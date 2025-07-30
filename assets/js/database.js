@@ -140,19 +140,21 @@ function getSeededRevealPattern(word, seed) {
     // Create all possible positions
     const availablePositions = Array.from({length: word.length}, (_, i) => i);
     
-    // Seeded shuffle of all positions
+    // Better seeded shuffle using multiple seed variations
     for (let i = availablePositions.length - 1; i > 0; i--) {
-        const j = Math.abs(seed * (i + 1) * 17) % (i + 1);
+        const seedVariation = seed + i * 7 + word.length * 3;
+        const j = Math.abs(Math.sin(seedVariation) * 10000) % (i + 1);
         [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
     }
     
-    // Select positions ensuring no two adjacent letters are revealed
+    // Select positions with improved spacing logic
     const selectedPositions = [];
+    const minSpacing = word.length <= 6 ? 1 : 2; // Allow closer spacing for short words
     
     for (const pos of availablePositions) {
-        // Check if this position is at least 2 spaces away from any selected position
+        // Check spacing requirement
         const isValidPosition = selectedPositions.every(selectedPos => 
-            Math.abs(pos - selectedPos) >= 2
+            Math.abs(pos - selectedPos) >= minSpacing
         );
         
         if (isValidPosition) {
@@ -165,11 +167,16 @@ function getSeededRevealPattern(word, seed) {
         }
     }
     
-    // If we couldn't find enough spaced positions, fall back to just first valid positions
+    // Improved fallback - use distributed positions instead of sequential
     if (selectedPositions.length < lettersToShow) {
         selectedPositions.length = 0;
-        for (let i = 0; i < lettersToShow && i * 2 < word.length; i++) {
-            selectedPositions.push(i * 2); // 0, 2, 4, 6...
+        const stepSize = Math.max(2, Math.floor(word.length / (lettersToShow + 1)));
+        
+        for (let i = 0; i < lettersToShow; i++) {
+            const pos = Math.min(i * stepSize + 1, word.length - 1);
+            if (!selectedPositions.includes(pos)) {
+                selectedPositions.push(pos);
+            }
         }
     }
     
