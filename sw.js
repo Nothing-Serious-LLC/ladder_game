@@ -1,16 +1,15 @@
 // LADDER PWA Service Worker
 const CACHE_NAME = 'ladder-v2';
 const CORE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/assets/js/game.js',
-  '/assets/js/database.js', 
-  '/assets/js/pwa.js',
-  '/config/supabase-config.js',
-  // Icons will be added once generated:
-  // '/assets/icons/icon-192.png',
-  // '/assets/icons/icon-512.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './assets/js/game.js',
+  './assets/js/database.js', 
+  './assets/js/pwa.js',
+  './config/supabase-config.js',
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png',
   'https://unpkg.com/@supabase/supabase-js@2'
 ];
 
@@ -49,7 +48,7 @@ self.addEventListener('fetch', (event) => {
       .catch(() => {
         // Fallback for offline - return main page for navigation requests only
         if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         }
       })
   );
