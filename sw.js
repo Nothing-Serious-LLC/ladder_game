@@ -4,13 +4,13 @@ const CORE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/assets/css/main.css',
   '/assets/js/game.js',
   '/assets/js/database.js', 
   '/assets/js/pwa.js',
   '/config/supabase-config.js',
-  '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png',
+  // Icons will be added once generated:
+  // '/assets/icons/icon-192.png',
+  // '/assets/icons/icon-512.png',
   'https://unpkg.com/@supabase/supabase-js@2'
 ];
 

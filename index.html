@@ -641,7 +641,7 @@
             </div>
         </div>
 
-        <button class="play-button" onclick="startGame()">Play Today's Puzzle</button>
+        <button class="play-button" onclick="window.gameModule?.startGame ? window.gameModule.startGame() : startGame()">Play Today's Puzzle</button>
     </div>
 
     <!-- Game Page -->
@@ -705,6 +705,62 @@
             <button class="share-button play-again" onclick="location.reload()">Play Again Tomorrow</button>
         </div>
     </div>
+
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <!-- Application Modules -->
+    <script type="module">
+        // Initialize Supabase client and set it globally for modules
+        import { supabaseConfig, setSupabaseClient } from './config/supabase-config.js';
+        import { initializePWA } from './assets/js/pwa.js';
+        import { fetchTodaysPuzzle, getTodaysPuzzleInfo } from './assets/js/database.js';
+        
+        // Initialize Supabase client
+        const supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        setSupabaseClient(supabaseClient);
+        
+        // Initialize PWA features
+        initializePWA();
+        
+        // Make functions globally available for onclick handlers
+        window.gameModule = {
+            startGame: async () => {
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('game-page').style.display = 'flex';
+                
+                // Use backend puzzle data instead of hardcoded
+                try {
+                    const puzzleData = await fetchTodaysPuzzle();
+                    window.game = new LadderGame(puzzleData);
+                } catch (error) {
+                    console.error('Failed to fetch puzzle, using fallback:', error);
+                    window.game = new LadderGame(); // Fallback to hardcoded
+                }
+            },
+            retryConnection: () => {
+                // Add offline retry logic here if needed
+                location.reload();
+            },
+            updateLandingInfo: async () => {
+                try {
+                    const { puzzleNumber } = getTodaysPuzzleInfo();
+                    const landingPuzzleInfo = document.getElementById('landing-puzzle-info');
+                    const today = new Date();
+                    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                    const formattedDate = today.toLocaleDateString('en-US', options);
+                    landingPuzzleInfo.textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+                } catch (error) {
+                    console.error('Error updating landing info:', error);
+                }
+            }
+        };
+        
+        // Initialize landing page info when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            window.gameModule.updateLandingInfo();
+        });
+    </script>
 
     <script>
         function startGame() {
@@ -1278,14 +1334,33 @@
         }
         
         let game;
+        
+        // Fallback startGame function for backwards compatibility
+        function startGame() {
+            if (window.gameModule?.startGame) {
+                window.gameModule.startGame();
+            } else {
+                // Fallback to original logic
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('game-page').style.display = 'flex';
+                game = new LadderGame();
+            }
+        }
+        
+        // Fallback puzzle info update (backend version will override this)
         document.addEventListener('DOMContentLoaded', function() {
-            // Update landing page puzzle info on load
-            const { puzzleNumber } = getTodaysPuzzleInfo();
-            const landingPuzzleInfo = document.getElementById('landing-puzzle-info');
-            const today = new Date();
-            const options = { month: 'long', day: 'numeric', year: 'numeric' };
-            const formattedDate = today.toLocaleDateString('en-US', options);
-            landingPuzzleInfo.textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+            // Delay to let backend module initialize first
+            setTimeout(() => {
+                if (!window.gameModule) {
+                    // Fallback to original logic
+                    const { puzzleNumber } = getTodaysPuzzleInfo();
+                    const landingPuzzleInfo = document.getElementById('landing-puzzle-info');
+                    const today = new Date();
+                    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                    const formattedDate = today.toLocaleDateString('en-US', options);
+                    landingPuzzleInfo.textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+                }
+            }, 100);
         });
     </script>
 </body>
