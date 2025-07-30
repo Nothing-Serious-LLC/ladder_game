@@ -788,7 +788,7 @@
         }
 
         class LadderGame {
-            constructor() {
+            constructor(databasePuzzle = null) {
                 this.allPuzzles = [
                     {
                         theme: "Fire & Home",
@@ -913,10 +913,17 @@
                     }
                 ];
                 
-                // Get today's puzzle using date-based seed
-                const { puzzle, puzzleNumber } = this.getTodaysPuzzle();
-                this.currentPuzzle = puzzle;
-                this.puzzleNumber = puzzleNumber;
+                // Use database puzzle if provided, otherwise get hardcoded puzzle
+                if (databasePuzzle) {
+                    console.log('Using database puzzle:', databasePuzzle.puzzle.theme);
+                    this.currentPuzzle = databasePuzzle.puzzle;
+                    this.puzzleNumber = databasePuzzle.puzzleNumber;
+                } else {
+                    console.log('Using hardcoded puzzle fallback');
+                    const { puzzle, puzzleNumber } = this.getTodaysPuzzle();
+                    this.currentPuzzle = puzzle;
+                    this.puzzleNumber = puzzleNumber;
+                }
                 this.currentRungIndex = 0;
                 this.wrongGuesses = 0;
                 this.maxWrongGuesses = 5;
