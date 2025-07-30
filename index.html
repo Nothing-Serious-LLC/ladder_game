@@ -1328,11 +1328,9 @@
             showWrongWordAnimation() {
                 const letterBoxes = this.getCurrentWordLetterBoxes();
                 
-                // Add wrong-word class to all user-typed letters
-                letterBoxes.forEach((letterBox, index) => {
-                    if (index < this.typedWord.length && letterBox.dataset.isRevealed !== 'true') {
-                        letterBox.classList.add('wrong-word');
-                    }
+                // Add wrong-word class to ALL letters in current word
+                letterBoxes.forEach((letterBox) => {
+                    letterBox.classList.add('wrong-word');
                 });
                 
                 // Remove wrong-word class after animation
