@@ -951,8 +951,7 @@
                 this.gameEnded = false;
                 this.startTime = null;
                 this.timerInterval = null;
-                this.currentTypingPosition = 0;
-                this.userInput = [];
+                this.typedWord = '';
                 
                 this.setupGame();
                 this.setupEventListeners();
@@ -1127,9 +1126,6 @@
             }
             
             setupEventListeners() {
-                this.currentTypingPosition = 0;
-                this.userInput = [];
-                
                 // Set up keyboard event listener for the document
                 document.addEventListener('keydown', (e) => this.handleKeyInput(e));
                 
@@ -1140,8 +1136,8 @@
                 submitButton?.addEventListener('click', () => this.submitCurrentWord());
                 clearButton?.addEventListener('click', () => this.clearCurrentWord());
                 
-                // Initialize the first typeable position as current
-                this.moveToNextPosition();
+                // Initialize the word display
+                this.updateWordDisplay();
             }
             
             handleKeyInput(e) {
@@ -1150,9 +1146,9 @@
                 const key = e.key.toUpperCase();
                 
                 // Handle letter input
-                if (key.match(/^[A-Z]$/) && this.currentTypingPosition < this.getCurrentWordLength()) {
+                if (key.match(/^[A-Z]$/)) {
                     e.preventDefault();
-                    this.typeLetterAtPosition(key, this.currentTypingPosition);
+                    this.addLetterToWord(key);
                     return;
                 }
                 
@@ -1171,92 +1167,79 @@
                 }
             }
             
-            typeLetterAtPosition(letter, position) {
-                const currentWord = this.getCurrentWordData();
-                const letterBoxes = this.getCurrentWordLetterBoxes();
-                const letterBox = letterBoxes[position];
+            addLetterToWord(letter) {
+                const currentWordData = this.getCurrentWordData();
+                const wordLength = currentWordData.word.length;
                 
-                if (!letterBox) return;
-                
-                const isRevealed = letterBox.dataset.isRevealed === 'true';
-                const correctLetter = letterBox.dataset.correctLetter;
-                
-                // Auto-correct if typing in a revealed position
-                if (isRevealed) {
-                    if (letter !== correctLetter) {
-                        // Show auto-correction animation
-                        letterBox.classList.add('auto-corrected');
-                        setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
-                        this.showFeedback(`Auto-corrected "${letter}" to "${correctLetter}"`, 'hint');
-                    }
-                    // Move to next position without changing the letter (it's already revealed)
-                    this.moveToNextPosition();
+                // Don't allow typing beyond word length
+                if (this.typedWord.length >= wordLength) {
                     return;
                 }
                 
-                // Type user's letter
-                letterBox.textContent = letter;
-                letterBox.classList.add('user-typed');
-                letterBox.classList.add('filled');
+                // Add letter to typed word
+                this.typedWord += letter;
                 
-                // Store the user input
-                this.userInput[position] = letter;
-                
-                // Move to next position
-                this.moveToNextPosition();
+                // Update the display
+                this.updateWordDisplay();
             }
             
             handleBackspace() {
-                // Move back to previous editable position
-                for (let i = this.currentTypingPosition - 1; i >= 0; i--) {
-                    const letterBoxes = this.getCurrentWordLetterBoxes();
-                    const letterBox = letterBoxes[i];
+                if (this.typedWord.length > 0) {
+                    // Remove last character
+                    this.typedWord = this.typedWord.slice(0, -1);
                     
-                    if (letterBox && letterBox.dataset.isRevealed !== 'true') {
-                        // Clear this position
-                        letterBox.textContent = '';
-                        letterBox.classList.remove('user-typed', 'filled');
-                        this.userInput[i] = undefined;
-                        this.currentTypingPosition = i;
-                        this.updateCurrentPosition();
-                        return;
-                    }
+                    // Update the display
+                    this.updateWordDisplay();
                 }
             }
             
-            moveToNextPosition() {
-                const wordLength = this.getCurrentWordLength();
-                
-                // If starting from beginning, find first typeable position
-                let startPos = this.currentTypingPosition === 0 ? 0 : this.currentTypingPosition + 1;
-                
-                // Find next typeable position
-                for (let i = startPos; i < wordLength; i++) {
-                    const letterBoxes = this.getCurrentWordLetterBoxes();
-                    const letterBox = letterBoxes[i];
-                    
-                    if (letterBox && letterBox.dataset.isRevealed !== 'true') {
-                        this.currentTypingPosition = i;
-                        this.updateCurrentPosition();
-                        return;
-                    }
-                }
-                
-                // If we've reached the end, stay at the last position
-                this.currentTypingPosition = wordLength;
-                this.updateCurrentPosition();
-            }
-            
-            updateCurrentPosition() {
-                // Remove current indicators from all letter boxes
-                const allLetterBoxes = document.querySelectorAll('.letter-box');
-                allLetterBoxes.forEach(box => box.classList.remove('current'));
-                
-                // Add current indicator to current position
+            updateWordDisplay() {
+                const currentWordData = this.getCurrentWordData();
+                const correctWord = currentWordData.word;
                 const letterBoxes = this.getCurrentWordLetterBoxes();
-                const currentBox = letterBoxes[this.currentTypingPosition];
-                if (currentBox && this.currentTypingPosition < this.getCurrentWordLength()) {
-                    currentBox.classList.add('current');
+                
+                // Clear current indicators and user-typed classes
+                letterBoxes.forEach(box => {
+                    box.classList.remove('current', 'user-typed');
+                    if (box.dataset.isRevealed !== 'true') {
+                        box.classList.remove('filled');
+                        box.textContent = '';
+                    }
+                });
+                
+                // Fill in the typed word
+                for (let i = 0; i < this.typedWord.length && i < correctWord.length; i++) {
+                    const letterBox = letterBoxes[i];
+                    const typedLetter = this.typedWord[i];
+                    const correctLetter = correctWord[i];
+                    const isRevealed = letterBox.dataset.isRevealed === 'true';
+                    
+                    if (isRevealed) {
+                        // For revealed letters, check if user typed the correct letter
+                        if (typedLetter !== correctLetter) {
+                            // Show auto-correction animation
+                            letterBox.classList.add('auto-corrected');
+                            setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
+                            
+                            // Show feedback for auto-correction
+                            if (i === this.typedWord.length - 1) { // Only show for the most recent correction
+                                this.showFeedback(`Auto-corrected "${typedLetter}" to "${correctLetter}"`, 'hint');
+                            }
+                        }
+                        // Revealed letters stay as they are (already filled)
+                    } else {
+                        // For non-revealed positions, show user's typed letter
+                        letterBox.textContent = typedLetter;
+                        letterBox.classList.add('user-typed', 'filled');
+                    }
+                }
+                
+                // Show current typing position indicator
+                if (this.typedWord.length < correctWord.length) {
+                    const nextBox = letterBoxes[this.typedWord.length];
+                    if (nextBox) {
+                        nextBox.classList.add('current');
+                    }
                 }
             }
             
@@ -1274,24 +1257,28 @@
             }
             
             buildCurrentGuess() {
-                const currentWord = this.getCurrentWordData().word;
-                let guess = '';
+                const currentWordData = this.getCurrentWordData();
+                const correctWord = currentWordData.word;
                 
-                for (let i = 0; i < currentWord.length; i++) {
+                if (this.typedWord.length < correctWord.length) {
+                    return null; // Incomplete word
+                }
+                
+                // Build guess by combining typed letters with revealed letters
+                let guess = '';
+                for (let i = 0; i < correctWord.length; i++) {
                     const letterBoxes = this.getCurrentWordLetterBoxes();
                     const letterBox = letterBoxes[i];
                     
-                    if (letterBox) {
-                        if (letterBox.dataset.isRevealed === 'true') {
-                            // Use revealed letter
-                            guess += letterBox.dataset.correctLetter;
-                        } else if (this.userInput[i]) {
-                            // Use user typed letter
-                            guess += this.userInput[i];
-                        } else {
-                            // Missing letter
-                            return null; // Incomplete word
-                        }
+                    if (letterBox && letterBox.dataset.isRevealed === 'true') {
+                        // Use revealed letter
+                        guess += letterBox.dataset.correctLetter;
+                    } else if (i < this.typedWord.length) {
+                        // Use typed letter
+                        guess += this.typedWord[i];
+                    } else {
+                        // This shouldn't happen if typedWord.length >= correctWord.length
+                        return null;
                     }
                 }
                 
@@ -1319,27 +1306,18 @@
             clearCurrentWord() {
                 if (this.gameEnded) return;
                 
-                // Clear all user-typed letters
-                const letterBoxes = this.getCurrentWordLetterBoxes();
-                letterBoxes.forEach((letterBox, index) => {
-                    if (letterBox.dataset.isRevealed !== 'true') {
-                        letterBox.textContent = '';
-                        letterBox.classList.remove('user-typed', 'filled');
-                        this.userInput[index] = undefined;
-                    }
-                });
+                // Clear typed word
+                this.typedWord = '';
                 
-                // Reset to first typeable position
-                this.currentTypingPosition = 0;
-                this.moveToNextPosition();
+                // Update the display
+                this.updateWordDisplay();
             }
             
             correctGuess() {
                 this.currentRungIndex++;
                 
                 // Reset typing state for next word
-                this.currentTypingPosition = 0;
-                this.userInput = [];
+                this.typedWord = '';
                 
                 this.renderLadder();
                 this.updateTimerColors(); // Immediately restore current colors after rebuild
@@ -1351,7 +1329,7 @@
                 } else {
                     this.showFeedback('Correct! Keep climbing!', 'hint');
                     // Set up typing for the new word
-                    this.updateCurrentPosition();
+                    this.updateWordDisplay();
                 }
             }
             
