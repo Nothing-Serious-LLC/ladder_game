@@ -677,9 +677,130 @@
             background: #666a6d;
         }
 
+        /* Mobile Keyboard Styles */
+        .mobile-keyboard {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-top: 1px solid #d3d6da;
+            margin-top: auto;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .keyboard-key {
+            background: #d3d6da;
+            border: none;
+            border-radius: 4px;
+            color: #1a1a1b;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 42px;
+            font-family: inherit;
+        }
+
+        .keyboard-key:active {
+            transform: scale(0.95);
+            background: #bdc1c6;
+        }
+
+        .keyboard-key.wide {
+            min-width: 48px;
+            font-size: 0.7rem;
+        }
+
+        .keyboard-key:disabled {
+            background: #878a8c;
+            color: #d3d6da;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 480px) {
             .container {
+                padding: 0;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            /* Mobile Game Layout Optimization */
+            .game-container {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                overflow: hidden;
+            }
+            
+            .mobile-header {
+                padding: 12px 16px 8px;
+                background: #fafafa;
+                border-bottom: 1px solid #e1e5e9;
+                flex-shrink: 0;
+            }
+            
+            .mobile-header .title {
+                font-size: 1.4rem;
+                letter-spacing: 0.1em;
+                margin-bottom: 4px;
+                text-align: center;
+            }
+            
+            .mobile-header .stats {
+                gap: 12px;
+                margin-bottom: 0;
+                justify-content: center;
+            }
+            
+            .mobile-header .stat-value {
+                font-size: 1.2rem;
+            }
+            
+            .mobile-header .stat-label {
+                font-size: 0.6rem;
+            }
+
+            .mobile-game-area {
+                flex: 1;
+                overflow-y: auto;
                 padding: 16px;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .mobile-ladder {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                margin-bottom: 16px;
+            }
+            
+            .mobile-keyboard {
+                display: flex;
+                flex-shrink: 0;
+            }
+            
+            /* Hide desktop elements on mobile */
+            .header {
+                display: none;
+            }
+            
+            .stats {
+                display: none;
+            }
+            
+            .game-area {
+                display: none;
             }
             
             .landing-title {
@@ -687,19 +808,10 @@
                 letter-spacing: 0.15em;
             }
             
-            .title {
-                font-size: 1.8rem;
-                letter-spacing: 0.15em;
-            }
-            
-            .stats {
-                gap: 16px;
-            }
-            
             .letter-box, .example-letter {
-                width: 28px;
-                height: 28px;
-                font-size: 1rem;
+                width: 26px;
+                height: 26px;
+                font-size: 0.9rem;
             }
             
             .button-group {
@@ -712,6 +824,22 @@
 
             .instructions {
                 padding: 24px;
+            }
+            
+            /* Rung optimization for mobile - smaller, more compact */
+            .rung {
+                padding: 12px;
+                border-radius: 6px;
+            }
+            
+            .word-display {
+                gap: 3px;
+                margin-bottom: 6px;
+            }
+            
+            .word-hint {
+                font-size: 0.75rem;
+                line-height: 1.2;
             }
         }
     </style>
@@ -780,6 +908,68 @@
 
             <div class="input-area">
                 <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+
+        <!-- Mobile-optimized layout -->
+        <div class="mobile-header">
+            <h1 class="title">LADDER</h1>
+            <div class="stats">
+                <div class="stat timer">
+                    <div class="stat-value" id="mobile-timer">0:00</div>
+                    <div class="stat-label">Time</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="mobile-current-rung">1</div>
+                    <div class="stat-label">Step</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="mobile-tries-left">5</div>
+                    <div class="stat-label">Tries</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mobile-game-area">
+            <div class="mobile-ladder" id="mobile-ladder"></div>
+            <div class="feedback" id="mobile-feedback"></div>
+        </div>
+
+        <!-- Mobile Keyboard -->
+        <div class="mobile-keyboard" id="mobile-keyboard">
+            <div class="keyboard-row">
+                <button class="keyboard-key" data-key="Q">Q</button>
+                <button class="keyboard-key" data-key="W">W</button>
+                <button class="keyboard-key" data-key="E">E</button>
+                <button class="keyboard-key" data-key="R">R</button>
+                <button class="keyboard-key" data-key="T">T</button>
+                <button class="keyboard-key" data-key="Y">Y</button>
+                <button class="keyboard-key" data-key="U">U</button>
+                <button class="keyboard-key" data-key="I">I</button>
+                <button class="keyboard-key" data-key="O">O</button>
+                <button class="keyboard-key" data-key="P">P</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="keyboard-key" data-key="A">A</button>
+                <button class="keyboard-key" data-key="S">S</button>
+                <button class="keyboard-key" data-key="D">D</button>
+                <button class="keyboard-key" data-key="F">F</button>
+                <button class="keyboard-key" data-key="G">G</button>
+                <button class="keyboard-key" data-key="H">H</button>
+                <button class="keyboard-key" data-key="J">J</button>
+                <button class="keyboard-key" data-key="K">K</button>
+                <button class="keyboard-key" data-key="L">L</button>
+            </div>
+            <div class="keyboard-row">
+                <button class="keyboard-key wide" data-key="ENTER">ENTER</button>
+                <button class="keyboard-key" data-key="Z">Z</button>
+                <button class="keyboard-key" data-key="X">X</button>
+                <button class="keyboard-key" data-key="C">C</button>
+                <button class="keyboard-key" data-key="V">V</button>
+                <button class="keyboard-key" data-key="B">B</button>
+                <button class="keyboard-key" data-key="N">N</button>
+                <button class="keyboard-key" data-key="M">M</button>
+                <button class="keyboard-key wide" data-key="BACKSPACE">⌫</button>
             </div>
         </div>
     </div>
@@ -1203,70 +1393,162 @@
                     landingPuzzleInfo.textContent = `Puzzle #${this.puzzleNumber} • ${formattedDate}`;
                 }
                 
+                // Initialize mobile UI
+                this.syncMobileUI();
+                
                 this.renderLadder();
                 this.startTimer();
             }
             
+            syncMobileUI() {
+                // Sync mobile stats with desktop stats
+                const mobileTimer = document.getElementById('mobile-timer');
+                const mobileCurrentRung = document.getElementById('mobile-current-rung');
+                const mobileTriesLeft = document.getElementById('mobile-tries-left');
+                
+                if (mobileTimer) mobileTimer.textContent = document.getElementById('timer').textContent;
+                if (mobileCurrentRung) mobileCurrentRung.textContent = document.getElementById('current-rung').textContent;
+                if (mobileTriesLeft) mobileTriesLeft.textContent = document.getElementById('tries-left').textContent;
+            }
+            
             renderLadder() {
                 const ladder = document.getElementById('ladder');
+                const mobileLadder = document.getElementById('mobile-ladder');
                 ladder.innerHTML = '';
+                if (mobileLadder) mobileLadder.innerHTML = '';
                 
                 this.currentPuzzle.words.forEach((wordData, index) => {
-                    const rung = document.createElement('div');
-                    rung.className = 'rung';
-                    rung.id = `rung-${index}`;
+                    const rung = this.createRung(wordData, index, false);
+                    const mobileRung = mobileLadder ? this.createRung(wordData, index, true) : null;
                     
-                    if (index === this.currentRungIndex && !this.gameEnded) {
-                        rung.classList.add('active');
-                    }
-                    
-                    if (index < this.currentRungIndex) {
-                        rung.classList.add('completed');
-                    }
-                    
-                    const wordDisplay = document.createElement('div');
-                    wordDisplay.className = 'word-display';
-                    
-                    const revealPattern = wordData.revealPattern || this.getMinimalRevealPattern(wordData.word, index);
-                    
-                    wordData.word.split('').forEach((letter, letterIndex) => {
-                        const letterBox = document.createElement('div');
-                        letterBox.className = 'letter-box';
-                        letterBox.dataset.wordIndex = index;
-                        letterBox.dataset.letterIndex = letterIndex;
-                        letterBox.dataset.correctLetter = letter;
-                        letterBox.dataset.isRevealed = revealPattern[letterIndex] ? 'true' : 'false';
-                        
-                        if (revealPattern[letterIndex] || index < this.currentRungIndex) {
-                            letterBox.textContent = letter;
-                            letterBox.classList.add('filled');
-                        }
-                        
-                        // Make current word's letter boxes interactive
-                        if (index === this.currentRungIndex && !this.gameEnded) {
-                            letterBox.classList.add('interactive');
-                            letterBox.setAttribute('tabindex', '0');
-                        }
-                        
-                        wordDisplay.appendChild(letterBox);
-                    });
-                    
-                    const hint = document.createElement('div');
-                    hint.className = 'word-hint';
-                    hint.textContent = wordData.hint;
-                    
-                    rung.appendChild(wordDisplay);
-                    rung.appendChild(hint);
                     ladder.appendChild(rung);
+                    if (mobileRung && mobileLadder) {
+                        mobileLadder.appendChild(mobileRung);
+                    }
                 });
+            }
+            
+            createRung(wordData, index, isMobile = false) {
+                const rung = document.createElement('div');
+                rung.className = 'rung';
+                rung.id = `${isMobile ? 'mobile-' : ''}rung-${index}`;
+                
+                if (index === this.currentRungIndex && !this.gameEnded) {
+                    rung.classList.add('active');
+                }
+                
+                if (index < this.currentRungIndex) {
+                    rung.classList.add('completed');
+                }
+                
+                const wordDisplay = document.createElement('div');
+                wordDisplay.className = 'word-display';
+                
+                const revealPattern = wordData.revealPattern || this.getMinimalRevealPattern(wordData.word, index);
+                
+                wordData.word.split('').forEach((letter, letterIndex) => {
+                    const letterBox = document.createElement('div');
+                    letterBox.className = 'letter-box';
+                    letterBox.dataset.wordIndex = index;
+                    letterBox.dataset.letterIndex = letterIndex;
+                    letterBox.dataset.correctLetter = letter;
+                    letterBox.dataset.isRevealed = revealPattern[letterIndex] ? 'true' : 'false';
+                    
+                    if (revealPattern[letterIndex] || index < this.currentRungIndex) {
+                        letterBox.textContent = letter;
+                        letterBox.classList.add('filled');
+                    }
+                    
+                    // Make current word's letter boxes interactive (but prevent native keyboard on mobile)
+                    if (index === this.currentRungIndex && !this.gameEnded) {
+                        letterBox.classList.add('interactive');
+                        if (!isMobile) {
+                            letterBox.setAttribute('tabindex', '0');
+                        } else {
+                            // Prevent mobile keyboard popup
+                            letterBox.setAttribute('readonly', 'true');
+                            letterBox.setAttribute('inputmode', 'none');
+                        }
+                    }
+                    
+                    wordDisplay.appendChild(letterBox);
+                });
+                
+                const hint = document.createElement('div');
+                hint.className = 'word-hint';
+                hint.textContent = wordData.hint;
+                
+                rung.appendChild(wordDisplay);
+                rung.appendChild(hint);
+                
+                return rung;
             }
             
             setupEventListeners() {
                 // Set up keyboard event listener for the document
                 document.addEventListener('keydown', (e) => this.handleKeyInput(e));
                 
+                // Set up mobile keyboard event listeners
+                this.setupMobileKeyboard();
+                
+                // Prevent native mobile keyboard on letter boxes
+                this.preventNativeMobileKeyboard();
+                
                 // Initialize the word display
                 this.updateWordDisplay();
+            }
+            
+            setupMobileKeyboard() {
+                const mobileKeyboard = document.getElementById('mobile-keyboard');
+                if (mobileKeyboard) {
+                    mobileKeyboard.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('keyboard-key')) {
+                            e.preventDefault();
+                            const key = e.target.dataset.key;
+                            
+                            if (key === 'BACKSPACE') {
+                                this.handleBackspace();
+                            } else if (key === 'ENTER') {
+                                // Enter key functionality can be added later if needed
+                                return;
+                            } else if (key.match(/^[A-Z]$/)) {
+                                this.addLetterToWord(key);
+                            }
+                            
+                            // Add visual feedback
+                            e.target.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                e.target.style.transform = 'scale(1)';
+                            }, 100);
+                        }
+                    });
+                }
+            }
+            
+            preventNativeMobileKeyboard() {
+                // Add input-related attributes to prevent mobile keyboard
+                const letterBoxes = document.querySelectorAll('.letter-box');
+                letterBoxes.forEach(box => {
+                    box.setAttribute('readonly', 'true');
+                    box.setAttribute('inputmode', 'none');
+                    box.addEventListener('focus', (e) => {
+                        e.target.blur(); // Immediately blur to prevent keyboard
+                    });
+                    box.addEventListener('touchstart', (e) => {
+                        e.preventDefault(); // Prevent touch focus
+                    });
+                });
+                
+                // Also prevent focus on the game area
+                const gameArea = document.querySelector('.game-area');
+                if (gameArea) {
+                    gameArea.addEventListener('touchstart', (e) => {
+                        // Allow normal touch behavior but prevent letter box focus
+                        if (e.target.classList.contains('letter-box')) {
+                            e.preventDefault();
+                        }
+                    });
+                }
             }
             
             handleKeyInput(e) {
@@ -1388,7 +1670,14 @@
             
             getCurrentWordLetterBoxes() {
                 const currentRung = document.getElementById(`rung-${this.currentRungIndex}`);
-                return currentRung ? currentRung.querySelectorAll('.letter-box') : [];
+                const desktopBoxes = currentRung ? currentRung.querySelectorAll('.letter-box') : [];
+                
+                // Also get mobile letter boxes if they exist
+                const mobileRung = document.getElementById(`mobile-rung-${this.currentRungIndex}`);
+                const mobileBoxes = mobileRung ? mobileRung.querySelectorAll('.letter-box') : [];
+                
+                // Return both sets of boxes for synchronized updates
+                return [...desktopBoxes, ...mobileBoxes];
             }
             
             buildCurrentGuess() {
@@ -1452,6 +1741,10 @@
                         this.updateTimerColors(); // Immediately restore current colors after rebuild
                         
                         document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
+                        
+                        // Sync mobile current rung
+                        const mobileCurrentRung = document.getElementById('mobile-current-rung');
+                        if (mobileCurrentRung) mobileCurrentRung.textContent = this.currentRungIndex + 1;
                         
                         if (this.currentRungIndex >= this.currentPuzzle.words.length) {
                             // Start completion animation before ending game
@@ -1527,6 +1820,10 @@
                 this.wrongGuesses++;
                 const triesLeft = this.maxWrongGuesses - this.wrongGuesses;
                 document.getElementById('tries-left').textContent = triesLeft;
+                
+                // Sync mobile tries left
+                const mobileTriesLeft = document.getElementById('mobile-tries-left');
+                if (mobileTriesLeft) mobileTriesLeft.textContent = triesLeft;
                 
                 if (triesLeft === 0) {
                     this.endGame(false);
@@ -1620,7 +1917,13 @@
                     const elapsed = Date.now() - this.startTime;
                     const minutes = Math.floor(elapsed / 60000);
                     const seconds = Math.floor((elapsed % 60000) / 1000);
-                    document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    const timeText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    document.getElementById('timer').textContent = timeText;
+                    
+                    // Sync mobile timer
+                    const mobileTimer = document.getElementById('mobile-timer');
+                    if (mobileTimer) mobileTimer.textContent = timeText;
                     
                     // Update colors based on elapsed time
                     this.updateTimerColors();
@@ -1717,11 +2020,21 @@
             
             showFeedback(message, type) {
                 const feedback = document.getElementById('feedback');
+                const mobileFeedback = document.getElementById('mobile-feedback');
+                
+                // Update desktop feedback
                 feedback.textContent = message;
                 feedback.className = `feedback ${type} show`;
                 
+                // Update mobile feedback if it exists
+                if (mobileFeedback) {
+                    mobileFeedback.textContent = message;
+                    mobileFeedback.className = `feedback ${type} show`;
+                }
+                
                 setTimeout(() => {
                     feedback.classList.remove('show');
+                    if (mobileFeedback) mobileFeedback.classList.remove('show');
                 }, 3000);
             }
             
