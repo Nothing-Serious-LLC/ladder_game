@@ -677,15 +677,23 @@
             background: #666a6d;
         }
 
-        /* Mobile Keyboard Styles */
+        /* Mobile Keyboard Styles - hidden by default, shown on mobile */
         .mobile-keyboard {
             display: none;
             flex-direction: column;
             gap: 8px;
-            padding: 16px;
+            padding: 16px 16px 32px 16px; /* Extra bottom padding for safety */
             background: #f8f9fa;
             border-top: 1px solid #d3d6da;
             margin-top: auto;
+            flex-shrink: 0; /* Prevent keyboard from shrinking */
+            min-height: 160px; /* Ensure minimum height for 3 rows */
+        }
+        
+        /* Mobile elements hidden by default */
+        .mobile-header,
+        .mobile-game-area {
+            display: none;
         }
 
         .keyboard-row {
@@ -776,6 +784,7 @@
                 padding: 16px;
                 display: flex;
                 flex-direction: column;
+                min-height: 0; /* Important for flex child overflow */
             }
             
             .mobile-ladder {
@@ -783,6 +792,13 @@
                 flex-direction: column;
                 gap: 6px;
                 margin-bottom: 16px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            
+            /* Limit mobile ladder to show fewer rungs */
+            .mobile-ladder .rung {
+                display: block;
             }
             
             .mobile-keyboard {
@@ -801,6 +817,24 @@
             
             .game-area {
                 display: none;
+            }
+            
+            /* Hide desktop ladder on mobile */
+            .ladder {
+                display: none;
+            }
+            
+            /* Show mobile elements on mobile */
+            .mobile-header {
+                display: block;
+            }
+            
+            .mobile-game-area {
+                display: flex;
+            }
+            
+            .mobile-keyboard {
+                display: flex;
             }
             
             .landing-title {
@@ -1031,18 +1065,30 @@
                     
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
+                    const mobileLadder = document.getElementById('mobile-ladder');
                     ladder.innerHTML = ''; // Clear any existing content
+                    if (mobileLadder) mobileLadder.innerHTML = '';
                     
                     // Create 6 temporary rungs that match the real game styling
                     for (let i = 0; i < 6; i++) {
+                        // Create desktop rung
                         const rung = document.createElement('div');
                         rung.className = 'rung';
                         rung.id = `loading-rung-${i}`;
                         rung.style.opacity = '0.3';
                         
+                        // Create mobile rung
+                        const mobileRung = document.createElement('div');
+                        mobileRung.className = 'rung';
+                        mobileRung.id = `mobile-loading-rung-${i}`;
+                        mobileRung.style.opacity = '0.3';
+                        
                         // Create word display with placeholder letter boxes
                         const wordDisplay = document.createElement('div');
                         wordDisplay.className = 'word-display';
+                        
+                        const mobileWordDisplay = document.createElement('div');
+                        mobileWordDisplay.className = 'word-display';
                         
                         // Create 5-8 letter boxes (varies like real words)
                         const letterCount = 4 + (i % 4) + 1; // Varies from 5-8 letters
@@ -1051,6 +1097,11 @@
                             letterBox.className = 'letter-box';
                             letterBox.style.opacity = '0.3';
                             wordDisplay.appendChild(letterBox);
+                            
+                            const mobileLetterBox = document.createElement('div');
+                            mobileLetterBox.className = 'letter-box';
+                            mobileLetterBox.style.opacity = '0.3';
+                            mobileWordDisplay.appendChild(mobileLetterBox);
                         }
                         
                         // Create hint placeholder
@@ -1058,9 +1109,19 @@
                         hint.className = 'word-hint';
                         hint.innerHTML = '&nbsp;'; // Empty space to maintain height
                         
+                        const mobileHint = document.createElement('div');
+                        mobileHint.className = 'word-hint';
+                        mobileHint.innerHTML = '&nbsp;';
+                        
                         rung.appendChild(wordDisplay);
                         rung.appendChild(hint);
                         ladder.appendChild(rung);
+                        
+                        if (mobileLadder) {
+                            mobileRung.appendChild(mobileWordDisplay);
+                            mobileRung.appendChild(mobileHint);
+                            mobileLadder.appendChild(mobileRung);
+                        }
                     }
                     
                     // Animate each rung from top to bottom with staggered timing
@@ -1069,12 +1130,23 @@
                         
                         setTimeout(() => {
                             const rung = document.getElementById(`loading-rung-${i}`);
+                            const mobileRung = document.getElementById(`mobile-loading-rung-${i}`);
+                            
                             if (rung) {
                                 rung.classList.add('loading-animation');
                                 
                                 // Clean up animation class after animation completes
                                 setTimeout(() => {
                                     rung.classList.remove('loading-animation');
+                                }, 800);
+                            }
+                            
+                            if (mobileRung) {
+                                mobileRung.classList.add('loading-animation');
+                                
+                                // Clean up animation class after animation completes
+                                setTimeout(() => {
+                                    mobileRung.classList.remove('loading-animation');
                                 }, 800);
                             }
                         }, delay);
@@ -1429,39 +1501,39 @@
             }
             
             createRung(wordData, index, isMobile = false) {
-                const rung = document.createElement('div');
-                rung.className = 'rung';
+                    const rung = document.createElement('div');
+                    rung.className = 'rung';
                 rung.id = `${isMobile ? 'mobile-' : ''}rung-${index}`;
-                
-                if (index === this.currentRungIndex && !this.gameEnded) {
-                    rung.classList.add('active');
-                }
-                
-                if (index < this.currentRungIndex) {
-                    rung.classList.add('completed');
-                }
-                
-                const wordDisplay = document.createElement('div');
-                wordDisplay.className = 'word-display';
-                
-                const revealPattern = wordData.revealPattern || this.getMinimalRevealPattern(wordData.word, index);
-                
-                wordData.word.split('').forEach((letter, letterIndex) => {
-                    const letterBox = document.createElement('div');
-                    letterBox.className = 'letter-box';
-                    letterBox.dataset.wordIndex = index;
-                    letterBox.dataset.letterIndex = letterIndex;
-                    letterBox.dataset.correctLetter = letter;
-                    letterBox.dataset.isRevealed = revealPattern[letterIndex] ? 'true' : 'false';
                     
-                    if (revealPattern[letterIndex] || index < this.currentRungIndex) {
-                        letterBox.textContent = letter;
-                        letterBox.classList.add('filled');
+                    if (index === this.currentRungIndex && !this.gameEnded) {
+                        rung.classList.add('active');
                     }
                     
+                    if (index < this.currentRungIndex) {
+                        rung.classList.add('completed');
+                    }
+                    
+                    const wordDisplay = document.createElement('div');
+                    wordDisplay.className = 'word-display';
+                    
+                    const revealPattern = wordData.revealPattern || this.getMinimalRevealPattern(wordData.word, index);
+                    
+                    wordData.word.split('').forEach((letter, letterIndex) => {
+                        const letterBox = document.createElement('div');
+                        letterBox.className = 'letter-box';
+                        letterBox.dataset.wordIndex = index;
+                        letterBox.dataset.letterIndex = letterIndex;
+                        letterBox.dataset.correctLetter = letter;
+                        letterBox.dataset.isRevealed = revealPattern[letterIndex] ? 'true' : 'false';
+                        
+                        if (revealPattern[letterIndex] || index < this.currentRungIndex) {
+                            letterBox.textContent = letter;
+                            letterBox.classList.add('filled');
+                        }
+                        
                     // Make current word's letter boxes interactive (but prevent native keyboard on mobile)
-                    if (index === this.currentRungIndex && !this.gameEnded) {
-                        letterBox.classList.add('interactive');
+                        if (index === this.currentRungIndex && !this.gameEnded) {
+                            letterBox.classList.add('interactive');
                         if (!isMobile) {
                             letterBox.setAttribute('tabindex', '0');
                         } else {
@@ -1469,17 +1541,17 @@
                             letterBox.setAttribute('readonly', 'true');
                             letterBox.setAttribute('inputmode', 'none');
                         }
-                    }
+                        }
+                        
+                        wordDisplay.appendChild(letterBox);
+                    });
                     
-                    wordDisplay.appendChild(letterBox);
-                });
-                
-                const hint = document.createElement('div');
-                hint.className = 'word-hint';
-                hint.textContent = wordData.hint;
-                
-                rung.appendChild(wordDisplay);
-                rung.appendChild(hint);
+                    const hint = document.createElement('div');
+                    hint.className = 'word-hint';
+                    hint.textContent = wordData.hint;
+                    
+                    rung.appendChild(wordDisplay);
+                    rung.appendChild(hint);
                 
                 return rung;
             }
@@ -1732,27 +1804,27 @@
                     
                     // Advance to next word after additional pause
                     setTimeout(() => {
-                        this.currentRungIndex++;
-                        
-                        // Reset typing state for next word
-                        this.typedWord = '';
-                        
-                        this.renderLadder();
-                        this.updateTimerColors(); // Immediately restore current colors after rebuild
-                        
-                        document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
+                this.currentRungIndex++;
+                
+                // Reset typing state for next word
+                this.typedWord = '';
+                
+                this.renderLadder();
+                this.updateTimerColors(); // Immediately restore current colors after rebuild
+                
+                document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
                         
                         // Sync mobile current rung
                         const mobileCurrentRung = document.getElementById('mobile-current-rung');
                         if (mobileCurrentRung) mobileCurrentRung.textContent = this.currentRungIndex + 1;
-                        
-                        if (this.currentRungIndex >= this.currentPuzzle.words.length) {
-                            // Start completion animation before ending game
-                            this.playCompletionAnimation();
-                        } else {
-                            // Set up typing for the new word
-                            this.updateWordDisplay();
-                        }
+                
+                if (this.currentRungIndex >= this.currentPuzzle.words.length) {
+                    // Start completion animation before ending game
+                    this.playCompletionAnimation();
+                } else {
+                    // Set up typing for the new word
+                    this.updateWordDisplay();
+                }
                     }, 200); // Additional pause after rung completion
                 }, 600); // Wait for cascade to fully complete + buffer
             }
@@ -1860,8 +1932,8 @@
             endGame(won) {
                 // Timer already stopped in correctGuess() for wins, but stop here for losses
                 if (!won) {
-                    this.gameEnded = true;
-                    clearInterval(this.timerInterval);
+                this.gameEnded = true;
+                clearInterval(this.timerInterval);
                 }
                 
                 const finalTime = Date.now() - this.startTime;
