@@ -736,6 +736,28 @@
         }
 
         @media (max-width: 480px) {
+            html, body {
+                height: 100%;
+            }
+            .container.game-page {
+                height: 100%;
+                flex-direction: column;
+            }
+            .mobile-header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+            .mobile-keyboard {
+                position: fixed;
+                bottom: env(safe-area-inset-bottom, 0);
+                left: 0;
+                right: 0;
+                z-index: 9999;
+            }
+            .mobile-game-area {
+                padding-bottom: calc(180px + env(safe-area-inset-bottom, 0)); /* account for keyboard */
+            }
             .container {
                 padding: 0;
                 height: 100vh;
