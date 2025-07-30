@@ -8,9 +8,8 @@ const CORE_ASSETS = [
   '/assets/js/database.js', 
   '/assets/js/pwa.js',
   '/config/supabase-config.js',
-  // Icons will be added once generated:
-  // '/assets/icons/icon-192.png',
-  // '/assets/icons/icon-512.png',
+  '/assets/icons/icon-192.png',
+  '/assets/icons/icon-512.png',
   'https://unpkg.com/@supabase/supabase-js@2'
 ];
 
