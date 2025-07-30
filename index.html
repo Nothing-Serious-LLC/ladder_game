@@ -708,14 +708,14 @@
             border-radius: 4px;
             color: #1a1a1b;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.1s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 32px;
-            height: 42px;
+            min-width: 36px;
+            height: 48px;
             font-family: inherit;
         }
 
@@ -725,8 +725,8 @@
         }
 
         .keyboard-key.wide {
-            min-width: 48px;
-            font-size: 0.7rem;
+            min-width: 60px;
+            font-size: 0.8rem;
         }
 
         .keyboard-key:disabled {
@@ -751,6 +751,8 @@
             .mobile-keyboard {
                 position: fixed;
                 margin-top: 0;
+                min-height: 180px;
+                gap: 10px;
                 bottom: env(safe-area-inset-bottom, 0);
                 left: 0;
                 right: 0;
@@ -758,7 +760,7 @@
             }
             /* Reduce bottom padding so ladder isn’t cut off */
             .mobile-game-area {
-                padding-bottom: calc(176px + env(safe-area-inset-bottom, 0)); /* 160 keyboard + 16px gap */
+                padding-bottom: calc(188px + env(safe-area-inset-bottom, 0)); /* 160 keyboard + 8px gap to match header */
             }
             .container {
                 padding: 0;
@@ -766,6 +768,10 @@
                 overflow: hidden;
             }
             
+            /* Allow scrolling in mobile container */
+            .container.game-page, .game-container {
+                overflow: visible !important;
+            }
             /* Mobile Game Layout Optimization */
             .game-container {
                 display: flex;
@@ -818,7 +824,7 @@
                 flex-direction: column;
                 gap: 6px;
                 margin-bottom: 16px;
-                max-height: 200px;
+                
                 overflow-y: auto;
             }
             
