@@ -1303,7 +1303,6 @@
                 if (triesLeft === 0) {
                     this.endGame(false);
                 } else {
-                    this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
                     // Clear the word so they can try again
                     this.typedWord = '';
                     setTimeout(() => {
