@@ -1424,13 +1424,22 @@
                 
                 letterBoxes.forEach((letterBox, index) => {
                     setTimeout(() => {
+                        // Start the cascade animation
                         letterBox.classList.add('cascade-fill');
                         
-                        // Remove animation class after it completes  
+                        // Apply permanent completed state immediately
+                        letterBox.classList.remove('typed-through'); // Override gray styling
+                        letterBox.classList.add('filled'); // Add filled class for permanent green
+                        
+                        // Set permanent completed styling (green background/border)
+                        letterBox.style.backgroundColor = '#6aaa64';
+                        letterBox.style.borderColor = '#6aaa64';
+                        letterBox.style.color = 'white';
+                        
+                        // Remove animation class after it completes but keep completed styling
                         setTimeout(() => {
                             letterBox.classList.remove('cascade-fill');
-                            // Clean up any typed-through styling that might interfere
-                            letterBox.classList.remove('typed-through');
+                            // Keep the permanent green styling - don't remove it
                         }, 400);
                     }, index * 60); // 60ms stagger between each letter
                 });
