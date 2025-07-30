@@ -293,14 +293,14 @@
         .letter-box.current {
             border-color: #f5793a;
             border-width: 3px;
-            box-shadow: 0 0 8px rgba(245, 121, 58, 0.3);
+            box-shadow: 0 0 12px rgba(245, 121, 58, 0.4);
             animation: pulse 1.5s infinite;
+            background-color: rgba(245, 121, 58, 0.1);
         }
 
         .letter-box.user-typed {
-            background: #787c7e;
-            border-color: #787c7e;
-            color: white;
+            /* User typed letters have no background - just plain text */
+            color: #1a1a1b;
         }
 
         .letter-box.auto-corrected {
@@ -1185,6 +1185,7 @@
                     if (box.dataset.isRevealed !== 'true') {
                         box.classList.remove('filled');
                         box.textContent = '';
+                        // Ensure clean state for non-revealed letters
                     }
                 });
                 
@@ -1211,7 +1212,8 @@
                     } else {
                         // For non-revealed positions, show user's typed letter
                         letterBox.textContent = typedLetter;
-                        letterBox.classList.add('user-typed', 'filled');
+                        letterBox.classList.add('user-typed');
+                        // Don't add 'filled' class - user-typed letters should have no background
                     }
                 }
                 
