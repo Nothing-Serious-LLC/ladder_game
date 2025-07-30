@@ -699,12 +699,7 @@
 
             <div class="input-area">
                 <div class="typing-instructions">
-                    Type letters to fill the circles above • Press Enter to submit • Backspace to delete
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-primary" id="submit-button">Submit Word</button>
-                    <button class="btn btn-tertiary" id="clear-button">Clear</button>
+                    Type letters to fill the circles above • Backspace to delete • Auto-submits when complete
                 </div>
 
                 <div class="feedback" id="feedback"></div>
@@ -1129,13 +1124,6 @@
                 // Set up keyboard event listener for the document
                 document.addEventListener('keydown', (e) => this.handleKeyInput(e));
                 
-                // Set up button event listeners
-                const submitButton = document.getElementById('submit-button');
-                const clearButton = document.getElementById('clear-button');
-                
-                submitButton?.addEventListener('click', () => this.submitCurrentWord());
-                clearButton?.addEventListener('click', () => this.clearCurrentWord());
-                
                 // Initialize the word display
                 this.updateWordDisplay();
             }
@@ -1156,13 +1144,6 @@
                 if (e.key === 'Backspace') {
                     e.preventDefault();
                     this.handleBackspace();
-                    return;
-                }
-                
-                // Handle enter
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.submitCurrentWord();
                     return;
                 }
             }
@@ -1234,8 +1215,23 @@
                     }
                 }
                 
-                // Show current typing position indicator
-                if (this.typedWord.length < correctWord.length) {
+                // Check if word is complete and auto-submit
+                if (this.typedWord.length === correctWord.length) {
+                    // Word is complete, check if it's correct
+                    const guess = this.buildCurrentGuess();
+                    if (guess === correctWord) {
+                        // Correct! Auto-advance to next word
+                        setTimeout(() => {
+                            this.correctGuess();
+                        }, 300); // Small delay for visual feedback
+                    } else {
+                        // Incorrect word, show feedback but don't advance
+                        setTimeout(() => {
+                            this.wrongGuess();
+                        }, 100);
+                    }
+                } else {
+                    // Show current typing position indicator
                     const nextBox = letterBoxes[this.typedWord.length];
                     if (nextBox) {
                         nextBox.classList.add('current');
@@ -1285,33 +1281,7 @@
                 return guess;
             }
             
-            submitCurrentWord() {
-                if (this.gameEnded) return;
-                
-                const guess = this.buildCurrentGuess();
-                const currentWord = this.getCurrentWordData().word;
-                
-                if (!guess) {
-                    this.showFeedback('Please complete the word before submitting!', 'error');
-                    return;
-                }
-                
-                if (guess === currentWord) {
-                    this.correctGuess();
-                } else {
-                    this.wrongGuess();
-                }
-            }
-            
-            clearCurrentWord() {
-                if (this.gameEnded) return;
-                
-                // Clear typed word
-                this.typedWord = '';
-                
-                // Update the display
-                this.updateWordDisplay();
-            }
+
             
             correctGuess() {
                 this.currentRungIndex++;
@@ -1342,7 +1312,11 @@
                     this.endGame(false);
                 } else {
                     this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
-                    // Keep current word state but show feedback
+                    // Clear the word so they can try again
+                    this.typedWord = '';
+                    setTimeout(() => {
+                        this.updateWordDisplay();
+                    }, 1500); // Wait a bit so they can see what they typed wrong
                 }
             }
             
@@ -1362,9 +1336,7 @@
                     this.showFeedback('💔 Game over! You ran out of tries.', 'error');
                 }
                 
-                // Disable all buttons
-                document.getElementById('submit-button').disabled = true;
-                document.getElementById('clear-button').disabled = true;
+                // Game ended - no buttons to disable
             }
             
             showResultsPopup(timeString) {
