@@ -1867,8 +1867,8 @@
                         if (mobileCurrentRung) mobileCurrentRung.textContent = this.currentRungIndex + 1;
                 
                 if (this.currentRungIndex >= this.currentPuzzle.words.length) {
-                    // Start completion animation before ending game
-                    this.playCompletionAnimation();
+                            // Show FINISH rung cascade then completion
+                            this.displayFinishRung();
                 } else {
                     // Set up typing for the new word
                     this.updateWordDisplay();
@@ -1901,6 +1901,33 @@
                         }, 400);
                     }, index * 60); // 60ms stagger between each letter
                 });
+            }
+            
+            // Display FINISH rung, cascade it, then show results popup
+            displayFinishRung() {
+                const word = 'FINISH';
+                const index = this.currentRungIndex; // 0-based position after last real rung
+                const desktopRung = this.createRung({ word, hint: '' }, index, false);
+                const ladder = document.getElementById('ladder');
+                ladder.appendChild(desktopRung);
+                
+                let mobileRung = null;
+                const mobileLadder = document.getElementById('mobile-ladder');
+                if (mobileLadder) {
+                    mobileRung = this.createRung({ word, hint: '' }, index, true);
+                    mobileLadder.appendChild(mobileRung);
+                }
+                
+                // Cascade-fill effect across both sets of boxes
+                const allBoxes = [
+                    ...desktopRung.querySelectorAll('.letter-box'),
+                    ...(mobileRung ? mobileRung.querySelectorAll('.letter-box') : [])
+                ];
+                allBoxes.forEach((box, i) => {
+                    setTimeout(() => box.classList.add('cascade-fill'), i * 60);
+                });
+                const total = (word.length - 1) * 60 + 600; // duration
+                setTimeout(() => this.playCompletionAnimation(), total);
             }
             
             playCompletionAnimation() {
