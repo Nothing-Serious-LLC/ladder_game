@@ -1313,12 +1313,34 @@
                     this.endGame(false);
                 } else {
                     this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
-                    // Clear the word so they can try again
-                    this.typedWord = '';
+                    
+                    // Show red shake animation on user-typed letters
+                    this.showWrongWordAnimation();
+                    
+                    // Clear the word after animation completes
                     setTimeout(() => {
+                        this.typedWord = '';
                         this.updateWordDisplay();
-                    }, 1500); // Wait a bit so they can see what they typed wrong
+                    }, 700); // Wait for shake animation to complete
                 }
+            }
+            
+            showWrongWordAnimation() {
+                const letterBoxes = this.getCurrentWordLetterBoxes();
+                
+                // Add wrong-word class to all user-typed letters
+                letterBoxes.forEach((letterBox, index) => {
+                    if (index < this.typedWord.length && letterBox.dataset.isRevealed !== 'true') {
+                        letterBox.classList.add('wrong-word');
+                    }
+                });
+                
+                // Remove wrong-word class after animation
+                setTimeout(() => {
+                    letterBoxes.forEach(letterBox => {
+                        letterBox.classList.remove('wrong-word');
+                    });
+                }, 600);
             }
             
             endGame(won) {
