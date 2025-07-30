@@ -307,6 +307,12 @@
             animation: autoCorrectFlash 0.6s ease;
         }
 
+        .letter-box.typed-through {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            color: white !important;
+        }
+
         .letter-box.interactive {
             cursor: pointer;
             transition: all 0.2s ease;
@@ -339,6 +345,37 @@
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-4px) scale(1.05); }
             20%, 40%, 60%, 80% { transform: translateX(4px) scale(1.05); }
+        }
+
+        .rung.climbing-animation {
+            animation: climbGlow 0.8s ease-in-out;
+            transform-origin: center;
+        }
+
+        @keyframes climbGlow {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(106, 170, 100, 0.1);
+            }
+            50% { 
+                transform: scale(1.03);
+                box-shadow: 0 8px 32px rgba(106, 170, 100, 0.6);
+                border-color: #6aaa64;
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(106, 170, 100, 0.1);
+            }
+        }
+
+        .ladder.completion-celebrate {
+            animation: ladderCelebrate 2s ease-in-out;
+        }
+
+        @keyframes ladderCelebrate {
+            0%, 100% { transform: translateY(0) scale(1); }
+            30% { transform: translateY(-10px) scale(1.02); }
+            60% { transform: translateY(-5px) scale(1.01); }
         }
 
         .rung.completed .letter-box {
@@ -1180,7 +1217,7 @@
                 
                 // Clear current indicators and user-typed classes
                 letterBoxes.forEach(box => {
-                    box.classList.remove('current', 'user-typed');
+                    box.classList.remove('current', 'user-typed', 'typed-through');
                     if (box.dataset.isRevealed !== 'true') {
                         box.classList.remove('filled');
                         box.textContent = '';
@@ -1201,13 +1238,9 @@
                             // Show auto-correction animation
                             letterBox.classList.add('auto-corrected');
                             setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
-                            
-                            // Show feedback for auto-correction
-                            if (i === this.typedWord.length - 1) { // Only show for the most recent correction
-                                this.showFeedback(`Auto-corrected "${typedLetter}" to "${correctLetter}"`, 'hint');
-                            }
                         }
-                        // Revealed letters stay as they are (already filled)
+                        // Show that user typed through this revealed letter with gray styling
+                        letterBox.classList.add('typed-through');
                     } else {
                         // For non-revealed positions, show user's typed letter
                         letterBox.textContent = typedLetter;
@@ -1296,12 +1329,45 @@
                 document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
                 
                 if (this.currentRungIndex >= this.currentPuzzle.words.length) {
-                    this.endGame(true);
+                    // Start completion animation before ending game
+                    this.playCompletionAnimation();
                 } else {
-                    this.showFeedback('Correct! Keep climbing!', 'hint');
                     // Set up typing for the new word
                     this.updateWordDisplay();
                 }
+            }
+            
+            playCompletionAnimation() {
+                // Add celebration class to the entire ladder
+                const ladder = document.getElementById('ladder');
+                ladder.classList.add('completion-celebrate');
+                
+                // Animate each rung from bottom to top with staggered timing
+                const totalRungs = this.currentPuzzle.words.length;
+                
+                for (let i = 0; i < totalRungs; i++) {
+                    const rungIndex = totalRungs - 1 - i; // Start from bottom (last index)
+                    const delay = i * 200; // 200ms between each rung animation
+                    
+                    setTimeout(() => {
+                        const rung = document.getElementById(`rung-${rungIndex}`);
+                        if (rung) {
+                            rung.classList.add('climbing-animation');
+                            
+                            // Remove animation class after it completes
+                            setTimeout(() => {
+                                rung.classList.remove('climbing-animation');
+                            }, 800);
+                        }
+                    }, delay);
+                }
+                
+                // End the game after all animations complete
+                const totalAnimationTime = (totalRungs * 200) + 800 + 500; // stagger + animation + buffer
+                setTimeout(() => {
+                    ladder.classList.remove('completion-celebrate');
+                    this.endGame(true);
+                }, totalAnimationTime);
             }
             
             wrongGuess() {
