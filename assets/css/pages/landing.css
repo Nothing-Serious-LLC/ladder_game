@@ -11,7 +11,7 @@
 }
 
 .landing-header {
-    margin-bottom: var(--spacing-xxl);
+    margin-bottom: var(--spacing-lg);
 }
 
 .landing-title {
@@ -31,5 +31,5 @@
 .puzzle-info {
     font-size: var(--font-size-base);
     color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-xxl);
+    margin-bottom: var(--spacing-lg);
 }

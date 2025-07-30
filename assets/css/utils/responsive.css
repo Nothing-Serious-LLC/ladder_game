@@ -73,9 +73,9 @@
     }
 
     .instructions {
-        padding: var(--spacing-lg);
+        padding: var(--spacing-md);
         max-width: none;
-        margin-bottom: 30px;
+        margin-bottom: var(--spacing-md);
     }
     
     .instruction-text {

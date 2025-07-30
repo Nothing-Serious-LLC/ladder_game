@@ -131,7 +131,7 @@
 .instruction-item {
     display: flex;
     align-items: flex-start;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     gap: 12px;
     width: 100%;
 }
