@@ -1,0 +1,176 @@
+/* LADDER - Authentication Page Styles */
+
+.auth-page {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--spacing-lg);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.auth-logo {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.auth-subtitle {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-form {
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-form .form-group:last-of-type {
+    margin-bottom: var(--spacing-xl);
+}
+
+.auth-form .btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-md);
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: var(--spacing-xl) 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-border);
+}
+
+.auth-divider::before {
+    margin-right: var(--spacing-md);
+}
+
+.auth-divider::after {
+    margin-left: var(--spacing-md);
+}
+
+.auth-links {
+    text-align: center;
+}
+
+.auth-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-size: var(--font-size-base);
+    transition: var(--transition-fast);
+}
+
+.auth-link:hover {
+    color: var(--color-primary-hover);
+    text-decoration: underline;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.auth-footer p {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Social Login Buttons */
+.social-login {
+    margin-bottom: var(--spacing-lg);
+}
+
+.social-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition-fast);
+    margin-bottom: var(--spacing-sm);
+}
+
+.social-button:hover {
+    background: var(--color-border);
+}
+
+.social-button img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    margin-top: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.password-strength-bar {
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-xs);
+}
+
+.password-strength-fill {
+    height: 100%;
+    transition: var(--transition-medium);
+    border-radius: 2px;
+}
+
+.password-strength-fill.weak {
+    width: 25%;
+    background: #dc3545;
+}
+
+.password-strength-fill.fair {
+    width: 50%;
+    background: #ffc107;
+}
+
+.password-strength-fill.good {
+    width: 75%;
+    background: #17a2b8;
+}
+
+.password-strength-fill.strong {
+    width: 100%;
+    background: var(--color-success);
+}
+
+.password-strength-text {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+}

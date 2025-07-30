@@ -6,10 +6,11 @@ Your LADDER game is now a **Progressive Web App (PWA)** that can be installed on
 
 ### ✅ **PWA Features Added:**
 - **Web App Manifest** (`manifest.json`) - Enables "Add to Home Screen"
-- **Service Worker** (`sw.js`) - Offline support and fast loading
+- **Smart Service Worker** (`sw.js`) - Fast loading with fresh puzzle data
 - **Mobile-Optimized CSS** - Perfect for phone, tablet, and desktop
 - **iOS-Specific Meta Tags** - Native app-like experience on iPhone
 - **Dynamic Viewport Height** - Handles iOS Safari's changing address bar
+- **Offline Awareness** - Clear messaging when internet is required
 
 ## 🖼️ **Icons Needed**
 
@@ -41,7 +42,28 @@ icon-512.png  # High-res PWA icon
 - ✅ No Safari URL bar when opened from home screen
 - ✅ Splash screen with your app colors
 - ✅ Native-like app experience
-- ✅ Works offline after first visit
+- ✅ Lightning-fast loading after first visit
+- ✅ Clear "Internet Required" message when offline
+
+## ⚡ **Smart Hybrid Caching**
+
+### **What Gets Cached (Fast Loading):**
+- ✅ HTML, CSS, JavaScript files
+- ✅ App icons and images
+- ✅ Game interface and animations
+- ✅ All static assets
+
+### **What Stays Fresh (Always from Internet):**
+- 🌐 Daily puzzle data from database
+- 🌐 User authentication
+- 🌐 Game statistics and progress
+- 🌐 Any dynamic content
+
+### **User Experience:**
+- **First Visit**: Normal loading speed
+- **Return Visits**: Lightning-fast interface + fresh puzzles
+- **Offline**: Clear "Internet Required" message with retry button
+- **Connection Restored**: Automatic retry functionality
 
 ## 🎨 **Mobile Optimizations**
 

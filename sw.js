@@ -1,9 +1,16 @@
 // LADDER PWA Service Worker
-const CACHE_NAME = 'ladder-v1';
+const CACHE_NAME = 'ladder-v2';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/assets/css/main.css',
+  '/assets/js/game.js',
+  '/assets/js/database.js', 
+  '/assets/js/pwa.js',
+  '/config/supabase-config.js',
+  '/assets/icons/icon-192.png',
+  '/assets/icons/icon-512.png',
   'https://unpkg.com/@supabase/supabase-js@2'
 ];
 
@@ -15,25 +22,32 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event - serve from cache when offline
+// Fetch event - smart hybrid caching
 self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
   
-  // Skip cross-origin requests that aren't Supabase
-  if (!event.request.url.startsWith(self.location.origin) && 
-      !event.request.url.includes('supabase.co')) {
+  // NEVER cache database calls - always fetch fresh puzzle data
+  if (event.request.url.includes('supabase.co') || 
+      event.request.url.includes('/api/') ||
+      event.request.url.includes('database')) {
+    // Let network handle all database requests
+    return;
+  }
+  
+  // Skip other cross-origin requests
+  if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
   
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version or fetch from network
+        // Return cached static assets or fetch from network
         return response || fetch(event.request);
       })
       .catch(() => {
-        // Fallback for offline - return main page for navigation requests
+        // Fallback for offline - return main page for navigation requests only
         if (event.request.mode === 'navigate') {
           return caches.match('/index.html');
         }

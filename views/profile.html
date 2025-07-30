@@ -1,0 +1,50 @@
+<!-- LADDER - Profile View -->
+<!-- This will be loaded dynamically via JavaScript when profile feature is added -->
+
+<div class="profile-page" id="profile-page">
+    <div class="profile-header">
+        <div class="profile-avatar-large" id="profile-avatar">
+            <!-- User initials will be inserted here -->
+        </div>
+        <h1 class="profile-name" id="profile-name">Loading...</h1>
+        <p class="profile-username" id="profile-username">@username</p>
+    </div>
+
+    <div class="profile-stats">
+        <div class="profile-stat">
+            <span class="profile-stat-value" id="total-puzzles">0</span>
+            <span class="profile-stat-label">Puzzles</span>
+        </div>
+        <div class="profile-stat">
+            <span class="profile-stat-value" id="current-streak">0</span>
+            <span class="profile-stat-label">Streak</span>
+        </div>
+        <div class="profile-stat">
+            <span class="profile-stat-value" id="best-time">--</span>
+            <span class="profile-stat-label">Best Time</span>
+        </div>
+        <div class="profile-stat">
+            <span class="profile-stat-value" id="avg-time">--</span>
+            <span class="profile-stat-label">Avg Time</span>
+        </div>
+    </div>
+
+    <div class="achievements">
+        <h3>Achievements</h3>
+        <div class="achievement-grid" id="achievement-grid">
+            <!-- Achievement badges will be inserted here -->
+        </div>
+    </div>
+
+    <div class="recent-activity">
+        <h3>Recent Activity</h3>
+        <div id="activity-list">
+            <!-- Activity items will be inserted here -->
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button class="btn btn-secondary" onclick="showSettings()">Settings</button>
+        <button class="btn btn-tertiary" onclick="showGame()">Back to Game</button>
+    </div>
+</div>

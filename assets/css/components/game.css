@@ -1,0 +1,178 @@
+/* LADDER - Game-Specific Components */
+
+/* Game Area Layout */
+.game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* Ladder Component */
+.ladder {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.rung {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    transition: var(--transition-fast);
+    position: relative;
+}
+
+.rung.active {
+    border-color: var(--color-secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+.rung.completed {
+    border-color: var(--color-primary);
+    background-color: #f6f7f8;
+}
+
+/* Word Display */
+.word-display {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+}
+
+.letter-box {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    background: var(--color-surface);
+    font-family: inherit;
+}
+
+.letter-box.filled {
+    color: white;
+    transition: var(--transition-medium);
+}
+
+.rung.completed .letter-box {
+    background: var(--color-completed) !important;
+    border-color: var(--color-completed) !important;
+    color: white;
+}
+
+/* Example Letters (for instructions) */
+.example-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
+    width: 100%;
+    align-items: center;
+    position: relative;
+    left: -18px; /* Offset by half of (circle width 24px + gap 12px) */
+}
+
+.example-letter {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    background: var(--color-surface);
+}
+
+.example-letter.filled {
+    background: var(--color-filled-base);
+    border-color: var(--color-filled-base);
+    color: white;
+}
+
+.example-letter.completed {
+    background: var(--color-completed);
+    border-color: var(--color-completed);
+    color: white;
+}
+
+/* Word Hints */
+.word-hint {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-style: italic;
+}
+
+/* Game Stats */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-lg);
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    text-align: center;
+    min-width: 60px;
+}
+
+/* Instruction Items */
+.instruction-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-md);
+    gap: 12px;
+    width: 100%;
+}
+
+.instruction-number {
+    background: var(--color-primary);
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.instruction-text {
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+    width: 100%;
+    flex: 1;
+    width: 0; /* Force flex item to use available space */
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--color-primary);
+    border-radius: var(--radius-full);
+    animation: spin 1s linear infinite;
+    margin-right: var(--spacing-sm);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

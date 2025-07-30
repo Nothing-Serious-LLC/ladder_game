@@ -37,9 +37,9 @@
         </div>
         
         <div class="test-item pending" id="sw-test">
-            <h2>⚙️ Service Worker</h2>
+            <h2>⚙️ Smart Service Worker</h2>
             <p class="status">Testing...</p>
-            <p>Verifying service worker registration and functionality.</p>
+            <p>Verifying hybrid caching (static assets cached, puzzle data always fresh).</p>
         </div>
         
         <div class="test-item pending" id="responsive-test">
@@ -58,6 +58,12 @@
             <h2>🖼️ Icons</h2>
             <p class="status">Testing...</p>
             <p>Verifying app icons are available.</p>
+        </div>
+        
+        <div class="test-item pending" id="offline-test">
+            <h2>📶 Offline Handling</h2>
+            <p class="status">Testing...</p>
+            <p>Verifying smart offline messaging and retry functionality.</p>
         </div>
     </div>
     
@@ -118,8 +124,8 @@
             
             // Test Icons
             const iconPromises = [
-                testIcon('/icon-192.png'),
-                testIcon('/icon-512.png')
+                testIcon('/assets/icons/icon-192.png'),
+                testIcon('/assets/icons/icon-512.png')
             ];
             
             const iconResults = await Promise.all(iconPromises);
@@ -129,6 +135,13 @@
                 updateTest('icons-test', 'pass', '✅ All required icons found');
             } else {
                 updateTest('icons-test', 'fail', `❌ Only ${iconCount}/2 icons found. Generate icons from icon.svg`);
+            }
+            
+            // Test Offline Handling
+            if (typeof showOfflineNotice === 'function') {
+                updateTest('offline-test', 'pass', '✅ Offline handling functions available');
+            } else {
+                updateTest('offline-test', 'fail', '❌ Offline handling not properly configured');
             }
         }
         
