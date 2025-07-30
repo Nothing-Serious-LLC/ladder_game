@@ -290,6 +290,44 @@
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
+        .letter-box.current {
+            border-color: #f5793a;
+            border-width: 3px;
+            box-shadow: 0 0 8px rgba(245, 121, 58, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+
+        .letter-box.user-typed {
+            background: #787c7e;
+            border-color: #787c7e;
+            color: white;
+        }
+
+        .letter-box.auto-corrected {
+            animation: autoCorrectFlash 0.6s ease;
+        }
+
+        .letter-box.interactive {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .letter-box.interactive:hover {
+            transform: scale(1.1);
+            border-color: #f5793a;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes autoCorrectFlash {
+            0% { background-color: #f5793a; border-color: #f5793a; }
+            50% { background-color: #ff6b1a; border-color: #ff6b1a; }
+            100% { background-color: initial; border-color: initial; }
+        }
+
         .rung.completed .letter-box {
             background: #6aaa64 !important;
             border-color: #6aaa64 !important;
@@ -309,39 +347,21 @@
             padding: 20px;
             border: 1px solid #d3d6da;
             margin-top: auto;
-        }
-
-        .guess-input {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #d3d6da;
-            border-radius: 8px;
-            font-size: 1.1rem;
             text-align: center;
-            background: white;
-            color: #1a1a1b;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 16px;
-            font-weight: 500;
         }
 
-        .guess-input:focus {
-            outline: none;
-            border-color: #f5793a;
-        }
-
-        .guess-input::placeholder {
+        .typing-instructions {
+            font-size: 0.9rem;
             color: #787c7e;
-            text-transform: none;
-            letter-spacing: normal;
-            font-weight: 400;
+            margin-bottom: 16px;
+            font-style: italic;
         }
 
         .button-group {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            justify-content: center;
         }
 
         .btn {
@@ -554,6 +574,8 @@
         .play-again:hover {
             background: #666a6d;
         }
+
+        @media (max-width: 480px) {
             .container {
                 padding: 16px;
             }
@@ -676,18 +698,13 @@
             <div class="ladder" id="ladder"></div>
 
             <div class="input-area">
-                <input 
-                    type="text" 
-                    class="guess-input" 
-                    id="guess-input" 
-                    placeholder="Enter your guess..."
-                    maxlength="12"
-                    autocomplete="off"
-                    spellcheck="false"
-                >
+                <div class="typing-instructions">
+                    Type letters to fill the circles above • Press Enter to submit • Backspace to delete
+                </div>
                 
                 <div class="button-group">
-                    <button class="btn btn-primary" id="guess-button">Submit</button>
+                    <button class="btn btn-primary" id="submit-button">Submit Word</button>
+                    <button class="btn btn-tertiary" id="clear-button">Clear</button>
                 </div>
 
                 <div class="feedback" id="feedback"></div>
@@ -934,6 +951,8 @@
                 this.gameEnded = false;
                 this.startTime = null;
                 this.timerInterval = null;
+                this.currentTypingPosition = 0;
+                this.userInput = [];
                 
                 this.setupGame();
                 this.setupEventListeners();
@@ -1078,10 +1097,20 @@
                     wordData.word.split('').forEach((letter, letterIndex) => {
                         const letterBox = document.createElement('div');
                         letterBox.className = 'letter-box';
+                        letterBox.dataset.wordIndex = index;
+                        letterBox.dataset.letterIndex = letterIndex;
+                        letterBox.dataset.correctLetter = letter;
+                        letterBox.dataset.isRevealed = revealPattern[letterIndex] ? 'true' : 'false';
                         
                         if (revealPattern[letterIndex] || index < this.currentRungIndex) {
                             letterBox.textContent = letter;
                             letterBox.classList.add('filled');
+                        }
+                        
+                        // Make current word's letter boxes interactive
+                        if (index === this.currentRungIndex && !this.gameEnded) {
+                            letterBox.classList.add('interactive');
+                            letterBox.setAttribute('tabindex', '0');
                         }
                         
                         wordDisplay.appendChild(letterBox);
@@ -1098,42 +1127,220 @@
             }
             
             setupEventListeners() {
-                const guessInput = document.getElementById('guess-input');
-                const guessButton = document.getElementById('guess-button');
+                this.currentTypingPosition = 0;
+                this.userInput = [];
                 
-                guessButton?.addEventListener('click', () => this.makeGuess());
+                // Set up keyboard event listener for the document
+                document.addEventListener('keydown', (e) => this.handleKeyInput(e));
                 
-                guessInput?.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') this.makeGuess();
-                });
+                // Set up button event listeners
+                const submitButton = document.getElementById('submit-button');
+                const clearButton = document.getElementById('clear-button');
                 
-                guessInput?.addEventListener('input', (e) => {
-                    e.target.value = e.target.value.toUpperCase();
-                });
+                submitButton?.addEventListener('click', () => this.submitCurrentWord());
+                clearButton?.addEventListener('click', () => this.clearCurrentWord());
                 
-                guessInput?.focus();
+                // Initialize the first typeable position as current
+                this.moveToNextPosition();
             }
             
-            makeGuess() {
+            handleKeyInput(e) {
                 if (this.gameEnded) return;
                 
-                const guessInput = document.getElementById('guess-input');
-                const guess = guessInput.value.trim().toUpperCase();
-                const currentWord = this.currentPuzzle.words[this.currentRungIndex].word;
+                const key = e.key.toUpperCase();
                 
-                if (!guess) return;
+                // Handle letter input
+                if (key.match(/^[A-Z]$/) && this.currentTypingPosition < this.getCurrentWordLength()) {
+                    e.preventDefault();
+                    this.typeLetterAtPosition(key, this.currentTypingPosition);
+                    return;
+                }
+                
+                // Handle backspace
+                if (e.key === 'Backspace') {
+                    e.preventDefault();
+                    this.handleBackspace();
+                    return;
+                }
+                
+                // Handle enter
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    this.submitCurrentWord();
+                    return;
+                }
+            }
+            
+            typeLetterAtPosition(letter, position) {
+                const currentWord = this.getCurrentWordData();
+                const letterBoxes = this.getCurrentWordLetterBoxes();
+                const letterBox = letterBoxes[position];
+                
+                if (!letterBox) return;
+                
+                const isRevealed = letterBox.dataset.isRevealed === 'true';
+                const correctLetter = letterBox.dataset.correctLetter;
+                
+                // Auto-correct if typing in a revealed position
+                if (isRevealed) {
+                    if (letter !== correctLetter) {
+                        // Show auto-correction animation
+                        letterBox.classList.add('auto-corrected');
+                        setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
+                        this.showFeedback(`Auto-corrected "${letter}" to "${correctLetter}"`, 'hint');
+                    }
+                    // Move to next position without changing the letter (it's already revealed)
+                    this.moveToNextPosition();
+                    return;
+                }
+                
+                // Type user's letter
+                letterBox.textContent = letter;
+                letterBox.classList.add('user-typed');
+                letterBox.classList.add('filled');
+                
+                // Store the user input
+                this.userInput[position] = letter;
+                
+                // Move to next position
+                this.moveToNextPosition();
+            }
+            
+            handleBackspace() {
+                // Move back to previous editable position
+                for (let i = this.currentTypingPosition - 1; i >= 0; i--) {
+                    const letterBoxes = this.getCurrentWordLetterBoxes();
+                    const letterBox = letterBoxes[i];
+                    
+                    if (letterBox && letterBox.dataset.isRevealed !== 'true') {
+                        // Clear this position
+                        letterBox.textContent = '';
+                        letterBox.classList.remove('user-typed', 'filled');
+                        this.userInput[i] = undefined;
+                        this.currentTypingPosition = i;
+                        this.updateCurrentPosition();
+                        return;
+                    }
+                }
+            }
+            
+            moveToNextPosition() {
+                const wordLength = this.getCurrentWordLength();
+                
+                // If starting from beginning, find first typeable position
+                let startPos = this.currentTypingPosition === 0 ? 0 : this.currentTypingPosition + 1;
+                
+                // Find next typeable position
+                for (let i = startPos; i < wordLength; i++) {
+                    const letterBoxes = this.getCurrentWordLetterBoxes();
+                    const letterBox = letterBoxes[i];
+                    
+                    if (letterBox && letterBox.dataset.isRevealed !== 'true') {
+                        this.currentTypingPosition = i;
+                        this.updateCurrentPosition();
+                        return;
+                    }
+                }
+                
+                // If we've reached the end, stay at the last position
+                this.currentTypingPosition = wordLength;
+                this.updateCurrentPosition();
+            }
+            
+            updateCurrentPosition() {
+                // Remove current indicators from all letter boxes
+                const allLetterBoxes = document.querySelectorAll('.letter-box');
+                allLetterBoxes.forEach(box => box.classList.remove('current'));
+                
+                // Add current indicator to current position
+                const letterBoxes = this.getCurrentWordLetterBoxes();
+                const currentBox = letterBoxes[this.currentTypingPosition];
+                if (currentBox && this.currentTypingPosition < this.getCurrentWordLength()) {
+                    currentBox.classList.add('current');
+                }
+            }
+            
+            getCurrentWordData() {
+                return this.currentPuzzle.words[this.currentRungIndex];
+            }
+            
+            getCurrentWordLength() {
+                return this.getCurrentWordData().word.length;
+            }
+            
+            getCurrentWordLetterBoxes() {
+                const currentRung = document.getElementById(`rung-${this.currentRungIndex}`);
+                return currentRung ? currentRung.querySelectorAll('.letter-box') : [];
+            }
+            
+            buildCurrentGuess() {
+                const currentWord = this.getCurrentWordData().word;
+                let guess = '';
+                
+                for (let i = 0; i < currentWord.length; i++) {
+                    const letterBoxes = this.getCurrentWordLetterBoxes();
+                    const letterBox = letterBoxes[i];
+                    
+                    if (letterBox) {
+                        if (letterBox.dataset.isRevealed === 'true') {
+                            // Use revealed letter
+                            guess += letterBox.dataset.correctLetter;
+                        } else if (this.userInput[i]) {
+                            // Use user typed letter
+                            guess += this.userInput[i];
+                        } else {
+                            // Missing letter
+                            return null; // Incomplete word
+                        }
+                    }
+                }
+                
+                return guess;
+            }
+            
+            submitCurrentWord() {
+                if (this.gameEnded) return;
+                
+                const guess = this.buildCurrentGuess();
+                const currentWord = this.getCurrentWordData().word;
+                
+                if (!guess) {
+                    this.showFeedback('Please complete the word before submitting!', 'error');
+                    return;
+                }
                 
                 if (guess === currentWord) {
                     this.correctGuess();
                 } else {
                     this.wrongGuess();
                 }
+            }
+            
+            clearCurrentWord() {
+                if (this.gameEnded) return;
                 
-                guessInput.value = '';
+                // Clear all user-typed letters
+                const letterBoxes = this.getCurrentWordLetterBoxes();
+                letterBoxes.forEach((letterBox, index) => {
+                    if (letterBox.dataset.isRevealed !== 'true') {
+                        letterBox.textContent = '';
+                        letterBox.classList.remove('user-typed', 'filled');
+                        this.userInput[index] = undefined;
+                    }
+                });
+                
+                // Reset to first typeable position
+                this.currentTypingPosition = 0;
+                this.moveToNextPosition();
             }
             
             correctGuess() {
                 this.currentRungIndex++;
+                
+                // Reset typing state for next word
+                this.currentTypingPosition = 0;
+                this.userInput = [];
+                
                 this.renderLadder();
                 this.updateTimerColors(); // Immediately restore current colors after rebuild
                 
@@ -1143,7 +1350,8 @@
                     this.endGame(true);
                 } else {
                     this.showFeedback('Correct! Keep climbing!', 'hint');
-                    document.getElementById('guess-input').focus();
+                    // Set up typing for the new word
+                    this.updateCurrentPosition();
                 }
             }
             
@@ -1156,7 +1364,7 @@
                     this.endGame(false);
                 } else {
                     this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
-                    document.getElementById('guess-input').focus();
+                    // Keep current word state but show feedback
                 }
             }
             
@@ -1177,8 +1385,8 @@
                 }
                 
                 // Disable all buttons
-                document.getElementById('guess-button').disabled = true;
-                document.getElementById('guess-input').disabled = true;
+                document.getElementById('submit-button').disabled = true;
+                document.getElementById('clear-button').disabled = true;
             }
             
             showResultsPopup(timeString) {
