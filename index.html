@@ -348,7 +348,7 @@
         }
 
         .rung.climbing-animation {
-            animation: climbGlow 1.2s ease-in-out;
+            animation: climbGlow 1.0s ease-in-out;
             transform-origin: center;
         }
 
@@ -1347,7 +1347,7 @@
                 
                 for (let i = 0; i < totalRungs; i++) {
                     const rungIndex = totalRungs - 1 - i; // Start from bottom (last index)
-                    const delay = i * 300; // 300ms between each rung animation
+                    const delay = i * 250; // 250ms between each rung animation
                     
                     setTimeout(() => {
                         const rung = document.getElementById(`rung-${rungIndex}`);
@@ -1363,7 +1363,7 @@
                 }
                 
                 // End the game after all animations complete
-                const totalAnimationTime = (totalRungs * 300) + 1200 + 500; // stagger + animation + buffer
+                const totalAnimationTime = (totalRungs * 250) + 1000 + 500; // stagger + animation + buffer
                 setTimeout(() => {
                     ladder.classList.remove('completion-celebrate');
                     this.endGame(true);
