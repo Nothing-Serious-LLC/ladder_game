@@ -760,7 +760,7 @@
             }
             /* Reduce bottom padding so ladder isn’t cut off */
             .mobile-game-area {
-                padding-bottom: calc(188px + env(safe-area-inset-bottom, 0)); /* 160 keyboard + 8px gap to match header */
+                padding-bottom: calc(184px + env(safe-area-inset-bottom, 0)); /* 180 keyboard + 4px gap */
             }
             .container {
                 padding: 0;
@@ -813,6 +813,7 @@
             .mobile-game-area {
                 flex: 1;
                 overflow-y: auto;
+                overflow-x: visible;
                 padding: 16px;
                 display: flex;
                 flex-direction: column;
@@ -821,6 +822,7 @@
             
             .mobile-ladder {
                 display: flex;
+                overflow-x: visible;
                 flex-direction: column;
                 gap: 6px;
                 margin-bottom: 16px;
@@ -828,6 +830,8 @@
                 overflow-y: auto;
             }
             
+            /* Prevent clip during loading scale */
+            .mobile-ladder .rung.loading-animation { overflow: visible; }
             /* Limit mobile ladder to show fewer rungs */
             .mobile-ladder .rung {
                 display: block;
