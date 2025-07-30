@@ -220,7 +220,7 @@
 
         .stat {
             text-align: center;
-            min-width: 60px;
+            min-width: 50px;
         }
 
         .stat-value {
@@ -680,6 +680,11 @@
         }
 
         /* FINISH placeholder style */
+        .mobile-keyboard.hide{display:none!important;}
+        
+        /* Loading outline keyframes for mobile */
+        @keyframes loadingOutline{0%{border-color:#d3d6da;box-shadow:none;}100%{border-color:#6aaa64;box-shadow:0 0 6px rgba(106,170,100,.4);}}
+
         .letter-box.finish-placeholder {
             background-color: #d3d6da !important;
             border-color: #d3d6da !important;
@@ -691,7 +696,7 @@
             display: none;
             flex-direction: column;
             gap: 8px;
-            padding: 16px 16px 32px 16px; /* Extra bottom padding for safety */
+            padding: 16px 4px 28px 4px; /* Extra bottom padding for safety */
             background: #f8f9fa;
             border-top: 1px solid #d3d6da;
             margin-top: auto;
@@ -723,8 +728,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 36px;
-            height: 48px;
+            min-width: 30px;
+            height: 44px;
             font-family: inherit;
         }
 
@@ -734,7 +739,7 @@
         }
 
         .keyboard-key.wide {
-            min-width: 60px;
+            min-width: 50px;
             font-size: 0.8rem;
         }
 
@@ -769,7 +774,7 @@
             }
             /* Reduce bottom padding so ladder isn’t cut off */
             .mobile-game-area {
-                padding-bottom: calc(184px + env(safe-area-inset-bottom, 0)); /* 180 keyboard + 4px gap */
+                padding-bottom: calc(174px + env(safe-area-inset-bottom, 0)); /* 180 keyboard + 4px gap */
             }
             .container {
                 padding: 0;
@@ -841,6 +846,7 @@
             
             /* Prevent clip during loading scale */
             .mobile-ladder .rung.loading-animation { overflow: visible; }
+            .rung.loading-animation{animation:loadingOutline 0.6s ease-out;transform:none;}
             /* Limit mobile ladder to show fewer rungs */
             .mobile-ladder .rung {
                 display: block;
@@ -2034,6 +2040,7 @@
                 // Show theme
                 const subtitle = document.querySelector('#results-popup .results-subtitle');
                 if (subtitle) subtitle.textContent = `You completed “${this.currentPuzzle.theme}” puzzle`;
+                const kb=document.getElementById('mobile-keyboard');if(kb)kb.classList.add('hide');
                 document.getElementById('results-popup').classList.add('show');
                 
                 // Set up share functionality
