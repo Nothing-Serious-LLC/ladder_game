@@ -371,16 +371,16 @@
             }
             50% { 
                 transform: scale(1.15);
-                background-color: #6aaa64;
-                border-color: #6aaa64;
-                color: white;
+                background-color: #6aaa64 !important;
+                border-color: #6aaa64 !important;
+                color: white !important;
                 box-shadow: 0 4px 12px rgba(106, 170, 100, 0.4);
             }
             100% { 
                 transform: scale(1);
-                background-color: #6aaa64;
-                border-color: #6aaa64;
-                color: white;
+                background-color: #6aaa64 !important;
+                border-color: #6aaa64 !important;
+                color: white !important;
                 box-shadow: 0 2px 8px rgba(106, 170, 100, 0.2);
             }
         }
@@ -1381,26 +1381,35 @@
                 // Play letter cascade animation on current word
                 this.playLetterCascadeAnimation();
                 
-                // Advance to next word after cascade completes
+                // Add delay between cascade completion and rung state change
                 setTimeout(() => {
-                    this.currentRungIndex++;
-                    
-                    // Reset typing state for next word
-                    this.typedWord = '';
-                    
-                    this.renderLadder();
-                    this.updateTimerColors(); // Immediately restore current colors after rebuild
-                    
-                    document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
-                    
-                    if (this.currentRungIndex >= this.currentPuzzle.words.length) {
-                        // Start completion animation before ending game
-                        this.playCompletionAnimation();
-                    } else {
-                        // Set up typing for the new word
-                        this.updateWordDisplay();
+                    // Mark rung as completed with transition delay
+                    const currentRung = document.getElementById(`rung-${this.currentRungIndex}`);
+                    if (currentRung) {
+                        currentRung.classList.add('completed');
                     }
-                }, 500); // Wait for cascade to mostly complete
+                    
+                    // Advance to next word after additional pause
+                    setTimeout(() => {
+                        this.currentRungIndex++;
+                        
+                        // Reset typing state for next word
+                        this.typedWord = '';
+                        
+                        this.renderLadder();
+                        this.updateTimerColors(); // Immediately restore current colors after rebuild
+                        
+                        document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
+                        
+                        if (this.currentRungIndex >= this.currentPuzzle.words.length) {
+                            // Start completion animation before ending game
+                            this.playCompletionAnimation();
+                        } else {
+                            // Set up typing for the new word
+                            this.updateWordDisplay();
+                        }
+                    }, 200); // Additional pause after rung completion
+                }, 600); // Wait for cascade to fully complete + buffer
             }
             
             playLetterCascadeAnimation() {
@@ -1410,9 +1419,11 @@
                     setTimeout(() => {
                         letterBox.classList.add('cascade-fill');
                         
-                        // Remove animation class after it completes
+                        // Remove animation class after it completes  
                         setTimeout(() => {
                             letterBox.classList.remove('cascade-fill');
+                            // Clean up any typed-through styling that might interfere
+                            letterBox.classList.remove('typed-through');
                         }, 400);
                     }, index * 60); // 60ms stagger between each letter
                 });
