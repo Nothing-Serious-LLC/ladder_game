@@ -749,35 +749,23 @@
         // Make functions globally available for onclick handlers
         window.gameModule = {
             startGame: async () => {
-                // Get puzzle data first
-                let puzzleData = null;
+                // Start loading animation first
+                await window.gameModule.playLoadingAnimation();
+                
+                // Then create the actual game
                 try {
-                    puzzleData = await fetchTodaysPuzzle();
+                    const puzzleData = await fetchTodaysPuzzle();
+                    window.game = new LadderGame(puzzleData);
                 } catch (error) {
                     console.error('Failed to fetch puzzle, using fallback:', error);
+                    window.game = new LadderGame(); // Fallback to hardcoded
                 }
-                
-                // Start loading animation with puzzle data
-                await window.gameModule.playLoadingAnimation(puzzleData);
-                
-                // Create the actual game
-                window.game = new LadderGame(puzzleData);
             },
             
-            playLoadingAnimation: async (puzzleData) => {
+            playLoadingAnimation: async () => {
                 return new Promise((resolve) => {
                     document.getElementById('landing-page').style.display = 'none';
                     document.getElementById('game-page').style.display = 'flex';
-                    
-                    // Get puzzle words (use fallback if no puzzle data)
-                    const puzzleWords = puzzleData ? puzzleData.words : [
-                        { word: "FIRE", hint: "Flame source" },
-                        { word: "SMOKE", hint: "Fire's breath" },
-                        { word: "CHIMNEY", hint: "Roof pipe" },
-                        { word: "HOUSE", hint: "Home structure" },
-                        { word: "FAMILY", hint: "Related people" },
-                        { word: "REUNION", hint: "Coming together" }
-                    ];
                     
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
@@ -794,9 +782,9 @@
                         const wordDisplay = document.createElement('div');
                         wordDisplay.className = 'word-display';
                         
-                        // Create letter boxes based on actual word length
-                        const wordLength = puzzleWords[i] ? puzzleWords[i].word.length : (5 + (i % 3));
-                        for (let j = 0; j < wordLength; j++) {
+                        // Create 5-8 letter boxes (varies like real words)
+                        const letterCount = 4 + (i % 4) + 1; // Varies from 5-8 letters
+                        for (let j = 0; j < letterCount; j++) {
                             const letterBox = document.createElement('div');
                             letterBox.className = 'letter-box';
                             letterBox.style.opacity = '0.3';
@@ -819,24 +807,7 @@
                         
                         setTimeout(() => {
                             const rung = document.getElementById(`loading-rung-${i}`);
-                            if (rung && puzzleWords[i]) {
-                                // Populate with real content as animation starts
-                                const wordDisplay = rung.querySelector('.word-display');
-                                const hint = rung.querySelector('.word-hint');
-                                const letterBoxes = wordDisplay.querySelectorAll('.letter-box');
-                                
-                                // Fill in the letters
-                                puzzleWords[i].word.split('').forEach((letter, letterIndex) => {
-                                    if (letterBoxes[letterIndex]) {
-                                        letterBoxes[letterIndex].textContent = letter;
-                                        letterBoxes[letterIndex].style.opacity = '1';
-                                    }
-                                });
-                                
-                                // Fill in the hint
-                                hint.textContent = puzzleWords[i].hint;
-                                
-                                // Start the animation
+                            if (rung) {
                                 rung.classList.add('loading-animation');
                                 
                                 // Clean up animation class after animation completes
@@ -1672,16 +1643,6 @@
                 document.getElementById('landing-page').style.display = 'none';
                 document.getElementById('game-page').style.display = 'flex';
                 
-                // Fallback puzzle words
-                const puzzleWords = [
-                    { word: "FIRE", hint: "Flame source" },
-                    { word: "SMOKE", hint: "Fire's breath" },
-                    { word: "CHIMNEY", hint: "Roof pipe" },
-                    { word: "HOUSE", hint: "Home structure" },
-                    { word: "FAMILY", hint: "Related people" },
-                    { word: "REUNION", hint: "Coming together" }
-                ];
-                
                 // Create temporary ladder that matches real game structure
                 const ladder = document.getElementById('ladder');
                 ladder.innerHTML = ''; // Clear any existing content
@@ -1697,9 +1658,9 @@
                     const wordDisplay = document.createElement('div');
                     wordDisplay.className = 'word-display';
                     
-                    // Create letter boxes based on actual word length
-                    const wordLength = puzzleWords[i] ? puzzleWords[i].word.length : (5 + (i % 3));
-                    for (let j = 0; j < wordLength; j++) {
+                    // Create 5-8 letter boxes (varies like real words)
+                    const letterCount = 4 + (i % 4) + 1; // Varies from 5-8 letters
+                    for (let j = 0; j < letterCount; j++) {
                         const letterBox = document.createElement('div');
                         letterBox.className = 'letter-box';
                         letterBox.style.opacity = '0.3';
@@ -1722,24 +1683,7 @@
                     
                     setTimeout(() => {
                         const rung = document.getElementById(`loading-rung-${i}`);
-                        if (rung && puzzleWords[i]) {
-                            // Populate with real content as animation starts
-                            const wordDisplay = rung.querySelector('.word-display');
-                            const hint = rung.querySelector('.word-hint');
-                            const letterBoxes = wordDisplay.querySelectorAll('.letter-box');
-                            
-                            // Fill in the letters
-                            puzzleWords[i].word.split('').forEach((letter, letterIndex) => {
-                                if (letterBoxes[letterIndex]) {
-                                    letterBoxes[letterIndex].textContent = letter;
-                                    letterBoxes[letterIndex].style.opacity = '1';
-                                }
-                            });
-                            
-                            // Fill in the hint
-                            hint.textContent = puzzleWords[i].hint;
-                            
-                            // Start the animation
+                        if (rung) {
                             rung.classList.add('loading-animation');
                             
                             // Clean up animation class after animation completes
