@@ -1836,6 +1836,7 @@
                 const isLastWord = (this.currentRungIndex + 1) >= this.currentPuzzle.words.length;
                 if (isLastWord) {
                     clearInterval(this.timerInterval);
+                    this.finalTimeMs = Date.now() - this.startTime;
                     this.gameEnded = true;
                 }
                 
@@ -2011,7 +2012,7 @@
                 clearInterval(this.timerInterval);
                 }
                 
-                const finalTime = Date.now() - this.startTime;
+                const finalTime = this.finalTimeMs !== undefined ? this.finalTimeMs : Date.now() - this.startTime;
                 const minutes = Math.floor(finalTime / 60000);
                 const seconds = Math.floor((finalTime % 60000) / 1000);
                 const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -2028,6 +2029,9 @@
             
             showResultsPopup(timeString) {
                 document.getElementById('results-time').textContent = timeString;
+                // Show theme
+                const subtitle = document.querySelector('#results-popup .results-subtitle');
+                if (subtitle) subtitle.textContent = `You completed “${this.currentPuzzle.theme}” puzzle`;
                 document.getElementById('results-popup').classList.add('show');
                 
                 // Set up share functionality
@@ -2078,6 +2082,7 @@
             }
             
             updateTimerColors() {
+                return; // color shifting disabled
                 if (this.gameEnded) return;
                 
                 const elapsed = Date.now() - this.startTime;
