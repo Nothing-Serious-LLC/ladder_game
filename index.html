@@ -1378,6 +1378,13 @@
 
             
             correctGuess() {
+                // Check if this is the final word and stop timer immediately
+                const isLastWord = (this.currentRungIndex + 1) >= this.currentPuzzle.words.length;
+                if (isLastWord) {
+                    clearInterval(this.timerInterval);
+                    this.gameEnded = true;
+                }
+                
                 // Play letter cascade animation on current word
                 this.playLetterCascadeAnimation();
                 
@@ -1500,8 +1507,11 @@
             }
             
             endGame(won) {
-                this.gameEnded = true;
-                clearInterval(this.timerInterval);
+                // Timer already stopped in correctGuess() for wins, but stop here for losses
+                if (!won) {
+                    this.gameEnded = true;
+                    clearInterval(this.timerInterval);
+                }
                 
                 const finalTime = Date.now() - this.startTime;
                 const minutes = Math.floor(finalTime / 60000);
