@@ -758,7 +758,7 @@
             }
             /* Reduce bottom padding so ladder isn’t cut off */
             .mobile-game-area {
-                padding-bottom: calc(120px + env(safe-area-inset-bottom, 0)); /* account for keyboard */
+                padding-bottom: calc(176px + env(safe-area-inset-bottom, 0)); /* 160 keyboard + 16px gap */
             }
             .container {
                 padding: 0;
@@ -782,6 +782,7 @@
             }
             
             .mobile-header .title {
+                display:none; /* hide LADDER on mobile to free space */
                 font-size: 1.4rem;
                 letter-spacing: 0.1em;
                 margin-bottom: 4px;
