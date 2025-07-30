@@ -1694,40 +1694,51 @@
             updateWordDisplay() {
                 const currentWordData = this.getCurrentWordData();
                 const correctWord = currentWordData.word;
-                const letterBoxes = this.getCurrentWordLetterBoxes();
                 
-                // Clear current indicators and user-typed classes
-                letterBoxes.forEach(box => {
+                // Separate desktop & mobile boxes for the current rung
+                const desktopRung = document.getElementById(`rung-${this.currentRungIndex}`);
+                const mobileRung = document.getElementById(`mobile-rung-${this.currentRungIndex}`);
+                const desktopBoxes = desktopRung ? Array.from(desktopRung.querySelectorAll('.letter-box')) : [];
+                const mobileBoxes  = mobileRung  ? Array.from(mobileRung.querySelectorAll('.letter-box'))  : [];
+                
+                // Helper to run an operation on both desktop & mobile boxes in parallel
+                const forEachPair = (cb) => {
+                    const len = Math.max(desktopBoxes.length, mobileBoxes.length);
+                    for (let i = 0; i < len; i++) {
+                        cb(desktopBoxes[i], i);
+                        cb(mobileBoxes[i], i);
+                    }
+                };
+                
+                // Clear previous state
+                forEachPair((box) => {
+                    if (!box) return;
                     box.classList.remove('current', 'user-typed', 'typed-through');
                     if (box.dataset.isRevealed !== 'true') {
                         box.classList.remove('filled');
                         box.textContent = '';
-                        // Ensure clean state for non-revealed letters
                     }
                 });
                 
-                // Fill in the typed word
+                // Fill in typed letters
                 for (let i = 0; i < this.typedWord.length && i < correctWord.length; i++) {
-                    const letterBox = letterBoxes[i];
                     const typedLetter = this.typedWord[i];
                     const correctLetter = correctWord[i];
-                    const isRevealed = letterBox.dataset.isRevealed === 'true';
                     
-                    if (isRevealed) {
-                        // For revealed letters, check if user typed the correct letter
-                        if (typedLetter !== correctLetter) {
-                            // Show auto-correction animation
-                            letterBox.classList.add('auto-corrected');
-                            setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
+                    [desktopBoxes[i], mobileBoxes[i]].forEach((letterBox) => {
+                        if (!letterBox) return;
+                        const isRevealed = letterBox.dataset.isRevealed === 'true';
+                        if (isRevealed) {
+                            if (typedLetter !== correctLetter) {
+                                letterBox.classList.add('auto-corrected');
+                                setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
+                            }
+                            letterBox.classList.add('typed-through');
+                        } else {
+                            letterBox.textContent = typedLetter;
+                            letterBox.classList.add('user-typed');
                         }
-                        // Show that user typed through this revealed letter with gray styling
-                        letterBox.classList.add('typed-through');
-                    } else {
-                        // For non-revealed positions, show user's typed letter
-                        letterBox.textContent = typedLetter;
-                        letterBox.classList.add('user-typed');
-                        // Don't add 'filled' class - user-typed letters should have no background
-                    }
+                    });
                 }
                 
                 // Check if word is complete and auto-submit
@@ -1747,10 +1758,11 @@
                     }
                 } else {
                     // Show current typing position indicator
-                    const nextBox = letterBoxes[this.typedWord.length];
-                    if (nextBox) {
-                        nextBox.classList.add('current');
-                    }
+                    const nextDesktop = desktopBoxes[this.typedWord.length];
+                    const nextMobile  = mobileBoxes[this.typedWord.length];
+                    [nextDesktop, nextMobile].forEach(box => {
+                        if (box) box.classList.add('current');
+                    });
                 }
             }
             
