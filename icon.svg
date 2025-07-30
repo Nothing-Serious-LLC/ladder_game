@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background -->
+  <rect width="512" height="512" rx="120" fill="#6aaa64"/>
+  
+  <!-- Ladder Rungs (Letters) -->
+  <g fill="white" stroke="none">
+    <!-- L -->
+    <circle cx="128" cy="120" r="32" fill="white"/>
+    <text x="128" y="130" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#6aaa64">L</text>
+    
+    <!-- A -->
+    <circle cx="256" cy="180" r="32" fill="white"/>
+    <text x="256" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#6aaa64">A</text>
+    
+    <!-- D -->
+    <circle cx="384" cy="240" r="32" fill="white"/>
+    <text x="384" y="250" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#6aaa64">D</text>
+    
+    <!-- D -->
+    <circle cx="256" cy="300" r="32" fill="white"/>
+    <text x="256" y="310" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#6aaa64">D</text>
+    
+    <!-- E -->
+    <circle cx="128" cy="360" r="32" fill="white"/>
+    <text x="128" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#6aaa64">E</text>
+    
+    <!-- R -->
+    <circle cx="384" cy="420" r="32" fill="white"/>
+    <text x="384" y="430" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#6aaa64">R</text>
+  </g>
+  
+  <!-- Connecting Lines -->
+  <g stroke="white" stroke-width="8" opacity="0.8">
+    <line x1="128" y1="152" x2="256" y2="148"/>
+    <line x1="256" y1="212" x2="384" y2="208"/>
+    <line x1="384" y1="272" x2="256" y2="268"/>
+    <line x1="256" y1="332" x2="128" y2="328"/>
+    <line x1="128" y1="392" x2="384" y2="388"/>
+  </g>
+</svg>

@@ -2,7 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6aaa64">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LADDER">
+    <meta name="description" content="Daily word puzzle where you climb through connected words">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS Home Screen Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+    
     <title>LADDER - Daily Word Chain</title>
     <style>
         * {
@@ -548,13 +562,33 @@
         .play-again:hover {
             background: #666a6d;
         }
+
+        /* Enhanced Mobile-First Responsive Design */
+        
+        /* Mobile Styles (default) */
+        @media (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+            
             .container {
-                padding: 16px;
+                padding: 12px;
+                min-height: 100vh;
+                min-height: calc(var(--vh, 1vh) * 100); /* Dynamic viewport height for mobile */
+            }
+            
+            .landing-page {
+                padding: 20px 12px;
+                min-height: 100vh; 
+                min-height: calc(var(--vh, 1vh) * 100);
             }
             
             .landing-title {
                 font-size: 2.5rem;
                 letter-spacing: 0.15em;
+                margin-bottom: 12px;
             }
             
             .title {
@@ -564,6 +598,11 @@
             
             .stats {
                 gap: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
             }
             
             .letter-box, .example-letter {
@@ -572,16 +611,113 @@
                 font-size: 1rem;
             }
             
+            .rung {
+                padding: 12px;
+            }
+            
+            .ladder {
+                gap: 6px;
+            }
+            
             .button-group {
                 flex-direction: column;
+                gap: 12px;
             }
             
             .btn {
                 min-width: auto;
+                padding: 16px;
+                font-size: 1rem;
+            }
+            
+            .guess-input {
+                padding: 16px;
+                font-size: 1.1rem;
             }
 
             .instructions {
+                padding: 20px;
+                max-width: none;
+                margin-bottom: 30px;
+            }
+            
+            .instruction-text {
+                font-size: 0.85rem;
+            }
+            
+            .results-content {
                 padding: 24px;
+                width: 95%;
+            }
+            
+            .results-time {
+                font-size: 2.5rem;
+            }
+            
+            .share-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .share-button {
+                width: 100%;
+                padding: 14px;
+            }
+        }
+        
+        /* Tablet Styles */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 600px;
+                padding: 20px;
+            }
+            
+            .landing-title {
+                font-size: 3rem;
+            }
+            
+            .letter-box, .example-letter {
+                width: 30px;
+                height: 30px;
+            }
+        }
+        
+        /* Desktop Styles */
+        @media (min-width: 1025px) {
+            .container {
+                max-width: 500px;
+            }
+            
+            .landing-title {
+                font-size: 3.5rem;
+            }
+            
+            .letter-box, .example-letter {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .button-group {
+                flex-direction: row;
+            }
+        }
+        
+        /* PWA-specific styles */
+        @media (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+            
+            .header {
+                padding-top: calc(20px + env(safe-area-inset-top));
+            }
+        }
+        
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .letter-box, .example-letter {
+                border-width: 1px;
             }
         }
     </style>
@@ -706,7 +842,15 @@
         </div>
     </div>
 
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
     <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'https://btonnmoeaandberyszsm.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0b25ubW9lYWFuZGJlcnlzenNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4MzA5MzMsImV4cCI6MjA2OTQwNjkzM30.hNwKiVxvGum9QFLEWeJM_Ip30PBAmgBAi0nAR6KydZo';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        
         function startGame() {
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('game-page').style.display = 'flex';
@@ -718,7 +862,8 @@
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const est = new Date(utc + (-5 * 3600000));
             
-            const launchDate = new Date('2025-01-01');
+            // Updated launch date to July 30, 2024
+            const launchDate = new Date('2024-07-30');
             const diffTime = est - launchDate;
             const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
             
@@ -851,10 +996,7 @@
                     }
                 ];
                 
-                // Get today's puzzle using date-based seed
-                const { puzzle, puzzleNumber } = this.getTodaysPuzzle();
-                this.currentPuzzle = puzzle;
-                this.puzzleNumber = puzzleNumber;
+                // Initial setup that doesn't require the puzzle
                 this.currentRungIndex = 0;
                 this.wrongGuesses = 0;
                 this.maxWrongGuesses = 5;
@@ -866,35 +1008,107 @@
                 this.startTime = null;
                 this.timerInterval = null;
                 
-                this.setupGame();
                 this.setupEventListeners();
+                
+                // Get today's puzzle (now async)
+                this.initializeAsync();
             }
             
-            getTodaysPuzzle() {
+            async initializeAsync() {
+                try {
+                    const { puzzle, puzzleNumber } = await this.getTodaysPuzzle();
+                    this.currentPuzzle = puzzle;
+                    this.puzzleNumber = puzzleNumber;
+                    
+                    // Complete setup after puzzle is loaded
+                    this.finishSetup();
+                } catch (error) {
+                    console.error('Failed to initialize puzzle:', error);
+                    // Fallback to first hardcoded puzzle
+                    this.currentPuzzle = this.allPuzzles[0];
+                    this.puzzleNumber = 1;
+                    this.finishSetup();
+                }
+            }
+            
+            finishSetup() {
+                // Complete the game setup now that puzzle is loaded
+                this.setupGame();
+            }
+            
+            async getTodaysPuzzle() {
                 // Get today's date in EST timezone
                 const now = new Date();
                 const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
                 const est = new Date(utc + (-5 * 3600000)); // EST is UTC-5
                 
-                // Create date string for consistent daily seed
+                // Format date for comparison
                 const year = est.getFullYear();
                 const month = String(est.getMonth() + 1).padStart(2, '0');
                 const day = String(est.getDate()).padStart(2, '0');
-                const dateStr = `${year}${month}${day}`;
-                
-                // Convert date to number seed
-                const dateSeed = parseInt(dateStr);
+                const dateStr = `${year}-${month}-${day}`;
                 
                 // Calculate puzzle number (days since launch)
-                const launchDate = new Date('2025-01-01'); // Adjust this to your actual launch date
+                const launchDate = new Date('2024-07-30'); // Updated launch date
                 const diffTime = est - launchDate;
                 const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 
-                // Use seeded random to select puzzle
+                // For July 29, 2024 and earlier - use hardcoded puzzles
+                if (dateStr <= '2024-07-29') {
+                    const dateSeed = parseInt(dateStr.replace(/-/g, ''));
+                    const puzzleIndex = this.seededRandom(dateSeed) % this.allPuzzles.length;
+                    const selectedPuzzle = this.allPuzzles[puzzleIndex];
+                    
+                    const puzzleWithReveals = {
+                        ...selectedPuzzle,
+                        words: selectedPuzzle.words.map((wordData, wordIndex) => ({
+                            ...wordData,
+                            revealPattern: this.getSeededRevealPattern(wordData.word, dateSeed + wordIndex)
+                        }))
+                    };
+                    
+                    return { puzzle: puzzleWithReveals, puzzleNumber };
+                }
+                
+                // For July 30, 2024 and later - fetch from database
+                try {
+                    const { data, error } = await supabase
+                        .from('daily_puzzles')
+                        .select('*')
+                        .eq('puzzle_date', dateStr)
+                        .single();
+                    
+                    if (error) {
+                        console.error('Error fetching puzzle:', error);
+                        throw error;
+                    }
+                    
+                    if (data) {
+                        // Convert database format to frontend format
+                        const puzzleWithReveals = {
+                            theme: data.theme,
+                            words: data.words.map((wordData, wordIndex) => ({
+                                word: wordData.word,
+                                clue: wordData.clue,
+                                hint: wordData.hint,
+                                revealPattern: Array.from({length: wordData.word.length}, (_, i) => 
+                                    wordData.revealed_letters.includes(i)
+                                )
+                            }))
+                        };
+                        
+                        return { puzzle: puzzleWithReveals, puzzleNumber: data.puzzle_number };
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch puzzle from database:', error);
+                }
+                
+                // Fallback to hardcoded puzzles if database fetch fails
+                console.log('Using fallback puzzle system');
+                const dateSeed = parseInt(dateStr.replace(/-/g, ''));
                 const puzzleIndex = this.seededRandom(dateSeed) % this.allPuzzles.length;
                 const selectedPuzzle = this.allPuzzles[puzzleIndex];
                 
-                // Create seeded reveal pattern for each word
                 const puzzleWithReveals = {
                     ...selectedPuzzle,
                     words: selectedPuzzle.words.map((wordData, wordIndex) => ({
@@ -1119,13 +1333,21 @@
                 // Set up share functionality
                 const shareText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\n${window.location.origin}`;
                 
-                document.getElementById('share-text').onclick = () => {
-                    if (navigator.share) {
-                        navigator.share({
-                            text: shareText
-                        });
+                document.getElementById('share-text').onclick = async () => {
+                    const shareData = {
+                        title: 'LADDER - Daily Word Chain',
+                        text: `LADDER #${this.puzzleNumber}: ${timeString} ⏱️`,
+                        url: window.location.origin
+                    };
+                    
+                    if (navigator.share && navigator.canShare(shareData)) {
+                        try {
+                            await navigator.share(shareData);
+                        } catch (err) {
+                            console.log('Share cancelled');
+                        }
                     } else {
-                        // Fallback: create SMS link
+                        // Fallback: create SMS link for mobile
                         const smsLink = `sms:?body=${encodeURIComponent(shareText)}`;
                         window.open(smsLink);
                     }
@@ -1278,6 +1500,38 @@
         }
         
         let game;
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        
+        // iOS Add to Home Screen prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // You could show a custom install button here
+        });
+        
+        // Handle iOS Safari viewport changes
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', setViewportHeight);
+        setViewportHeight();
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Update landing page puzzle info on load
             const { puzzleNumber } = getTodaysPuzzleInfo();

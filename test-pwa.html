@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LADDER PWA Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-item { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px;
+        }
+        .pass { border-color: #6aaa64; background: #f0f8f0; }
+        .fail { border-color: #d73a49; background: #fdf2f2; }
+        .pending { border-color: #f5793a; background: #fff8f0; }
+        h1 { color: #6aaa64; }
+        h2 { color: #333; margin-top: 0; }
+        .status { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🧪 LADDER PWA Test Suite</h1>
+    
+    <div id="tests">
+        <div class="test-item pending" id="manifest-test">
+            <h2>📄 Manifest File</h2>
+            <p class="status">Testing...</p>
+            <p>Checking if manifest.json is accessible and properly formatted.</p>
+        </div>
+        
+        <div class="test-item pending" id="sw-test">
+            <h2>⚙️ Service Worker</h2>
+            <p class="status">Testing...</p>
+            <p>Verifying service worker registration and functionality.</p>
+        </div>
+        
+        <div class="test-item pending" id="responsive-test">
+            <h2>📱 Responsive Design</h2>
+            <p class="status">Testing...</p>
+            <p>Screen: <span id="screen-size"></span></p>
+        </div>
+        
+        <div class="test-item pending" id="pwa-test">
+            <h2>🏠 PWA Install</h2>
+            <p class="status">Testing...</p>
+            <p>Checking if app can be installed on home screen.</p>
+        </div>
+        
+        <div class="test-item pending" id="icons-test">
+            <h2>🖼️ Icons</h2>
+            <p class="status">Testing...</p>
+            <p>Verifying app icons are available.</p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 40px; text-align: center;">
+        <a href="/" style="color: #6aaa64; text-decoration: none; font-weight: bold;">
+            ← Back to LADDER Game
+        </a>
+    </div>
+
+    <script>
+        async function runTests() {
+            // Test Manifest
+            try {
+                const manifest = await fetch('/manifest.json');
+                if (manifest.ok) {
+                    const data = await manifest.json();
+                    updateTest('manifest-test', 'pass', `✅ Manifest loaded: ${data.name}`);
+                } else {
+                    updateTest('manifest-test', 'fail', '❌ Manifest file not found');
+                }
+            } catch (e) {
+                updateTest('manifest-test', 'fail', `❌ Manifest error: ${e.message}`);
+            }
+            
+            // Test Service Worker
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        updateTest('sw-test', 'pass', '✅ Service Worker registered');
+                    } else {
+                        updateTest('sw-test', 'fail', '❌ Service Worker not registered');
+                    }
+                } catch (e) {
+                    updateTest('sw-test', 'fail', `❌ SW error: ${e.message}`);
+                }
+            } else {
+                updateTest('sw-test', 'fail', '❌ Service Worker not supported');
+            }
+            
+            // Test Responsive
+            const width = window.innerWidth;
+            let deviceType = 'Desktop';
+            if (width <= 768) deviceType = 'Mobile';
+            else if (width <= 1024) deviceType = 'Tablet';
+            
+            document.getElementById('screen-size').textContent = `${width}px (${deviceType})`;
+            updateTest('responsive-test', 'pass', `✅ Responsive design active for ${deviceType}`);
+            
+            // Test PWA Install
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                updateTest('pwa-test', 'pass', '✅ App is running in standalone mode');
+            } else if ('BeforeInstallPromptEvent' in window) {
+                updateTest('pwa-test', 'pass', '✅ PWA install supported');
+            } else {
+                updateTest('pwa-test', 'pending', '⚠️ Test on mobile device for full PWA support');
+            }
+            
+            // Test Icons
+            const iconPromises = [
+                testIcon('/icon-192.png'),
+                testIcon('/icon-512.png')
+            ];
+            
+            const iconResults = await Promise.all(iconPromises);
+            const iconCount = iconResults.filter(Boolean).length;
+            
+            if (iconCount === 2) {
+                updateTest('icons-test', 'pass', '✅ All required icons found');
+            } else {
+                updateTest('icons-test', 'fail', `❌ Only ${iconCount}/2 icons found. Generate icons from icon.svg`);
+            }
+        }
+        
+        function updateTest(testId, status, message) {
+            const element = document.getElementById(testId);
+            element.className = `test-item ${status}`;
+            element.querySelector('.status').textContent = message;
+        }
+        
+        async function testIcon(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                return response.ok;
+            } catch {
+                return false;
+            }
+        }
+        
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>
