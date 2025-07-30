@@ -750,13 +750,15 @@
             }
             .mobile-keyboard {
                 position: fixed;
+                margin-top: 0;
                 bottom: env(safe-area-inset-bottom, 0);
                 left: 0;
                 right: 0;
                 z-index: 9999;
             }
+            /* Reduce bottom padding so ladder isn’t cut off */
             .mobile-game-area {
-                padding-bottom: calc(180px + env(safe-area-inset-bottom, 0)); /* account for keyboard */
+                padding-bottom: calc(120px + env(safe-area-inset-bottom, 0)); /* account for keyboard */
             }
             .container {
                 padding: 0;
@@ -787,6 +789,7 @@
             }
             
             .mobile-header .stats {
+                display:flex !important;
                 gap: 12px;
                 margin-bottom: 0;
                 justify-content: center;
