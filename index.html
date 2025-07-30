@@ -804,10 +804,10 @@
         // Make functions globally available for onclick handlers
         window.gameModule = {
             startGame: async () => {
-                // Start loading animation
-                await window.gameModule.playLoadingAnimation();
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('game-page').style.display = 'flex';
                 
-                // Use backend puzzle data instead of hardcoded
+                // Create the actual game first
                 try {
                     const puzzleData = await fetchTodaysPuzzle();
                     window.game = new LadderGame(puzzleData);
@@ -815,45 +815,40 @@
                     console.error('Failed to fetch puzzle, using fallback:', error);
                     window.game = new LadderGame(); // Fallback to hardcoded
                 }
+                
+                // Then animate the real rungs
+                await window.gameModule.playLoadingAnimation();
             },
             
             playLoadingAnimation: async () => {
                 return new Promise((resolve) => {
-                    document.getElementById('landing-page').style.display = 'none';
-                    document.getElementById('game-page').style.display = 'flex';
+                    // Find all the real game rungs that were just created
+                    const rungs = document.querySelectorAll('.rung');
                     
-                    // Create temporary ladder for loading animation
-                    const ladder = document.getElementById('ladder');
-                    ladder.innerHTML = ''; // Clear any existing content
-                    
-                    // Create 6 temporary rungs for the loading animation
-                    for (let i = 0; i < 6; i++) {
-                        const rung = document.createElement('div');
-                        rung.className = 'rung';
-                        rung.id = `loading-rung-${i}`;
-                        rung.style.opacity = '0.3'; // Start dim
-                        ladder.appendChild(rung);
-                    }
+                    // Initially hide all rungs
+                    rungs.forEach(rung => {
+                        rung.style.opacity = '0.3';
+                        rung.style.transform = 'scale(0.95)';
+                    });
                     
                     // Animate each rung from top to bottom with staggered timing
-                    for (let i = 0; i < 6; i++) {
+                    rungs.forEach((rung, i) => {
                         const delay = i * 200; // 200ms between each rung animation
                         
                         setTimeout(() => {
-                            const rung = document.getElementById(`loading-rung-${i}`);
-                            if (rung) {
-                                rung.classList.add('loading-animation');
-                                
-                                // Clean up animation class after animation completes
-                                setTimeout(() => {
-                                    rung.classList.remove('loading-animation');
-                                }, 800);
-                            }
+                            rung.classList.add('loading-animation');
+                            
+                            // Clean up animation class after animation completes
+                            setTimeout(() => {
+                                rung.classList.remove('loading-animation');
+                                rung.style.opacity = '';
+                                rung.style.transform = '';
+                            }, 800);
                         }, delay);
-                    }
+                    });
                     
                     // Resolve after all animations complete
-                    const totalAnimationTime = (6 * 200) + 800 + 200; // stagger + animation + buffer
+                    const totalAnimationTime = (rungs.length * 200) + 800 + 200; // stagger + animation + buffer
                     setTimeout(() => {
                         resolve();
                     }, totalAnimationTime);
@@ -1665,50 +1660,48 @@
             if (window.gameModule?.startGame) {
                 window.gameModule.startGame();
             } else {
-                // Fallback with loading animation
-                await playLoadingAnimationFallback();
+                // Fallback with loading animation on real rungs
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('game-page').style.display = 'flex';
+                
+                // Create the actual game first
                 game = new LadderGame();
+                
+                // Then animate the real rungs
+                await playLoadingAnimationFallback();
             }
         }
         
         // Fallback loading animation function
         function playLoadingAnimationFallback() {
             return new Promise((resolve) => {
-                document.getElementById('landing-page').style.display = 'none';
-                document.getElementById('game-page').style.display = 'flex';
+                // Find all the real game rungs that were just created
+                const rungs = document.querySelectorAll('.rung');
                 
-                // Create temporary ladder for loading animation
-                const ladder = document.getElementById('ladder');
-                ladder.innerHTML = ''; // Clear any existing content
-                
-                // Create 6 temporary rungs for the loading animation
-                for (let i = 0; i < 6; i++) {
-                    const rung = document.createElement('div');
-                    rung.className = 'rung';
-                    rung.id = `loading-rung-${i}`;
-                    rung.style.opacity = '0.3'; // Start dim
-                    ladder.appendChild(rung);
-                }
+                // Initially hide all rungs
+                rungs.forEach(rung => {
+                    rung.style.opacity = '0.3';
+                    rung.style.transform = 'scale(0.95)';
+                });
                 
                 // Animate each rung from top to bottom with staggered timing
-                for (let i = 0; i < 6; i++) {
+                rungs.forEach((rung, i) => {
                     const delay = i * 200; // 200ms between each rung animation
                     
                     setTimeout(() => {
-                        const rung = document.getElementById(`loading-rung-${i}`);
-                        if (rung) {
-                            rung.classList.add('loading-animation');
-                            
-                            // Clean up animation class after animation completes
-                            setTimeout(() => {
-                                rung.classList.remove('loading-animation');
-                            }, 800);
-                        }
+                        rung.classList.add('loading-animation');
+                        
+                        // Clean up animation class after animation completes
+                        setTimeout(() => {
+                            rung.classList.remove('loading-animation');
+                            rung.style.opacity = '';
+                            rung.style.transform = '';
+                        }, 800);
                     }, delay);
-                }
+                });
                 
                 // Resolve after all animations complete
-                const totalAnimationTime = (6 * 200) + 800 + 200; // stagger + animation + buffer
+                const totalAnimationTime = (rungs.length * 200) + 800 + 200; // stagger + animation + buffer
                 setTimeout(() => {
                     resolve();
                 }, totalAnimationTime);
