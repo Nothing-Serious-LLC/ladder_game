@@ -688,7 +688,14 @@
         .letter-box.finish-placeholder {
             background-color: #d3d6da !important;
             border-color: #d3d6da !important;
-            color: transparent;
+            color: white !important;
+        }
+        
+        /* Selected hint letters - maintain grey indication */
+        .letter-box.filled.selected {
+            background-color: #b8bcc0 !important; /* Lighter grey to show selection */
+            border-color: #6aaa64 !important; /* Green border to show selection */
+            color: white !important;
         }
         
         /* Mobile Keyboard Styles - hidden by default, shown on mobile */
@@ -1403,7 +1410,7 @@
                 this.typedWord = '';
                 
                 // Append FINISH rung at the end so it’s always visible
-                this.currentPuzzle.words.push({ word: 'FINISH', hint: '', revealPattern: new Array(6).fill(false) });
+                this.currentPuzzle.words.push({ word: 'FINISH', hint: '', revealPattern: new Array(6).fill(true) });
                 this.setupGame();
                 this.setupEventListeners();
             }
@@ -1581,11 +1588,16 @@
                         
                         if (revealPattern[letterIndex] || index < this.currentRungIndex) {
                             letterBox.textContent = letter;
-                            letterBox.classList.add('filled');
+                            if (wordData.word === 'FINISH') {
+                                letterBox.classList.add('finish-placeholder');
+                            } else {
+                                letterBox.classList.add('filled');
+                            }
                         }
                         
                     // Make current word's letter boxes interactive (but prevent native keyboard on mobile)
-                        if (index === this.currentRungIndex && !this.gameEnded) {
+                    // FINISH rung should never be interactive
+                        if (index === this.currentRungIndex && !this.gameEnded && wordData.word !== 'FINISH') {
                             letterBox.classList.add('interactive');
                         if (!isMobile) {
                             letterBox.setAttribute('tabindex', '0');
@@ -1849,8 +1861,8 @@
 
             
             correctGuess() {
-                // Check if this is the final word and stop timer immediately
-                const isLastWord = (this.currentRungIndex + 1) >= this.currentPuzzle.words.length;
+                // Check if this is the final word (before FINISH) and stop timer immediately
+                const isLastWord = (this.currentRungIndex + 1) >= (this.currentPuzzle.words.length - 1);
                 if (isLastWord) {
                     clearInterval(this.timerInterval);
                     this.finalTimeMs = Date.now() - this.startTime;
@@ -1884,7 +1896,7 @@
                         const mobileCurrentRung = document.getElementById('mobile-current-rung');
                         if (mobileCurrentRung) mobileCurrentRung.textContent = this.currentRungIndex + 1;
                 
-                if (this.currentRungIndex >= this.currentPuzzle.words.length) {
+                if (this.currentRungIndex >= this.currentPuzzle.words.length - 1) {
                             // Show FINISH rung cascade then completion
                             this.displayFinishRung();
                 } else {
