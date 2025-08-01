@@ -223,8 +223,8 @@
         .instruction-number {
             width: 32px;
             height: 48px;
-            background: #d3d6da;
-            color: #787c7e;
+            background: #6aaa64;
+            color: white;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -232,12 +232,6 @@
             font-size: 1rem;
             font-weight: 700;
             flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-
-        .instruction-number.animate-green {
-            background: #6aaa64;
-            color: white;
         }
 
         .instruction-content {
@@ -279,8 +273,8 @@
             background: white;
             color: #6aaa64;
             border: 2px solid #d3d6da;
-            border-radius: 16px;
-            padding: 20px 72px;
+            border-radius: 12px;
+            padding: 20px 32px;
             font-size: 1.5rem;
             font-weight: 800;
             cursor: pointer;
@@ -288,7 +282,8 @@
             letter-spacing: 0.05em;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             position: relative;
-            min-width: 280px;
+            max-width: 500px;
+            width: 100%;
             transform: scale(1);
         }
         
@@ -1859,26 +1854,18 @@
 
 
         function animateIntroLadder() {
-            const numbers = document.querySelectorAll('.instruction-number');
             const playButton = document.querySelector('.play-button');
             
             // Add animating class to prevent hover during animation
             playButton.classList.add('animating');
             playButton.disabled = true;
             
-            // Animate numbers one by one with staggered timing
-            numbers.forEach((number, index) => {
-                setTimeout(() => {
-                    number.classList.add('animate-green');
-                }, index * 200); // 200ms delay between each number
-            });
-            
-            // Turn button green after all numbers animate
+            // Turn button green immediately (no number animation delay)
             setTimeout(() => {
                 playButton.classList.add('green');
-            }, numbers.length * 200 + 100);
+            }, 100);
             
-            // Start the game after button turns green (increased delay + fade transition)
+            // Start the game after button turns green (shorter delay)
             setTimeout(() => {
                 // Add fade out animation to landing content only (not header)
                 const landingContent = document.getElementById('landing-content');
@@ -1892,7 +1879,7 @@
                         startGame();
                     }
                 }, 400); // Wait for fade to complete
-            }, numbers.length * 200 + 800); // Increased delay from 300ms to 800ms
+            }, 600); // Reduced from numbers.length * 200 + 800 to 600ms
         }
 
 
