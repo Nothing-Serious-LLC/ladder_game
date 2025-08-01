@@ -71,6 +71,26 @@
             --safe-area-inset-right: env(safe-area-inset-right);
             --safe-area-inset-bottom: env(safe-area-inset-bottom);
             --safe-area-inset-left: env(safe-area-inset-left);
+            
+            /* LADDER Color Palette - Design System */
+            /* Green Theme - Success & Completion */
+            --primary-green: #6aaa64;
+            --primary-green-hover: #5d9556;
+            
+            /* Orange Theme - Active & Selection States */  
+            --primary-orange: #ff8c42;
+            --primary-orange-hover: #e06829;
+            
+            /* Error & Warning States */
+            --error-red: #e74c3c;
+            --error-red-dark: #c0392b;
+            
+            /* Neutral Gray System */
+            --gray-50: #fafafa;         /* Light background */
+            --gray-200: #d3d6da;        /* Borders, default states */
+            --gray-400: #a8adb3;        /* Intermediate tone, hover states */
+            --gray-600: #787c7e;        /* Secondary text, labels */
+            --gray-900: #1a1a1b;        /* Primary text */
         }
         
         html {
@@ -132,6 +152,8 @@
             min-height: 100vh;
             text-align: center;
             padding: 20px 20px;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .landing-header {
@@ -139,6 +161,10 @@
             padding: 20px 0 30px;
             border-bottom: 1px solid #d3d6da;
             margin-bottom: 40px;
+            max-width: 500px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .landing-title {
@@ -162,7 +188,7 @@
             padding: 32px;
             margin-bottom: 40px;
             text-align: left;
-            max-width: 400px;
+            max-width: 500px;
             width: 100%;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             position: relative;
@@ -216,7 +242,7 @@
         }
 
         .instruction-header {
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: #6aaa64;
             font-weight: 700;
             margin-bottom: 4px;
@@ -224,7 +250,7 @@
         }
 
         .instruction-text {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #1a1a1b;
             line-height: 1.4;
         }
@@ -247,23 +273,24 @@
         .play-button {
             opacity: 0;
             animation: fadeInUp 0.6s ease-out 0.5s forwards;
-            background: #d3d6da;
+            background: white;
             color: #787c7e;
             border: 2px solid #d3d6da;
             border-radius: 16px;
-            padding: 20px 40px;
-            font-size: 1.2rem;
-            font-weight: 700;
+            padding: 28px 56px;
+            font-size: 1.5rem;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            box-shadow: 0 4px 12px rgba(211, 214, 218, 0.3);
+            letter-spacing: 0.1em;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             position: relative;
-            overflow: hidden;
-            min-width: 240px;
+            min-width: 280px;
             transform: scale(1);
         }
+        
+
 
         @keyframes slideUpFade {
             from {
@@ -297,26 +324,28 @@
                 transform: translateY(0);
             }
         }
+        
+
 
 
 
         .play-button.green {
-            background: #6aaa64 !important;
-            color: white !important;
-            border-color: #6aaa64 !important;
-            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.4) !important;
+            background: #6aaa64;
+            color: white;
+            border-color: #6aaa64;
         }
+        
+
 
         .play-button:not(:disabled):not(.animating):hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(106, 170, 100, 0.3);
-            border-color: #6aaa64;
-            background: #e1e4e8;
+            transform: translateY(-2px) scale(1.02);
+            border-color: var(--primary-green);
+            box-shadow: 0 4px 16px rgba(106, 170, 100, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .play-button:not(:disabled):active {
             transform: translateY(0px) scale(0.98);
-            box-shadow: 0 2px 8px rgba(211, 214, 218, 0.3);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
         }
 
         .play-button:disabled {
@@ -379,7 +408,7 @@
         }
 
         .timer .stat-value {
-            color: #f5793a;
+            color: #ff8c42;
         }
 
         .game-area {
@@ -406,8 +435,8 @@
         }
 
         .rung.active {
-            border-color: #f5793a;
-            box-shadow: 0 2px 8px rgba(245, 121, 58, 0.1);
+            border-color: #ff8c42;
+            box-shadow: 0 2px 8px rgba(255, 140, 66, 0.1);
         }
 
         .rung.completed {
@@ -444,11 +473,11 @@
         }
 
         .letter-box.current {
-            border-color: #f5793a;
+            border-color: #ff8c42;
             border-width: 3px;
-            box-shadow: 0 0 12px rgba(245, 121, 58, 0.4);
+            box-shadow: 0 0 12px rgba(255, 140, 66, 0.4);
             animation: pulse 1.5s infinite;
-            background-color: rgba(245, 121, 58, 0.1);
+            background-color: rgba(255, 140, 66, 0.1);
         }
 
         .letter-box.user-typed {
@@ -473,7 +502,7 @@
 
         .letter-box.interactive:hover {
             transform: scale(1.1);
-            border-color: #f5793a;
+            border-color: #ff8c42;
         }
 
         @keyframes pulse {
@@ -482,14 +511,14 @@
         }
 
         @keyframes autoCorrectFlash {
-            0% { background-color: #f5793a; border-color: #f5793a; }
-            50% { background-color: #ff6b1a; border-color: #ff6b1a; }
+            0% { background-color: #ff8c42; border-color: #ff8c42; }
+            50% { background-color: #e06829; border-color: #e06829; }
             100% { background-color: initial; border-color: initial; }
         }
 
         .letter-box.wrong-word {
-            background-color: #dc3545 !important;
-            border-color: #dc3545 !important;
+            background-color: #e74c3c !important;
+            border-color: #e74c3c !important;
             color: white !important;
             animation: shake 0.6s ease-in-out;
         }
@@ -507,20 +536,20 @@
         
         @keyframes failureCascade {
             0% { background-color: transparent; border-color: #d3d6da; color: #1a1a1b; }
-            50% { background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; transform: scale(1.1); }
-            100% { background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; transform: scale(1); }
+            50% { background-color: #e74c3c !important; border-color: #e74c3c !important; color: white !important; transform: scale(1.1); }
+            100% { background-color: #e74c3c !important; border-color: #e74c3c !important; color: white !important; transform: scale(1); }
         }
         
         /* Failed rung styling - turns entire rung red */
         .rung.failed {
-            background-color: rgba(220, 53, 69, 0.1);
-            border-left: 4px solid #dc3545;
+            background-color: rgba(231, 76, 60, 0.1);
+            border-left: 4px solid #e74c3c;
             transition: all 0.3s ease;
         }
         
         .rung.failed .letter-box {
-            background-color: #dc3545 !important;
-            border-color: #dc3545 !important;
+            background-color: #e74c3c !important;
+            border-color: #e74c3c !important;
             color: white !important;
         }
         
@@ -662,7 +691,7 @@
         }
 
         .btn-secondary {
-            background: #f5793a;
+            background: #ff8c42;
             color: white;
         }
 
@@ -724,7 +753,7 @@
 
         .reveal-confirmation {
             background: white;
-            border: 2px solid #f5793a;
+            border: 2px solid #ff8c42;
             border-radius: 12px;
             padding: 20px;
             text-align: center;
@@ -748,32 +777,7 @@
             min-width: 80px;
         }
 
-        .results-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
 
-        .results-popup.show {
-            display: flex;
-        }
-
-        .results-content {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
 
         .results-title {
             font-size: 1.8rem;
@@ -863,7 +867,7 @@
         
         /* Selected hint letters - maintain grey indication */
         .letter-box.filled.selected {
-            background-color: #b8bcc0 !important; /* Lighter grey to show selection */
+            background-color: #a8adb3 !important; /* Intermediate grey to show selection */
             border-color: #6aaa64 !important; /* Green border to show selection */
             color: white !important;
         }
@@ -871,9 +875,9 @@
         /* Current position (first letter) takes priority over selected hint styling */
         .letter-box.filled.current {
             background-color: #d3d6da !important; /* Keep original grey */
-            border-color: #f5793a !important; /* Orange border for current position */
+            border-color: #ff8c42 !important; /* Orange border for current position */
             border-width: 3px !important;
-            box-shadow: 0 0 12px rgba(245, 121, 58, 0.4) !important;
+            box-shadow: 0 0 12px rgba(255, 140, 66, 0.4) !important;
             animation: pulse 1.5s infinite !important;
         }
         
@@ -923,7 +927,7 @@
 
         .keyboard-key:active {
             transform: scale(0.95);
-            background: #bdc1c6;
+            background: #a8adb3;
         }
 
         .keyboard-key.wide {
@@ -937,6 +941,193 @@
             background: #878a8c;
             color: #d3d6da;
             cursor: not-allowed;
+        }
+
+        /* Completion and Failure Page Styles */
+        .completion-page,
+        .failure-page {
+            display: none;
+            background-color: #fafafa;
+        }
+        
+        .completion-content,
+        .failure-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+        
+        /* Card styling - matches intro card exactly */
+        .card {
+            background: white;
+            border: 1px solid #d3d6da;
+            border-radius: 12px;
+            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardSlideUp 0.4s ease forwards;
+        }
+        
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        @keyframes cardSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Completion Card Styles */
+        .completion-title,
+        .failure-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a1a1b;
+            margin-bottom: 8px;
+        }
+        
+        .completion-subtitle,
+        .failure-subtitle {
+            font-size: 1rem;
+            color: #787c7e;
+            margin-bottom: 24px;
+        }
+        
+        .completion-time {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #6aaa64;
+            margin-bottom: 8px;
+        }
+        
+        .completion-message,
+        .failure-message {
+            font-size: 1.1rem;
+            color: #1a1a1b;
+            margin-bottom: 24px;
+        }
+        
+        .failure-encourage {
+            font-size: 1rem;
+            color: #787c7e;
+            margin-bottom: 24px;
+        }
+        
+        .completion-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        
+        .completion-button,
+        .failure-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .completion-button.share-text {
+            background: #1da1f2;
+            color: white;
+        }
+        
+        .completion-button.share-text:hover {
+            background: #1a91da;
+        }
+        
+        .completion-button.share-copy {
+            background: #6aaa64;
+            color: white;
+        }
+        
+        .completion-button.share-copy:hover {
+            background: #5d9556;
+        }
+        
+        .completion-button.play-again,
+        .failure-button.play-again {
+            background: #787c7e;
+            color: white;
+            width: 100%;
+        }
+        
+        .completion-button.play-again:hover,
+        .failure-button.play-again:hover {
+            background: #666a6d;
+        }
+        
+        /* Signup Card Styles */
+        .signup-card {
+            animation-delay: 0.4s;
+        }
+        
+        .signup-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a1a1b;
+            margin-bottom: 12px;
+        }
+        
+        .signup-text {
+            font-size: 1rem;
+            color: #787c7e;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .signup-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .signup-button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .signup-button.primary {
+            background: #6aaa64;
+            color: white;
+        }
+        
+        .signup-button.primary:hover {
+            background: #5d9556;
+        }
+        
+        .signup-button.secondary {
+            background: #f8f9fa;
+            color: #787c7e;
+            border: 1px solid #d3d6da;
+        }
+        
+        .signup-button.secondary:hover {
+            background: #e9ecef;
         }
 
         @media (max-width: 480px) {
@@ -984,7 +1175,7 @@
             .mobile-header {
                 padding: 12px 16px 8px;
                 background: #fafafa;
-                border-bottom: 1px solid #e1e5e9;
+                border-bottom: 1px solid #d3d6da;
                 flex-shrink: 0;
             }
             
@@ -1114,6 +1305,41 @@
                 font-size: 0.75rem;
                 line-height: 1.2;
             }
+            
+            /* Mobile styles for completion/failure pages inherit from container */
+            
+            .completion-content,
+            .failure-content {
+                gap: 16px;
+                padding-top: 12px;
+            }
+            
+            .card {
+                padding: 24px;
+                max-width: none;
+                margin: 0 8px;
+            }
+            
+            .completion-title,
+            .failure-title {
+                font-size: 1.5rem;
+            }
+            
+            .completion-time {
+                font-size: 2.5rem;
+            }
+            
+            .completion-buttons,
+            .signup-buttons {
+                flex-direction: column;
+            }
+            
+            .completion-button,
+            .failure-button,
+            .signup-button {
+                width: 100%;
+                min-width: auto;
+            }
         }
     </style>
 </head>
@@ -1172,7 +1398,7 @@
             </div>
             <div class="stat">
                 <div class="stat-value" id="current-rung">1</div>
-                <div class="stat-label">Step</div>
+                <div class="stat-label">Rung</div>
             </div>
             <div class="stat">
                 <div class="stat-value" id="tries-left">5</div>
@@ -1198,7 +1424,7 @@
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="mobile-current-rung">1</div>
-                    <div class="stat-label">Step</div>
+                    <div class="stat-label">Rung</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="mobile-tries-left">5</div>
@@ -1251,34 +1477,69 @@
         </div>
     </div>
 
-    <!-- Results Popup -->
-    <div class="results-popup" id="results-popup">
-        <div class="results-content">
-            <h2 class="results-title">🎉 Completed!</h2>
-            <p class="results-subtitle">Today's LADDER</p>
-            <div class="results-time" id="results-time">2:34</div>
-            <p class="results-message">You climbed the word ladder!</p>
-            
-            <div class="share-buttons">
-                <button class="share-button share-text" id="share-text">Share via Text</button>
-                <button class="share-button share-copy" id="share-copy">Copy Link</button>
+    <!-- Completion Screen -->
+    <div class="container completion-page" id="completion-page" style="display: none;">
+        <header class="header">
+            <h1 class="title">LADDER</h1>
+            <p class="date-info" id="completion-date-display">Puzzle # • Loading...</p>
+        </header>
+        
+        <div class="completion-content">
+            <div class="completion-card card">
+                <h2 class="completion-title">🎉 Completed!</h2>
+                <p class="completion-subtitle" id="completion-subtitle">Today's LADDER</p>
+                <div class="completion-time" id="completion-time">2:34</div>
+                <p class="completion-message">You climbed the word ladder!</p>
+                
+                <div class="completion-buttons">
+                    <button class="completion-button share-text" id="completion-share-text">Share via Text</button>
+                    <button class="completion-button share-copy" id="completion-share-copy">Copy Link</button>
+                </div>
+                
+                <button class="completion-button play-again" onclick="location.reload()">Play Again Tomorrow</button>
             </div>
             
-            <button class="share-button play-again" onclick="location.reload()">Play Again Tomorrow</button>
+            <div class="signup-card card">
+                <h3 class="signup-title">Track Your Progress</h3>
+                <p class="signup-text">Create an account to save your stats and get daily puzzle reminders!</p>
+                <div class="signup-buttons">
+                    <button class="signup-button primary">Create Account</button>
+                    <button class="signup-button secondary">Maybe Later</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Failure Popup -->
-    <div class="results-popup" id="failure-popup">
-        <div class="results-content">
-            <h2 class="results-title">💔 Game Over</h2>
-            <p class="results-subtitle" id="failure-subtitle">Today's LADDER</p>
-            <div class="results-message">You ran out of tries! The correct word is revealed above.</div>
-            <p class="failure-encourage">Better luck tomorrow! 🪜</p>
+    <!-- Failure Screen -->
+    <div class="container failure-page" id="failure-page" style="display: none;">
+        <header class="header">
+            <h1 class="title">LADDER</h1>
+            <p class="date-info" id="failure-date-display">Puzzle # • Loading...</p>
+        </header>
+        
+        <div class="failure-content">
+            <div class="failure-card card">
+                <h2 class="failure-title">💔 Game Over</h2>
+                <p class="failure-subtitle" id="failure-subtitle">Today's LADDER</p>
+                <div class="failure-message">You ran out of tries! The correct word is revealed above.</div>
+                <p class="failure-encourage">Better luck tomorrow! 🪜</p>
+                
+                <button class="failure-button play-again" onclick="location.reload()">Try Again Tomorrow</button>
+            </div>
             
-            <button class="share-button play-again" onclick="location.reload()">Try Again Tomorrow</button>
+            <div class="signup-card card">
+                <h3 class="signup-title">Track Your Progress</h3>
+                <p class="signup-text">Create an account to save your stats and get daily puzzle reminders!</p>
+                <div class="signup-buttons">
+                    <button class="signup-button primary">Create Account</button>
+                    <button class="signup-button secondary">Maybe Later</button>
+                </div>
+            </div>
         </div>
     </div>
+
+
+
 
     <!-- External Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -2458,8 +2719,8 @@
                         
                         // Apply permanent red styling after animation
                         setTimeout(() => {
-                            letterBox.style.backgroundColor = '#dc3545';
-                            letterBox.style.borderColor = '#dc3545';
+                            letterBox.style.backgroundColor = '#e74c3c';
+                            letterBox.style.borderColor = '#e74c3c';
                             letterBox.style.color = 'white';
                             letterBox.classList.remove('failure-cascade');
                         }, 500);
@@ -2569,41 +2830,50 @@
                 const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
                 if (won) {
-                    // Show results popup instead of feedback
-                    this.showResultsPopup(timeString);
+                    // Show completion page instead of modal
+                    this.showCompletionPage(timeString);
                 } else {
-                    this.showFailurePopup();
+                    this.showFailurePage();
                 }
                 
                 // Game ended - no buttons to disable
             }
             
-            showResultsPopup(timeString) {
-                document.getElementById('results-time').textContent = timeString;
-                // Show theme
-                const subtitle = document.querySelector('#results-popup .results-subtitle');
-                if (subtitle) subtitle.textContent = `You completed "${this.currentPuzzle.theme}" puzzle`;
-                const kb=document.getElementById('mobile-keyboard');if(kb)kb.classList.add('hide');
-                document.getElementById('results-popup').classList.add('show');
+            showCompletionPage(timeString) {
+                // Hide mobile keyboard if showing
+                const kb = document.getElementById('mobile-keyboard');
+                if (kb) kb.classList.add('hide');
+                
+                // Hide game page and show completion page
+                document.getElementById('game-page').style.display = 'none';
+                const completionPage = document.getElementById('completion-page');
+                completionPage.style.display = 'flex';
+                
+                // Update completion page content - copy date from main game
+                document.getElementById('completion-time').textContent = timeString;
+                document.getElementById('completion-subtitle').textContent = `You completed "${this.currentPuzzle.theme}" puzzle`;
+                document.getElementById('completion-date-display').textContent = document.getElementById('date-display').textContent;
+                
+                // No animation - instant display
+                
+                // Set up signup button functionality
+                this.setupSignupButtons();
                 
                 // Set up share functionality
                 const shareText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\n${window.location.origin}`;
                 
-                document.getElementById('share-text').onclick = () => {
+                document.getElementById('completion-share-text').onclick = () => {
                     if (navigator.share) {
-                        navigator.share({
-                            text: shareText
-                        });
+                        navigator.share({ text: shareText });
                     } else {
-                        // Fallback: create SMS link
                         const smsLink = `sms:?body=${encodeURIComponent(shareText)}`;
                         window.open(smsLink);
                     }
                 };
                 
-                document.getElementById('share-copy').onclick = () => {
+                document.getElementById('completion-share-copy').onclick = () => {
                     navigator.clipboard.writeText(shareText).then(() => {
-                        const button = document.getElementById('share-copy');
+                        const button = document.getElementById('completion-share-copy');
                         const originalText = button.textContent;
                         button.textContent = 'Copied!';
                         setTimeout(() => {
@@ -2613,17 +2883,49 @@
                 };
             }
             
-            showFailurePopup() {
-                // Show theme in failure popup
-                const subtitle = document.querySelector('#failure-popup .results-subtitle');
-                if (subtitle) subtitle.textContent = `You couldn't complete "${this.currentPuzzle.theme}" puzzle`;
-                
+            showFailurePage() {
                 // Hide mobile keyboard if showing
                 const kb = document.getElementById('mobile-keyboard');
                 if (kb) kb.classList.add('hide');
                 
-                // Show failure popup
-                document.getElementById('failure-popup').classList.add('show');
+                // Hide game page and show failure page
+                document.getElementById('game-page').style.display = 'none';
+                const failurePage = document.getElementById('failure-page');
+                failurePage.style.display = 'flex';
+                
+                // Update failure page content - copy date from main game
+                document.getElementById('failure-subtitle').textContent = `You couldn't complete "${this.currentPuzzle.theme}" puzzle`;
+                document.getElementById('failure-date-display').textContent = document.getElementById('date-display').textContent;
+                
+                // No animation - instant display
+                
+                // Set up signup button functionality
+                this.setupSignupButtons();
+            }
+            
+            setupSignupButtons() {
+                // Find all signup buttons on both completion and failure pages
+                const primaryButtons = document.querySelectorAll('.signup-button.primary');
+                const secondaryButtons = document.querySelectorAll('.signup-button.secondary');
+                
+                primaryButtons.forEach(button => {
+                    button.onclick = () => {
+                        console.log('Create Account clicked - would redirect to signup');
+                        // TODO: Implement account creation
+                        alert('Account creation coming soon!');
+                    };
+                });
+                
+                secondaryButtons.forEach(button => {
+                    button.onclick = () => {
+                        console.log('Maybe Later clicked - dismissing signup');
+                        // Could hide the signup card or just do nothing
+                        button.closest('.signup-card').style.opacity = '0.5';
+                        setTimeout(() => {
+                            button.closest('.signup-card').style.display = 'none';
+                        }, 300);
+                    };
+                });
             }
             
             startTimer() {
@@ -2892,6 +3194,9 @@
                 }
             }, 100);
         });
+        
+        // Make LadderGame class available globally for module scripts
+        window.LadderGame = LadderGame;
     </script>
 </body>
 </html>
