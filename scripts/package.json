@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "update-reveals": "node update-database-letter-reveals.js",
-    "test-pattern": "node test-letter-pattern.js"
+    "test-pattern": "node test-letter-pattern.js",
+    "update-clues": "node update-clues.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
