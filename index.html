@@ -275,7 +275,7 @@
             opacity: 0;
             animation: fadeInUp 0.6s ease-out 0.5s forwards;
             background: white;
-            color: #787c7e;
+            color: #6aaa64;
             border: 2px solid #d3d6da;
             border-radius: 16px;
             padding: 28px 56px;
@@ -1444,7 +1444,7 @@
         </div>
 
         <div class="instructions">
-            <h3>How to Play</h3>
+            <h3>Instructions</h3>
             <div class="instruction-item">
                 <div class="instruction-number">1</div>
                 <div class="instruction-content">
@@ -1688,7 +1688,15 @@
             playLoadingAnimation: async () => {
                 return new Promise((resolve) => {
                     document.getElementById('landing-page').style.display = 'none';
-                    document.getElementById('game-page').style.display = 'flex';
+                    const gamePage = document.getElementById('game-page');
+                    gamePage.style.display = 'flex';
+                    gamePage.style.opacity = '0';
+                    gamePage.style.transition = 'opacity 0.4s ease-in';
+                    
+                    // Fade in the game page
+                    setTimeout(() => {
+                        gamePage.style.opacity = '1';
+                    }, 50); // Small delay to ensure display is set
                     
                     // Play loading sound
                     if (window.LadderGame && window.LadderGame.prototype.playSound) {
@@ -1819,7 +1827,16 @@
     <script>
         function startGame() {
             document.getElementById('landing-page').style.display = 'none';
-            document.getElementById('game-page').style.display = 'flex';
+            const gamePage = document.getElementById('game-page');
+            gamePage.style.display = 'flex';
+            gamePage.style.opacity = '0';
+            gamePage.style.transition = 'opacity 0.4s ease-in';
+            
+            // Fade in the game page
+            setTimeout(() => {
+                gamePage.style.opacity = '1';
+            }, 50);
+            
             game = new LadderGame();
         }
 
@@ -1858,14 +1875,22 @@
                 playButton.classList.add('green');
             }, numbers.length * 200 + 100);
             
-            // Start the game after button turns green
+            // Start the game after button turns green (increased delay + fade transition)
             setTimeout(() => {
-                if (window.gameModule?.startGame) {
-                    window.gameModule.startGame();
-                } else {
-                    startGame();
-                }
-            }, numbers.length * 200 + 300); // Shorter delay for instant transition
+                // Add fade out animation to landing page
+                const landingPage = document.getElementById('landing-page');
+                landingPage.style.transition = 'opacity 0.4s ease-out';
+                landingPage.style.opacity = '0';
+                
+                // Start game after fade completes
+                setTimeout(() => {
+                    if (window.gameModule?.startGame) {
+                        window.gameModule.startGame();
+                    } else {
+                        startGame();
+                    }
+                }, 400); // Wait for fade to complete
+            }, numbers.length * 200 + 800); // Increased delay from 300ms to 800ms
         }
 
 
@@ -3284,7 +3309,15 @@
         function playLoadingAnimationFallback() {
             return new Promise((resolve) => {
                 document.getElementById('landing-page').style.display = 'none';
-                document.getElementById('game-page').style.display = 'flex';
+                const gamePage = document.getElementById('game-page');
+                gamePage.style.display = 'flex';
+                gamePage.style.opacity = '0';
+                gamePage.style.transition = 'opacity 0.4s ease-in';
+                
+                // Fade in the game page
+                setTimeout(() => {
+                    gamePage.style.opacity = '1';
+                }, 50); // Small delay to ensure display is set
                 
                 // Play loading sound
                 if (window.LadderGame && window.LadderGame.prototype.playSound) {
