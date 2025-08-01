@@ -26,16 +26,41 @@ export function setupInstallPrompt() {
     });
 }
 
-// Viewport Height Management for iOS Safari
+// Viewport Height Management for iOS Safari and PWA Fullscreen
 export function setupViewportHeight() {
     function setViewportHeight() {
         const vh = window.innerHeight * 0.01;
         document.documentElement.style.setProperty('--vh', `${vh}px`);
+        
+        // Handle fullscreen PWA mode
+        if (window.navigator.standalone || window.matchMedia('(display-mode: fullscreen)').matches) {
+            document.body.classList.add('pwa-fullscreen');
+        }
     }
     
     window.addEventListener('resize', setViewportHeight);
     window.addEventListener('orientationchange', setViewportHeight);
     setViewportHeight();
+}
+
+// PWA Display Mode Detection
+export function setupPWAMode() {
+    // Detect if running as PWA
+    const isStandalone = window.navigator.standalone || 
+                        window.matchMedia('(display-mode: standalone)').matches ||
+                        window.matchMedia('(display-mode: fullscreen)').matches;
+    
+    if (isStandalone) {
+        document.body.classList.add('pwa-mode');
+        console.log('Running as PWA');
+    }
+    
+    // Handle status bar styling in PWA
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor && isStandalone) {
+        // Ensure theme color is applied
+        metaThemeColor.setAttribute('content', '#6aaa64');
+    }
 }
 
 // Online/Offline Status Management
@@ -67,6 +92,7 @@ export function initializePWA() {
     registerServiceWorker();
     setupInstallPrompt();
     setupViewportHeight();
+    setupPWAMode();
     setupConnectionMonitoring();
     
     console.log('PWA features initialized');

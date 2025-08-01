@@ -1,14 +1,20 @@
 {
-  "name": "LADDER - Daily Word Chain",
-  "short_name": "LADDER",
+  "name": "Ladder",
+  "short_name": "Ladder",
   "description": "Daily word puzzle where you climb through connected words",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#fafafa",
   "theme_color": "#6aaa64",
   "orientation": "portrait-primary",
   "scope": "/",
   "icons": [
+    {
+      "src": "/assets/icons/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/assets/icons/icon-192.png",
       "sizes": "192x192",
@@ -24,5 +30,7 @@
   ],
   "categories": ["games", "education"],
   "lang": "en-US",
-  "dir": "ltr"
+  "dir": "ltr",
+  "display_override": ["fullscreen", "standalone"],
+  "prefer_related_applications": false
 }

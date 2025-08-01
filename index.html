@@ -3,20 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LADDER - Daily Word Chain Puzzle Game</title>
-    <meta name="description" content="Play LADDER, the daily word chain puzzle! Transform one word into another by changing one letter at a time. New challenging puzzles every day with weekly difficulty progression.">
+    <title>Ladder</title>
+    <meta name="description" content="Play Ladder, the daily word chain puzzle! Transform one word into another by changing one letter at a time. New challenging puzzles every day with weekly difficulty progression.">
     <meta name="keywords" content="word game, puzzle, daily puzzle, word chain, ladder game, word transformation, vocabulary, brain teaser">
-    <meta name="author" content="LADDER Game">
+    <meta name="author" content="Ladder Game">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://ladder.game/">
     
+    <!-- PWA Meta Tags for Full Screen Experience -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ladder">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#6aaa64">
+    <meta name="msapplication-navbutton-color" content="#6aaa64">
+    <meta name="msapplication-TileColor" content="#6aaa64">
+    
     <!-- Open Graph Meta Tags for Social Sharing -->
-    <meta property="og:title" content="LADDER - Daily Word Chain Puzzle">
+    <meta property="og:title" content="Ladder - Daily Word Chain Puzzle">
     <meta property="og:description" content="Transform words by changing one letter at a time. New daily puzzles with weekly difficulty progression!">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ladder.game/">
     <meta property="og:image" content="https://ladder.game/assets/icons/icon-512.png">
-    <meta property="og:site_name" content="LADDER">
+    <meta property="og:site_name" content="Ladder">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
@@ -56,6 +65,42 @@
     </script>
     
     <style>
+        /* PWA Full Screen Support */
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+        }
+        
+        html {
+            height: 100vh;
+            height: -webkit-fill-available;
+        }
+        
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            padding-top: var(--safe-area-inset-top);
+            padding-right: var(--safe-area-inset-right);
+            padding-bottom: var(--safe-area-inset-bottom);
+            padding-left: var(--safe-area-inset-left);
+        }
+        
+        /* Hide scrollbars in PWA mode */
+        @media (display-mode: fullscreen) {
+            html {
+                overflow: hidden;
+            }
+            body {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            ::-webkit-scrollbar {
+                display: none;
+            }
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -90,28 +135,24 @@
         }
 
         .landing-header {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid #d3d6da;
             margin-bottom: 40px;
-            margin-top: 0px;
         }
 
         .landing-title {
-            font-size: 3.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
             letter-spacing: 0.2em;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
             color: #1a1a1b;
         }
 
-        .landing-subtitle {
-            font-size: 1.2rem;
-            color: #787c7e;
-            margin-bottom: 8px;
-        }
-
         .puzzle-info {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #787c7e;
-            margin-bottom: 40px;
+            margin-bottom: 0;
         }
 
         .instructions {
@@ -123,66 +164,165 @@
             text-align: left;
             max-width: 400px;
             width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
+
+
 
         .instructions h3 {
             font-size: 1.2rem;
             color: #1a1a1b;
-            margin-bottom: 20px;
+            margin-bottom: 32px;
             text-align: center;
+            font-weight: 600;
         }
 
         .instruction-item {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 16px;
-            gap: 12px;
-            width: 100%;
+            margin-bottom: 40px;
+            gap: 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .instruction-item:last-child {
+            margin-bottom: 0;
         }
 
         .instruction-number {
-            background: #6aaa64;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
+            width: 32px;
+            height: 48px;
+            background: #d3d6da;
+            color: #787c7e;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 1rem;
+            font-weight: 700;
             flex-shrink: 0;
-            margin-top: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .instruction-number.animate-green {
+            background: #6aaa64;
+            color: white;
+        }
+
+        .instruction-content {
+            flex: 1;
+        }
+
+        .instruction-header {
+            font-size: 1rem;
+            color: #6aaa64;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.2;
         }
 
         .instruction-text {
             font-size: 0.9rem;
             color: #1a1a1b;
-            line-height: 1.5;
-            width: 100%;
-            flex: 1;
-            width: 0; /* Force flex item to use available space */
+            line-height: 1.4;
         }
 
+        /* Entrance animations */
+        .instructions {
+            animation: slideUpFade 0.6s ease-out;
+        }
 
+        .instruction-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: climbUp 0.5s ease-out forwards;
+        }
+
+        .instruction-item:nth-child(2) { animation-delay: 0.1s; }
+        .instruction-item:nth-child(3) { animation-delay: 0.2s; }
+        .instruction-item:nth-child(4) { animation-delay: 0.3s; }
 
         .play-button {
-            background: #6aaa64;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 16px 32px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.5s forwards;
+            background: #d3d6da;
+            color: #787c7e;
+            border: 2px solid #d3d6da;
+            border-radius: 16px;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
+            box-shadow: 0 4px 12px rgba(211, 214, 218, 0.3);
+            position: relative;
+            overflow: hidden;
+            min-width: 240px;
+            transform: scale(1);
         }
 
-        .play-button:hover {
-            background: #5d9556;
-            transform: translateY(-2px);
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes climbUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+
+        .play-button.green {
+            background: #6aaa64 !important;
+            color: white !important;
+            border-color: #6aaa64 !important;
+            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.4) !important;
+        }
+
+        .play-button:not(:disabled):not(.animating):hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(106, 170, 100, 0.3);
+            border-color: #6aaa64;
+            background: #e1e4e8;
+        }
+
+        .play-button:not(:disabled):active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow: 0 2px 8px rgba(211, 214, 218, 0.3);
+        }
+
+        .play-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: scale(1) !important;
         }
 
         /* Game Page Styles */
@@ -359,6 +499,32 @@
             10%, 30%, 50%, 70%, 90% { transform: translateX(-4px) scale(1.05); }
             20%, 40%, 60%, 80% { transform: translateX(4px) scale(1.05); }
         }
+        
+        /* Failure cascade animation - reveals remaining words in red */
+        .letter-box.failure-cascade {
+            animation: failureCascade 0.5s ease-out;
+        }
+        
+        @keyframes failureCascade {
+            0% { background-color: transparent; border-color: #d3d6da; color: #1a1a1b; }
+            50% { background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; transform: scale(1.1); }
+            100% { background-color: #dc3545 !important; border-color: #dc3545 !important; color: white !important; transform: scale(1); }
+        }
+        
+        /* Failed rung styling - turns entire rung red */
+        .rung.failed {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid #dc3545;
+            transition: all 0.3s ease;
+        }
+        
+        .rung.failed .letter-box {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+        }
+        
+        /* FINISH rung matches other completed rungs exactly - no special styling */
 
         .rung.climbing-animation {
             animation: climbGlow 0.8s ease-in-out;
@@ -380,8 +546,8 @@
                 box-shadow: 0 2px 8px rgba(106, 170, 100, 0.1);
             }
             50% { 
-                transform: scale(1.08);
-                box-shadow: 0 8px 32px rgba(106, 170, 100, 0.6);
+                transform: scale(1.02);
+                box-shadow: 0 2px 8px rgba(106, 170, 100, 0.3);
                 border-color: #6aaa64;
             }
             100% { 
@@ -397,8 +563,8 @@
                 opacity: 0.3;
             }
             50% { 
-                transform: scale(1.08);
-                box-shadow: 0 8px 32px rgba(106, 170, 100, 0.6);
+                transform: scale(1.04);
+                box-shadow: 0 3px 8px rgba(106, 170, 100, 0.6);
                 border-color: #6aaa64;
                 opacity: 1;
             }
@@ -411,24 +577,28 @@
 
         @keyframes cascadeFill {
             0% { 
-                transform: scale(1);
                 background-color: transparent;
                 border-color: #d3d6da;
                 color: #1a1a1b;
+                transform: translateY(0);
             }
-            50% { 
-                transform: scale(1.15);
+            30% { 
                 background-color: #6aaa64 !important;
                 border-color: #6aaa64 !important;
                 color: white !important;
-                box-shadow: 0 4px 12px rgba(106, 170, 100, 0.4);
+                transform: translateY(-4px);
+                box-shadow: 0 3px 6px rgba(106, 170, 100, 0.4);
+            }
+            60% {
+                transform: translateY(1px);
+                box-shadow: 0 2px 4px rgba(106, 170, 100, 0.3);
             }
             100% { 
-                transform: scale(1);
                 background-color: #6aaa64 !important;
                 border-color: #6aaa64 !important;
                 color: white !important;
-                box-shadow: 0 2px 8px rgba(106, 170, 100, 0.2);
+                transform: translateY(0);
+                box-shadow: 0 1px 3px rgba(106, 170, 100, 0.2);
             }
         }
 
@@ -437,9 +607,9 @@
         }
 
         @keyframes ladderCelebrate {
-            0%, 100% { transform: translateY(0) scale(1); }
-            30% { transform: translateY(-10px) scale(1.02); }
-            60% { transform: translateY(-5px) scale(1.01); }
+            0%, 100% { transform: scale(1); }
+            30% { transform: scale(1.02); }
+            60% { transform: scale(1.01); }
         }
 
         .rung.completed .letter-box {
@@ -698,17 +868,26 @@
             color: white !important;
         }
         
+        /* Current position (first letter) takes priority over selected hint styling */
+        .letter-box.filled.current {
+            background-color: #d3d6da !important; /* Keep original grey */
+            border-color: #f5793a !important; /* Orange border for current position */
+            border-width: 3px !important;
+            box-shadow: 0 0 12px rgba(245, 121, 58, 0.4) !important;
+            animation: pulse 1.5s infinite !important;
+        }
+        
         /* Mobile Keyboard Styles - hidden by default, shown on mobile */
         .mobile-keyboard {
             display: none;
             flex-direction: column;
-            gap: 8px;
-            padding: 16px 4px 28px 4px; /* Extra bottom padding for safety */
+            gap: 6px;
+            padding: 12px 2px 28px 2px; /* Minimal side padding for maximum key width */
             background: #f8f9fa;
             border-top: 1px solid #d3d6da;
             margin-top: auto;
             flex-shrink: 0; /* Prevent keyboard from shrinking */
-            min-height: 160px; /* Ensure minimum height for 3 rows */
+            min-height: 180px; /* Increased height for larger keys */
         }
         
         /* Mobile elements hidden by default */
@@ -720,24 +899,26 @@
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 3px; /* Reduced gap for more key space */
         }
 
         .keyboard-key {
             background: #d3d6da;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             color: #1a1a1b;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 1rem; /* Larger font for bigger keys */
             cursor: pointer;
             transition: all 0.1s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 30px;
-            height: 44px;
+            flex: 1; /* Keys expand to fill available space */
+            min-width: 32px; /* Larger minimum width */
+            height: 52px; /* Taller keys for better touch targets */
             font-family: inherit;
+            max-width: 38px; /* Prevent keys from getting too wide */
         }
 
         .keyboard-key:active {
@@ -746,8 +927,10 @@
         }
 
         .keyboard-key.wide {
-            min-width: 50px;
-            font-size: 0.8rem;
+            flex: 1.5; /* Take up more space than regular keys */
+            min-width: 60px; /* Larger minimum for wide keys */
+            max-width: 70px; /* Larger maximum for wide keys */
+            font-size: 0.9rem; /* Slightly larger font */
         }
 
         .keyboard-key:disabled {
@@ -781,7 +964,7 @@
             }
             /* Reduce bottom padding so ladder isn’t cut off */
             .mobile-game-area {
-                padding-bottom: calc(174px + env(safe-area-inset-bottom, 0)); /* 180 keyboard + 4px gap */
+                padding-bottom: calc(192px + env(safe-area-inset-bottom, 0)); /* 180 keyboard + 12px padding */
             }
             .container {
                 padding: 0;
@@ -941,43 +1124,47 @@
     <div class="landing-page" id="landing-page">
         <div class="landing-header">
             <h1 class="landing-title">LADDER</h1>
-            <p class="landing-subtitle">Daily Word Chain Puzzle</p>
-            <p class="puzzle-info" id="landing-puzzle-info">Puzzle #1 • Today</p>
+            <p class="puzzle-info" id="landing-puzzle-info">Puzzle # • Loading...</p>
         </div>
 
         <div class="instructions">
             <h3>How to Play</h3>
             
+
+            
             <div class="instruction-item">
                 <div class="instruction-number">1</div>
-                <div class="instruction-text">
-                    <strong>Type:</strong> Fill in each word using the revealed letters.
+                <div class="instruction-content">
+                    <div class="instruction-header">Type</div>
+                    <div class="instruction-text">Fill in each word using the revealed letters.</div>
                 </div>
             </div>
 
             <div class="instruction-item">
                 <div class="instruction-number">2</div>
-                <div class="instruction-text">
-                    <strong>Connect:</strong> Each word connects to the one before it.
+                <div class="instruction-content">
+                    <div class="instruction-header">Connect</div>
+                    <div class="instruction-text">Each word connects to the one before it.</div>
                 </div>
             </div>
 
             <div class="instruction-item">
                 <div class="instruction-number">3</div>
-                <div class="instruction-text">
-                    <strong>Climb:</strong> Puzzles get harder throughout the week.
+                <div class="instruction-content">
+                    <div class="instruction-header">Climb</div>
+                    <div class="instruction-text">Puzzles get harder throughout the week.</div>
                 </div>
             </div>
         </div>
 
-        <button class="play-button" onclick="window.gameModule?.startGame ? window.gameModule.startGame() : startGame()">Play Today's Puzzle</button>
+        <button class="play-button" onclick="animateIntroLadder()">Play Today's Puzzle</button>
     </div>
 
     <!-- Game Page -->
     <div class="container game-page" id="game-page">
         <header class="header">
             <h1 class="title">LADDER</h1>
-            <p class="date-info" id="date-display">Puzzle #1 • Today</p>
+            <p class="date-info" id="date-display">Puzzle # • Loading...</p>
         </header>
 
         <div class="stats">
@@ -1083,6 +1270,18 @@
         </div>
     </div>
 
+    <!-- Failure Popup -->
+    <div class="results-popup" id="failure-popup">
+        <div class="results-content">
+            <h2 class="results-title">💔 Game Over</h2>
+            <p class="results-subtitle" id="failure-subtitle">Today's LADDER</p>
+            <div class="results-message">You ran out of tries! The correct word is revealed above.</div>
+            <p class="failure-encourage">Better luck tomorrow! 🪜</p>
+            
+            <button class="share-button play-again" onclick="location.reload()">Try Again Tomorrow</button>
+        </div>
+    </div>
+
     <!-- External Libraries -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     
@@ -1121,14 +1320,20 @@
                     document.getElementById('landing-page').style.display = 'none';
                     document.getElementById('game-page').style.display = 'flex';
                     
+                    // Play loading sound
+                    if (window.LadderGame && window.LadderGame.prototype.playSound) {
+                        const tempGame = { playSound: window.LadderGame.prototype.playSound };
+                        tempGame.playSound('loading');
+                    }
+                    
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
                     const mobileLadder = document.getElementById('mobile-ladder');
                     ladder.innerHTML = ''; // Clear any existing content
                     if (mobileLadder) mobileLadder.innerHTML = '';
                     
-                    // Create 6 temporary rungs that match the real game styling
-                    for (let i = 0; i < 7; i++) {
+                    // Create 5 temporary rungs that match the real game styling
+                    for (let i = 0; i < 6; i++) {
                         // Create desktop rung
                         const rung = document.createElement('div');
                         rung.className = 'rung';
@@ -1183,7 +1388,7 @@
                     }
                     
                     // Animate each rung from top to bottom with staggered timing
-                    for (let i = 0; i < 7; i++) {
+                    for (let i = 0; i < 6; i++) {
                         const delay = i * 200; // 200ms between each rung animation
                         
                         setTimeout(() => {
@@ -1253,12 +1458,49 @@
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
             const est = new Date(utc + (-5 * 3600000));
             
-            const launchDate = new Date('2025-01-01');
+            // Launch date set so today is puzzle #4
+            const launchDate = new Date('2025-07-28');
             const diffTime = est - launchDate;
             const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
             
             return { puzzleNumber };
         }
+
+
+
+        function animateIntroLadder() {
+            const numbers = document.querySelectorAll('.instruction-number');
+            const playButton = document.querySelector('.play-button');
+            
+            // Add animating class to prevent hover during animation
+            playButton.classList.add('animating');
+            playButton.disabled = true;
+            
+            // Animate numbers one by one with staggered timing
+            numbers.forEach((number, index) => {
+                setTimeout(() => {
+                    number.classList.add('animate-green');
+                }, index * 200); // 200ms delay between each number
+            });
+            
+            // Turn button green after all numbers animate
+            setTimeout(() => {
+                playButton.classList.add('green');
+            }, numbers.length * 200 + 100);
+            
+            // Start the game after button turns green
+            setTimeout(() => {
+                if (window.gameModule?.startGame) {
+                    window.gameModule.startGame();
+                } else {
+                    startGame();
+                }
+            }, numbers.length * 200 + 300); // Shorter delay for instant transition
+        }
+
+
+
+
 
         class LadderGame {
             constructor(databasePuzzle = null) {
@@ -1591,7 +1833,7 @@
                             if (wordData.word === 'FINISH') {
                                 letterBox.classList.add('finish-placeholder');
                             } else {
-                                letterBox.classList.add('filled');
+                            letterBox.classList.add('filled');
                             }
                         }
                         
@@ -1645,11 +1887,15 @@
                             
                             if (key === 'BACKSPACE') {
                                 this.handleBackspace();
+                                this.playSound('type');
+                                this.vibrate(30); // Shorter vibration for backspace
                             } else if (key === 'ENTER') {
                                 // Enter key functionality can be added later if needed
                                 return;
                             } else if (key.match(/^[A-Z]$/)) {
                                 this.addLetterToWord(key);
+                                this.playSound('type');
+                                this.vibrate(50); // Short vibration for typing
                             }
                             
                             // Add visual feedback
@@ -1697,6 +1943,8 @@
                 if (key.match(/^[A-Z]$/)) {
                     e.preventDefault();
                     this.addLetterToWord(key);
+                    this.playSound('type');
+                    this.vibrate(50); // Short vibration for typing
                     return;
                 }
                 
@@ -1704,6 +1952,8 @@
                 if (e.key === 'Backspace') {
                     e.preventDefault();
                     this.handleBackspace();
+                    this.playSound('type');
+                    this.vibrate(30); // Shorter vibration for backspace
                     return;
                 }
             }
@@ -1771,16 +2021,16 @@
                     [desktopBoxes[i], mobileBoxes[i]].forEach((letterBox) => {
                         if (!letterBox) return;
                         const isRevealed = letterBox.dataset.isRevealed === 'true';
-                        if (isRevealed) {
-                            if (typedLetter !== correctLetter) {
-                                letterBox.classList.add('auto-corrected');
-                                setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
-                            }
-                            letterBox.classList.add('typed-through');
-                        } else {
-                            letterBox.textContent = typedLetter;
-                            letterBox.classList.add('user-typed');
+                    if (isRevealed) {
+                        if (typedLetter !== correctLetter) {
+                            letterBox.classList.add('auto-corrected');
+                            setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
                         }
+                        letterBox.classList.add('typed-through');
+                    } else {
+                        letterBox.textContent = typedLetter;
+                        letterBox.classList.add('user-typed');
+                    }
                     });
                 }
                 
@@ -1792,10 +2042,12 @@
                         // Correct! Auto-advance to next word
                         setTimeout(() => {
                             this.correctGuess();
-                        }, 300); // Small delay for visual feedback
+                        }, 200); // Reduced delay for faster response
                     } else {
                         // Incorrect word, show feedback but don't advance
                         setTimeout(() => {
+                            this.playSound('wrong');
+                            this.vibrate([200, 100, 200]); // Error vibration pattern
                             this.wrongGuess();
                         }, 100);
                     }
@@ -1806,6 +2058,198 @@
                     [nextDesktop, nextMobile].forEach(box => {
                         if (box) box.classList.add('current');
                     });
+                }
+            }
+            
+            // Sound Effects System
+            playSound(type) {
+                // Create audio context if it doesn't exist
+                if (!this.audioContext) {
+                    try {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    } catch (e) {
+                        return; // Audio not supported
+                    }
+                }
+                
+                const ctx = this.audioContext;
+                const oscillator = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                const filterNode = ctx.createBiquadFilter();
+                
+                // Add low-pass filter to reduce harshness and improve speaker quality
+                filterNode.type = 'lowpass';
+                filterNode.frequency.setValueAtTime(2000, ctx.currentTime); // Cut harsh high frequencies
+                filterNode.Q.setValueAtTime(1, ctx.currentTime);
+                
+                oscillator.connect(filterNode);
+                filterNode.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                
+                // Different sounds for different events
+                switch (type) {
+                    case 'type':
+                        // Typing sound with heavier end thump
+                        // High click component
+                        oscillator.type = 'sine';
+                        oscillator.frequency.setValueAtTime(600, ctx.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.02);
+                        gainNode.gain.setValueAtTime(0.04, ctx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+                        oscillator.start(ctx.currentTime);
+                        oscillator.stop(ctx.currentTime + 0.04);
+                        
+                        // Add heavier low-end thump at the end
+                        const thumpOsc = ctx.createOscillator();
+                        const thumpGain = ctx.createGain();
+                        thumpOsc.connect(thumpGain);
+                        thumpGain.connect(ctx.destination);
+                        thumpOsc.type = 'sine';
+                        thumpOsc.frequency.setValueAtTime(120, ctx.currentTime + 0.015);
+                        thumpOsc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.06);
+                        thumpGain.gain.setValueAtTime(0.08, ctx.currentTime + 0.015);
+                        thumpGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.06);
+                        thumpOsc.start(ctx.currentTime + 0.015);
+                        thumpOsc.stop(ctx.currentTime + 0.06);
+                        break;
+                    case 'correct':
+                        // Pleasant bell chime with harmonics for better speaker quality
+                        [349, 440, 523].forEach((freq, i) => { // F-A-C chord
+                            // Main tone
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            const filter = ctx.createBiquadFilter();
+                            
+                            filter.type = 'lowpass';
+                            filter.frequency.setValueAtTime(1500, ctx.currentTime + i * 0.08);
+                            filter.Q.setValueAtTime(0.5, ctx.currentTime + i * 0.08);
+                            
+                            osc.type = 'triangle'; // Warmer than sine, less harsh than square
+                            osc.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+                            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+                            gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.08);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.08 + 0.6);
+                            osc.start(ctx.currentTime + i * 0.08);
+                            osc.stop(ctx.currentTime + i * 0.08 + 0.6);
+                            
+                            // Add subtle harmonic for richness
+                            const harmonic = ctx.createOscillator();
+                            const harmonicGain = ctx.createGain();
+                            const harmonicFilter = ctx.createBiquadFilter();
+                            
+                            harmonicFilter.type = 'lowpass';
+                            harmonicFilter.frequency.setValueAtTime(1200, ctx.currentTime + i * 0.08);
+                            
+                            harmonic.type = 'sine';
+                            harmonic.connect(harmonicFilter);
+                            harmonicFilter.connect(harmonicGain);
+                            harmonicGain.connect(ctx.destination);
+                            harmonic.frequency.setValueAtTime(freq * 2, ctx.currentTime + i * 0.08); // Octave harmonic
+                            harmonicGain.gain.setValueAtTime(0.05, ctx.currentTime + i * 0.08);
+                            harmonicGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.4);
+                            harmonic.start(ctx.currentTime + i * 0.08);
+                            harmonic.stop(ctx.currentTime + i * 0.08 + 0.4);
+                        });
+                        break;
+                    case 'wrong':
+                        // Natural, gentle error sound (like a soft "uh-oh")
+                        oscillator.type = 'sine';
+                        oscillator.frequency.setValueAtTime(220, ctx.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.15);
+                        oscillator.frequency.exponentialRampToValueAtTime(160, ctx.currentTime + 0.3);
+                        gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.15);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                        oscillator.start(ctx.currentTime);
+                        oscillator.stop(ctx.currentTime + 0.3);
+                        break;
+                    case 'finish':
+                        // Extended triumphant victory fanfare with rich harmonics
+                        [262, 330, 392, 523, 659, 784, 523].forEach((freq, i) => { // C-E-G-C-E-G-C progression
+                            // Main tone with filtering
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            const filter = ctx.createBiquadFilter();
+                            
+                            filter.type = 'lowpass';
+                            filter.frequency.setValueAtTime(2000, ctx.currentTime + i * 0.15);
+                            filter.Q.setValueAtTime(0.7, ctx.currentTime + i * 0.15);
+                            
+                            osc.type = 'triangle'; // Warmer, richer tone
+                            osc.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+                            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+                            gain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.15);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 1.2);
+                            osc.start(ctx.currentTime + i * 0.15);
+                            osc.stop(ctx.currentTime + i * 0.15 + 1.2);
+                            
+                            // Add fifth harmonic for richness
+                            const harmonic = ctx.createOscillator();
+                            const harmonicGain = ctx.createGain();
+                            const harmonicFilter = ctx.createBiquadFilter();
+                            
+                            harmonicFilter.type = 'lowpass';
+                            harmonicFilter.frequency.setValueAtTime(1500, ctx.currentTime + i * 0.15);
+                            
+                            harmonic.type = 'sine';
+                            harmonic.connect(harmonicFilter);
+                            harmonicFilter.connect(harmonicGain);
+                            harmonicGain.connect(ctx.destination);
+                            harmonic.frequency.setValueAtTime(freq * 1.5, ctx.currentTime + i * 0.15); // Perfect fifth
+                            harmonicGain.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.15);
+                            harmonicGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.8);
+                            harmonic.start(ctx.currentTime + i * 0.15);
+                            harmonic.stop(ctx.currentTime + i * 0.15 + 0.8);
+                        });
+                        break;
+                    case 'failure':
+                        // Game over failure sound - descending disappointed tone
+                        [220, 185, 150, 120, 100].forEach((freq, i) => {
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            osc.type = 'sine';
+                            osc.connect(gain);
+                            gain.connect(ctx.destination);
+                            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.2);
+                            gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.2);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.2 + 0.8);
+                            osc.start(ctx.currentTime + i * 0.2);
+                            osc.stop(ctx.currentTime + i * 0.2 + 0.8);
+                        });
+                        break;
+                    case 'loading':
+                        // Gentle ascending loading sound with soft filtering
+                        [200, 250, 300, 350, 400].forEach((freq, i) => {
+                            const osc = ctx.createOscillator();
+                            const gain = ctx.createGain();
+                            const filter = ctx.createBiquadFilter();
+                            
+                            filter.type = 'lowpass';
+                            filter.frequency.setValueAtTime(1000, ctx.currentTime + i * 0.15);
+                            filter.Q.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+                            
+                            osc.type = 'triangle'; // Softer than sine
+                            osc.connect(filter);
+                            filter.connect(gain);
+                            gain.connect(ctx.destination);
+                            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
+                            gain.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.15);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.4);
+                            osc.start(ctx.currentTime + i * 0.15);
+                            osc.stop(ctx.currentTime + i * 0.15 + 0.4);
+                        });
+                        break;
+                }
+            }
+            
+            // Haptic Feedback System
+            vibrate(pattern) {
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(pattern);
                 }
             }
             
@@ -1869,6 +2313,10 @@
                     this.gameEnded = true;
                 }
                 
+                // Play correct word sound and haptic feedback for ALL words (including final)
+                this.playSound('correct');
+                this.vibrate([100, 50, 100]);
+                
                 // Play letter cascade animation on current word
                 this.playLetterCascadeAnimation();
                 
@@ -1890,11 +2338,13 @@
                 this.renderLadder();
                 this.updateTimerColors(); // Immediately restore current colors after rebuild
                 
-                document.getElementById('current-rung').textContent = this.currentRungIndex + 1;
-                        
+                // Cap the step counter at 5 (never show step 6 for FINISH)
+                const stepNumber = Math.min(this.currentRungIndex + 1, 5);
+                document.getElementById('current-rung').textContent = stepNumber;
+                
                         // Sync mobile current rung
                         const mobileCurrentRung = document.getElementById('mobile-current-rung');
-                        if (mobileCurrentRung) mobileCurrentRung.textContent = this.currentRungIndex + 1;
+                        if (mobileCurrentRung) mobileCurrentRung.textContent = stepNumber;
                 
                 if (this.currentRungIndex >= this.currentPuzzle.words.length - 1) {
                             // Show FINISH rung cascade then completion
@@ -1903,8 +2353,8 @@
                     // Set up typing for the new word
                     this.updateWordDisplay();
                 }
-                    }, 200); // Additional pause after rung completion
-                }, 600); // Wait for cascade to fully complete + buffer
+                    }, 150); // Reduced pause after rung completion
+                }, 650); // Slightly increased delay before FINISH animation
             }
             
             playLetterCascadeAnimation() {
@@ -1933,22 +2383,98 @@
                 });
             }
             
-            // Display FINISH rung, cascade it, then show results popup
+            // Display FINISH rung, immediately turn green, then start cascade animation
             displayFinishRung() {
                 const finishIndex = this.currentPuzzle.words.length - 1;
                 const desktopRung = document.getElementById(`rung-${finishIndex}`);
                 const mobileRung  = document.getElementById(`mobile-rung-${finishIndex}`);
                 if (!desktopRung) return;
-                // Cascade-fill effect across both sets of boxes
+                
+                // Get all letter boxes from both desktop and mobile
                 const allBoxes = [
                     ...desktopRung.querySelectorAll('.letter-box'),
                     ...(mobileRung ? mobileRung.querySelectorAll('.letter-box') : [])
                 ];
-                allBoxes.forEach((box, i) => {
-                    setTimeout(() => box.classList.add('cascade-fill'), i * 60);
+                
+                // Immediately turn all FINISH letters green (no cascade animation)
+                allBoxes.forEach((letterBox) => {
+                    // Remove finish-placeholder styling and apply permanent completed state
+                    letterBox.classList.remove('finish-placeholder', 'typed-through');
+                    letterBox.classList.add('filled'); // Add filled class for permanent green
+                    
+                    // Set permanent completed styling (same as other completed words)
+                    letterBox.style.backgroundColor = '#6aaa64';
+                    letterBox.style.borderColor = '#6aaa64';
+                    letterBox.style.color = 'white';
                 });
-                const total = (allBoxes.length - 1) * 60 + 600; // duration
-                setTimeout(() => this.playCompletionAnimation(), total);
+                
+                // Immediately turn the entire FINISH rung green (like regular words)
+                desktopRung.classList.add('completed');
+                if (mobileRung) mobileRung.classList.add('completed');
+                
+                // Play finish celebration sound and haptic feedback
+                this.playSound('finish');
+                this.vibrate([200, 100, 200, 100, 300]);
+                
+                // Small delay to ensure FINISH box color change is visible before cascade
+                setTimeout(() => {
+                    this.playCompletionAnimation();
+                }, 200); // Increased delay for better visual separation
+            }
+            
+            // Show failure cascade - reveal only the current word in red
+            playFailureCascade() {
+                this.gameEnded = true;
+                clearInterval(this.timerInterval);
+                
+                // Play failure sound immediately
+                this.playSound('failure');
+                this.vibrate([300, 150, 300, 150, 500]); // Long disappointed vibration
+                
+                // Get only the current rung that the user failed on
+                const currentRung = document.getElementById(`rung-${this.currentRungIndex}`);
+                const mobileRung = document.getElementById(`mobile-rung-${this.currentRungIndex}`);
+                if (!currentRung) return;
+                
+                const wordData = this.currentPuzzle.words[this.currentRungIndex];
+                const desktopBoxes = Array.from(currentRung.querySelectorAll('.letter-box'));
+                const mobileBoxes = mobileRung ? Array.from(mobileRung.querySelectorAll('.letter-box')) : [];
+                const allBoxes = [...desktopBoxes, ...mobileBoxes];
+                
+                // Reveal the current word letters and apply cascade animation
+                allBoxes.forEach((letterBox, letterIndex) => {
+                    const actualLetterIndex = letterIndex % wordData.word.length; // Handle desktop/mobile duplication
+                    setTimeout(() => {
+                        const correctLetter = wordData.word[actualLetterIndex];
+                        
+                        // Reveal the letter and override any existing styling
+                        letterBox.textContent = correctLetter;
+                        letterBox.classList.remove('filled', 'typed-through', 'finish-placeholder'); // Remove hint styling
+                        letterBox.classList.add('failure-cascade');
+                        
+                        // Apply permanent red styling after animation
+                        setTimeout(() => {
+                            letterBox.style.backgroundColor = '#dc3545';
+                            letterBox.style.borderColor = '#dc3545';
+                            letterBox.style.color = 'white';
+                            letterBox.classList.remove('failure-cascade');
+                        }, 500);
+                    }, actualLetterIndex * 80); // 80ms between letters
+                });
+                
+                // After letter cascade completes, turn the entire rung red
+                const cascadeDelay = (wordData.word.length * 80) + 500; // Wait for cascade + animation
+                setTimeout(() => {
+                    // Turn the entire current rung red to match the letters
+                    currentRung.classList.add('failed');
+                    if (mobileRung) mobileRung.classList.add('failed');
+                }, cascadeDelay);
+                
+                // Show failure modal after rung turns red
+                const finalDelay = cascadeDelay + 300; // Extra pause after rung color change
+                setTimeout(() => {
+                    this.endGame(false);
+                }, finalDelay);
             }
             
             playCompletionAnimation() {
@@ -1961,7 +2487,7 @@
                 
                 for (let i = 0; i < totalRungs; i++) {
                     const rungIndex = totalRungs - 1 - i; // Start from bottom (last index)
-                    const delay = i * 200; // 200ms between each rung animation
+                    const delay = i * 150; // Faster 150ms between each rung animation (was 200ms)
                     
                     setTimeout(() => {
                         const rung = document.getElementById(`rung-${rungIndex}`);
@@ -1977,7 +2503,7 @@
                 }
                 
                 // End the game after all animations complete
-                const totalAnimationTime = (totalRungs * 200) + 800 + 500; // stagger + animation + buffer
+                const totalAnimationTime = (totalRungs * 150) + 800 + 300; // faster stagger + animation + reduced buffer
                 setTimeout(() => {
                     ladder.classList.remove('completion-celebrate');
                     this.endGame(true);
@@ -1994,7 +2520,8 @@
                 if (mobileTriesLeft) mobileTriesLeft.textContent = triesLeft;
                 
                 if (triesLeft === 0) {
-                    this.endGame(false);
+                    // Game over - show failure cascade then end game
+                    this.playFailureCascade();
                 } else {
                     this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
                     
@@ -2041,7 +2568,7 @@
                     // Show results popup instead of feedback
                     this.showResultsPopup(timeString);
                 } else {
-                    this.showFeedback('💔 Game over! You ran out of tries.', 'error');
+                    this.showFailurePopup();
                 }
                 
                 // Game ended - no buttons to disable
@@ -2080,6 +2607,19 @@
                         }, 2000);
                     });
                 };
+            }
+            
+            showFailurePopup() {
+                // Show theme in failure popup
+                const subtitle = document.querySelector('#failure-popup .results-subtitle');
+                if (subtitle) subtitle.textContent = `You couldn't complete "${this.currentPuzzle.theme}" puzzle`;
+                
+                // Hide mobile keyboard if showing
+                const kb = document.getElementById('mobile-keyboard');
+                if (kb) kb.classList.add('hide');
+                
+                // Show failure popup
+                document.getElementById('failure-popup').classList.add('show');
             }
             
             startTimer() {
@@ -2215,16 +2755,32 @@
                 const pattern = new Array(word.length).fill(false);
                 const seed = wordIndex * 7 + word.length * 3;
                 
-                let lettersToShow = 1;
-                if (word.length >= 6) lettersToShow = 2;
+                // More generous hint distribution - average +1 letter
+                let lettersToShow = 2; // Base 2 letters minimum
+                if (word.length >= 7) lettersToShow = 3; // 3 letters for 7+ letter words
+                if (word.length >= 10) lettersToShow = 4; // 4 letters for 10+ letter words
                 
-                const positions = Array.from({length: word.length}, (_, i) => i);
+                // Create positions array excluding first and last positions to avoid bias
+                const positions = [];
+                for (let i = 1; i < word.length - 1; i++) {
+                    positions.push(i);
+                }
                 
+                // If we need more letters than middle positions, add first/last
+                if (lettersToShow > positions.length) {
+                    positions.unshift(0); // Add first position
+                    if (lettersToShow > positions.length) {
+                        positions.push(word.length - 1); // Add last position
+                    }
+                }
+                
+                // Shuffle positions using seed for consistent randomization
                 for (let i = positions.length - 1; i > 0; i--) {
                     const j = (seed + i * 17) % (i + 1);
                     [positions[i], positions[j]] = [positions[j], positions[i]];
                 }
                 
+                // Reveal the selected positions
                 for (let i = 0; i < lettersToShow && i < positions.length; i++) {
                     pattern[positions[i]] = true;
                 }
@@ -2252,12 +2808,18 @@
                 document.getElementById('landing-page').style.display = 'none';
                 document.getElementById('game-page').style.display = 'flex';
                 
+                // Play loading sound
+                if (window.LadderGame && window.LadderGame.prototype.playSound) {
+                    const tempGame = { playSound: window.LadderGame.prototype.playSound };
+                    tempGame.playSound('loading');
+                }
+                
                 // Create temporary ladder that matches real game structure
                 const ladder = document.getElementById('ladder');
                 ladder.innerHTML = ''; // Clear any existing content
                 
-                // Create 6 temporary rungs that match the real game styling
-                for (let i = 0; i < 7; i++) {
+                // Create 5 temporary rungs that match the real game styling
+                for (let i = 0; i < 6; i++) {
                     const rung = document.createElement('div');
                     rung.className = 'rung';
                     rung.id = `loading-rung-${i}`;
@@ -2287,7 +2849,7 @@
                 }
                 
                 // Animate each rung from top to bottom with staggered timing
-                for (let i = 0; i < 7; i++) {
+                for (let i = 0; i < 6; i++) {
                     const delay = i * 200; // 200ms between each rung animation
                     
                     setTimeout(() => {

@@ -20,8 +20,8 @@ export function getTodaysPuzzleInfo() {
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
     const est = new Date(utc + (-5 * 3600000));
     
-    // Updated launch date to July 30, 2024
-    const launchDate = new Date('2024-07-30');
+    // Launch date set so today is puzzle #4
+    const launchDate = new Date('2025-07-28');
     const diffTime = est - launchDate;
     const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
@@ -44,7 +44,7 @@ export async function fetchTodaysPuzzle() {
     const dateStr = `${year}-${month}-${day}`;
     
     // Calculate puzzle number (days since launch)
-    const launchDate = new Date('2024-07-30'); // Updated launch date
+    const launchDate = new Date('2025-07-28'); // Launch date for puzzle #4 today
     const diffTime = est - launchDate;
     const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
     
