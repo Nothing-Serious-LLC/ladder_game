@@ -1,5 +1,5 @@
 // LADDER PWA Service Worker
-const CACHE_NAME = 'ladder-v78';
+const CACHE_NAME = 'ladder-v79';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   './assets/js/database.js', 
   './assets/js/pwa.js',
   './config/supabase-config.js',
+  './assets/icons/icon.svg',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   'https://unpkg.com/@supabase/supabase-js@2'
