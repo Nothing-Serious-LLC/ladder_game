@@ -962,10 +962,7 @@
                 right: 0;
                 z-index: 9999;
             }
-            /* Reduce bottom padding so ladder isn’t cut off */
-            .mobile-game-area {
-                padding-bottom: calc(192px + env(safe-area-inset-bottom, 0)); /* 180 keyboard + 12px padding */
-            }
+            /* Reduce bottom padding so ladder isn't cut off */
             .container {
                 padding: 0;
                 height: 100vh;
@@ -992,10 +989,10 @@
             }
             
             .mobile-header .title {
-                display:none; /* hide LADDER on mobile to free space */
-                font-size: 1.4rem;
+                display:block; /* Show LADDER title on mobile in abbreviated format */
+                font-size: 1.2rem;
                 letter-spacing: 0.1em;
-                margin-bottom: 4px;
+                margin-bottom: 12px;
                 text-align: center;
             }
             
@@ -1022,6 +1019,7 @@
                 display: flex;
                 flex-direction: column;
                 min-height: 0; /* Important for flex child overflow */
+                padding-bottom: calc(160px + env(safe-area-inset-bottom, 0)); /* Reduced padding to better match keyboard */
             }
             
             .mobile-ladder {
@@ -1192,7 +1190,7 @@
 
         <!-- Mobile-optimized layout -->
         <div class="mobile-header">
-            <h1 class="title">LADDER</h1>
+            <h1 class="title" id="mobile-title">LADDER #1</h1>
             <div class="stats">
                 <div class="stat timer">
                     <div class="stat-value" id="mobile-timer">0:00</div>
@@ -1651,7 +1649,7 @@
                 this.timerInterval = null;
                 this.typedWord = '';
                 
-                // Append FINISH rung at the end so it’s always visible
+                // Append FINISH rung at the end so it's always visible
                 this.currentPuzzle.words.push({ word: 'FINISH', hint: '', revealPattern: new Array(6).fill(true) });
                 this.setupGame();
                 this.setupEventListeners();
@@ -1760,6 +1758,12 @@
                 const options = { month: 'long', day: 'numeric', year: 'numeric' };
                 const formattedDate = today.toLocaleDateString('en-US', options);
                 dateDisplay.textContent = `Puzzle #${this.puzzleNumber} • ${formattedDate}`;
+                
+                // Update mobile title with abbreviated format
+                const mobileTitle = document.getElementById('mobile-title');
+                if (mobileTitle) {
+                    mobileTitle.textContent = `LADDER #${this.puzzleNumber}`;
+                }
                 
                 // Also update landing page puzzle info
                 const landingPuzzleInfo = document.getElementById('landing-puzzle-info');
@@ -2578,7 +2582,7 @@
                 document.getElementById('results-time').textContent = timeString;
                 // Show theme
                 const subtitle = document.querySelector('#results-popup .results-subtitle');
-                if (subtitle) subtitle.textContent = `You completed “${this.currentPuzzle.theme}” puzzle`;
+                if (subtitle) subtitle.textContent = `You completed "${this.currentPuzzle.theme}" puzzle`;
                 const kb=document.getElementById('mobile-keyboard');if(kb)kb.classList.add('hide');
                 document.getElementById('results-popup').classList.add('show');
                 
