@@ -68,6 +68,35 @@ export async function fetchTodaysPuzzle() {
     // For July 30, 2024 and later - fetch from database
     try {
         const client = getSupabaseClient();
+        
+        // FIRST: Check for puzzle overrides (for testing)
+        console.log('Checking for puzzle override for date:', dateStr);
+        const { data: overrideData, error: overrideError } = await client
+            .from('puzzle_overrides')
+            .select('*')
+            .eq('puzzle_date', dateStr)
+            .single();
+        
+        if (overrideData && !overrideError) {
+            console.log('🔧 Using puzzle override:', overrideData.theme, '(', overrideData.notes, ')');
+            // Convert override puzzle to frontend format
+            const puzzleWithReveals = {
+                theme: overrideData.theme,
+                words: overrideData.words.map((wordData, wordIndex) => ({
+                    word: wordData.word,
+                    clue: wordData.clue,
+                    hint: wordData.hint,
+                    revealPattern: Array.from({length: wordData.word.length}, (_, i) => 
+                        wordData.revealed_letters.includes(i)
+                    )
+                }))
+            };
+            
+            return { puzzle: puzzleWithReveals, puzzleNumber: puzzleNumber };
+        }
+        
+        // SECOND: Check regular daily puzzles
+        console.log('No override found, checking daily puzzles');
         const { data, error } = await client
             .from('daily_puzzles')
             .select('*')
@@ -80,6 +109,7 @@ export async function fetchTodaysPuzzle() {
         }
         
         if (data) {
+            console.log('Using daily puzzle:', data.theme);
             // Convert database format to frontend format
             const puzzleWithReveals = {
                 theme: data.theme,

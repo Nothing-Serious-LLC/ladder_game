@@ -30,6 +30,7 @@ ladder_game/
 ├── 📁 docs/                      # Documentation files
 │   ├── THEME_STRATEGY.md         # Puzzle design framework
 │   ├── COLOR_PALETTE_DESIGN.md   # UI color system & design guidelines
+│   ├── PUZZLE_TESTING_SYSTEM.md  # Override system for testing puzzles
 │   ├── 90_THEMES_LIST.md         # Complete theme list
 │   ├── SAMPLE_WEEK_PUZZLES.md    # Example puzzles
 │   ├── PWA_SETUP.md              # Progressive Web App setup guide
@@ -79,6 +80,7 @@ ladder_game/
 |------|---------|--------|--------------|
 | `docs/THEME_STRATEGY.md` | Puzzle design framework | ✅ Ready | 2024-07-29 |
 | `docs/COLOR_PALETTE_DESIGN.md` | UI color system & design guidelines | ✅ Ready | 2024-01-XX |
+| `docs/PUZZLE_TESTING_SYSTEM.md` | Override system for testing puzzles | ✅ Ready | 2025-08-01 |
 | `docs/90_THEMES_LIST.md` | Complete theme catalog | ✅ Ready | 2024-07-29 |
 | `docs/SAMPLE_WEEK_PUZZLES.md` | Example implementations | ✅ Ready | 2024-07-29 |
 | `docs/PWA_SETUP.md` | Installation guide | ✅ Ready | 2024-07-29 |
@@ -232,6 +234,13 @@ open http://localhost:8000/tests/test-pwa.html
 | 2024-07-29 | **Backend Integration** | Enhanced features | Optional Supabase modules |
 | 2024-07-29 | **Progressive Enhancement** | Better fallbacks | Works with or without backend |
 | 2024-07-29 | **Documentation Update** | Current architecture | Updated this index file |
+| 2025-08-01 | **MAJOR: Puzzle Difficulty Overhaul** | Balanced gameplay | Fixed 20+ overly difficult puzzles |
+| 2025-08-01 | **12-Letter Word Limit** | Database constraint | Maximum word length enforced |
+| 2025-08-01 | **20% More Direct Hints** | Improved accessibility | Clearer, everyday language |
+| 2025-08-01 | **Puzzle Override System** | Testing flexibility | `puzzle_overrides` table for easy testing |
+| 2025-08-01 | **Testing Documentation** | Developer workflow | Added PUZZLE_TESTING_SYSTEM.md |
+| 2025-08-01 | **Cultural Prerequisites Discovery** | Major difficulty insight | Cultural Prerequisites dial has exponential (not linear) impact - reclassified puzzles, updated nine-dial system |
+| 2025-08-01 | **MASSIVE: 90-Puzzle Database Overhaul** | Perfect weekly progression | Applied Nine-Dial System to all puzzles - replaced specialized Monday/Tuesday themes with universal ones, upgraded Saturday/Sunday to proper difficulty levels |
 
 ---
 

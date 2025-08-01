@@ -266,9 +266,9 @@
             animation: climbUp 0.5s ease-out forwards;
         }
 
-        .instruction-item:nth-child(2) { animation-delay: 0.1s; }
-        .instruction-item:nth-child(3) { animation-delay: 0.2s; }
-        .instruction-item:nth-child(4) { animation-delay: 0.3s; }
+        .instruction-item:nth-child(2) { animation-delay: 0.0s; }
+        .instruction-item:nth-child(3) { animation-delay: 0.1s; }
+        .instruction-item:nth-child(4) { animation-delay: 0.2s; }
 
         .play-button {
             opacity: 0;
@@ -282,8 +282,7 @@
             font-weight: 800;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             position: relative;
             min-width: 280px;
@@ -357,6 +356,15 @@
         /* Game Page Styles */
         .game-page {
             display: none;
+            transition: opacity 0.4s ease-out;
+        }
+        
+        .game-content {
+            transition: opacity 0.2s ease-out;
+        }
+        
+        .game-content.fade-out {
+            opacity: 0;
         }
 
         .header {
@@ -532,18 +540,64 @@
         /* Failure cascade animation - reveals remaining words in red */
         .letter-box.failure-cascade {
             animation: failureCascade 0.5s ease-out;
+            /* Override any current/orange styling during failure */
+            border-width: 2px !important;
+            box-shadow: none !important;
+        }
+        
+        /* Ensure failure cascade overrides current class completely */
+        .letter-box.failure-cascade.current,
+        .letter-box.failure-cascade.filled.current {
+            border-width: 2px !important;
+            box-shadow: none !important;
+            animation: failureCascade 0.5s ease-out !important;
+            border-color: #d3d6da !important;
+            background-color: transparent !important;
+        }
+        
+        /* Additional override for any persistent current styling during failure */
+        .letter-box.current.failure-cascade,
+        .letter-box.filled.current.failure-cascade {
+            border-color: #d3d6da !important;
+            border-width: 2px !important;
+            box-shadow: none !important;
+            animation: failureCascade 0.5s ease-out !important;
+            background-color: transparent !important;
         }
         
         @keyframes failureCascade {
-            0% { background-color: transparent; border-color: #d3d6da; color: #1a1a1b; }
-            50% { background-color: #e74c3c !important; border-color: #e74c3c !important; color: white !important; transform: scale(1.1); }
-            100% { background-color: #e74c3c !important; border-color: #e74c3c !important; color: white !important; transform: scale(1); }
+            0% { 
+                background-color: transparent !important; 
+                border-color: #d3d6da !important; 
+                color: #1a1a1b !important; 
+                border-width: 2px !important;
+                box-shadow: none !important;
+                animation: none !important;
+                transform: scale(1) !important;
+            }
+            50% { 
+                background-color: #e74c3c !important; 
+                border-color: #e74c3c !important; 
+                color: white !important; 
+                transform: scale(1.1);
+                border-width: 2px !important;
+                box-shadow: none !important;
+            }
+            100% { 
+                background-color: #e74c3c !important; 
+                border-color: #e74c3c !important; 
+                color: white !important; 
+                transform: scale(1);
+                border-width: 2px !important;
+                box-shadow: none !important;
+            }
         }
         
         /* Failed rung styling - turns entire rung red */
         .rung.failed {
             background-color: rgba(231, 76, 60, 0.1);
-            border-left: 4px solid #e74c3c;
+            border-color: #e74c3c !important; /* Override any orange active border */
+            box-shadow: none !important; /* Remove any orange glow */
             transition: all 0.3s ease;
         }
         
@@ -973,161 +1027,185 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             text-align: center;
             opacity: 0;
-            transform: translateY(20px);
-            animation: cardSlideUp 0.4s ease forwards;
+            transform: translateY(40px);
+            animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         
         .card:nth-child(2) {
-            animation-delay: 0.2s;
+            animation-delay: 0.15s;
         }
         
         @keyframes cardSlideUp {
-            to {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
         
-        /* Completion Card Styles */
-        .completion-title,
-        .failure-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1a1a1b;
-            margin-bottom: 8px;
+        /* Result Card Styles */
+        .result-word {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
         }
         
-        .completion-subtitle,
-        .failure-subtitle {
-            font-size: 1rem;
+        .letter-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .letter-circle.green {
+            background: #6aaa64;
+        }
+        
+        .letter-circle.grey {
+            background: #878a8c;
+        }
+        
+        .letter-circle.red {
+            background: #e74c3c;
+        }
+        
+        .result-theme {
+            font-size: 0.9rem;
             color: #787c7e;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .completion-time,
+        .failure-time {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 32px;
+            letter-spacing: -0.02em;
         }
         
         .completion-time {
-            font-size: 3rem;
-            font-weight: 700;
             color: #6aaa64;
-            margin-bottom: 8px;
         }
         
-        .completion-message,
-        .failure-message {
-            font-size: 1.1rem;
-            color: #1a1a1b;
-            margin-bottom: 24px;
-        }
-        
-        .failure-encourage {
-            font-size: 1rem;
-            color: #787c7e;
-            margin-bottom: 24px;
+        .failure-time {
+            color: #e74c3c;
         }
         
         .completion-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
+            margin-bottom: 6px;
         }
         
         .completion-button,
         .failure-button {
-            padding: 12px 24px;
-            border: none;
+            padding: 14px 28px;
+            border: 1px solid #d3d6da;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            background: white;
+            color: #1a1a1b;
         }
         
-        .completion-button.share-text {
-            background: #1da1f2;
-            color: white;
+        .completion-button:hover,
+        .failure-button:hover {
+            border-color: #6aaa64;
+            color: #6aaa64;
         }
         
-        .completion-button.share-text:hover {
-            background: #1a91da;
-        }
-        
-        .completion-button.share-copy {
+        .completion-button.tomorrow,
+        .failure-button.tomorrow {
             background: #6aaa64;
             color: white;
-        }
-        
-        .completion-button.share-copy:hover {
-            background: #5d9556;
-        }
-        
-        .completion-button.play-again,
-        .failure-button.play-again {
-            background: #787c7e;
-            color: white;
+            border-color: #6aaa64;
             width: 100%;
+            margin-top: 8px;
         }
         
-        .completion-button.play-again:hover,
-        .failure-button.play-again:hover {
-            background: #666a6d;
+        .completion-button.tomorrow:hover,
+        .failure-button.tomorrow:hover {
+            background: #5d9556;
+            border-color: #5d9556;
+        }
+        
+        .failure-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 0;
+        }
+        
+        .failure-buttons .failure-button {
+            flex: 1;
         }
         
         /* Signup Card Styles */
         .signup-card {
-            animation-delay: 0.4s;
+            animation-delay: 0.15s;
         }
         
         .signup-title {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 600;
             color: #1a1a1b;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         
         .signup-text {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: #787c7e;
             margin-bottom: 24px;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         
         .signup-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
-            flex-wrap: wrap;
         }
         
         .signup-button {
-            padding: 14px 28px;
-            border: none;
+            padding: 12px 24px;
+            border: 1px solid #d3d6da;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             flex: 1;
-            min-width: 120px;
+            background: white;
+            color: #1a1a1b;
+        }
+        
+        .signup-button:hover {
+            border-color: #6aaa64;
+            color: #6aaa64;
         }
         
         .signup-button.primary {
             background: #6aaa64;
             color: white;
+            border-color: #6aaa64;
         }
         
         .signup-button.primary:hover {
             background: #5d9556;
-        }
-        
-        .signup-button.secondary {
-            background: #f8f9fa;
-            color: #787c7e;
-            border: 1px solid #d3d6da;
-        }
-        
-        .signup-button.secondary:hover {
-            background: #e9ecef;
+            border-color: #5d9556;
         }
 
         @media (max-width: 480px) {
@@ -1314,6 +1392,17 @@
                 padding-top: 12px;
             }
             
+            .letter-circle {
+                width: 36px;
+                height: 36px;
+                font-size: 1.1rem;
+            }
+            
+            .result-word {
+                gap: 4px;
+                margin-bottom: 12px;
+            }
+            
             .card {
                 padding: 24px;
                 max-width: none;
@@ -1325,11 +1414,13 @@
                 font-size: 1.5rem;
             }
             
-            .completion-time {
+            .completion-time,
+            .failure-time {
                 font-size: 2.5rem;
             }
             
             .completion-buttons,
+            .failure-buttons,
             .signup-buttons {
                 flex-direction: column;
             }
@@ -1353,9 +1444,6 @@
 
         <div class="instructions">
             <h3>How to Play</h3>
-            
-
-            
             <div class="instruction-item">
                 <div class="instruction-number">1</div>
                 <div class="instruction-content">
@@ -1381,7 +1469,7 @@
             </div>
         </div>
 
-        <button class="play-button" onclick="animateIntroLadder()">Play Today's Puzzle</button>
+        <button class="play-button" onclick="animateIntroLadder()">Play today's puzzle</button>
     </div>
 
     <!-- Game Page -->
@@ -1391,7 +1479,8 @@
             <p class="date-info" id="date-display">Puzzle # • Loading...</p>
         </header>
 
-        <div class="stats">
+        <div class="game-content" id="game-content">
+            <div class="stats">
             <div class="stat timer">
                 <div class="stat-value" id="timer">0:00</div>
                 <div class="stat-label">Time</div>
@@ -1475,6 +1564,7 @@
                 <button class="keyboard-key wide" data-key="BACKSPACE">⌫</button>
             </div>
         </div>
+        </div> <!-- Close game-content -->
     </div>
 
     <!-- Completion Screen -->
@@ -1486,25 +1576,34 @@
         
         <div class="completion-content">
             <div class="completion-card card">
-                <h2 class="completion-title">🎉 Completed!</h2>
-                <p class="completion-subtitle" id="completion-subtitle">Today's LADDER</p>
-                <div class="completion-time" id="completion-time">2:34</div>
-                <p class="completion-message">You climbed the word ladder!</p>
-                
-                <div class="completion-buttons">
-                    <button class="completion-button share-text" id="completion-share-text">Share via Text</button>
-                    <button class="completion-button share-copy" id="completion-share-copy">Copy Link</button>
+                <div class="result-word">
+                    <span class="letter-circle green">C</span>
+                    <span class="letter-circle green">O</span>
+                    <span class="letter-circle green">M</span>
+                    <span class="letter-circle green">P</span>
+                    <span class="letter-circle green">L</span>
+                    <span class="letter-circle green">E</span>
+                    <span class="letter-circle green">T</span>
+                    <span class="letter-circle green">E</span>
                 </div>
                 
-                <button class="completion-button play-again" onclick="location.reload()">Play Again Tomorrow</button>
+                <p class="result-theme" id="completion-theme">Parliamentary Democracy</p>
+                <div class="completion-time" id="completion-time">2:34</div>
+                
+                <div class="completion-buttons">
+                    <button class="completion-button share" id="completion-share-result">Share Result</button>
+                    <button class="completion-button copy" id="completion-copy-link">Copy Link</button>
+                </div>
+                
+                <button class="completion-button tomorrow" onclick="location.reload()">Tomorrow</button>
             </div>
             
             <div class="signup-card card">
-                <h3 class="signup-title">Track Your Progress</h3>
-                <p class="signup-text">Create an account to save your stats and get daily puzzle reminders!</p>
+                <h3 class="signup-title">Save Progress</h3>
+                <p class="signup-text">Track your stats and get daily reminders</p>
                 <div class="signup-buttons">
-                    <button class="signup-button primary">Create Account</button>
-                    <button class="signup-button secondary">Maybe Later</button>
+                    <button class="signup-button primary">Sign Up</button>
+                    <button class="signup-button secondary">Skip</button>
                 </div>
             </div>
         </div>
@@ -1519,20 +1618,31 @@
         
         <div class="failure-content">
             <div class="failure-card card">
-                <h2 class="failure-title">💔 Game Over</h2>
-                <p class="failure-subtitle" id="failure-subtitle">Today's LADDER</p>
-                <div class="failure-message">You ran out of tries! The correct word is revealed above.</div>
-                <p class="failure-encourage">Better luck tomorrow! 🪜</p>
+                <div class="result-word">
+                    <span class="letter-circle red">F</span>
+                    <span class="letter-circle red">A</span>
+                    <span class="letter-circle red">I</span>
+                    <span class="letter-circle red">L</span>
+                    <span class="letter-circle red">U</span>
+                    <span class="letter-circle red">R</span>
+                    <span class="letter-circle red">E</span>
+                </div>
                 
-                <button class="failure-button play-again" onclick="location.reload()">Try Again Tomorrow</button>
+                <p class="result-theme" id="failure-theme">Theme: Parliamentary Democracy</p>
+                <div class="failure-time" id="failure-time">2:34</div>
+                
+                <div class="failure-buttons">
+                    <button class="failure-button share" id="failure-share">Share</button>
+                    <button class="failure-button tomorrow" onclick="location.reload()">Tomorrow</button>
+                </div>
             </div>
             
             <div class="signup-card card">
-                <h3 class="signup-title">Track Your Progress</h3>
-                <p class="signup-text">Create an account to save your stats and get daily puzzle reminders!</p>
+                <h3 class="signup-title">Save Progress</h3>
+                <p class="signup-text">Track your stats and get daily reminders</p>
                 <div class="signup-buttons">
-                    <button class="signup-button primary">Create Account</button>
-                    <button class="signup-button secondary">Maybe Later</button>
+                    <button class="signup-button primary">Sign Up</button>
+                    <button class="signup-button secondary">Skip</button>
                 </div>
             </div>
         </div>
@@ -2487,25 +2597,25 @@
                         });
                         break;
                     case 'loading':
-                        // Gentle ascending loading sound with soft filtering
-                        [200, 250, 300, 350, 400].forEach((freq, i) => {
+                        // Gentle ascending loading sound with soft filtering - 6 chimes to match 6 rungs
+                        [200, 250, 300, 350, 400, 450].forEach((freq, i) => {
                             const osc = ctx.createOscillator();
                             const gain = ctx.createGain();
                             const filter = ctx.createBiquadFilter();
                             
                             filter.type = 'lowpass';
-                            filter.frequency.setValueAtTime(1000, ctx.currentTime + i * 0.15);
-                            filter.Q.setValueAtTime(0.3, ctx.currentTime + i * 0.15);
+                            filter.frequency.setValueAtTime(1000, ctx.currentTime + i * 0.2); // 200ms to match rung timing
+                            filter.Q.setValueAtTime(0.3, ctx.currentTime + i * 0.2);
                             
                             osc.type = 'triangle'; // Softer than sine
                             osc.connect(filter);
                             filter.connect(gain);
                             gain.connect(ctx.destination);
-                            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15);
-                            gain.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.15);
-                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.4);
-                            osc.start(ctx.currentTime + i * 0.15);
-                            osc.stop(ctx.currentTime + i * 0.15 + 0.4);
+                            osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.2);
+                            gain.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.2);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.2 + 0.5); // Longer sustain
+                            osc.start(ctx.currentTime + i * 0.2);
+                            osc.stop(ctx.currentTime + i * 0.2 + 0.5);
                         });
                         break;
                 }
@@ -2701,6 +2811,10 @@
                 const mobileRung = document.getElementById(`mobile-rung-${this.currentRungIndex}`);
                 if (!currentRung) return;
                 
+                // Remove active class immediately to stop orange border/shadow
+                currentRung.classList.remove('active');
+                if (mobileRung) mobileRung.classList.remove('active');
+                
                 const wordData = this.currentPuzzle.words[this.currentRungIndex];
                 const desktopBoxes = Array.from(currentRung.querySelectorAll('.letter-box'));
                 const mobileBoxes = mobileRung ? Array.from(mobileRung.querySelectorAll('.letter-box')) : [];
@@ -2714,8 +2828,14 @@
                         
                         // Reveal the letter and override any existing styling
                         letterBox.textContent = correctLetter;
-                        letterBox.classList.remove('filled', 'typed-through', 'finish-placeholder'); // Remove hint styling
+                        letterBox.classList.remove('filled', 'typed-through', 'finish-placeholder', 'current', 'selected', 'interactive', 'user-typed'); // Remove ALL styling classes
                         letterBox.classList.add('failure-cascade');
+                        
+                        // Force remove any orange styling immediately
+                        letterBox.style.borderColor = '#d3d6da';
+                        letterBox.style.borderWidth = '2px';
+                        letterBox.style.boxShadow = 'none';
+                        letterBox.style.animation = 'failureCascade 0.5s ease-out';
                         
                         // Apply permanent red styling after animation
                         setTimeout(() => {
@@ -2830,10 +2950,13 @@
                 const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                 
                 if (won) {
-                    // Show completion page instead of modal
+                    // Show completion page with smooth transition
                     this.showCompletionPage(timeString);
                 } else {
-                    this.showFailurePage();
+                    // Delay failure screen so user can see the revealed word
+                                    setTimeout(() => {
+                    this.showFailurePage(timeString);
+                }, 1000); // 1 second delay to see solution
                 }
                 
                 // Game ended - no buttons to disable
@@ -2844,63 +2967,111 @@
                 const kb = document.getElementById('mobile-keyboard');
                 if (kb) kb.classList.add('hide');
                 
-                // Hide game page and show completion page
-                document.getElementById('game-page').style.display = 'none';
+                const gamePage = document.getElementById('game-page');
+                const gameContent = document.getElementById('game-content');
                 const completionPage = document.getElementById('completion-page');
-                completionPage.style.display = 'flex';
                 
-                // Update completion page content - copy date from main game
-                document.getElementById('completion-time').textContent = timeString;
-                document.getElementById('completion-subtitle').textContent = `You completed "${this.currentPuzzle.theme}" puzzle`;
-                document.getElementById('completion-date-display').textContent = document.getElementById('date-display').textContent;
+                // Stage 1: Fade out game content (keep header visible)
+                gameContent.classList.add('fade-out');
                 
-                // No animation - instant display
-                
-                // Set up signup button functionality
-                this.setupSignupButtons();
-                
-                // Set up share functionality
-                const shareText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\n${window.location.origin}`;
-                
-                document.getElementById('completion-share-text').onclick = () => {
-                    if (navigator.share) {
-                        navigator.share({ text: shareText });
-                    } else {
-                        const smsLink = `sms:?body=${encodeURIComponent(shareText)}`;
-                        window.open(smsLink);
-                    }
-                };
-                
-                document.getElementById('completion-share-copy').onclick = () => {
-                    navigator.clipboard.writeText(shareText).then(() => {
-                        const button = document.getElementById('completion-share-copy');
-                        const originalText = button.textContent;
-                        button.textContent = 'Copied!';
-                        setTimeout(() => {
-                            button.textContent = originalText;
-                        }, 2000);
-                    });
-                };
+                // Stage 2: Show completion page after game fades out
+                setTimeout(() => {
+                    gamePage.style.display = 'none';
+                    completionPage.style.display = 'flex';
+                    
+                    // Update completion page content - copy date from main game
+                    document.getElementById('completion-time').textContent = timeString;
+                    document.getElementById('completion-theme').textContent = `Theme: ${this.currentPuzzle.theme}`;
+                    document.getElementById('completion-date-display').textContent = document.getElementById('date-display').textContent;
+                    
+                    // Set up signup button functionality
+                    this.setupSignupButtons();
+                    
+                    // Set up completion screen sharing
+                    const resultText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\n"${this.currentPuzzle.theme}" puzzle completed!`;
+                    const gameUrl = window.location.origin;
+                    
+                    document.getElementById('completion-share-result').onclick = () => {
+                        if (navigator.share) {
+                            navigator.share({ 
+                                title: 'LADDER - Daily Word Puzzle',
+                                text: resultText,
+                                url: gameUrl
+                            });
+                        } else {
+                            // Fallback: copy result to clipboard
+                            navigator.clipboard.writeText(resultText + '\n\n' + gameUrl).then(() => {
+                                const button = document.getElementById('completion-share-result');
+                                const originalText = button.textContent;
+                                button.textContent = 'Copied!';
+                                setTimeout(() => {
+                                    button.textContent = originalText;
+                                }, 2000);
+                            });
+                        }
+                    };
+                    
+                    document.getElementById('completion-copy-link').onclick = () => {
+                        navigator.clipboard.writeText(gameUrl).then(() => {
+                            const button = document.getElementById('completion-copy-link');
+                            const originalText = button.textContent;
+                            button.textContent = 'Copied!';
+                            setTimeout(() => {
+                                button.textContent = originalText;
+                            }, 2000);
+                        });
+                    };
+                }, 200); // Wait for fade out to complete
             }
             
-            showFailurePage() {
+            showFailurePage(timeString) {
                 // Hide mobile keyboard if showing
                 const kb = document.getElementById('mobile-keyboard');
                 if (kb) kb.classList.add('hide');
                 
-                // Hide game page and show failure page
-                document.getElementById('game-page').style.display = 'none';
+                const gamePage = document.getElementById('game-page');
+                const gameContent = document.getElementById('game-content');
                 const failurePage = document.getElementById('failure-page');
-                failurePage.style.display = 'flex';
                 
-                // Update failure page content - copy date from main game
-                document.getElementById('failure-subtitle').textContent = `You couldn't complete "${this.currentPuzzle.theme}" puzzle`;
-                document.getElementById('failure-date-display').textContent = document.getElementById('date-display').textContent;
+                // Stage 1: Fade out game content (keep header visible)
+                gameContent.classList.add('fade-out');
                 
-                // No animation - instant display
-                
-                // Set up signup button functionality
-                this.setupSignupButtons();
+                // Stage 2: Show failure page after game fades out
+                setTimeout(() => {
+                    gamePage.style.display = 'none';
+                    failurePage.style.display = 'flex';
+                    
+                    // Update failure page content - copy date from main game
+                    document.getElementById('failure-time').textContent = timeString;
+                    document.getElementById('failure-theme').textContent = `Theme: ${this.currentPuzzle.theme}`;
+                    document.getElementById('failure-date-display').textContent = document.getElementById('date-display').textContent;
+                    
+                    // Set up signup button functionality
+                    this.setupSignupButtons();
+                    
+                    // Set up failure screen sharing
+                    const gameUrl = window.location.origin;
+                    const failureText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\nTried "${this.currentPuzzle.theme}" puzzle`;
+                    document.getElementById('failure-share').onclick = () => {
+                        if (navigator.share) {
+                            navigator.share({ 
+                                title: 'LADDER - Daily Word Puzzle',
+                                text: failureText,
+                                url: gameUrl
+                            });
+                        } else {
+                            // Fallback: copy result to clipboard
+                            navigator.clipboard.writeText(failureText + '\n\n' + gameUrl).then(() => {
+                                const button = document.getElementById('failure-share');
+                                const originalText = button.textContent;
+                                button.textContent = 'Copied!';
+                                setTimeout(() => {
+                                    button.textContent = originalText;
+                                }, 2000);
+                            });
+                        }
+                    };
+                }, 200); // Wait for fade out to complete
             }
             
             setupSignupButtons() {
