@@ -3305,19 +3305,33 @@
                 }, 200); // Wait for fade out to complete
                 
                 // Set up completion screen sharing (outside setTimeout to prevent header animation)
-                const resultText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\n"${this.currentPuzzle.theme}" puzzle completed!`;
+                const currentDate = new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                const resultText = `🏆 LADDER COMPLETED! 🏆
+
+📅 ${currentDate}
+🎯 Puzzle #${this.puzzleNumber}: "${this.currentPuzzle.theme}"
+⏱️ Time: ${timeString}
+
+Can you beat my time? Play daily at:`;
+                
                 const gameUrl = window.location.origin;
                 
                 document.getElementById('completion-share-result').onclick = () => {
                     if (navigator.share) {
                         navigator.share({ 
-                            title: 'LADDER - Daily Word Puzzle',
+                            title: `🏆 LADDER Puzzle #${this.puzzleNumber} Completed!`,
                             text: resultText,
                             url: gameUrl
                         });
                     } else {
                         // Fallback: copy result to clipboard
-                        navigator.clipboard.writeText(resultText + '\n\n' + gameUrl).then(() => {
+                        navigator.clipboard.writeText(resultText + '\n' + gameUrl).then(() => {
                             const button = document.getElementById('completion-share-result');
                             const originalText = button.textContent;
                             button.textContent = 'Copied!';
@@ -3366,18 +3380,33 @@
                     this.setupSignupButtons();
                     
                     // Set up failure screen sharing
+                    const currentDate = new Date().toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                    
                     const gameUrl = window.location.origin;
-                    const failureText = `LADDER #${this.puzzleNumber}: ${timeString} ⏱️\nTried "${this.currentPuzzle.theme}" puzzle`;
+                    const failureText = `🎯 LADDER ATTEMPT 🎯
+
+📅 ${currentDate}
+🧩 Puzzle #${this.puzzleNumber}: "${this.currentPuzzle.theme}"
+⏱️ Time: ${timeString}
+🎲 Couldn't crack this one... can you?
+
+Play daily at:`;
+
                     document.getElementById('failure-share').onclick = () => {
                         if (navigator.share) {
                             navigator.share({ 
-                                title: 'LADDER - Daily Word Puzzle',
+                                title: `🎯 LADDER Puzzle #${this.puzzleNumber} Challenge`,
                                 text: failureText,
                                 url: gameUrl
                             });
                         } else {
                             // Fallback: copy result to clipboard
-                            navigator.clipboard.writeText(failureText + '\n\n' + gameUrl).then(() => {
+                            navigator.clipboard.writeText(failureText + '\n' + gameUrl).then(() => {
                                 const button = document.getElementById('failure-share');
                                 const originalText = button.textContent;
                                 button.textContent = 'Copied!';
