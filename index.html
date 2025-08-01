@@ -1175,14 +1175,17 @@
             background: #6aaa64 !important;
             color: white !important;
             border-color: #6aaa64 !important;
-            width: 100%;
-            margin-top: 8px;
         }
         
         .completion-button.tomorrow:hover,
         .failure-button.tomorrow:hover {
             background: #5d9556 !important;
             border-color: #5d9556 !important;
+        }
+        
+        .completion-buttons .completion-button.tomorrow {
+            margin-top: 0 !important;
+            width: auto !important;
         }
         
         .failure-buttons {
@@ -1222,6 +1225,8 @@
             background: #6aaa64 !important;
             color: white !important;
             border-color: #6aaa64 !important;
+            margin-top: 0 !important; /* remove vertical offset */
+            width: auto !important;   /* let flex handle width */
         }
         
         .failure-buttons .failure-button.tomorrow:hover {
