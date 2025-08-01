@@ -1865,18 +1865,20 @@
 
     <script>
         function startGame() {
-            document.getElementById('landing-page').style.display = 'none';
+            const landingPage = document.getElementById('landing-page');
             const gamePage = document.getElementById('game-page');
+            const gameContent = document.getElementById('game-content');
+            
+            // Hide landing page and show game page immediately (header visible)
+            landingPage.style.display = 'none';
             gamePage.style.display = 'flex';
             
-            // Fade in only the game content, not the header
-            const gameContent = document.getElementById('game-content');
-            gameContent.style.opacity = '0';
-            gameContent.style.transition = 'opacity 0.4s ease-in';
+            // Start with game content faded out, then fade in (same as failure screen approach)
+            gameContent.classList.add('fade-out');
             
-            // Fade in the game content
+            // Remove fade-out class to fade in content (header stays static)
             setTimeout(() => {
-                gameContent.style.opacity = '1';
+                gameContent.classList.remove('fade-out');
             }, 50);
             
             game = new LadderGame();
