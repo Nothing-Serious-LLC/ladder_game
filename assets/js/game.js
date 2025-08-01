@@ -122,7 +122,7 @@ export class LadderGame {
             
             const hint = document.createElement('div');
             hint.className = 'word-hint';
-            hint.textContent = wordData.hint;
+            hint.textContent = wordData.clue || wordData.hint;
             
             rung.appendChild(wordDisplay);
             rung.appendChild(hint);
@@ -315,8 +315,8 @@ export class LadderGame {
         const pattern = new Array(word.length).fill(false);
         const seed = wordIndex * 7 + word.length * 3;
         
-        let lettersToShow = 1;
-        if (word.length >= 6) lettersToShow = 2;
+                // Reveal more letters to reduce difficulty
+        let lettersToShow = Math.max(2, Math.ceil(word.length * 0.35));
         
         const positions = Array.from({length: word.length}, (_, i) => i);
         
