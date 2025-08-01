@@ -122,7 +122,14 @@ export class LadderGame {
             
             const hint = document.createElement('div');
             hint.className = 'word-hint';
-            hint.textContent = wordData.clue || wordData.hint;
+            // Determine clue vs hint based on weekday difficulty
+            const weekday = new Date().getDay(); // 0=Sun
+            const level = weekday === 0 ? 7 : weekday; // Map Sun→7
+            if (level <= 3) {
+                hint.textContent = wordData.clue || wordData.hint;
+            } else {
+                hint.textContent = wordData.hint || wordData.clue;
+            }
             
             rung.appendChild(wordDisplay);
             rung.appendChild(hint);
