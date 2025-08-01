@@ -238,18 +238,19 @@
         /* Mobile instruction adjustments */
         @media (max-width: 480px) {
             .instruction-number {
-                width: 48px;
-                height: 64px;
-                font-size: 1.2rem;
+                width: 56px;
+                height: 72px;
+                font-size: 1.3rem;
+                font-weight: 800;
             }
             
             .instruction-text {
-                font-size: 0.85rem;
-                line-height: 1.25;
+                font-size: 0.8rem;
+                line-height: 1.2;
             }
             
             .instruction-item {
-                gap: 16px;
+                gap: 18px;
                 align-items: flex-start;
             }
         }
@@ -2334,6 +2335,9 @@
                                 this.vibrate(50); // Short vibration for typing
                             }
                             
+                            // Debug haptic feedback
+                            console.log('Mobile key pressed:', key, 'Vibrate available:', 'vibrate' in navigator);
+                            
                             // Add visual feedback
                             e.target.style.transform = 'scale(0.95)';
                             setTimeout(() => {
@@ -2381,6 +2385,8 @@
                     this.addLetterToWord(key);
                     this.playSound('type');
                     this.vibrate(50); // Short vibration for typing
+                    // Debug haptic feedback
+                    console.log('Desktop key pressed:', key, 'Vibrate available:', 'vibrate' in navigator);
                     return;
                 }
                 
@@ -2815,7 +2821,7 @@
                             letterBox.classList.remove('cascade-fill');
                             // Keep the permanent green styling - don't remove it
                         }, 400);
-                    }, index * 60); // 60ms stagger between each letter
+                    }, index * 40); // 40ms stagger between each letter (faster for mobile)
                 });
             }
             
