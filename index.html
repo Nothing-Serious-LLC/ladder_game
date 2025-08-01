@@ -3336,25 +3336,26 @@
                     day: 'numeric' 
                 });
                 
-                const resultText = `**LADDER**
+                const resultText = `LADDER
 
 Puzzle #${this.puzzleNumber} • ${currentDate}
 
 COMPLETED
-**${timeString}**`;
+**${timeString}**
+
+https://ladder.game/`;
                 
                 const gameUrl = 'https://ladder.game/';
                 
                 document.getElementById('completion-share-result').onclick = () => {
                     if (navigator.share) {
                         navigator.share({ 
-                            title: 'LADDER - Daily Word Puzzle',
-                            text: resultText,
-                            url: gameUrl
+                            title: 'LADDER',
+                            text: resultText
                         });
                     } else {
                         // Fallback: copy result to clipboard
-                        navigator.clipboard.writeText(resultText + '\n\n' + gameUrl).then(() => {
+                        navigator.clipboard.writeText(resultText).then(() => {
                             const button = document.getElementById('completion-share-result');
                             const originalText = button.textContent;
                             button.textContent = 'Copied!';
@@ -3410,23 +3411,24 @@ COMPLETED
                     });
                     
                     const gameUrl = 'https://ladder.game/';
-                    const failureText = `**LADDER**
+                    const failureText = `LADDER
 
 Puzzle #${this.puzzleNumber} • ${currentDate}
 
 FAILED
-**${timeString}**`;
+**${timeString}**
+
+https://ladder.game/`;
 
                     document.getElementById('failure-share').onclick = () => {
                         if (navigator.share) {
                             navigator.share({ 
-                                title: 'LADDER - Daily Word Puzzle',
-                                text: failureText,
-                                url: gameUrl
+                                title: 'LADDER',
+                                text: failureText
                             });
                         } else {
                             // Fallback: copy result to clipboard
-                            navigator.clipboard.writeText(failureText + '\n\n' + gameUrl).then(() => {
+                            navigator.clipboard.writeText(failureText).then(() => {
                                 const button = document.getElementById('failure-share');
                                 const originalText = button.textContent;
                                 button.textContent = 'Copied!';
