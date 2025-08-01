@@ -3331,11 +3331,13 @@
                     day: 'numeric' 
                 });
                 
-                const resultText = `LADDER
+                const resultText = `**LADDER**
+
 Puzzle #${this.puzzleNumber} • ${currentDate}
-${timeString}`;
+
+**${timeString}**`;
                 
-                const gameUrl = window.location.origin;
+                const gameUrl = 'https://ladder.game/';
                 
                 document.getElementById('completion-share-result').onclick = () => {
                     if (navigator.share) {
@@ -3401,10 +3403,12 @@ ${timeString}`;
                         day: 'numeric' 
                     });
                     
-                    const gameUrl = window.location.origin;
-                    const failureText = `LADDER
+                    const gameUrl = 'https://ladder.game/';
+                    const failureText = `**LADDER**
+
 Puzzle #${this.puzzleNumber} • ${currentDate}
-${timeString}`;
+
+**${timeString}**`;
 
                     document.getElementById('failure-share').onclick = () => {
                         if (navigator.share) {
