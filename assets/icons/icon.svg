@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <!-- Background -->
-  <rect width="512" height="512" rx="160" fill="#6aaa64"/>
+  <rect width="512" height="512" rx="160" fill="white"/>
   
   <!-- Ladder -->
-  <g fill="#2d5a2b" stroke="none">
+  <g fill="#333333" stroke="none">
     <!-- Left Side Rail -->
     <rect x="160" y="120" width="32" height="272" rx="16"/>
     
@@ -11,9 +11,9 @@
     <rect x="320" y="120" width="32" height="272" rx="16"/>
     
     <!-- Rungs -->
-    <rect x="192" y="160" width="128" height="20" rx="10" fill="white"/>
-    <rect x="192" y="220" width="128" height="20" rx="10" fill="white"/>
-    <rect x="192" y="280" width="128" height="20" rx="10" fill="white"/>
-    <rect x="192" y="340" width="128" height="20" rx="10" fill="white"/>
+    <rect x="192" y="160" width="128" height="20" rx="10" fill="#666666"/>
+    <rect x="192" y="220" width="128" height="20" rx="10" fill="#666666"/>
+    <rect x="192" y="280" width="128" height="20" rx="10" fill="#666666"/>
+    <rect x="192" y="340" width="128" height="20" rx="10" fill="#666666"/>
   </g>
 </svg>
