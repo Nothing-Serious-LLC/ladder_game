@@ -1,0 +1,14 @@
+{
+  "name": "ladder-database-scripts",
+  "version": "1.0.0",
+  "description": "Database maintenance scripts for LADDER game",
+  "type": "module",
+  "scripts": {
+    "update-reveals": "node update-database-letter-reveals.js",
+    "test-pattern": "node test-letter-pattern.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "dotenv": "^16.4.5"
+  }
+}

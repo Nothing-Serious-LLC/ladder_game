@@ -79,7 +79,7 @@ export async function fetchTodaysPuzzle() {
         
         if (overrideData && !overrideError) {
             console.log('🔧 Using puzzle override:', overrideData.theme, '(', overrideData.notes, ')');
-            // Convert override puzzle to frontend format
+            // Convert override puzzle to frontend format using database patterns
             const puzzleWithReveals = {
                 theme: overrideData.theme,
                 words: overrideData.words.map((wordData, wordIndex) => ({
@@ -110,7 +110,7 @@ export async function fetchTodaysPuzzle() {
         
         if (data) {
             console.log('Using daily puzzle:', data.theme);
-            // Convert database format to frontend format
+            // Convert database format to frontend format using database patterns
             const puzzleWithReveals = {
                 theme: data.theme,
                 words: data.words.map((wordData, wordIndex) => ({
@@ -162,26 +162,66 @@ function seededRandom(seed) {
 function getSeededRevealPattern(word, seed) {
     const pattern = new Array(word.length).fill(false);
     
-    // Determine number of letters to reveal based on word length
+    // Calculate difficulty level based on day of week (Monday=1, Sunday=7)
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const est = new Date(utc + (-5 * 3600000));
+    const dayOfWeek = est.getDay(); // 0=Sunday, 1=Monday, etc.
+    const difficultyLevel = dayOfWeek === 0 ? 7 : dayOfWeek; // Convert Sunday from 0 to 7
+    
+    // Determine number of letters to reveal based on word length and difficulty
     let lettersToShow = 1;
     if (word.length >= 6) lettersToShow = 2;
     if (word.length >= 9) lettersToShow = 3;
     
-    // Create all possible positions
-    const availablePositions = Array.from({length: word.length}, (_, i) => i);
+    // Adjust letter count based on difficulty (higher difficulty = fewer letters)
+    if (difficultyLevel >= 5) {
+        lettersToShow = Math.max(1, lettersToShow - 1); // Reduce by 1 for hard days
+    }
     
-    // Better seeded shuffle using multiple seed variations
+    // First letter frequency based on difficulty level (from theme strategy)
+    const firstLetterFrequencies = {
+        1: 0.80, 2: 0.80, // Mon-Tue: 80%
+        3: 0.60,          // Wed: 60%
+        4: 0.40,          // Thu: 40%
+        5: 0.30,          // Fri: 30%
+        6: 0.20,          // Sat: 20%
+        7: 0.10           // Sun: 10%
+    };
+    
+    const firstLetterChance = firstLetterFrequencies[difficultyLevel];
+    
+    // Use seed to determine if first letter should be shown
+    const firstLetterSeed = Math.abs(Math.sin(seed * 7) * 10000) % 100;
+    const showFirstLetter = (firstLetterSeed / 100) < firstLetterChance;
+    
+    const selectedPositions = [];
+    
+    // If showing first letter, add it first
+    if (showFirstLetter) {
+        selectedPositions.push(0);
+        lettersToShow--; // Reduce remaining letters to show
+    }
+    
+    // Create remaining positions (excluding first if already used)
+    const availablePositions = [];
+    for (let i = showFirstLetter ? 1 : 0; i < word.length; i++) {
+        availablePositions.push(i);
+    }
+    
+    // Seeded shuffle of remaining positions
     for (let i = availablePositions.length - 1; i > 0; i--) {
         const seedVariation = seed + i * 7 + word.length * 3;
         const j = Math.abs(Math.sin(seedVariation) * 10000) % (i + 1);
         [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
     }
     
-    // Select positions with improved spacing logic
-    const selectedPositions = [];
-    const minSpacing = word.length <= 6 ? 1 : 2; // Allow closer spacing for short words
+    // Select additional positions ensuring no two adjacent letters
+    const minSpacing = 2; // Maintain 2-space minimum
     
     for (const pos of availablePositions) {
+        if (lettersToShow <= 0) break;
+        
         // Check spacing requirement
         const isValidPosition = selectedPositions.every(selectedPos => 
             Math.abs(pos - selectedPos) >= minSpacing
@@ -189,25 +229,14 @@ function getSeededRevealPattern(word, seed) {
         
         if (isValidPosition) {
             selectedPositions.push(pos);
-            
-            // Stop once we have enough letters
-            if (selectedPositions.length >= lettersToShow) {
-                break;
-            }
+            lettersToShow--;
         }
     }
     
-    // Improved fallback - use distributed positions instead of sequential
-    if (selectedPositions.length < lettersToShow) {
-        selectedPositions.length = 0;
-        const stepSize = Math.max(2, Math.floor(word.length / (lettersToShow + 1)));
-        
-        for (let i = 0; i < lettersToShow; i++) {
-            const pos = Math.min(i * stepSize + 1, word.length - 1);
-            if (!selectedPositions.includes(pos)) {
-                selectedPositions.push(pos);
-            }
-        }
+    // Fallback if we couldn't find enough spaced positions
+    if (lettersToShow > 0 && selectedPositions.length === 0) {
+        // Emergency fallback - just use position 0 or 1
+        selectedPositions.push(word.length <= 2 ? 0 : 1);
     }
     
     // Mark selected positions
