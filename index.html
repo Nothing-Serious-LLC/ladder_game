@@ -197,12 +197,14 @@
 
 
 
-        .instructions h3 {
-            font-size: 1.8rem;
-            color: #6aaa64;
-            margin-bottom: 32px;
-            text-align: center;
-            font-weight: 700;
+        /* Removed instructions h3 styling - no longer needed */
+        
+        .landing-content {
+            transition: opacity 0.4s ease-out;
+        }
+        
+        .landing-content.fade-out {
+            opacity: 0;
         }
 
         .instruction-item {
@@ -267,9 +269,9 @@
             animation: climbUp 0.5s ease-out forwards;
         }
 
-        .instruction-item:nth-child(2) { animation-delay: 0.0s; }
-        .instruction-item:nth-child(3) { animation-delay: 0.1s; }
-        .instruction-item:nth-child(4) { animation-delay: 0.2s; }
+        .instruction-item:nth-child(1) { animation-delay: 0.0s; }
+        .instruction-item:nth-child(2) { animation-delay: 0.1s; }
+        .instruction-item:nth-child(3) { animation-delay: 0.2s; }
 
         .play-button {
             opacity: 0;
@@ -278,7 +280,7 @@
             color: #6aaa64;
             border: 2px solid #d3d6da;
             border-radius: 16px;
-            padding: 28px 56px;
+            padding: 20px 72px;
             font-size: 1.5rem;
             font-weight: 800;
             cursor: pointer;
@@ -1443,34 +1445,35 @@
             <p class="puzzle-info" id="landing-puzzle-info">Puzzle # • Loading...</p>
         </div>
 
-        <div class="instructions">
-            <h3>Instructions</h3>
-            <div class="instruction-item">
-                <div class="instruction-number">1</div>
-                <div class="instruction-content">
-                    <div class="instruction-header">Type</div>
-                    <div class="instruction-text">Fill in each word using the revealed letters.</div>
+        <div class="landing-content" id="landing-content">
+            <div class="instructions">
+                <div class="instruction-item">
+                    <div class="instruction-number">1</div>
+                    <div class="instruction-content">
+                        <div class="instruction-header">Type</div>
+                        <div class="instruction-text">Fill in each word using the revealed letters.</div>
+                    </div>
+                </div>
+
+                <div class="instruction-item">
+                    <div class="instruction-number">2</div>
+                    <div class="instruction-content">
+                        <div class="instruction-header">Connect</div>
+                        <div class="instruction-text">Each word connects to the one before it.</div>
+                    </div>
+                </div>
+
+                <div class="instruction-item">
+                    <div class="instruction-number">3</div>
+                    <div class="instruction-content">
+                        <div class="instruction-header">Climb</div>
+                        <div class="instruction-text">Puzzles get harder throughout the week.</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="instruction-item">
-                <div class="instruction-number">2</div>
-                <div class="instruction-content">
-                    <div class="instruction-header">Connect</div>
-                    <div class="instruction-text">Each word connects to the one before it.</div>
-                </div>
-            </div>
-
-            <div class="instruction-item">
-                <div class="instruction-number">3</div>
-                <div class="instruction-content">
-                    <div class="instruction-header">Climb</div>
-                    <div class="instruction-text">Puzzles get harder throughout the week.</div>
-                </div>
-            </div>
+            <button class="play-button" onclick="animateIntroLadder()">Play</button>
         </div>
-
-        <button class="play-button" onclick="animateIntroLadder()">Play</button>
     </div>
 
     <!-- Game Page -->
@@ -1877,10 +1880,9 @@
             
             // Start the game after button turns green (increased delay + fade transition)
             setTimeout(() => {
-                // Add fade out animation to landing page
-                const landingPage = document.getElementById('landing-page');
-                landingPage.style.transition = 'opacity 0.4s ease-out';
-                landingPage.style.opacity = '0';
+                // Add fade out animation to landing content only (not header)
+                const landingContent = document.getElementById('landing-content');
+                landingContent.classList.add('fade-out');
                 
                 // Start game after fade completes
                 setTimeout(() => {
