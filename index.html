@@ -1875,6 +1875,7 @@
             let headerClone = null;
             if (landingHeader) {
                 headerClone = landingHeader.cloneNode(true);
+                console.log('[DEBUG] Cloning landing header to keep static');
                 headerClone.style.position = 'fixed';
                 headerClone.style.top = '0';
                 headerClone.style.left = '0';
@@ -1884,16 +1885,19 @@
             }
             
             // Hide landing page (content + original header) and show game page immediately
+            console.log('[DEBUG] Hiding landing page, showing game page');
             landingPage.style.display = 'none';
             gamePage.style.display = 'flex';
             
             // Remove header clone after game header is rendered
             setTimeout(() => {
                 if (headerClone) {
-                    document.body.removeChild(headerClone);
+                    console.log('[DEBUG] Removing header clone');
+                document.body.removeChild(headerClone);
                 }
             }, 100);
             
+            console.log('[DEBUG] startGame: adding fade-out to gameContent');
             // Start with game content faded out, then fade in (same as failure screen approach)
             gameContent.classList.add('fade-out');
             
