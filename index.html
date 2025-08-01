@@ -1187,9 +1187,10 @@
         
         .failure-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
             margin-bottom: 0;
+            align-items: center;
         }
         
         .failure-buttons .failure-button {
@@ -1210,6 +1211,22 @@
             align-items: center !important;
             justify-content: center !important;
             box-sizing: border-box !important;
+        }
+        
+        .failure-buttons .failure-button:hover {
+            border-color: #6aaa64 !important;
+            color: #6aaa64 !important;
+        }
+        
+        .failure-buttons .failure-button.tomorrow {
+            background: #6aaa64 !important;
+            color: white !important;
+            border-color: #6aaa64 !important;
+        }
+        
+        .failure-buttons .failure-button.tomorrow:hover {
+            background: #5d9556 !important;
+            border-color: #5d9556 !important;
         }
         
         /* Signup Card Styles */
