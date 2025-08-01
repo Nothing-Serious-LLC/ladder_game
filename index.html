@@ -947,11 +947,12 @@
         
         /* Current position (first letter) takes priority over selected hint styling */
         .letter-box.filled.current {
-            background-color: #787c7e !important; /* Darker grey for better visibility */
+            background-color: #d3d6da !important; /* Keep original grey background */
             border-color: #ff8c42 !important; /* Orange border for current position */
             border-width: 3px !important;
             box-shadow: 0 0 12px rgba(255, 140, 66, 0.4) !important;
             animation: pulse 1.5s infinite !important;
+            color: #787c7e !important; /* Dark grey text for better visibility */
         }
         
         /* Mobile Keyboard Styles - hidden by default, shown on mobile */
@@ -1443,6 +1444,7 @@
             .letter-box.filled.current {
                 border-width: 4px !important; /* Thicker border on mobile */
                 box-shadow: 0 0 16px rgba(255, 140, 66, 0.6) !important; /* Stronger glow */
+                color: #787c7e !important; /* Dark grey text for better visibility on mobile */
             }
             
             /* Hide desktop elements on mobile */
