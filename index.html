@@ -249,9 +249,8 @@
             }
             
             .landing-header {
-                margin-bottom: 40px;
+                margin-bottom: 48px;
             }
-        }
             
             .instruction-text {
                 font-size: 0.8rem;
@@ -981,7 +980,7 @@
         .letter-box.filled.selected {
             background-color: #a8adb3 !important; /* Intermediate grey to show selection */
             border-color: #6aaa64 !important; /* Green border to show selection */
-            color: white !important;
+            color: #1a1a1b !important; /* Dark gray text for better visibility when selected */
         }
         
         /* Current position (first letter) takes priority over selected hint styling */
@@ -998,12 +997,14 @@
             display: none;
             flex-direction: column;
             gap: 6px;
-            padding: 12px 2px 28px 2px; /* Minimal side padding for maximum key width */
+            padding: 12px 3px 28px 3px; /* 3px side padding for maximum width */
             background: #f8f9fa;
             border-top: 1px solid #d3d6da;
             margin-top: auto;
             flex-shrink: 0; /* Prevent keyboard from shrinking */
-            min-height: 180px; /* Increased height for larger keys */
+            min-height: 200px; /* Increased height for dynamic keys */
+            width: calc(100vw - 6px); /* Full viewport width minus 6px total margin */
+            box-sizing: border-box;
         }
         
         /* Mobile elements hidden by default */
@@ -1024,17 +1025,20 @@
             border-radius: 6px;
             color: #1a1a1b;
             font-weight: 600;
-            font-size: 1rem; /* Larger font for bigger keys */
             cursor: pointer;
             transition: all 0.1s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             flex: 1; /* Keys expand to fill available space */
-            min-width: 32px; /* Larger minimum width */
-            height: 52px; /* Taller keys for better touch targets */
             font-family: inherit;
-            max-width: 38px; /* Prevent keys from getting too wide */
+            
+            /* Dynamic sizing based on screen width */
+            --available-keyboard-width: calc(100vw - 12px); /* Account for keyboard padding */
+            --key-width: calc(var(--available-keyboard-width) / 10.5); /* ~10 keys per row average */
+            width: clamp(28px, var(--key-width), 42px);
+            height: clamp(40px, calc(var(--key-width) * 1.3), 60px);
+            font-size: clamp(0.9rem, calc(var(--key-width) * 0.4), 1.3rem);
         }
 
         .keyboard-key:active {
@@ -1087,6 +1091,11 @@
             opacity: 0;
             transform: translateY(40px);
             animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        /* Make failure card slightly wider */
+        .failure-card {
+            max-width: 550px;
         }
         
         .card:nth-child(2) {
@@ -1348,29 +1357,32 @@
             align-items: center;
             max-width: 500px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 160px 20px 40px;
         }
         
         .countdown-card {
-            animation-delay: 0s;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            text-align: center;
         }
         
-        .countdown-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1a1a1b;
-            margin-bottom: 32px;
+        .countdown-subtitle {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #787c7e;
+            margin: 24px 0 0 0;
             text-align: center;
         }
         
         .countdown-timer {
-            font-size: 4rem;
-            font-weight: 700;
-            color: #ff8c42;
-            margin-bottom: 24px;
+            font-size: 3.5rem;
+            font-weight: 600;
+            color: var(--primary-orange);
+            margin-bottom: 0;
             text-align: center;
             letter-spacing: -0.02em;
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         @media (max-width: 480px) {
@@ -1391,9 +1403,10 @@
                 margin-top: 0;
                 min-height: 180px;
                 gap: 10px;
-                bottom: env(safe-area-inset-bottom, 0);
-                left: 0;
-                right: 0;
+                bottom: calc(env(safe-area-inset-bottom, 0) - 10px); /* Move 10px closer to bottom */
+                left: 3px; /* 3px from left edge */
+                right: 3px; /* 3px from right edge */
+                width: calc(100vw - 6px); /* Explicit width calculation */
                 z-index: 9999;
             }
             /* Reduce bottom padding so ladder isn't cut off */
@@ -1456,14 +1469,20 @@
                 padding-bottom: calc(160px + env(safe-area-inset-bottom, 0)); /* Reduced padding to better match keyboard */
             }
             
+            /* 3-Card Viewport System */
+            .mobile-ladder-viewport {
+                height: calc(100vh - 140px - 200px); /* Screen minus header minus keyboard */
+                overflow: hidden;  /* Hide overflow to create window effect */
+                position: relative;
+            }
+            
             .mobile-ladder {
                 display: flex;
-                overflow-x: visible;
                 flex-direction: column;
-                gap: 6px;
+                gap: 8px;
                 margin-bottom: 16px;
-                
-                overflow-y: auto;
+                transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+                transform: translateY(0px); /* Initial position */
             }
             
             /* Prevent clip during loading scale */
@@ -1533,15 +1552,29 @@
                 padding: 24px;
             }
             
-            /* Rung optimization for mobile - smaller, more compact */
+            /* Rung optimization for mobile - dynamic sizing for 12 letters */
             .rung {
-                padding: 12px;
-                border-radius: 6px;
+                padding: 16px;
+                border-radius: 8px;
+                min-height: 120px; /* Increased height for larger letters */
             }
             
             .word-display {
-                gap: 3px;
-                margin-bottom: 6px;
+                gap: 2px;
+                margin-bottom: 8px;
+            }
+            
+            /* Dynamic letter box sizing - fits exactly 12 letters */
+            .letter-box {
+                --available-width: calc(100vw - 38px); /* Screen width minus rung padding */
+                --gap-space: calc(11 * 2px); /* 11 gaps between 12 letters */
+                --letter-space: calc(var(--available-width) - var(--gap-space));
+                --letter-size: calc(var(--letter-space) / 12);
+                
+                width: clamp(24px, var(--letter-size), 36px);
+                height: clamp(24px, var(--letter-size), 36px);
+                font-size: clamp(0.8rem, calc(var(--letter-size) * 0.55), 1.3rem);
+                border-width: 2px;
             }
             
             .word-hint {
@@ -1647,15 +1680,16 @@
             }
             
             .countdown-content {
-                padding: 20px 16px;
+                padding: 60px 16px 20px;
             }
             
             .countdown-timer {
-                font-size: 3rem;
+                font-size: 2.8rem;
             }
             
-            .countdown-title {
-                font-size: 1.5rem;
+            .countdown-subtitle {
+                font-size: 1rem;
+                margin: 20px 0 0 0;
             }
         }
     </style>
@@ -1751,7 +1785,9 @@
         </div>
 
         <div class="mobile-game-area">
-            <div class="mobile-ladder" id="mobile-ladder"></div>
+            <div class="mobile-ladder-viewport">
+                <div class="mobile-ladder" id="mobile-ladder"></div>
+            </div>
             <div class="feedback" id="mobile-feedback"></div>
         </div>
 
@@ -1851,9 +1887,8 @@
                     <span class="letter-circle red">A</span>
                     <span class="letter-circle red">I</span>
                     <span class="letter-circle red">L</span>
-                    <span class="letter-circle red">U</span>
-                    <span class="letter-circle red">R</span>
                     <span class="letter-circle red">E</span>
+                    <span class="letter-circle red">D</span>
                 </div>
                 
                 <p class="result-theme" id="failure-theme">Theme: Parliamentary Democracy</p>
@@ -1884,9 +1919,9 @@
         </header>
         
         <div class="countdown-content">
-            <div class="countdown-card card">
-                <h2 class="countdown-title">Next Puzzle</h2>
+            <div class="countdown-card">
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
+                <p class="countdown-subtitle">Next Puzzle</p>
             </div>
         </div>
     </div>
@@ -2195,8 +2230,30 @@
                 const timeUntilNext = next3AM.getTime() - easternTime.getTime();
                 
                 if (timeUntilNext <= 0) {
-                    // Time's up! Refresh to new puzzle
-                    location.reload();
+                    // Time's up! Fade to intro page with new puzzle
+                    const countdownPage = document.getElementById('countdown-page');
+                    const landingPage = document.getElementById('landing-page');
+                    
+                    // Fade out countdown page
+                    countdownPage.style.transition = 'opacity 0.5s ease-out';
+                    countdownPage.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        // Hide countdown and show landing page
+                        countdownPage.style.display = 'none';
+                        landingPage.style.display = 'flex';
+                        landingPage.style.opacity = '0';
+                        landingPage.style.transition = 'opacity 0.5s ease-in';
+                        
+                        // Fade in landing page
+                        setTimeout(() => {
+                            landingPage.style.opacity = '1';
+                            // Reload after transition to get new puzzle
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500);
+                        }, 50);
+                    }, 500);
                     return;
                 }
                 
@@ -3129,6 +3186,9 @@
                 // Reset typing state for next word
                 this.typedWord = '';
                 
+                // Animate mobile descent before re-rendering
+                this.animateMobileDescent();
+                
                 this.renderLadder();
                 this.updateTimerColors(); // Immediately restore current colors after rebuild
                 
@@ -3704,6 +3764,21 @@ https://ladder.game/`;
                 }
                 
                 return pattern;
+            }
+
+            animateMobileDescent() {
+                // Only animate on mobile
+                if (window.innerWidth > 480) return;
+                
+                const mobileLadder = document.getElementById('mobile-ladder');
+                if (!mobileLadder) return;
+                
+                // Calculate descent position (each rung moves the ladder up)
+                const rungHeight = 140; // ~120px min-height + 8px gap + padding
+                const descentPosition = (this.currentRungIndex - 1) * rungHeight;
+                
+                // Animate descent (ladder moves up, creating downward climbing feel)
+                mobileLadder.style.transform = `translateY(-${descentPosition}px)`;
             }
         }
         
