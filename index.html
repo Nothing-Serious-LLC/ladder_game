@@ -2366,6 +2366,49 @@
             }, 50);
             
             game = new LadderGame();
+            
+            // Track puzzle start for authenticated users
+            trackPuzzleStartFromIndex();
+        }
+        
+        async function trackPuzzleStartFromIndex() {
+            try {
+                // Check if user is authenticated
+                if (!window.supabaseClient) return;
+                
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (!user) return;
+                
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Check if record already exists
+                const { data: existing } = await window.supabaseClient
+                    .from('puzzle_completions')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .eq('puzzle_date', today)
+                    .single();
+                
+                if (!existing) {
+                    // Get puzzle number for today
+                    const puzzleInfo = getTodaysPuzzleInfo();
+                    
+                    // Create a started record (not completed yet)
+                    await window.supabaseClient
+                        .from('puzzle_completions')
+                        .insert({
+                            user_id: user.id,
+                            puzzle_date: today,
+                            puzzle_name: `Puzzle #${puzzleInfo.puzzleNumber}`,
+                            completed: false,
+                            created_at: new Date().toISOString()
+                        });
+                    
+                    console.log('Puzzle start tracked from index');
+                }
+            } catch (error) {
+                console.error('Error tracking puzzle start from index:', error);
+            }
         }
 
         function getTodaysPuzzleInfo() {
@@ -3982,6 +4025,9 @@
                     
                     // Set up signup button functionality
                     this.setupSignupButtons();
+                    
+                    // Track completion for authenticated users
+                    this.trackCompletion(timeString);
                 }, 200); // Wait for fade out to complete
                 
                 // Set up completion screen sharing (outside setTimeout to prevent header animation)
@@ -4114,6 +4160,49 @@ https://ladder.game/`;
                         }, 300);
                     };
                 });
+            }
+            
+            async trackCompletion(timeString) {
+                try {
+                    // Check if user is authenticated
+                    if (!window.supabaseClient) {
+                        console.log('Supabase not available for completion tracking');
+                        return;
+                    }
+                    
+                    const { data: { user } } = await window.supabaseClient.auth.getUser();
+                    if (!user) {
+                        console.log('User not authenticated, skipping completion tracking');
+                        return;
+                    }
+                    
+                    const today = new Date().toISOString().split('T')[0];
+                    const completionTime = this.finalTimeMs || Date.now() - this.startTime;
+                    
+                    // Try to insert completion record
+                    const { data, error } = await window.supabaseClient
+                        .from('puzzle_completions')
+                        .upsert({
+                            user_id: user.id,
+                            puzzle_date: today,
+                            puzzle_name: this.currentPuzzle.theme,
+                            completed: true,
+                            completion_time: Math.floor(completionTime / 1000), // Store in seconds
+                            hints_used: this.hintsUsed || 0,
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        }, {
+                            onConflict: 'user_id,puzzle_date'
+                        });
+                    
+                    if (error) {
+                        console.error('Error tracking completion:', error);
+                    } else {
+                        console.log('Puzzle completion tracked successfully');
+                    }
+                } catch (error) {
+                    console.error('Error in trackCompletion:', error);
+                }
             }
             
             startTimer() {
