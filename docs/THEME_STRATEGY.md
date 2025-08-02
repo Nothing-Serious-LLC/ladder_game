@@ -322,6 +322,22 @@ If spacing requirements can't be met:
 
 This system creates **sequential puzzle chains** that gradually reveal sophisticated themes while maintaining consistent mechanical difficulty that makes LADDER engaging and fair.
 
+## 🧪 **Testing & Override System Integration**
+
+The **Puzzle Override System** (documented in `PUZZLE_TESTING_SYSTEM.md`) allows immediate testing of puzzles created using this strategy:
+
+### **Quick Testing Workflow:**
+1. **Design puzzle** using theme strategy guidelines
+2. **Add override** for immediate testing: `INSERT INTO puzzle_overrides (puzzle_date, theme, words, complexity_level, notes) VALUES (CURRENT_DATE, 'Theme', '[words...]'::jsonb, 6, 'Test notes');`
+3. **Test difficulty** in browser at localhost:8000
+4. **Iterate and refine** based on user feedback
+5. **Queue up variations** for sequential testing across multiple days
+
+### **Integration with Daily Reset:**
+- Game resets at **3:00 AM Eastern Time**
+- Overrides take immediate effect when added to database
+- Perfect for testing Level 6 puzzles on different weekdays to assess true difficulty independent of day-of-week expectations
+
 ---
 
 ## 📋 **Quick Reference Summary**

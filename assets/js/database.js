@@ -18,7 +18,19 @@ function getSupabaseClient() {
 export function getTodaysPuzzleInfo() {
     const now = new Date();
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const est = new Date(utc + (-5 * 3600000));
+    
+    // Determine if we're in daylight saving time (roughly March-November)
+    const currentMonth = now.getUTCMonth() + 1; // 1-12
+    const isDST = currentMonth >= 3 && currentMonth <= 11; // Rough DST period
+    
+    // Calculate Eastern time offset: EDT = UTC-4, EST = UTC-5
+    const easternOffset = isDST ? -4 : -5;
+    const easternTime = new Date(utc + (easternOffset * 3600000));
+    
+    // Subtract 3 hours from current Eastern time to get "game day"
+    // This makes 3:00 AM Eastern the daily reset time
+    const gameTime = new Date(easternTime.getTime() - (3 * 3600000));
+    const est = gameTime; // Keep variable name for compatibility
     
     // Launch date set so today is puzzle #4
     const launchDate = new Date('2025-07-28');
@@ -32,10 +44,22 @@ export function getTodaysPuzzleInfo() {
  * Fetch today's puzzle from database or fallback to hardcoded puzzles
  */
 export async function fetchTodaysPuzzle() {
-    // Get today's date in EST timezone
+    // Get today's date in Eastern timezone with 3:00 AM reset
     const now = new Date();
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const est = new Date(utc + (-5 * 3600000)); // EST is UTC-5
+    
+    // Determine if we're in daylight saving time (roughly March-November)
+    const currentMonth = now.getUTCMonth() + 1; // 1-12
+    const isDST = currentMonth >= 3 && currentMonth <= 11; // Rough DST period
+    
+    // Calculate Eastern time offset: EDT = UTC-4, EST = UTC-5
+    const easternOffset = isDST ? -4 : -5;
+    const easternTime = new Date(utc + (easternOffset * 3600000));
+    
+    // Subtract 3 hours from current Eastern time to get "game day"
+    // This makes 3:00 AM Eastern the daily reset time
+    const gameTime = new Date(easternTime.getTime() - (3 * 3600000));
+    const est = gameTime; // Keep variable name for compatibility
     
     // Format date for comparison
     const year = est.getFullYear();
@@ -165,7 +189,20 @@ function getSeededRevealPattern(word, seed) {
     // Calculate difficulty level based on day of week (Monday=1, Sunday=7)
     const now = new Date();
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const est = new Date(utc + (-5 * 3600000));
+    
+    // Determine if we're in daylight saving time (roughly March-November)
+    const currentMonth = now.getUTCMonth() + 1; // 1-12
+    const isDST = currentMonth >= 3 && currentMonth <= 11; // Rough DST period
+    
+    // Calculate Eastern time offset: EDT = UTC-4, EST = UTC-5
+    const easternOffset = isDST ? -4 : -5;
+    const easternTime = new Date(utc + (easternOffset * 3600000));
+    
+    // Subtract 3 hours from current Eastern time to get "game day"
+    // This makes 3:00 AM Eastern the daily reset time
+    const gameTime = new Date(easternTime.getTime() - (3 * 3600000));
+    const est = gameTime; // Keep variable name for compatibility
+    
     const dayOfWeek = est.getDay(); // 0=Sunday, 1=Monday, etc.
     const difficultyLevel = dayOfWeek === 0 ? 7 : dayOfWeek; // Convert Sunday from 0 to 7
     
