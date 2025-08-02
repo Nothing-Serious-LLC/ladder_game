@@ -1403,7 +1403,7 @@
                 margin-top: 0;
                 min-height: 180px;
                 gap: 10px;
-                bottom: calc(env(safe-area-inset-bottom, 0) - 10px); /* Move 10px closer to bottom */
+                bottom: calc(env(safe-area-inset-bottom, 0) - 15px); /* Move 15px closer to bottom */
                 left: 3px; /* 3px from left edge */
                 right: 3px; /* 3px from right edge */
                 width: calc(100vw - 6px); /* Explicit width calculation */
@@ -1469,20 +1469,20 @@
                 padding-bottom: calc(160px + env(safe-area-inset-bottom, 0)); /* Reduced padding to better match keyboard */
             }
             
-            /* 3-Card Viewport System */
+            /* Scrollable Mobile Ladder */
             .mobile-ladder-viewport {
-                height: calc(100vh - 140px - 200px); /* Screen minus header minus keyboard */
-                overflow: hidden;  /* Hide overflow to create window effect */
-                position: relative;
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: visible;
+                padding-bottom: 40px; /* More padding for larger cards */
+                max-height: calc(100vh - 140px - 220px); /* Account for header + keyboard */
             }
             
             .mobile-ladder {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
-                margin-bottom: 16px;
-                transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
-                transform: translateY(0px); /* Initial position */
+                gap: 12px; /* Slightly more gap for larger cards */
+                padding-bottom: 20px; /* Extra bottom padding */
             }
             
             /* Prevent clip during loading scale */
@@ -1554,32 +1554,54 @@
             
             /* Rung optimization for mobile - dynamic sizing for 12 letters */
             .rung {
-                padding: 16px;
+                padding: 20px 16px; /* More vertical padding to balance */
                 border-radius: 8px;
-                min-height: 120px; /* Increased height for larger letters */
+                display: flex;
+                flex-direction: column;
+                justify-content: center; /* Center the word + hint unit */
+                align-items: center;
+            }
+            
+            /* FINISH rung - center letters vertically when no hint */
+            .rung.finish-rung {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .rung.finish-rung .word-display {
+                margin-bottom: 0; /* Remove margin since no hint below */
             }
             
             .word-display {
                 gap: 2px;
-                margin-bottom: 8px;
+                margin-bottom: 12px; /* Balanced space between letters and hint */
+                justify-content: center; /* Center the letter boxes */
+                display: flex;
+                flex-wrap: wrap;
             }
             
-            /* Dynamic letter box sizing - fits exactly 12 letters */
+            /* Dynamic letter box sizing - maximize for 12 letters */
             .letter-box {
-                --available-width: calc(100vw - 38px); /* Screen width minus rung padding */
-                --gap-space: calc(11 * 2px); /* 11 gaps between 12 letters */
+                --available-width: calc(100vw - 32px); /* Screen width minus rung padding (16px * 2) */
+                --gap-space: calc(11 * 2px); /* 11 gaps between 12 letters at 2px each */
                 --letter-space: calc(var(--available-width) - var(--gap-space));
                 --letter-size: calc(var(--letter-space) / 12);
                 
-                width: clamp(24px, var(--letter-size), 36px);
-                height: clamp(24px, var(--letter-size), 36px);
-                font-size: clamp(0.8rem, calc(var(--letter-size) * 0.55), 1.3rem);
+                /* Make circles as big as possible for 12 letters */
+                width: clamp(22px, var(--letter-size), 50px);
+                height: clamp(22px, var(--letter-size), 50px);
+                font-size: clamp(0.8rem, calc(var(--letter-size) * 0.6), 2rem);
                 border-width: 2px;
             }
             
             .word-hint {
-                font-size: 0.75rem;
-                line-height: 1.2;
+                font-size: 1.1rem; /* Even bigger hint text */
+                line-height: 1.4;
+                color: #787c7e;
+                text-align: center;
+                font-weight: 500;
             }
             
             /* Mobile styles for completion/failure pages */
@@ -2649,8 +2671,8 @@
             }
             
             createRung(wordData, index, isMobile = false) {
-                    const rung = document.createElement('div');
-                    rung.className = 'rung';
+                                    const rung = document.createElement('div');
+                rung.className = wordData.word === 'FINISH' ? 'rung finish-rung' : 'rung';
                 rung.id = `${isMobile ? 'mobile-' : ''}rung-${index}`;
                     
                     if (index === this.currentRungIndex && !this.gameEnded) {
@@ -2699,12 +2721,15 @@
                         wordDisplay.appendChild(letterBox);
                     });
                     
-                    const hint = document.createElement('div');
-                    hint.className = 'word-hint';
-                    hint.textContent = wordData.hint;
-                    
                     rung.appendChild(wordDisplay);
-                    rung.appendChild(hint);
+                    
+                    // Only add hint if not FINISH word
+                    if (wordData.word !== 'FINISH') {
+                        const hint = document.createElement('div');
+                        hint.className = 'word-hint';
+                        hint.textContent = wordData.hint;
+                        rung.appendChild(hint);
+                    }
                 
                 return rung;
             }
@@ -3186,8 +3211,10 @@
                 // Reset typing state for next word
                 this.typedWord = '';
                 
-                // Animate mobile descent before re-rendering
-                this.animateMobileDescent();
+                // Animate mobile descent after completing a card (from 2nd card onwards)
+                if (this.currentRungIndex >= 1) {
+                    this.animateMobileDescent();
+                }
                 
                 this.renderLadder();
                 this.updateTimerColors(); // Immediately restore current colors after rebuild
@@ -3770,15 +3797,19 @@ https://ladder.game/`;
                 // Only animate on mobile
                 if (window.innerWidth > 480) return;
                 
-                const mobileLadder = document.getElementById('mobile-ladder');
-                if (!mobileLadder) return;
+                const mobileViewport = document.querySelector('.mobile-ladder-viewport');
+                if (!mobileViewport) return;
                 
-                // Calculate descent position (each rung moves the ladder up)
-                const rungHeight = 140; // ~120px min-height + 8px gap + padding
-                const descentPosition = (this.currentRungIndex - 1) * rungHeight;
+                // Calculate partial scroll to keep previous card visible
+                const cardHeight = 160; // Card height + gap + padding
+                const partialScroll = cardHeight * 0.6; // Only scroll 60% of card height
+                const scrollPosition = (this.currentRungIndex - 1) * partialScroll;
                 
-                // Animate descent (ladder moves up, creating downward climbing feel)
-                mobileLadder.style.transform = `translateY(-${descentPosition}px)`;
+                // Smooth scroll animation (feels like descending the ladder)
+                mobileViewport.scrollTo({
+                    top: scrollPosition,
+                    behavior: 'smooth'
+                });
             }
         }
         
