@@ -1462,11 +1462,10 @@
                 flex: 1;
                 overflow-y: auto;
                 overflow-x: visible;
-                padding: 16px;
+                padding: 0 16px; /* No top/bottom padding to eliminate gaps */
                 display: flex;
                 flex-direction: column;
                 min-height: 0; /* Important for flex child overflow */
-                padding-bottom: calc(160px + env(safe-area-inset-bottom, 0)); /* Reduced padding to better match keyboard */
             }
             
             /* Scrollable Mobile Ladder */
@@ -1474,8 +1473,8 @@
                 flex: 1;
                 overflow-y: auto;
                 overflow-x: visible;
-                padding-bottom: 40px; /* More padding for larger cards */
-                max-height: calc(100vh - 140px - 220px); /* Account for header + keyboard */
+                padding-bottom: 20px; /* Reduced padding */
+                max-height: calc(100vh - 115px - 200px); /* Fine-tuned top calculation */
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
             }
@@ -1484,7 +1483,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 12px; /* Slightly more gap for larger cards */
-                padding-bottom: 20px; /* Extra bottom padding */
+                padding: 12px 0 20px 0; /* Add top padding to maintain card spacing from header */
             }
             
             /* Prevent clip during loading scale */
