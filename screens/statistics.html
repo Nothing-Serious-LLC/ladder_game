@@ -47,13 +47,22 @@
         
         .header {
             text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 40px;
+            padding: 20px;
             position: sticky;
             top: 0;
             background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
             z-index: 100;
+            width: 100%;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 30px;
         }
         
         .title {
@@ -307,11 +316,13 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="title">LADDER</h1>
-            <p class="date-info" id="stats-date-display">Loading...</p>
+            <div class="header-content">
+                <h1 class="title">LADDER</h1>
+                <p class="date-info" id="stats-date-display">Loading...</p>
+            </div>
         </header>
         
-        <a href="../screens/home.html" class="back-button">
+        <a href="../screens/home.html" class="back-button" style="margin-top: 40px;">
             ← Back to Home
         </a>
         

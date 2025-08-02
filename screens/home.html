@@ -72,13 +72,22 @@
         
         .header {
             text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 40px;
+            padding: 20px;
             position: sticky;
             top: 0;
             background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
             z-index: 100;
+            width: 100%;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 30px;
         }
         
         .title {
@@ -99,6 +108,7 @@
             flex-direction: column;
             gap: 24px;
             margin-bottom: 40px;
+            margin-top: 40px;
         }
         
         .two-card-row {
@@ -145,6 +155,16 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 28px;
+        }
+        
+        .puzzle-status.centered {
+            justify-content: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .puzzle-info.centered {
+            text-align: center;
         }
         
         .puzzle-info {
@@ -629,16 +649,17 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="title">LADDER</h1>
-            <p class="date-info" id="home-date-display">Loading...</p>
+            <div class="header-content">
+                <h1 class="title">LADDER</h1>
+                <p class="date-info" id="home-date-display">Loading...</p>
+            </div>
         </header>
         
         <div class="content-stack">
             <!-- 1. Today's Puzzle (Full Width) -->
             <div class="daily-puzzle-section card" id="daily-puzzle-card">
-                <h2 class="section-title">Today's Puzzle</h2>
-                <div class="puzzle-status">
-                    <div class="puzzle-info">
+                <div class="puzzle-status centered">
+                    <div class="puzzle-info centered">
                         <div class="puzzle-name" id="daily-puzzle-name">Loading...</div>
                         <div class="puzzle-date" id="daily-puzzle-date">Loading...</div>
                     </div>

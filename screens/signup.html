@@ -67,13 +67,22 @@
         
         .header {
             text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 1px solid var(--gray-200);
-            margin-bottom: 30px;
+            padding: 20px;
             position: sticky;
             top: 0;
             background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
             z-index: 100;
+            width: 100%;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+        }
+        
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 30px;
         }
         
 
@@ -98,7 +107,7 @@
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
-            margin: 0 auto;
+            margin: 40px auto 0;
         }
         
         .signup-form {
@@ -215,8 +224,10 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1 class="title">LADDER</h1>
-            <p class="date-info" id="signup-date-display">Loading...</p>
+            <div class="header-content">
+                <h1 class="title">LADDER</h1>
+                <p class="date-info" id="signup-date-display">Loading...</p>
+            </div>
         </header>
         
         <div class="signup-card">
