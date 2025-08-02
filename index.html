@@ -1099,10 +1099,11 @@
         }
         
         .result-theme {
-            font-size: 0.9rem;
+            font-size: 1.3rem;
             color: #787c7e;
             margin-bottom: 20px;
             font-style: italic;
+            font-weight: normal;
         }
         
         .completion-time,
@@ -2115,13 +2116,23 @@
             function updateCountdown() {
                 const now = new Date();
                 const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-                const est = new Date(utc + (-5 * 3600000)); // EST is UTC-5
                 
-                // Calculate next midnight EST
-                const nextMidnight = new Date(est);
-                nextMidnight.setHours(24, 0, 0, 0); // Next midnight
+                // Use same DST logic as database.js
+                const currentMonth = now.getUTCMonth() + 1; // 1-12
+                const isDST = currentMonth >= 3 && currentMonth <= 11; // Rough DST period
+                const easternOffset = isDST ? -4 : -5;
+                const easternTime = new Date(utc + (easternOffset * 3600000));
                 
-                const timeUntilNext = nextMidnight.getTime() - est.getTime();
+                // Calculate next 3:00 AM Eastern Time
+                const next3AM = new Date(easternTime);
+                next3AM.setHours(3, 0, 0, 0); // 3:00 AM
+                
+                // If it's already past 3 AM today, move to tomorrow's 3 AM
+                if (easternTime.getTime() >= next3AM.getTime()) {
+                    next3AM.setDate(next3AM.getDate() + 1);
+                }
+                
+                const timeUntilNext = next3AM.getTime() - easternTime.getTime();
                 
                 if (timeUntilNext <= 0) {
                     // Time's up! Refresh to new puzzle

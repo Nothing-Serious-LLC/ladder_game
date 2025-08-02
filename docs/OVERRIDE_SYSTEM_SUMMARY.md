@@ -25,6 +25,16 @@ INSERT INTO puzzle_overrides VALUES
 SELECT puzzle_date, theme, complexity_level, notes FROM puzzle_overrides WHERE puzzle_date >= CURRENT_DATE ORDER BY puzzle_date;
 ```
 
+### **Replace Today's Puzzle (Change What Shows Now)**
+```sql
+-- STEP 1: Delete current puzzle
+DELETE FROM puzzle_overrides WHERE puzzle_date = CURRENT_DATE;
+
+-- STEP 2: Add new puzzle for TODAY
+INSERT INTO puzzle_overrides (puzzle_date, theme, words, complexity_level, notes) 
+VALUES (CURRENT_DATE, 'New Theme', '[words...]'::jsonb, 6, 'Immediate replacement');
+```
+
 ### **Remove Override**
 ```sql
 DELETE FROM puzzle_overrides WHERE puzzle_date = CURRENT_DATE;

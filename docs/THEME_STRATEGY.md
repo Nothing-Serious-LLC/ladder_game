@@ -275,17 +275,19 @@ If spacing requirements can't be met:
 - **Culture**: Advanced education | **Hints**: Technical precision
 - **Letters**: 12-18% total, 30% first letters
 
-### **Level 6 (Sat)**: Scientific Mastery
-- **Connections**: Scientific/theoretical (quantum mechanics)
-- **Vocabulary**: Scientific concepts (9-10 letters avg)
-- **Culture**: Expert knowledge | **Hints**: Advanced terminology
-- **Letters**: 10-15% total, 20% first letters
+### **Level 6 (Sat)**: Sophisticated but Accessible ✨ **RECALIBRATED**
+- **Connections**: Advanced logical processes (wine making, culinary arts)
+- **Vocabulary**: Sophisticated terms (7-9 letters avg) - **TERROIR, SOMMELIER, APERTURE**
+- **Culture**: **Hobby/interest level knowledge** (wine culture, advanced cooking, photography) | **Hints**: Sophisticated but clear
+- **Letters**: 12-15% total, 15% first letters
+- **Key**: Requires cultural sophistication but not professional training
 
-### **Level 7 (Sun)**: Academic Excellence
-- **Connections**: Psychological/philosophical (cognitive processes)
-- **Vocabulary**: Abstract psychology (10+ letters avg)
-- **Culture**: Graduate-level mastery | **Hints**: Philosophical depth
-- **Letters**: 8-12% total, 10% first letters
+### **Level 7 (Sun)**: Specialized Domains ✨ **RECALIBRATED**  
+- **Connections**: Professional/academic domain knowledge (meteorology, legal systems)
+- **Vocabulary**: Specialized terminology (8-12 letters avg) - **EYEWALL, PRECEDENT, JURISDICTION**
+- **Culture**: **Professional/academic specialization required** (weather science, law, advanced science) | **Hints**: Technical precision
+- **Letters**: 12-15% total, 15% first letters  
+- **Key**: Requires specific training or professional knowledge
 
 ## 🔍 **Quality Assurance**
 
@@ -366,16 +368,16 @@ The **Puzzle Override System** (documented in `PUZZLE_TESTING_SYSTEM.md`) allows
 - **Level 3**: Educational terms (CRIME, ARREST, TRIAL)  
 - **Level 4**: Technical jargon (PRECEDENT, DOCTRINE, RULING)
 - **Level 5**: Professional terms (SYMPTOM, DIAGNOSIS, TREATMENT)
-- **Level 6**: Scientific concepts (PARTICLE, DUALITY, OBSERVER)
-- **Level 7**: Abstract psychology (PERCEPTION, HEURISTIC, FALLACY)
+- **Level 6**: **Sophisticated accessible** (TERROIR, SOMMELIER, APERTURE, VINTAGE) - hobby/interest level
+- **Level 7**: **Specialized domains** (EYEWALL, PRECEDENT, PARTICLE, JURISDICTION) - professional/academic level
 
 ### **🎯 Dial 2: Hint Directness**
 - **Level 1-2**: Concrete ("Open your eyes", "Need for food")
 - **Level 3**: Educational ("Law violation", "Official detention")
 - **Level 4**: Technical ("Binding authority", "Legal framework")
 - **Level 5**: Professional ("Health complaint", "Therapeutic approach")  
-- **Level 6**: Scientific ("Quantum entity", "Reality selection")
-- **Level 7**: Philosophical ("Mental processing", "Cognitive warping")
+- **Level 6**: **Sophisticated clear** ("Wine influence", "Light control", "Expert taster") - accessible but advanced
+- **Level 7**: **Technical specialized** ("Storm center", "Legal authority", "Court principle") - domain expertise required
 
 ### **🎯 Dial 3: Connection Types** *(How words link to each other)*
 - **Level 1-2**: **Physical/Causal** - Direct cause-effect (WAKE makes you HUNGRY, FIRE creates SMOKE)
@@ -428,8 +430,8 @@ The **Puzzle Override System** (documented in `PUZZLE_TESTING_SYSTEM.md`) allows
 - **Level 3**: Basic education (civic/general knowledge accessible to most adults)
 - **Level 4**: **MINIMAL** specialized knowledge (technical/scientific terms most adults know)
 - **Level 5**: Moderate specialized knowledge (some professional/academic exposure)
-- **Level 6**: **HIGH** specialized knowledge (professional/expert domains)
-- **Level 7**: **EXTREME** specialized knowledge (graduate-level academic mastery)
+- **Level 6**: **MODERATE-HIGH** hobby/interest knowledge (wine culture, advanced cooking, photography techniques)
+- **Level 7**: **HIGH** specialized knowledge (professional/academic domains: meteorology, law, advanced science)
 
 **⚠️ WARNING**: This dial has EXPONENTIAL impact. Level 4+ cultural barriers can make otherwise moderate puzzles extremely difficult!
 

@@ -40,6 +40,7 @@ SELECT puzzle_date, theme, complexity_level, notes FROM puzzle_overrides WHERE p
 - **Summer (EDT)**: 3:00 AM EDT = 7:00 AM UTC
 - **Winter (EST)**: 3:00 AM EST = 8:00 AM UTC
 - This ensures puzzles change at a reasonable hour for US players
+- **Countdown Timer**: Now correctly synchronized to show time until next 3:00 AM ET reset
 
 ## 🔄 How The System Works
 
@@ -218,6 +219,21 @@ INSERT INTO puzzle_overrides (
 DELETE FROM puzzle_overrides WHERE puzzle_date = CURRENT_DATE;
 ```
 
+### **When User Says: "Replace today's puzzle with a new one"**
+
+⚠️ **CRITICAL**: To change what shows in the game RIGHT NOW, you must **delete and replace** today's puzzle, not add future ones.
+
+```sql
+-- STEP 1: Delete current puzzle
+DELETE FROM puzzle_overrides WHERE puzzle_date = CURRENT_DATE;
+
+-- STEP 2: Add new puzzle for TODAY
+INSERT INTO puzzle_overrides (puzzle_date, theme, words, complexity_level, notes) 
+VALUES (CURRENT_DATE, 'New Theme', '[new words...]'::jsonb, 6, 'Replacement test');
+```
+
+**Why this is needed**: The game only shows the puzzle for the current date. Adding puzzles for future dates queues them but doesn't change what's active now.
+
 ### **When User Says: "What puzzle is showing today?"**
 ```sql
 SELECT 
@@ -333,11 +349,18 @@ INSERT INTO puzzle_overrides (puzzle_date, theme, words, complexity_level, notes
 VALUES ('2025-08-03', 'Space Exploration', '[space words...]'::jsonb, 5, 'Level 5 comparison test');
 ```
 
-### **Current Active Status** ✅
-- **August 1st (Today)**: Hurricane Season (Level 6) - **ACTIVE NOW**
-- **Purpose**: Testing meteorological vocabulary at Level 6 difficulty
-- **Chain**: PRESSURE → CYCLONE → EYEWALL → LANDFALL → SURGE  
-- **Validation**: Override system working correctly with 3:00 AM ET timezone reset
+### **Level 6 & 7 Recalibration Complete** ✅
+
+**New Calibration Understanding:**
+- **Level 6**: **Sophisticated but Accessible** - Hobby/interest level knowledge (wine culture, advanced cooking, photography)
+- **Level 7**: **Specialized Domains** - Professional/academic knowledge required (quantum physics, meteorology, legal precedent)
+
+**Key Insight**: Cultural Prerequisites dial is the main difficulty driver, not vocabulary length or mechanical complexity.
+
+### **Database Updated** ✅
+- **All Level 6/7 puzzles recalibrated** based on new understanding
+- **Level 6**: Now includes Renaissance Art, Technical Climbing, Social Media, etc. (sophisticated but accessible)
+- **Level 7**: Now includes Quantum Mechanics, Educational Psychology, Medical Diagnosis, etc. (specialized domains)
 
 ### Aug 4, 2025: "Digital Communication" ✅
 - **Theme**: Digital Communication
@@ -435,6 +458,18 @@ INSERT INTO puzzle_overrides VALUES
     (CURRENT_DATE + 2, 'Space Exploration', '[space words...]'::jsonb, 6, 'Level 6C - Scientific')
 ON CONFLICT (puzzle_date) 
 DO UPDATE SET theme = EXCLUDED.theme, words = EXCLUDED.words, complexity_level = EXCLUDED.complexity_level, notes = EXCLUDED.notes;
+```
+
+#### **Replace Today's Puzzle (Immediate Change)**
+```sql
+-- To change what shows RIGHT NOW in the game:
+-- Step 1: Delete current override
+DELETE FROM puzzle_overrides WHERE puzzle_date = CURRENT_DATE;
+
+-- Step 2: Add new puzzle for today
+INSERT INTO puzzle_overrides (puzzle_date, theme, words, complexity_level, notes) 
+VALUES (CURRENT_DATE, 'New Theme', '[words...]'::jsonb, 6, 'Immediate test')
+ON CONFLICT (puzzle_date) DO UPDATE SET theme = EXCLUDED.theme, words = EXCLUDED.words, complexity_level = EXCLUDED.complexity_level;
 ```
 
 #### **Remove Override (Return to Daily Puzzles)**
