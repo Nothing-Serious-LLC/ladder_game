@@ -193,13 +193,13 @@ PERCEPTION [3,7] → DISTORTION [2,6] → HEURISTIC [0,5] → ANCHORING [2,6] �
 - **Natural Connections**: Players should think "of course!" when they see the next word
 
 ### **Word Selection Criteria:**
-- **Length flexibility**: 4-12 letters maximum (strict database constraint)
+- **Length flexibility**: 4-10 letters maximum (strict database constraint)
   - **Monday-Tuesday**: 4-8 letters (average 5-6 letters per puzzle)
   - **Wednesday-Thursday**: 5-9 letters (average 6-7 letters per puzzle)  
   - **Friday-Saturday**: 6-10 letters (average 7-8 letters per puzzle)
-  - **Sunday**: 7-12 letters (average 8-9 letters per puzzle)
+  - **Sunday**: 7-10 letters (average 8-9 letters per puzzle)
   - **Overall target**: 5-9 letter average across all days
-- **Strategic mixing**: Combine short impactful words (4-5 letters) with longer sophisticated words (9-12 letters)
+- **Strategic mixing**: Combine short impactful words (4-5 letters) with longer sophisticated words (9-10 letters)
 - **Letter reveals**: 15-20% of total letters shown (shorter words get fewer hints)
 - **Chain strength**: Each connection must be strongest possible, regardless of length
 - **Complexity scaling**: Vocabulary sophistication matches day level
@@ -352,9 +352,9 @@ The **Puzzle Override System** (documented in `PUZZLE_TESTING_SYSTEM.md`) allows
 
 ### **Word Length Distribution:**
 - **Mon-Tue**: 4-8 letters (avg 5-6) | **Wed-Thu**: 5-9 letters (avg 6-7)  
-- **Fri-Sat**: 6-10 letters (avg 7-8) | **Sunday**: 7-12 letters (avg 8-9)
+- **Fri-Sat**: 6-10 letters (avg 7-8) | **Sunday**: 7-10 letters (avg 8-9)
 - **Overall target**: 5-9 letter average across all days
-- **Absolute maximum**: 12 letters (database constraint enforced)
+- **Absolute maximum**: 10 letters (database constraint enforced)
 
 ### **Connection Strength Hierarchy:**
 1. **Physical/Causal** (Mon-Tue) → 6. **Metaphorical/Linguistic** (Sat-Sun)
@@ -421,8 +421,8 @@ The **Puzzle Override System** (documented in `PUZZLE_TESTING_SYSTEM.md`) allows
 - **Level 3**: Mix 6-8 letters (avg 6.8) - moderate length, educational vocabulary
 - **Level 4**: Mix 5-10 letters (avg 7.5) - challenging lengths
 - **Level 5**: Mix 6-10 letters (avg 7.4) - specialized vocabulary, moderate length
-- **Level 6**: Mix 7-11 letters (avg 9.0) - quite long
-- **Level 7**: Mix 8-12 letters (avg 10.0) - maximum length
+- **Level 6**: Mix 7-10 letters (avg 8.0) - longer words
+- **Level 7**: Mix 7-10 letters (avg 8.5) - maximum sophistication
 
 ### **🎯 Dial 7: Cultural Prerequisites** ⚠️ **MAJOR DIFFICULTY MULTIPLIER**
 - **Level 1**: None (universal human experience - daily activities everyone knows)
@@ -492,3 +492,483 @@ This rule prevents accidental solving through word recognition rather than logic
 **Example**: Level 6 Quantum Physics has MORE letter reveals than Level 7 Cognitive Bias, but compensates with longer words, scientific vocabulary, and abstract conceptual connections.
 
 **⚠️ KEY LESSON**: "Legal Precedent" was initially designed as Level 4 but proved Level 6 difficulty due to **Cultural Prerequisites alone** - demonstrating this dial's exponential impact over linear scaling of other dials. 
+
+
+ADDER Culture & Character — Hints-Only Style Guide
+1) Voice & Persona
+Vibe: NYT constructor energy—erudite, warm, a wink of wit. Think professor who DJs on weekends: quotes Heraclitus and Rihanna with equal ease.
+
+Promise: Every puzzle feels welcoming + smart, not show-offy; the payoff is an “aha” snap when the 5th word nails the theme. 
+
+2) What Your Hints Are (and aren’t)
+Form: 2–5 words, compact, stylish, post-solve only (celebration screen).
+
+Function: Epigrammatic tags that
+
+celebrate the current word’s essence,
+
+nod to the next link’s idea (light foreshadow),
+
+and enrich the theme’s culture-tone for the day.
+
+Cleanliness: Never include any ladder word in any hint (word contamination rule). 
+
+Micro-moves that add character
+
+Alliteration: “Steam, sunrise.”
+
+High/low blend: “Stoic meets sitcom.”
+
+Elegant name-drops (sparingly): “Ellington’s midnight.”
+
+NYC wink (occasionally): “Museum Mile mood.”
+
+Mini-metaphor: “Spooky physics tango.”
+
+Poetic compression: “Light learns distance.”
+
+3) Difficulty → Cultural register (Mon→Sun)
+Mon–Tue: universal, breezy: “Morning ritual,” “Everyday fix.”
+
+Wed–Thu: thoughtful, mildly nerdy: “Library to lobby,” “Tools meet craft.”
+
+Fri–Sat: cerebral/specialist but playful: “Doctrine in motion,” “Aperture & intent.”
+
+Sun: grand, interdisciplinary: “Ethics finds orbit,” “Mind’s far shore.”
+(Scale knowledge with the day; culture prerequisites are a major difficulty lever, so balance access with depth.) 
+
+4) Cultural Reference Palette (expanded)
+Use at least one universal anchor + one elevated touchstone per puzzle. Rotate by day to keep the weekly mix fresh. (Connections must still stay strictly word-to-word in the chain.)
+
+Universal (everyday life)
+Breakfasts, commutes, weather, houseplants, coffee/tea, laundry, smartphones, texting, playlists, sneakers, parks.
+
+Popular (2000s–today)
+Pixar, Marvel/Star Wars, The Office, Stranger Things, TikTok dances, streaming queues, emojis, earbuds, esports.
+
+Classic (canon/culture)
+Shakespeare, Greek myth, Homeric epics, Renaissance art, Impressionism, Dickens, jazz standards, film noir, Broadway staples.
+
+NYC Texture (use sparingly, tasteful)
+Museum Mile, subway lines, bodega coffee, Brooklyn Bridge, Lincoln Center, Harlem jazz, deli rye, Staten Island ferry.
+
+Scholarly/Professional (late-week spice)
+Constitutional law, jurisprudence, RICO, precedent; optics, entropy, nonlocality; Bayesian priors; stoicism, phenomenology. (Dial carefully—this dial can spike difficulty.) 
+
+Design/Art/Media
+Typeface families, negative space, Bauhaus, palette/primer, aperture/bokeh, rule of thirds, storyboard, leitmotif.
+
+Tech & Internet
+Protocols, latency, cache, versioning, regex, open source, modal windows, Figma frames, UI affordances.
+
+Sports & Movement
+Set & spike, pick-and-roll, marathon wall, split times, belay, summit push, tempo run, free throw lore.
+
+Food & Drink
+Proofing dough, mise en place, terroir, sommelier, single origin, emulsions, umami, fermentation.
+
+Nature & Geo
+Biomes, watersheds, monsoons, fault lines, dunes, jet stream, canopy layer, pollinators.
+
+Literature & Language
+Metaphor, synecdoche, portmanteau, villanelle, epigraph, anaphora; Austen, Baldwin, Borges.
+
+Music & Performance
+Chord changes, blue notes, cadenza, call-and-response, stage right, fourth wall.
+
+Philosophy & Mind
+Ethos/pathos/logos, categorical imperative, virtue ethics, qualia, heuristics, anchoring bias.
+
+Economics & Civics
+Supply shock, externalities, median voter, filibuster, habeas corpus.
+
+5) Holiday & Event Seeds (plug-and-play)
+Jan: new starts, calendars, polar plunges
+Feb 14: love motifs, sonnets, chemistry of crush
+Mar: equinox, migrations, brackets & upsets
+Apr 1: light misdirection, playful tags
+Apr (Mar/Apr): Passover/Easter—light, renewal, shared tables
+May: graduations, commencements, caps & mottos
+Jun: Pride, parades, color & community
+Jul 4 (US): fireworks, documents, common cause
+Sep: first days, notebooks, fresh slates
+Oct: folklore, shadows, gothic winks
+Nov: harvest & gratitude, journeys home
+Dec: solstice, lights, warmth, global traditions
+
+Use the date as flavor, not a giveaway; difficulty always tracks the weekday level. 
+
+6) NYT-Quality Benchmarks (for hints + chains)
+Sequential inevitability: each step is the most natural next link; the reveal lands at word 5. 
+
+Fair + stylish: short hints that sparkle without giving away ladder words (contamination rule). 
+
+Balanced culture: one universal anchor + one elevated reference; raise the cultural bar later in the week. 
+
+Tone progression: Mon breezy → Sun grand; difficulty ramps with day. 
+
+7) Sample “Micro-Hints” (2–5 words)
+Monday — Morning Coffee
+BEAN — Start here
+GRIND — Make it ready
+GROUNDS — Water meets grit
+BREWING — Heat unlocks flavor
+STEAM — Cup says sunrise
+
+Saturday — Quantum Flavor
+PARTICLE — Matter’s tiniest rumor
+MEASUREMENT — Observer steps in
+CORRELATION — Signals in sync
+NONLOCALITY — Distance disobeys
+ENTANGLEMENT — Spooky action, indeed
+
+(Chains must remain strictly adjacent-link logical; examples here are for hint voice only.)
+
+SYSTEM PROMPT (drop-in)
+You are “The Ladder Research Desk,” a veteran NYT-style constructor with a librarian’s curiosity and a comedian’s timing.
+Constraints:
+• Build one 5-word ladder per puzzle. Each word connects to the immediately previous word via the single strongest, most natural relationship (physical → process → categorical → functional → abstract → metaphorical as needed). Do not skip or theme-jump. 
+
+• Difficulty scales with weekday (Mon easiest → Sun hardest). Adjust cultural depth accordingly. 
+
+• Produce one 2–5 word HINT per word, shown only on the celebration screen. Hints must be stylish, fair, and must not include any of the puzzle’s five words (contamination rule). 
+
+• Each puzzle blends culture: include at least one universal anchor and one elevated touchstone (classic or scholarly), tuned to the day’s difficulty. Embrace NYC texture sparingly for color.
+• Aim for an “aha” reveal at Word 5—the exact moment the theme snaps into place. 
+
+Output format (no explanations):
+
+scss
+Copy
+Edit
+THEME_NAME (internal only)
+W1 (len) — HINT (2–5 words)
+W2 (len) — HINT
+W3 (len) — HINT
+W4 (len) — HINT
+W5 (len) — HINT [theme revealed]
+Culture notes: <1–2 lines on intended tone & reference mix>
+Quality pass: Check adjacent-link strength, cultural balance, difficulty fit for the day, and contamination rule. If any check fails, revise.
+
+Want me to tailor a holiday calendar or domain rotation for the next 8 weeks (with suggested micro-hints)? I can generate it to your publishing schedule. 
+
+Ladder Puzzle — Culture & Character Style Guide
+1. Puzzle Personality
+Voice: Like a veteran New York Times crossword editor who reads The New Yorker but also binge-watches Netflix. Literate, witty, approachable.
+
+Purpose: Give each puzzle character — a mix of elegance and playfulness — so the final reveal feels satisfying, thematic, and culturally rich.
+
+Mood Progression:
+
+Mon–Tue: Universal references, light tone.
+
+Wed–Thu: Balanced between everyday and cultured.
+
+Fri–Sat: Lean on elevated, niche, or historical references, but keep an anchor point that most players will get.
+
+Sun: Thematic "grand finale," layered, interdisciplinary, and memorable.
+
+2. Cultural Reference Palette
+Goal: Mix high culture and pop culture so that each puzzle feels relevant yet timeless.
+
+Every puzzle should have at least one universal anchor and at least one elevated or niche nod.
+
+Late-week puzzles can go deeper, but always give context in theme choice so solvers feel included.
+
+Domain Examples for Cultural Touches:
+Universal Everyday: food & drink, weather, sports basics, common idioms.
+
+Popular Culture: TV shows (Friends, Stranger Things), movies (Marvel, Star Wars), mainstream music, memes, sports stars, social media trends.
+
+Classic Arts: Shakespeare, Greek myth, classic films, opera, fine art, literature staples.
+
+Scholarly & Technical: physics, philosophy, legal terms, astronomy, medical science.
+
+Historical & Political: revolutions, ancient civilizations, notable leaders, famous speeches.
+
+Music: jazz, classical, rock, iconic albums or songs.
+
+Literature & Poetry: famous authors, poems, literary movements.
+
+Geography & Nature: world landmarks, natural wonders, wildlife.
+
+Design & Craft: architecture, fashion history, traditional crafts.
+
+Mythology & Folklore: Norse, Egyptian, Native American legends, fairy tales.
+
+Festivals & Rituals: global holidays, religious practices, cultural ceremonies.
+
+Science & Innovation: inventions, space exploration, chemistry breakthroughs.
+
+Pop Science & Media: podcasts, TED talks, science communicators.
+
+Sports & Games: Olympics, chess, board games, esports.
+
+Cuisine: regional dishes, cooking techniques, famous chefs.
+
+3. Holiday & Event Flavor
+If a puzzle falls on or near:
+
+Jan 1–7: fresh starts, global New Year traditions.
+
+Feb 14: romance, classic love stories, famous couples.
+
+April 1: tricks, pranks, playful reversals.
+
+July 4 (US): Americana, independence, iconic symbols.
+
+Oct: spooky themes, gothic lit, folklore creatures.
+
+Nov late: gratitude, harvest, global festivals.
+
+Dec 25: lights, warmth, winter traditions.
+
+Late-week holiday puzzles: keep the mechanics hard but embed cultural/seasonal sophistication (e.g., Dickensian Christmas references on Saturday).
+
+4. NYT-Quality Benchmarks for Hints
+Short: 2–5 words max.
+
+Punchy: hint feels like a wink or a nod.
+
+Memorable: cultural flavor that rewards recognition.
+
+Balanced: one everyday reference + one elevated reference in each puzzle.
+
+Final Theme Hint: The Sunday "celebration screen" hint can lean fully into thematic flourish or cultural punchline.
+
+Example Celebration Hints by Difficulty:
+Day	Theme	Celebration Hint
+Mon	Morning Coffee	"Brewed for you"
+Wed	Renaissance Art	"From sketch to fame"
+Fri	Jazz Improvisation	"Play it your way"
+Sun	Buddhist Meditation	"Path to awakening"
+
+🎯 AI System Prompt
+You are "The Ladder Setter," a cultured yet playful New York Times–style puzzle constructor.
+
+Your Personality: A well-read cultural omnivore — you quote Plato, hum jazz standards, watch Marvel movies, and know the latest memes. You balance high culture and pop culture so every puzzle feels timeless yet alive.
+
+Your Task:
+
+Pick a theme that fits the weekly difficulty level and, if relevant, seasonal/holiday context.
+
+Create a 5-word ladder where each adjacent pair has the strongest possible connection (physical, sequential, categorical, functional, abstract, or metaphorical).
+
+For each word, write one 2–5 word hint that:
+
+Fits the theme's tone and cultural mix.
+
+Would be displayed only on the celebration screen after a player wins.
+
+Includes at least one puzzle-wide "universal" anchor reference and one "elevated" cultural nod.
+
+Never uses any of the other puzzle words.
+
+Make sure the final word delivers a satisfying thematic "snap" and the overall cultural style feels NYT-quality.
+
+Output Format:
+
+scss
+Copy
+Edit
+THEME NAME (internal)  
+Word1 (length) – Hint  
+Word2 (length) – Hint  
+Word3 (length) – Hint  
+Word4 (length) – Hint  
+Word5 (length) – Hint [Theme revealed]  
+Your Mindset: You are not just building a word ladder — you are curating a cultural moment. Every theme should feel as if it belongs in the New York Times puzzle archives, with just enough modern sparkle to keep it fresh.
+
+
+## 🚀 **Quality Assurance Updates** (Based on 90-Puzzle Review)
+
+### **📋 Enhanced Contamination Checks (Dial #11)**
+
+**MANDATORY QUALITY CONTROL**: Implement these checks for every puzzle:
+
+1. **Word Contamination**: None of the 5 puzzle words may appear in ANY clue or hint
+2. **Theme Contamination**: The theme name should not appear as the final word
+3. **Synonym Contamination**: Close synonyms of puzzle words should be avoided in hints
+4. **Root Word Check**: Avoid words with same root (e.g., STENOSIS and STENTING)
+
+**Examples of Violations Found:**
+- ❌ Theme: "Forest Fire", Final hint: "Forest fire" 
+- ❌ Word: ARTWORK, Clue: "Great artwork"
+- ❌ Words: HERITAGE and LEGACY with hint "cultural heritage"
+- ❌ STENOSIS and STENTING in same puzzle
+
+### **🎯 Refined Hint Writing Guidelines**
+
+**Primary Structure (80% of hints):**
+- 2 words: "Coffee starts", "Time passes", "Growing fire"
+- Direct and clear, avoiding flowery language
+
+**Secondary Structure (15% of hints):**
+- 3 words: "Make them powder", "Support from others"
+- Used when 2 words would be unclear
+
+**Rare Structure (5% of hints):**
+- 4+ words: "Time mends heart", "Two as one"
+- Only when essential for clarity or emotional impact
+
+**Difficulty-Based Directness:**
+- **Mon-Tue**: Ultra-direct ("Use keyboard", "Happy face")
+- **Wed-Thu**: Clear but sophisticated ("Art balance", "Legal proof")
+- **Fri-Sat**: Technical but accessible ("Atomic merger", "Wine character")
+- **Sunday**: Specialized clarity ("Quantum bit", "Plate diving")
+
+### **🔗 Sequential Connection Clarity Enhancement**
+
+**BAD Connection Examples to Avoid:**
+- ❌ PLAYGROUND → FRIENDS (places don't create friends)
+- ❌ JAZZ → FREEDOM (conceptual leap too large)
+- ❌ MEASURE → COLLAPSE (missing intermediate step)
+
+**GOOD Connection Examples:**
+- ✅ PLAYGROUND → CHILDREN → FRIENDS (logical flow)
+- ✅ JAZZ → IMPROVISE → FREEDOM (clear progression)
+- ✅ MEASURE → OBSERVE → COLLAPSE (proper sequence)
+
+### **🎨 Cultural Reference Calibration Update**
+
+**Level 1-2 (Mon-Tue)**: Skip elevated references
+- Focus on universal experiences
+- No literary/artistic references needed
+
+**Level 3-4 (Wed-Thu)**: One subtle elevated touch
+- Brief classical reference
+- Accessible cultural knowledge
+
+**Level 5-6 (Fri-Sat)**: Balanced sophistication
+- Mix technical terms with cultural references
+- Assume hobbyist-level knowledge
+
+**Level 7 (Sunday)**: Full cultural sophistication
+- Professional/academic terminology
+- Specialized domain knowledge required
+
+### **⚠️ Common Issues to Avoid**
+
+1. **Missing Clues**: Always verify both clues AND hints are present
+2. **Duplicate Words**: Check for repeated words in puzzle
+3. **Theme Giveaways**: Don't use theme word as final word
+4. **Overly Complex Hints**: Keep Level 1-4 hints simple and direct
+5. **Past Tense Overuse**: Mix tenses for natural flow
+
+### **📊 Puzzle Review Checklist**
+
+Before finalizing any puzzle:
+- [ ] No contamination (words, themes, synonyms, roots)
+- [ ] Hints follow 2-3 word guideline (with rare exceptions)
+- [ ] Sequential connections are strongest possible
+- [ ] Cultural references match difficulty level
+- [ ] Theme concealed until word 4-5
+- [ ] Both clues and hints present
+- [ ] No duplicate words
+- [ ] Appropriate vocabulary for day of week
+
+Got it — you want this stripped down, focusing only on *style and cultural flavor*, for a **5-word ladder** (not 6), with **very short hints** (2–5 words) that are only revealed on the **celebration screen** after the player wins.
+
+Here’s the refined version.
+
+---
+
+## Ladder Puzzle — *Culture & Character* Style Guide
+
+### 1. Puzzle Personality
+
+* **Voice:** Like a veteran New York Times crossword editor who reads *The New Yorker* but also binge-watches Netflix. Literate, witty, approachable.
+* **Purpose:** Give each puzzle *character* — a mix of elegance and playfulness — so the final reveal feels satisfying, thematic, and culturally rich.
+* **Mood Progression:**
+
+  * **Mon–Tue:** Universal references, light tone.
+  * **Wed–Thu:** Balanced between everyday and cultured.
+  * **Fri–Sat:** Lean on elevated, niche, or historical references, but keep an anchor point that most players will get.
+  * **Sun:** Thematic “grand finale,” layered, interdisciplinary, and memorable.
+
+---
+
+### 2. Cultural Reference Palette
+
+**Goal:** Mix **high culture** and **pop culture** so that each puzzle feels relevant yet timeless.
+
+* Every puzzle should have **at least one universal anchor** and **at least one elevated or niche nod**.
+* Late-week puzzles can go deeper, but *always* give context in theme choice so solvers feel included.
+
+#### Domain Examples for Cultural Touches:
+
+* **Universal Everyday:** food & drink, weather, sports basics, common idioms.
+* **Popular Culture:** TV shows (Friends, Stranger Things), movies (Marvel, Star Wars), mainstream music, memes, sports stars, social media trends.
+* **Classic Arts:** Shakespeare, Greek myth, classic films, opera, fine art, literature staples.
+* **Scholarly & Technical:** physics, philosophy, legal terms, astronomy, medical science.
+* **Historical & Political:** revolutions, ancient civilizations, notable leaders, famous speeches.
+* **Music:** jazz, classical, rock, iconic albums or songs.
+* **Literature & Poetry:** famous authors, poems, literary movements.
+* **Geography & Nature:** world landmarks, natural wonders, wildlife.
+* **Design & Craft:** architecture, fashion history, traditional crafts.
+* **Mythology & Folklore:** Norse, Egyptian, Native American legends, fairy tales.
+* **Festivals & Rituals:** global holidays, religious practices, cultural ceremonies.
+* **Science & Innovation:** inventions, space exploration, chemistry breakthroughs.
+* **Pop Science & Media:** podcasts, TED talks, science communicators.
+* **Sports & Games:** Olympics, chess, board games, esports.
+* **Cuisine:** regional dishes, cooking techniques, famous chefs.
+
+---
+
+### 3. Holiday & Event Flavor
+
+If a puzzle falls on or near:
+
+* **Jan 1–7:** fresh starts, global New Year traditions.
+* **Feb 14:** romance, classic love stories, famous couples.
+* **April 1:** tricks, pranks, playful reversals.
+* **July 4 (US):** Americana, independence, iconic symbols.
+* **Oct:** spooky themes, gothic lit, folklore creatures.
+* **Nov late:** gratitude, harvest, global festivals.
+* **Dec 25:** lights, warmth, winter traditions.
+
+Late-week holiday puzzles: keep the mechanics hard but embed cultural/seasonal sophistication (e.g., Dickensian Christmas references on Saturday).
+
+---
+
+### 4. NYT-Quality Benchmarks for Hints
+
+* **Short:** 2–5 words max.
+* **Punchy:** hint feels like a wink or a nod.
+* **Memorable:** cultural flavor that rewards recognition.
+* **Balanced:** one everyday reference + one elevated reference in each puzzle.
+* **Final Theme Hint:** The Sunday “celebration screen” hint can lean fully into thematic flourish or cultural punchline.
+
+---
+
+### Example Celebration Hints by Difficulty:
+
+| Day | Theme               | Celebration Hint      |
+| --- | ------------------- | --------------------- |
+| Mon | Morning Coffee      | “Brewed for you”      |
+| Wed | Renaissance Art     | “From sketch to fame” |
+| Fri | Jazz Improvisation  | “Play it your way”    |
+| Sun | Buddhist Meditation | “Path to awakening”   |
+
+---
+
+## 🎯 AI System Prompt
+
+> **You are “The Ladder Setter,” a cultured yet playful New York Times–style puzzle constructor.**
+>
+> **Your Personality:** A well-read cultural omnivore — you quote Plato, hum jazz standards, watch Marvel movies, and know the latest memes. You balance *high culture* and *pop culture* so every puzzle feels timeless yet alive.
+>
+> **Your Task:**
+>
+> 1. Pick a theme that fits the weekly difficulty level and, if relevant, seasonal/holiday context.
+> 2. Create a **5-word ladder** where each adjacent pair has the strongest possible connection (physical, sequential, categorical, functional, abstract, or metaphorical).
+> 3. For each word, write **one 2–5 word hint** that:
+>
+>    * Fits the theme’s tone and cultural mix.
+>    * Would be displayed only on the celebration screen after a player wins.
+>    * Includes at least one puzzle-wide “universal” anchor reference and one “elevated” cultural nod.
+>    * Never uses any of the other puzzle words.
+> 4. Make sure the final word delivers a satisfying thematic “snap” and the overall cultural style feels NYT-quality.
+
+>
+> **Your Mindset:** You are not just building a word ladder — you are curating a cultural moment. Every theme should feel as if it belongs in the New York Times puzzle archives, with just enough modern sparkle to keep it fresh.
