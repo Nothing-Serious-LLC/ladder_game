@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Overview - LADDER</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#fafafa">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="LADDER">
+    
+    <style>
+        :root {
+            --gray-50: #fafafa;
+            --gray-200: #d3d6da;
+            --gray-400: #a8adb3;
+            --gray-600: #787c7e;
+            --gray-900: #1a1a1b;
+            --green-500: #6aaa64;
+            --green-600: #5a9a5a;
+            --orange-500: #f5a623;
+            --orange-600: #e6951a;
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            background: var(--gray-50);
+            z-index: 100;
+            width: 100%;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+        }
+        
+        .header-content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 8px;
+            color: var(--gray-900);
+        }
+        
+        .date-info {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+        
+        .back-button:hover {
+            background: var(--gray-200);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex: 1;
+            margin-top: 40px;
+        }
+        
+        .product-hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .product-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .product-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--gray-900);
+        }
+        
+        .product-description {
+            font-size: 1.1rem;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+        }
+        
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--green-600);
+            margin-bottom: 8px;
+        }
+        
+        .price-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        
+        .features-section {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .features-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--gray-900);
+        }
+        
+        .features-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-icon {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            color: var(--green-600);
+        }
+        
+        .feature-text {
+            flex: 1;
+            font-size: 1rem;
+            color: var(--gray-900);
+        }
+        
+        .feature-detail {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+        
+        .purchase-section {
+            position: sticky;
+            bottom: 0;
+            background: var(--gray-50);
+            padding: 20px 0 30px;
+            border-top: 1px solid var(--gray-200);
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .purchase-button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
+            color: white;
+            border: none;
+            padding: 18px 32px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+        
+        .purchase-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(106, 170, 100, 0.4);
+        }
+        
+        .purchase-button:active {
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .product-hero {
+                padding: 30px 16px;
+            }
+            
+            .features-section {
+                padding: 20px;
+            }
+            
+            .product-name {
+                font-size: 1.6rem;
+            }
+            
+            .product-price {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">←</button>
+        <div class="header-content">
+            <h1 class="title">LADDER</h1>
+            <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="product-hero">
+            <div class="product-icon" id="product-icon">🧩</div>
+            <div class="product-name" id="product-name">Puzzle Pack</div>
+            <div class="product-description" id="product-description">100 carefully crafted puzzles</div>
+            <div class="product-price" id="product-price">$4.99</div>
+            <div class="price-subtitle">One-time purchase</div>
+        </div>
+        
+        <div class="features-section">
+            <h2 class="features-title">What's Included</h2>
+            <ul class="features-list" id="features-list">
+                <li class="feature-item">
+                    <span class="feature-icon">🎯</span>
+                    <div>
+                        <div class="feature-text">100 Unique Puzzles</div>
+                        <div class="feature-detail">Handcrafted themes and challenging word ladders</div>
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <span class="feature-icon">📈</span>
+                    <div>
+                        <div class="feature-text">Progressive Difficulty</div>
+                        <div class="feature-detail">From beginner-friendly to expert challenges</div>
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <span class="feature-icon">🏆</span>
+                    <div>
+                        <div class="feature-text">Achievement Tracking</div>
+                        <div class="feature-detail">Track your progress and completion times</div>
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <span class="feature-icon">💡</span>
+                    <div>
+                        <div class="feature-text">Hint System</div>
+                        <div class="feature-detail">Smart hints to help when you're stuck</div>
+                    </div>
+                </li>
+                <li class="feature-item">
+                    <span class="feature-icon">📱</span>
+                    <div>
+                        <div class="feature-text">Play Anywhere</div>
+                        <div class="feature-detail">Works offline and syncs across devices</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="purchase-section">
+        <button class="purchase-button" onclick="purchaseProduct()">
+            Purchase Now
+        </button>
+    </div>
+    
+    <script>
+        // Get product info from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('product') || 'puzzle-pack';
+        
+        // Product data
+        const products = {
+            'puzzle-pack': {
+                icon: '🧩',
+                name: 'Puzzle Pack',
+                description: '100 carefully crafted puzzles',
+                price: '$4.99',
+                features: [
+                    {
+                        icon: '🎯',
+                        title: '100 Unique Puzzles',
+                        detail: 'Handcrafted themes and challenging word ladders'
+                    },
+                    {
+                        icon: '📈',
+                        title: 'Progressive Difficulty',
+                        detail: 'From beginner-friendly to expert challenges'
+                    },
+                    {
+                        icon: '🏆',
+                        title: 'Achievement Tracking',
+                        detail: 'Track your progress and completion times'
+                    },
+                    {
+                        icon: '💡',
+                        title: 'Hint System',
+                        detail: 'Smart hints to help when you\'re stuck'
+                    },
+                    {
+                        icon: '📱',
+                        title: 'Play Anywhere',
+                        detail: 'Works offline and syncs across devices'
+                    }
+                ]
+            },
+            'historic-puzzles': {
+                icon: '📚',
+                name: 'Historic Puzzles',
+                description: 'All past daily puzzles',
+                price: '$2.99',
+                features: [
+                    {
+                        icon: '📅',
+                        title: 'Complete Archive',
+                        detail: 'Every daily puzzle since LADDER launched'
+                    },
+                    {
+                        icon: '🔍',
+                        title: 'Search by Theme',
+                        detail: 'Find puzzles by topic or difficulty'
+                    },
+                    {
+                        icon: '📊',
+                        title: 'Historical Stats',
+                        detail: 'See how you performed over time'
+                    },
+                    {
+                        icon: '🎲',
+                        title: 'Random Mode',
+                        detail: 'Play a random historical puzzle anytime'
+                    },
+                    {
+                        icon: '⭐',
+                        title: 'Replay Favorites',
+                        detail: 'Mark and replay your favorite puzzles'
+                    }
+                ]
+            }
+        };
+        
+        function initializePage() {
+            const product = products[productId];
+            if (!product) {
+                // Fallback to puzzle pack if product not found
+                window.location.href = 'product-overview.html?product=puzzle-pack';
+                return;
+            }
+            
+            // Update product info
+            document.getElementById('product-icon').textContent = product.icon;
+            document.getElementById('product-name').textContent = product.name;
+            document.getElementById('product-description').textContent = product.description;
+            document.getElementById('product-price').textContent = product.price;
+            
+            // Update features list
+            const featuresList = document.getElementById('features-list');
+            featuresList.innerHTML = '';
+            
+            product.features.forEach(feature => {
+                const featureItem = document.createElement('li');
+                featureItem.className = 'feature-item';
+                featureItem.innerHTML = `
+                    <span class="feature-icon">${feature.icon}</span>
+                    <div>
+                        <div class="feature-text">${feature.title}</div>
+                        <div class="feature-detail">${feature.detail}</div>
+                    </div>
+                `;
+                featuresList.appendChild(featureItem);
+            });
+            
+            // Update header date
+            const today = new Date();
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            document.getElementById('header-date').textContent = today.toLocaleDateString('en-US', options);
+        }
+        
+        function goBack() {
+            window.location.href = 'home.html';
+        }
+        
+        function purchaseProduct() {
+            const product = products[productId];
+            if (product) {
+                const params = new URLSearchParams({
+                    item: product.name,
+                    price: product.price,
+                    description: product.description
+                });
+                window.location.href = `purchase-confirmation.html?${params.toString()}`;
+            }
+        }
+        
+        // Initialize page when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializePage);
+    </script>
+</body>
+</html>

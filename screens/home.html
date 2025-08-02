@@ -131,6 +131,10 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
         
+        .card[onclick] {
+            cursor: pointer;
+        }
+        
 
         
         .daily-puzzle-section {
@@ -672,13 +676,13 @@
             
             <!-- 2. Two Cards Side-by-Side: My Puzzles & Store -->
             <div class="two-card-row">
-                <div class="puzzle-packs-section card">
+                <div class="puzzle-packs-section card" onclick="window.location.href='my-puzzles.html'">
                     <h2 class="section-title">My Puzzles</h2>
                     <div id="puzzle-packs-content">
                         <div class="empty-state">
                             <div class="empty-state-icon">📦</div>
                             <div class="empty-state-text">No puzzle packs yet</div>
-                            <div class="empty-state-subtext">Purchase packs from the store to get started</div>
+                            <div class="empty-state-subtext">Click to browse available packs</div>
                         </div>
                     </div>
                 </div>
@@ -686,21 +690,21 @@
                 <div class="store-section card">
                     <h2 class="section-title">Store</h2>
                     <div class="store-items">
-                        <div class="store-item">
+                        <div class="store-item" onclick="viewProduct('puzzle-pack')">
                             <div class="item-info">
                                 <div class="item-name">Puzzle Pack</div>
                                 <div class="item-description">100 puzzles</div>
                                 <div class="item-price">$4.99</div>
                             </div>
-                            <button class="buy-button" onclick="buyItem('puzzle-pack')">Buy</button>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('puzzle-pack')">View</button>
                         </div>
-                        <div class="store-item">
+                        <div class="store-item" onclick="viewProduct('historic-puzzles')">
                             <div class="item-info">
                                 <div class="item-name">Historic Puzzles</div>
                                 <div class="item-description">All past daily puzzles</div>
                                 <div class="item-price">$2.99</div>
                             </div>
-                            <button class="buy-button" onclick="buyItem('historic-puzzles')">Buy</button>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('historic-puzzles')">View</button>
                         </div>
                     </div>
                 </div>
@@ -1208,40 +1212,11 @@
         }
         
         window.viewStatistics = function() {
-            // TODO: Navigate to detailed statistics page
-            alert('Detailed statistics page coming soon!');
+            window.location.href = 'statistics.html';
         };
         
-        window.buyItem = function(itemId) {
-            // Define item details
-            const items = {
-                'puzzle-pack': {
-                    name: 'Puzzle Pack',
-                    price: '$4.99',
-                    description: '100 puzzles'
-                },
-                'historic-puzzles': {
-                    name: 'Historic Puzzles',
-                    price: '$2.99',
-                    description: 'All past daily puzzles'
-                }
-            };
-            
-            const item = items[itemId];
-            if (!item) {
-                console.error('Unknown item:', itemId);
-                return;
-            }
-            
-            // TODO: Implement actual purchase flow with Stripe/PayPal
-            // For now, simulate successful purchase and redirect to confirmation
-            const params = new URLSearchParams({
-                item: item.name,
-                price: item.price,
-                description: item.description
-            });
-            
-            window.location.href = `../screens/purchase-confirmation.html?${params.toString()}`;
+        window.viewProduct = function(productId) {
+            window.location.href = `product-overview.html?product=${productId}`;
         };
         
         window.playPuzzlePack = function(packType) {
