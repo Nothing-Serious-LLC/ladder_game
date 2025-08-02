@@ -571,6 +571,24 @@
             outline: none !important;
         }
         
+        /* Remove touch highlight and prevent persistent scaling on mobile */
+        .letter-box.interactive {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        .letter-box.interactive:active {
+            transform: none !important;
+        }
+        
+        /* Disable transform for interactive boxes on touch devices completely */
+        @media (hover: none) and (pointer: coarse) {
+            .letter-box.interactive {
+                transition: none !important;
+            }
+        }
+        
         .time-penalty-popup {
             position: fixed;
             background-color: #e74c3c;
@@ -618,9 +636,12 @@
             transition: all 0.2s ease;
         }
 
-        .letter-box.interactive:hover {
-            transform: scale(1.1);
-            border-color: #ff8c42;
+        /* Only show hover effects on non-touch devices to prevent mobile scaling issues */
+        @media (hover: hover) and (pointer: fine) {
+            .letter-box.interactive:hover {
+                transform: scale(1.1);
+                border-color: #ff8c42;
+            }
         }
 
 
@@ -641,6 +662,13 @@
             border-color: #e74c3c !important;
             color: white !important;
             animation: shake 0.6s ease-in-out;
+        }
+        
+        /* Override hint styling during wrong word animation */
+        .letter-box.hint-revealed.wrong-word {
+            background-color: #e74c3c !important;
+            border-color: #e74c3c !important;
+            color: white !important;
         }
 
         @keyframes shake {
@@ -675,6 +703,18 @@
             box-shadow: none !important;
             animation: failureCascade 0.5s ease-out !important;
             background-color: transparent !important;
+        }
+        
+        /* Override hint styling during failure cascade */
+        .letter-box.hint-revealed.failure-cascade,
+        .letter-box.hint-revealed.current.failure-cascade,
+        .letter-box.hint-revealed.filled.failure-cascade {
+            border-color: #d3d6da !important;
+            border-width: 2px !important;
+            box-shadow: none !important;
+            animation: failureCascade 0.5s ease-out !important;
+            background-color: transparent !important;
+            color: #787c7e !important; /* Use normal text color during failure */
         }
         
         @keyframes failureCascade {
@@ -3017,24 +3057,32 @@
                 
                 // Different positioning for mobile vs desktop
                 const isMobile = window.innerWidth <= 480;
-                const timer = document.getElementById('timer');
+                let timer;
                 
                 if (isMobile) {
-                    // Mobile: position exactly in line with header, to the left of timer
+                    // Mobile: use mobile timer and position in mobile header
+                    timer = document.getElementById('mobile-timer');
                     const mobileHeader = document.querySelector('.mobile-header');
+                    
                     if (mobileHeader && timer) {
                         const timerRect = timer.getBoundingClientRect();
                         popup.style.left = (timerRect.left - 60) + 'px';
                         popup.style.top = (timerRect.top + (timerRect.height / 2) - 10) + 'px'; // Center with timer
                         popup.style.zIndex = '1000'; // Ensure it appears above other elements
+                        
+                        // Debug log for mobile
+                        console.log('Mobile popup positioned at:', popup.style.left, popup.style.top);
                     } else {
-                        // Fallback for mobile
-                        popup.style.top = '60px';
-                        popup.style.left = '20px';
+                        // Fallback for mobile - position in visible area
+                        popup.style.top = '80px';  // Below mobile header
+                        popup.style.left = '50%';
+                        popup.style.transform = 'translateX(-50%)'; // Center horizontally
                         popup.style.zIndex = '1000';
+                        console.log('Mobile popup fallback positioning');
                     }
                 } else {
-                    // Desktop positioning
+                    // Desktop positioning - use desktop timer
+                    timer = document.getElementById('timer');
                     if (timer) {
                         const timerRect = timer.getBoundingClientRect();
                         popup.style.left = (timerRect.left - 70) + 'px';
@@ -3217,10 +3265,7 @@
                         if (!letterBox) return;
                         const isRevealed = letterBox.dataset.isRevealed === 'true';
                     if (isRevealed) {
-                        if (typedLetter !== correctLetter) {
-                            letterBox.classList.add('auto-corrected');
-                            setTimeout(() => letterBox.classList.remove('auto-corrected'), 600);
-                        }
+                        // Skip auto-correct flash to avoid orange flicker
                         letterBox.classList.add('typed-through');
                     } else {
                         letterBox.textContent = typedLetter;
@@ -3251,7 +3296,9 @@
                     const nextDesktop = desktopBoxes[this.typedWord.length];
                     const nextMobile  = mobileBoxes[this.typedWord.length];
                     [nextDesktop, nextMobile].forEach(box => {
-                        if (box) box.classList.add('current');
+                        if (box) {
+                            box.classList.add('current');
+                        }
                     });
                 }
             }
@@ -3530,12 +3577,24 @@
                     this.gameEnded = true;
                 }
                 
-                // Play correct word sound and haptic feedback for ALL words (including final)
-                this.playSound('correct');
-                this.vibrate([100, 50, 100]);
-                
                 // Play letter cascade animation on current word
                 this.playLetterCascadeAnimation();
+                
+                // Play correct word sound and haptic feedback
+                const isMobile = window.innerWidth <= 480;
+                if (isMobile) {
+                    // Mobile: play chime on next animation frame after cascade starts for tight sync
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            this.playSound('correct');
+                            this.vibrate([100, 50, 100]);
+                        });
+                    });
+                } else {
+                    // Desktop: immediate chime (original timing)
+                    this.playSound('correct');
+                    this.vibrate([100, 50, 100]);
+                }
                 
                 // Add delay between cascade completion and rung state change
                 setTimeout(() => {
@@ -3580,6 +3639,8 @@
             
             playLetterCascadeAnimation() {
                 const letterBoxes = this.getCurrentWordLetterBoxes();
+                const isMobile = window.innerWidth <= 480;
+                const stagger = isMobile ? 80 : 60; // slower cascade on mobile for smoother feel
                 
                 letterBoxes.forEach((letterBox, index) => {
                     setTimeout(() => {
