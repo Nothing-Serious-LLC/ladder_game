@@ -220,29 +220,8 @@
             margin-bottom: 0;
         }
 
-        .instruction-number {
-            width: 32px;
-            height: 48px;
-            background: transparent;
-            color: #6aaa64;
-            border: 2px solid #6aaa64;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-        
         /* Mobile instruction adjustments */
         @media (max-width: 480px) {
-            .instruction-number {
-                width: 56px;
-                height: 72px;
-                font-size: 1.3rem;
-                font-weight: 800;
-            }
             
             .instruction-text {
                 font-size: 0.8rem;
@@ -261,7 +240,7 @@
 
         .instruction-header {
             font-size: 1.2rem;
-            color: #1a1a1b;
+            color: var(--primary-green);
             font-weight: 700;
             margin-bottom: 4px;
             line-height: 1.2;
@@ -1632,7 +1611,6 @@
         <div class="landing-content" id="landing-content">
             <div class="instructions">
                 <div class="instruction-item">
-                    <div class="instruction-number">1</div>
                     <div class="instruction-content">
                         <div class="instruction-header">Type</div>
                         <div class="instruction-text">Fill in each word using the revealed letters.</div>
@@ -1640,7 +1618,6 @@
                 </div>
 
                 <div class="instruction-item">
-                    <div class="instruction-number">2</div>
                     <div class="instruction-content">
                         <div class="instruction-header">Connect</div>
                         <div class="instruction-text">Each word connects to the one before it.</div>
@@ -1648,7 +1625,6 @@
                 </div>
 
                 <div class="instruction-item">
-                    <div class="instruction-number">3</div>
                     <div class="instruction-content">
                         <div class="instruction-header">Climb</div>
                         <div class="instruction-text">Puzzles get harder throughout the week.</div>
@@ -1888,6 +1864,14 @@
                 return new Promise((resolve) => {
                     const landingPage = document.getElementById('landing-page');
                     const gamePage = document.getElementById('game-page');
+                    
+                    // Copy puzzle info from landing to game page immediately (no "Loading..." flicker)
+                    const landingPuzzleInfo = document.getElementById('landing-puzzle-info');
+                    const gamePageDateDisplay = document.getElementById('date-display');
+                    if (landingPuzzleInfo && gamePageDateDisplay) {
+                        gamePageDateDisplay.textContent = landingPuzzleInfo.textContent;
+                    }
+                    
                     gamePage.style.display = 'flex';
                     gamePage.style.opacity = '0';
                     gamePage.style.transition = 'opacity 0.4s ease-in';
