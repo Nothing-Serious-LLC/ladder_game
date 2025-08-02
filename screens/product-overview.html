@@ -76,22 +76,25 @@
         }
         
         .back-button {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 1.2rem;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 0.9rem;
             color: var(--gray-600);
             cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            width: fit-content;
         }
         
         .back-button:hover {
-            background: var(--gray-200);
+            border-color: var(--gray-400);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
         .container {
@@ -104,7 +107,7 @@
         
         .product-hero {
             text-align: center;
-            padding: 40px 20px;
+            padding: 40px 20px 30px;
             background: white;
             border-radius: 16px;
             border: 1px solid var(--gray-200);
@@ -140,55 +143,49 @@
         .price-subtitle {
             font-size: 0.9rem;
             color: var(--gray-600);
+            margin-bottom: 30px;
         }
         
-        .features-section {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid var(--gray-200);
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        .divider {
+            height: 1px;
+            background: var(--gray-200);
+            margin: 20px 0;
         }
         
         .features-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 16px;
             color: var(--gray-900);
+            text-align: left;
         }
         
         .features-list {
             list-style: none;
+            text-align: left;
         }
         
         .feature-item {
             display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--gray-200);
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 10px;
         }
         
         .feature-item:last-child {
-            border-bottom: none;
+            margin-bottom: 0;
         }
         
         .feature-icon {
-            font-size: 1.2rem;
-            margin-right: 12px;
+            font-size: 1rem;
             color: var(--green-600);
+            margin-top: 2px;
         }
         
         .feature-text {
-            flex: 1;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--gray-900);
-        }
-        
-        .feature-detail {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-            margin-top: 4px;
+            line-height: 1.4;
         }
         
         .purchase-section {
@@ -250,7 +247,6 @@
 </head>
 <body>
     <div class="header">
-        <button class="back-button" onclick="goBack()">←</button>
         <div class="header-content">
             <h1 class="title">LADDER</h1>
             <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
@@ -258,51 +254,32 @@
     </div>
     
     <div class="container">
+        <button class="back-button" onclick="goBack()">
+            ← Back to Store
+        </button>
+        
         <div class="product-hero">
             <div class="product-icon" id="product-icon">🧩</div>
             <div class="product-name" id="product-name">Puzzle Pack</div>
             <div class="product-description" id="product-description">100 carefully crafted puzzles</div>
             <div class="product-price" id="product-price">$4.99</div>
             <div class="price-subtitle">One-time purchase</div>
-        </div>
-        
-        <div class="features-section">
-            <h2 class="features-title">What's Included</h2>
+            
+            <div class="divider"></div>
+            
+            <h3 class="features-title">What's Included</h3>
             <ul class="features-list" id="features-list">
                 <li class="feature-item">
                     <span class="feature-icon">🎯</span>
-                    <div>
-                        <div class="feature-text">100 Unique Puzzles</div>
-                        <div class="feature-detail">Handcrafted themes and challenging word ladders</div>
-                    </div>
+                    <div class="feature-text">100 Unique Puzzles</div>
                 </li>
                 <li class="feature-item">
                     <span class="feature-icon">📈</span>
-                    <div>
-                        <div class="feature-text">Progressive Difficulty</div>
-                        <div class="feature-detail">From beginner-friendly to expert challenges</div>
-                    </div>
+                    <div class="feature-text">Progressive Difficulty</div>
                 </li>
                 <li class="feature-item">
                     <span class="feature-icon">🏆</span>
-                    <div>
-                        <div class="feature-text">Achievement Tracking</div>
-                        <div class="feature-detail">Track your progress and completion times</div>
-                    </div>
-                </li>
-                <li class="feature-item">
-                    <span class="feature-icon">💡</span>
-                    <div>
-                        <div class="feature-text">Hint System</div>
-                        <div class="feature-detail">Smart hints to help when you're stuck</div>
-                    </div>
-                </li>
-                <li class="feature-item">
-                    <span class="feature-icon">📱</span>
-                    <div>
-                        <div class="feature-text">Play Anywhere</div>
-                        <div class="feature-detail">Works offline and syncs across devices</div>
-                    </div>
+                    <div class="feature-text">Achievement Tracking</div>
                 </li>
             </ul>
         </div>
@@ -329,28 +306,15 @@
                 features: [
                     {
                         icon: '🎯',
-                        title: '100 Unique Puzzles',
-                        detail: 'Handcrafted themes and challenging word ladders'
+                        title: '100 Unique Puzzles'
                     },
                     {
                         icon: '📈',
-                        title: 'Progressive Difficulty',
-                        detail: 'From beginner-friendly to expert challenges'
+                        title: 'Progressive Difficulty'
                     },
                     {
                         icon: '🏆',
-                        title: 'Achievement Tracking',
-                        detail: 'Track your progress and completion times'
-                    },
-                    {
-                        icon: '💡',
-                        title: 'Hint System',
-                        detail: 'Smart hints to help when you\'re stuck'
-                    },
-                    {
-                        icon: '📱',
-                        title: 'Play Anywhere',
-                        detail: 'Works offline and syncs across devices'
+                        title: 'Achievement Tracking'
                     }
                 ]
             },
@@ -362,28 +326,15 @@
                 features: [
                     {
                         icon: '📅',
-                        title: 'Complete Archive',
-                        detail: 'Every daily puzzle since LADDER launched'
+                        title: 'Complete Archive'
                     },
                     {
                         icon: '🔍',
-                        title: 'Search by Theme',
-                        detail: 'Find puzzles by topic or difficulty'
+                        title: 'Browse by Date'
                     },
                     {
-                        icon: '📊',
-                        title: 'Historical Stats',
-                        detail: 'See how you performed over time'
-                    },
-                    {
-                        icon: '🎲',
-                        title: 'Random Mode',
-                        detail: 'Play a random historical puzzle anytime'
-                    },
-                    {
-                        icon: '⭐',
-                        title: 'Replay Favorites',
-                        detail: 'Mark and replay your favorite puzzles'
+                        icon: '🏆',
+                        title: 'Achievement Tracking'
                     }
                 ]
             }
@@ -412,10 +363,7 @@
                 featureItem.className = 'feature-item';
                 featureItem.innerHTML = `
                     <span class="feature-icon">${feature.icon}</span>
-                    <div>
-                        <div class="feature-text">${feature.title}</div>
-                        <div class="feature-detail">${feature.detail}</div>
-                    </div>
+                    <div class="feature-text">${feature.title}</div>
                 `;
                 featuresList.appendChild(featureItem);
             });
