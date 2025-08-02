@@ -48,6 +48,11 @@
             color: var(--gray-900);
             min-height: 100vh;
             padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+            transition: opacity 0.3s ease-out;
+        }
+        
+        body.fade-out {
+            opacity: 0;
         }
         
         .container {
@@ -313,6 +318,22 @@
             }
         }
         
+        function smoothTransitionToHome(button, successText) {
+            // Update button to show success
+            button.textContent = successText;
+            button.style.background = 'var(--primary-green)';
+            
+            // Start fade out after brief delay to show success state
+            setTimeout(() => {
+                document.body.classList.add('fade-out');
+                
+                // Navigate after fade completes
+                setTimeout(() => {
+                    window.location.href = './home.html';
+                }, 300); // Match the CSS transition duration
+            }, 200); // Brief delay to show success state
+        }
+        
         async function handleSignup(event) {
             event.preventDefault();
             
@@ -339,17 +360,8 @@
                     throw error;
                 }
                 
-                // Success - check if email confirmation is needed
-                if (data.user && !data.session) {
-                    alert('Account created! Since email confirmation is disabled, you should be able to sign in immediately.');
-                } else if (data.session) {
-                    alert('Account created and signed in successfully! Welcome to Ladder.');
-                } else {
-                    alert('Account created successfully! Welcome to Ladder.');
-                }
-                
-                // Redirect to home screen
-                window.location.href = './home.html';
+                // Show success state and smooth transition
+                smoothTransitionToHome(submitButton, 'Success!');
                 
             } catch (error) {
                 console.error('Signup error:', error);
@@ -386,9 +398,8 @@
                 }
                 
                 if (data.session && data.user) {
-                    alert('Signed in successfully! Welcome back to Ladder.');
-                    // Redirect to home screen
-                    window.location.href = './home.html';
+                    // Show success state and smooth transition
+                    smoothTransitionToHome(submitButton, 'Welcome back!');
                 } else {
                     throw new Error('No session created - this might indicate an authentication issue.');
                 }
