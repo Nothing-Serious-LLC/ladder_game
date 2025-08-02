@@ -75,6 +75,10 @@
             padding: 20px 0 30px;
             border-bottom: 1px solid var(--gray-200);
             margin-bottom: 40px;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
         }
         
         .title {
@@ -661,19 +665,19 @@
                     <div class="store-items">
                         <div class="store-item">
                             <div class="item-info">
-                                <div class="item-name">Premium Pack</div>
-                                <div class="item-description">100 expert puzzles</div>
+                                <div class="item-name">Puzzle Pack</div>
+                                <div class="item-description">100 puzzles</div>
                                 <div class="item-price">$4.99</div>
                             </div>
-                            <button class="buy-button" onclick="buyItem('premium-pack')">Buy</button>
+                            <button class="buy-button" onclick="buyItem('puzzle-pack')">Buy</button>
                         </div>
                         <div class="store-item">
                             <div class="item-info">
-                                <div class="item-name">Historical Pack</div>
+                                <div class="item-name">Historic Puzzles</div>
                                 <div class="item-description">All past daily puzzles</div>
                                 <div class="item-price">$2.99</div>
                             </div>
-                            <button class="buy-button" onclick="buyItem('historical-pack')">Buy</button>
+                            <button class="buy-button" onclick="buyItem('historic-puzzles')">Buy</button>
                         </div>
                     </div>
                 </div>
@@ -692,15 +696,15 @@
                         <div class="stat-label">Streak</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" id="best-streak">0</div>
-                        <div class="stat-label">Best</div>
+                        <div class="stat-number" id="average-time">0:00</div>
+                        <div class="stat-label">Avg Time</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number" id="success-rate">0%</div>
                         <div class="stat-label">Success</div>
                     </div>
                 </div>
-                <button class="view-all-button" onclick="viewStatistics()">View Details</button>
+                <button class="view-all-button" onclick="window.location.href='../screens/statistics.html'">View Details</button>
             </div>
             
             <!-- 4. Profile (Full Width, Simple) -->
@@ -714,7 +718,7 @@
                     </div>
                 </div>
                 <div class="profile-actions">
-                    <button class="profile-button primary" onclick="editProfile()">Edit Profile</button>
+                    <button class="profile-button primary" onclick="window.location.href='../screens/settings.html'">Edit Profile</button>
                     <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
                 </div>
             </div>
@@ -827,8 +831,7 @@
                         // Show not started state - puzzle number and date only
                         puzzleName.textContent = `Puzzle #${getDayOfYear()}`;
                         puzzleDateEl.textContent = puzzleDate;
-                        statusBadge.textContent = 'Not Started';
-                        statusBadge.className = 'status-badge status-pending';
+                        statusBadge.style.display = 'none'; // Hide status badge for not started
                         playButton.textContent = 'Play Today\'s Puzzle';
                         playButton.className = 'play-button';
                         playButton.onclick = playDailyPuzzle;
@@ -837,7 +840,7 @@
                     // Not logged in, show generic info
                     document.getElementById('daily-puzzle-name').textContent = `Puzzle #${getDayOfYear()}`;
                     document.getElementById('daily-puzzle-date').textContent = puzzleDate;
-                    document.getElementById('daily-status').textContent = 'Not Started';
+                    document.getElementById('daily-status').style.display = 'none'; // Hide status badge for not started
                 }
             } catch (error) {
                 console.error('Error loading daily puzzle:', error);
@@ -920,12 +923,12 @@
                     if (completions) {
                         const totalCompleted = completions.length;
                         const currentStreak = calculateCurrentStreak(completions);
-                        const bestStreak = calculateBestStreak(completions);
+                        const averageTime = calculateAverageTime(completions);
                         const successRate = totalCompleted > 0 ? Math.round((completions.filter(c => c.completed).length / totalCompleted) * 100) : 0;
                         
                         document.getElementById('total-completed').textContent = totalCompleted;
                         document.getElementById('current-streak').textContent = currentStreak;
-                        document.getElementById('best-streak').textContent = bestStreak;
+                        document.getElementById('average-time').textContent = averageTime;
                         document.getElementById('success-rate').textContent = `${successRate}%`;
                     }
                 }
@@ -934,7 +937,7 @@
                 // Show placeholder stats
                 document.getElementById('total-completed').textContent = '0';
                 document.getElementById('current-streak').textContent = '0';
-                document.getElementById('best-streak').textContent = '0';
+                document.getElementById('average-time').textContent = '0:00';
                 document.getElementById('success-rate').textContent = '0%';
             }
         }
@@ -959,22 +962,37 @@
             return streak;
         }
         
-        function calculateBestStreak(completions) {
-            if (!completions || completions.length === 0) return 0;
+        function calculateAverageTime(completions) {
+            if (!completions || completions.length === 0) return '0:00';
             
-            let maxStreak = 0;
-            let currentStreak = 0;
+            // Filter only completed puzzles with valid completion times
+            const completedWithTimes = completions.filter(c => 
+                c.completed && c.completion_time && c.completion_time !== '--:--'
+            );
             
-            for (const completion of completions) {
-                if (completion.completed) {
-                    currentStreak++;
-                    maxStreak = Math.max(maxStreak, currentStreak);
-                } else {
-                    currentStreak = 0;
+            if (completedWithTimes.length === 0) return '0:00';
+            
+            // Parse time strings and calculate average
+            let totalSeconds = 0;
+            let validTimes = 0;
+            
+            for (const completion of completedWithTimes) {
+                const timeParts = completion.completion_time.split(':');
+                if (timeParts.length === 2) {
+                    const minutes = parseInt(timeParts[0]) || 0;
+                    const seconds = parseInt(timeParts[1]) || 0;
+                    totalSeconds += (minutes * 60) + seconds;
+                    validTimes++;
                 }
             }
             
-            return maxStreak;
+            if (validTimes === 0) return '0:00';
+            
+            const avgSeconds = Math.round(totalSeconds / validTimes);
+            const avgMinutes = Math.floor(avgSeconds / 60);
+            const remainingSeconds = avgSeconds % 60;
+            
+            return `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
         
         async function loadPurchases() {
@@ -1172,8 +1190,35 @@
         };
         
         window.buyItem = function(itemId) {
-            // TODO: Implement purchase flow with Stripe/PayPal
-            alert(`Purchase flow for ${itemId} coming soon!`);
+            // Define item details
+            const items = {
+                'puzzle-pack': {
+                    name: 'Puzzle Pack',
+                    price: '$4.99',
+                    description: '100 puzzles'
+                },
+                'historic-puzzles': {
+                    name: 'Historic Puzzles',
+                    price: '$2.99',
+                    description: 'All past daily puzzles'
+                }
+            };
+            
+            const item = items[itemId];
+            if (!item) {
+                console.error('Unknown item:', itemId);
+                return;
+            }
+            
+            // TODO: Implement actual purchase flow with Stripe/PayPal
+            // For now, simulate successful purchase and redirect to confirmation
+            const params = new URLSearchParams({
+                item: item.name,
+                price: item.price,
+                description: item.description
+            });
+            
+            window.location.href = `../screens/purchase-confirmation.html?${params.toString()}`;
         };
         
         window.playPuzzlePack = function(packType) {
