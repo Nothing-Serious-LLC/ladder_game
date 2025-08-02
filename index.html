@@ -1489,8 +1489,10 @@
             /* Prevent clip during loading scale */
             .mobile-ladder .rung.loading-animation { overflow: visible; }
             .rung.loading-animation{animation:loadingOutline 0.6s ease-out;transform:none;}
-            /* Limit mobile ladder to show fewer rungs */
+            
+            /* Mobile loading animation bounce effect */
             .mobile-ladder .rung {
+                transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
                 display: block;
             }
             
@@ -2018,6 +2020,7 @@
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
                     const mobileLadder = document.getElementById('mobile-ladder');
+                    const mobileViewport = document.querySelector('.mobile-ladder-viewport');
                     ladder.innerHTML = ''; // Clear any existing content
                     if (mobileLadder) mobileLadder.innerHTML = '';
                     
@@ -2029,11 +2032,13 @@
                         rung.id = `loading-rung-${i}`;
                         rung.style.opacity = '0.3';
                         
-                        // Create mobile rung
+                        // Create mobile rung with special initial state
+                        const isFinish = i === 5;
                         const mobileRung = document.createElement('div');
-                        mobileRung.className = 'rung';
+                        mobileRung.className = isFinish ? 'rung finish-rung' : 'rung';
                         mobileRung.id = `mobile-loading-rung-${i}`;
-                        mobileRung.style.opacity = '0.3';
+                        mobileRung.style.opacity = isFinish ? '0.8' : '0.1'; // FINISH visible, others faded
+                        mobileRung.style.transform = 'translateY(20px) scale(0.95)'; // Start slightly down and small
                         
                         // Create word display with placeholder letter boxes
                         const wordDisplay = document.createElement('div');
@@ -2042,8 +2047,8 @@
                         const mobileWordDisplay = document.createElement('div');
                         mobileWordDisplay.className = 'word-display';
                         
-                        // Create 5-8 letter boxes (varies like real words)
-                        const letterCount = 4 + (i % 4) + 1; // Varies from 5-8 letters
+                        // Create letter boxes (6 for FINISH, varies for others)
+                        const letterCount = isFinish ? 6 : 4 + (i % 4) + 1;
                         for (let j = 0; j < letterCount; j++) {
                             const letterBox = document.createElement('div');
                             letterBox.className = 'letter-box';
@@ -2056,56 +2061,87 @@
                             mobileWordDisplay.appendChild(mobileLetterBox);
                         }
                         
-                        // Create hint placeholder
-                        const hint = document.createElement('div');
-                        hint.className = 'word-hint';
-                        hint.innerHTML = '&nbsp;'; // Empty space to maintain height
-                        
-                        const mobileHint = document.createElement('div');
-                        mobileHint.className = 'word-hint';
-                        mobileHint.innerHTML = '&nbsp;';
-                        
                         rung.appendChild(wordDisplay);
-                        rung.appendChild(hint);
+                        
+                        // Only add hint if not FINISH
+                        if (!isFinish) {
+                            const hint = document.createElement('div');
+                            hint.className = 'word-hint';
+                            hint.innerHTML = '&nbsp;';
+                            rung.appendChild(hint);
+                            
+                            const mobileHint = document.createElement('div');
+                            mobileHint.className = 'word-hint';
+                            mobileHint.innerHTML = '&nbsp;';
+                            mobileRung.appendChild(mobileHint);
+                        }
+                        
                         ladder.appendChild(rung);
                         
                         if (mobileLadder) {
                             mobileRung.appendChild(mobileWordDisplay);
-                            mobileRung.appendChild(mobileHint);
                             mobileLadder.appendChild(mobileRung);
                         }
                     }
                     
-                    // Animate each rung from top to bottom with staggered timing
-                    for (let i = 0; i < 6; i++) {
-                        const delay = i * 200; // 200ms between each rung animation
-                        
+                    // For mobile: Start scrolled to bottom to show FINISH card
+                    if (mobileViewport && window.innerWidth <= 480) {
                         setTimeout(() => {
-                            const rung = document.getElementById(`loading-rung-${i}`);
-                            const mobileRung = document.getElementById(`mobile-loading-rung-${i}`);
+                            mobileViewport.scrollTop = mobileViewport.scrollHeight;
+                        }, 100);
+                    }
+                    
+                    // Mobile-specific upward cascade animation
+                    if (window.innerWidth <= 480) {
+                        // Upward cascade: Start from bottom (5) to top (0)
+                        for (let i = 5; i >= 0; i--) {
+                            const delay = (5 - i) * 150; // 150ms between each rung, bottom to top
                             
-                            if (rung) {
-                                rung.classList.add('loading-animation');
+                            setTimeout(() => {
+                                const mobileRung = document.getElementById(`mobile-loading-rung-${i}`);
                                 
-                                // Clean up animation class after animation completes
-                                setTimeout(() => {
-                                    rung.classList.remove('loading-animation');
-                                }, 800);
+                                if (mobileRung) {
+                                    // Animate upward with bounce
+                                    mobileRung.style.transition = 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+                                    mobileRung.style.opacity = '0.8';
+                                    mobileRung.style.transform = 'translateY(0px) scale(1)';
+                                }
+                            }, delay);
+                        }
+                        
+                        // After upward cascade, scroll to top
+                        setTimeout(() => {
+                            if (mobileViewport) {
+                                mobileViewport.scrollTo({
+                                    top: 0,
+                                    behavior: 'smooth'
+                                });
                             }
+                        }, 900); // After cascade completes
+                        
+                    } else {
+                        // Desktop animation (unchanged)
+                        for (let i = 0; i < 6; i++) {
+                            const delay = i * 200;
                             
-                            if (mobileRung) {
-                                mobileRung.classList.add('loading-animation');
+                            setTimeout(() => {
+                                const rung = document.getElementById(`loading-rung-${i}`);
                                 
-                                // Clean up animation class after animation completes
-                                setTimeout(() => {
-                                    mobileRung.classList.remove('loading-animation');
-                                }, 800);
-                            }
-                        }, delay);
+                                if (rung) {
+                                    rung.classList.add('loading-animation');
+                                    
+                                    setTimeout(() => {
+                                        rung.classList.remove('loading-animation');
+                                    }, 800);
+                                }
+                            }, delay);
+                        }
                     }
                     
                     // Resolve after all animations complete
-                    const totalAnimationTime = (6 * 200) + 800 + 200; // stagger + animation + buffer
+                    const totalAnimationTime = window.innerWidth <= 480 
+                        ? 1500 // Mobile: 900ms cascade + 600ms scroll
+                        : (6 * 200) + 800 + 200; // Desktop: stagger + animation + buffer
                     setTimeout(() => {
                         resolve();
                     }, totalAnimationTime);
