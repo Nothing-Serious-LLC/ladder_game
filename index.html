@@ -2499,7 +2499,8 @@
             },
             
             checkTodaysPuzzleStatus: async (isAuthenticated) => {
-                const today = new Date().toISOString().split('T')[0];
+                // Get today's puzzle date based on ET timezone and 3am reset
+                const today = window.gameModule.getCurrentPuzzleDate();
                 
                 if (isAuthenticated) {
                     // Check database for authenticated users
@@ -2530,14 +2531,107 @@
                 }
             },
             
+            getCurrentPuzzleDate: () => {
+                // Returns the current puzzle date based on ET timezone and 3am reset
+                // If it's before 3am ET, we're still on "yesterday's" puzzle
+                // If it's 3am ET or later, we're on "today's" puzzle
+                
+                const now = new Date();
+                
+                // Get current date/time in Eastern timezone
+                const etFormatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/New_York',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                const etParts = etFormatter.formatToParts(now);
+                const etYear = parseInt(etParts.find(part => part.type === 'year').value);
+                const etMonth = parseInt(etParts.find(part => part.type === 'month').value) - 1; // 0-indexed
+                const etDay = parseInt(etParts.find(part => part.type === 'day').value);
+                const etHour = parseInt(etParts.find(part => part.type === 'hour').value);
+                
+                // Create the current puzzle date
+                const puzzleDate = new Date();
+                puzzleDate.setFullYear(etYear, etMonth, etDay);
+                
+                if (etHour < 3) {
+                    // Before 3am ET, so we're still on yesterday's puzzle
+                    puzzleDate.setDate(puzzleDate.getDate() - 1);
+                }
+                
+                // Return in YYYY-MM-DD format
+                return puzzleDate.toISOString().split('T')[0];
+            },
+            
+            getNextPuzzleResetTime: () => {
+                // Puzzles reset at 3am ET (Eastern Time)
+                // This returns the next 3am ET reset time converted to user's local timezone
+                
+                const now = new Date();
+                
+                // Get current date/time in Eastern timezone using Intl
+                const etFormatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/New_York',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                const etParts = etFormatter.formatToParts(now);
+                const etYear = parseInt(etParts.find(part => part.type === 'year').value);
+                const etMonth = parseInt(etParts.find(part => part.type === 'month').value) - 1; // 0-indexed
+                const etDay = parseInt(etParts.find(part => part.type === 'day').value);
+                const etHour = parseInt(etParts.find(part => part.type === 'hour').value);
+                
+                // Create today at 3am ET
+                const todayAt3amET = new Date();
+                todayAt3amET.setFullYear(etYear, etMonth, etDay);
+                todayAt3amET.setHours(3, 0, 0, 0);
+                
+                // Determine if we need today's or tomorrow's 3am ET
+                let targetResetDate;
+                if (etHour >= 3) {
+                    // Past 3am ET, so next reset is tomorrow at 3am ET
+                    targetResetDate = new Date(todayAt3amET);
+                    targetResetDate.setDate(targetResetDate.getDate() + 1);
+                } else {
+                    // Before 3am ET, so next reset is today at 3am ET  
+                    targetResetDate = todayAt3amET;
+                }
+                
+                // Convert from local interpretation to actual ET time
+                // The targetResetDate currently represents the date/time as if it were in local timezone
+                // We need to adjust it to represent that same moment in ET timezone
+                
+                // Method: Create two dates representing the same moment, one in local time, one in ET
+                const testLocal = new Date(targetResetDate);
+                const testET = new Date(testLocal.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+                
+                // Calculate the difference
+                const offsetMs = testLocal.getTime() - testET.getTime();
+                
+                // Apply the offset to get the correct reset time
+                const correctResetTime = new Date(targetResetDate.getTime() + offsetMs);
+                
+                return correctResetTime;
+            },
+            
             setPuzzlePlayedCookie: () => {
-                const today = new Date().toISOString().split('T')[0];
+                const today = window.gameModule.getCurrentPuzzleDate();
                 const cookieName = `ladder_played_${today}`;
-                // Set cookie to expire at end of day
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
-                document.cookie = `${cookieName}=true; expires=${tomorrow.toUTCString()}; path=/`;
+                // Set cookie to expire at next 3am ET reset
+                const nextReset = window.gameModule.getNextPuzzleResetTime();
+                document.cookie = `${cookieName}=true; expires=${nextReset.toUTCString()}; path=/`;
             },
             
             showLandingPage: () => {
@@ -2570,11 +2664,9 @@
             startCountdownTimer: () => {
                 function updateCountdown() {
                     const now = new Date();
-                    const tomorrow = new Date(now);
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    tomorrow.setHours(0, 0, 0, 0);
+                    const nextReset = window.gameModule.getNextPuzzleResetTime();
                     
-                    const timeLeft = tomorrow - now;
+                    const timeLeft = nextReset - now;
                     
                     if (timeLeft <= 0) {
                         // New day - reload the page to reset
@@ -2665,7 +2757,7 @@
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if (!user) return;
                 
-                const today = new Date().toISOString().split('T')[0];
+                const today = window.gameModule.getCurrentPuzzleDate();
                 
                 // Check if record already exists
                 const { data: existing } = await window.supabaseClient
@@ -4578,7 +4670,7 @@ https://ladder.game/`;
                         return;
                     }
                     
-                    const today = new Date().toISOString().split('T')[0];
+                    const today = window.gameModule.getCurrentPuzzleDate();
                     const completionTime = this.finalTimeMs || Date.now() - this.startTime;
                     
                     // Try to insert completion record
