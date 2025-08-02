@@ -2469,9 +2469,8 @@
                         // Show countdown screen instead of landing page
                         window.gameModule.showCountdownFromStart();
                     } else if (isAuthenticated) {
-                        // Authenticated user who hasn't played - could redirect to home screen or show landing
-                        // For now, show landing page but could redirect to home in the future
-                        window.gameModule.showLandingPage();
+                        // Authenticated user who hasn't played - redirect to home screen for better UX
+                        window.location.href = './screens/home.html';
                     } else {
                         // Non-authenticated user who hasn't played - show landing page
                         window.gameModule.showLandingPage();
@@ -4546,11 +4545,16 @@ https://ladder.game/`;
                     }
                     
                     if (isAuthenticated) {
-                        // Show authenticated user cards
+                        // Show authenticated user cards with appropriate message based on page type
+                        const isCompletion = pageType === 'completion';
+                        const title = isCompletion ? 'Great Job!' : 'Keep Trying!';
+                        const text = isCompletion ? 'View your progress and stats on your dashboard' : 'Check your stats and try again tomorrow';
+                        const urlParam = isCompletion ? 'completed=true' : 'failed=true';
+                        
                         authCard.innerHTML = `
-                            <h3 class="auth-title">Great Job!</h3>
-                            <p class="auth-text">View your progress and stats on your dashboard</p>
-                            <a href="./screens/home.html" class="auth-button">Go to Dashboard</a>
+                            <h3 class="auth-title">${title}</h3>
+                            <p class="auth-text">${text}</p>
+                            <a href="./screens/home.html?${urlParam}" class="auth-button">Go to Dashboard</a>
                         `;
                         
                         // Set up more puzzles card
@@ -4558,11 +4562,14 @@ https://ladder.game/`;
                         
                     } else {
                         // Show signup card for non-authenticated users
+                        const isCompletion = pageType === 'completion';
+                        const urlParam = isCompletion ? 'completed=true' : 'failed=true';
+                        
                         authCard.innerHTML = `
                             <h3 class="auth-title">Save Progress</h3>
                             <p class="auth-text">Track your stats and get daily reminders</p>
                             <div class="signup-buttons">
-                                <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
+                                <button class="signup-button primary" onclick="window.location.href='./screens/signup.html?from=${pageType}'">Sign Up</button>
                                 <button class="signup-button secondary" onclick="this.closest('.auth-card').style.opacity='0.5'; setTimeout(() => this.closest('.auth-card').style.display='none', 300)">Skip</button>
                             </div>
                         `;

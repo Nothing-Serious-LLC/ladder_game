@@ -337,13 +337,24 @@
             button.textContent = successText;
             button.style.background = 'var(--primary-green)';
             
+            // Check if user came from completion/failure screen
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromCompletion = urlParams.get('from') === 'completion';
+            const fromFailure = urlParams.get('from') === 'failure';
+            
             // Start fade out after brief delay to show success state
             setTimeout(() => {
                 document.body.classList.add('fade-out');
                 
                 // Navigate after fade completes
                 setTimeout(() => {
-                    window.location.href = './home.html';
+                    let targetUrl = './home.html';
+                    if (fromCompletion) {
+                        targetUrl = './home.html?completed=true';
+                    } else if (fromFailure) {
+                        targetUrl = './home.html?failed=true';
+                    }
+                    window.location.href = targetUrl;
                 }, 300); // Match the CSS transition duration
             }, 200); // Brief delay to show success state
         }

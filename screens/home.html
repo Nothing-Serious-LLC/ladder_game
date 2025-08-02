@@ -774,6 +774,19 @@
             loadPurchases();
         });
         
+        // Refresh puzzle status when page becomes visible (handles navigation from other screens)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // Page is now visible, refresh daily puzzle status
+                loadDailyPuzzle();
+            }
+        });
+        
+        // Also refresh when window gains focus
+        window.addEventListener('focus', function() {
+            loadDailyPuzzle();
+        });
+        
         async function initializeHomePage() {
             // Check if user is logged in
             const { data: { session } } = await supabase.auth.getSession();
@@ -860,9 +873,26 @@
             // Return in YYYY-MM-DD format
             return puzzleDate.toISOString().split('T')[0];
         }
+        
+        function checkTodaysPuzzleStatusLocal() {
+            // Check cookies for non-authenticated users to see if they've played today's puzzle
+            const today = getCurrentPuzzleDate();
+            const cookieName = `ladder_played_${today}`;
+            return document.cookie.split(';').some(c => c.trim().startsWith(cookieName + '='));
+        }
 
         async function loadDailyPuzzle() {
             try {
+                // Check for URL parameters indicating recent puzzle completion/failure
+                const urlParams = new URLSearchParams(window.location.search);
+                const justCompleted = urlParams.get('completed');
+                const justFailed = urlParams.get('failed');
+                
+                // Clean URL if we have completion parameters
+                if (justCompleted || justFailed) {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+                
                 // Get today's puzzle date based on ET timezone and 3am reset
                 const today = getCurrentPuzzleDate();
                 
@@ -901,10 +931,26 @@
                         playButton.onclick = playDailyPuzzle;
                     }
                 } else {
-                    // Not logged in, show generic info
-                    document.getElementById('daily-puzzle-name').textContent = `Puzzle #${getDayOfYear()}`;
-                    document.getElementById('daily-puzzle-date').textContent = puzzleDate;
-                    document.getElementById('daily-status').style.display = 'none'; // Hide status badge for not started
+                    // Not logged in - check cookies for completion status
+                    const hasPlayedToday = checkTodaysPuzzleStatusLocal();
+                    
+                    const statusBadge = document.getElementById('daily-status');
+                    const playButton = document.getElementById('daily-play-button');
+                    const puzzleName = document.getElementById('daily-puzzle-name');
+                    const puzzleDateEl = document.getElementById('daily-puzzle-date');
+                    
+                    if (hasPlayedToday) {
+                        // Show countdown timer for users who have played
+                        showCountdown();
+                    } else {
+                        // Show not started state - puzzle number and date only
+                        puzzleName.textContent = `Puzzle #${getDayOfYear()}`;
+                        puzzleDateEl.textContent = puzzleDate;
+                        statusBadge.style.display = 'none'; // Hide status badge for not started
+                        playButton.textContent = 'Play Today\'s Puzzle';
+                        playButton.className = 'play-button';
+                        playButton.onclick = playDailyPuzzle;
+                    }
                 }
             } catch (error) {
                 console.error('Error loading daily puzzle:', error);
