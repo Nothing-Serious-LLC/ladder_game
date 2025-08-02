@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Ladder</title>
+    <meta name="description" content="Sign up for Ladder to track your progress and get daily puzzle reminders.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/icon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/icon-180.png">
+    
+    <style>
+        /* Import the same color palette and basic styles from the main game */
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+            
+            /* LADDER Color Palette */
+            --primary-green: #6aaa64;
+            --primary-green-hover: #5d9556;
+            --primary-orange: #ff8c42;
+            --primary-orange-hover: #e06829;
+            --error-red: #e74c3c;
+            --gray-50: #fafafa;
+            --gray-200: #d3d6da;
+            --gray-400: #a8adb3;
+            --gray-600: #787c7e;
+            --gray-900: #1a1a1b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+            padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 30px;
+        }
+        
+
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 8px;
+            color: var(--gray-900);
+        }
+        
+        .date-info {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        
+        .signup-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 2px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 14px;
+        }
+        
+        .form-input {
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+        
+        .signup-button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .signup-button:hover {
+            background: var(--primary-green-hover);
+        }
+        
+        .signup-button.secondary {
+            background: transparent;
+            color: var(--gray-600);
+            border: 2px solid var(--gray-200);
+        }
+        
+        .signup-button.secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+        
+        .benefits-list {
+            list-style: none;
+            margin: 20px 0 15px 0;
+        }
+        
+        .benefits-list li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 24px;
+            color: var(--gray-600);
+        }
+        
+        .benefits-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary-green);
+            font-weight: bold;
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 0;
+            position: relative;
+            color: var(--gray-400);
+        }
+        
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gray-200);
+            z-index: 1;
+        }
+        
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">LADDER</h1>
+            <p class="date-info" id="signup-date-display">Loading...</p>
+        </header>
+        
+        <div class="signup-card">
+            <form class="signup-form" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-input" type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-input" type="password" id="password" name="password" required placeholder="Create a password" minlength="6">
+                </div>
+                
+                <ul class="benefits-list">
+                    <li>Track your daily puzzle progress</li>
+                    <li>Get streak counters and statistics</li>
+                    <li>Daily puzzle reminders</li>
+                </ul>
+                
+                <button type="submit" class="signup-button">Create Account</button>
+                
+                <div class="button-group">
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+                    
+                    <button type="button" class="signup-button secondary" id="signin-toggle">Sign In</button>
+                    
+                    <button type="button" class="signup-button secondary" onclick="goBack()">Skip for now</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <script type="module">
+        // Import Supabase configuration
+        import { supabaseConfig } from '../config/supabase-config.js';
+        import { getTodaysPuzzleInfo } from '../assets/js/database.js';
+
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        
+        // Track current mode (signup vs signin)
+        let isSignupMode = true;
+        
+        // Set the header date info
+        function setHeaderInfo() {
+            try {
+                const { puzzleNumber } = getTodaysPuzzleInfo();
+                const today = new Date();
+                const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                const formattedDate = today.toLocaleDateString('en-US', options);
+                document.getElementById('signup-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+            } catch (error) {
+                console.error('Error setting header info:', error);
+                document.getElementById('signup-date-display').textContent = 'Daily Word Puzzle';
+            }
+        }
+        
+        // Initialize page
+        setHeaderInfo();
+        
+        // Toggle between signup and signin modes
+        function toggleMode() {
+            const form = document.querySelector('.signup-form');
+            const submitButton = document.querySelector('.signup-button:not(.secondary)');
+            const toggleButton = document.getElementById('signin-toggle');
+            const titleElement = document.querySelector('.title');
+            
+            isSignupMode = !isSignupMode;
+            
+            if (isSignupMode) {
+                // Switch to signup mode
+                submitButton.textContent = 'Create Account';
+                toggleButton.textContent = 'Sign In';
+                titleElement.textContent = 'LADDER';
+                document.querySelector('.benefits-list').style.display = 'block';
+                form.onsubmit = handleSignup;
+            } else {
+                // Switch to signin mode
+                submitButton.textContent = 'Sign In';
+                toggleButton.textContent = 'Sign Up';
+                titleElement.textContent = 'LADDER';
+                document.querySelector('.benefits-list').style.display = 'none';
+                form.onsubmit = handleSignin;
+            }
+        }
+        
+        // Set up toggle button
+        document.getElementById('signin-toggle').onclick = toggleMode;
+        
+        function goBack() {
+            // Go back to the previous page
+            if (document.referrer && document.referrer.includes(window.location.origin)) {
+                window.history.back();
+            } else {
+                // Fallback to main game page
+                window.location.href = '../index.html';
+            }
+        }
+        
+        async function handleSignup(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitButton = event.target.querySelector('.signup-button:not(.secondary)');
+            
+            console.log('Starting signup process...', { email });
+            
+            // Disable button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Creating Account...';
+            
+            try {
+                console.log('Calling supabase.auth.signUp...');
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                });
+                
+                console.log('Signup response:', { data, error });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                // Success - check if email confirmation is needed
+                if (data.user && !data.session) {
+                    alert('Account created! Since email confirmation is disabled, you should be able to sign in immediately.');
+                } else if (data.session) {
+                    alert('Account created and signed in successfully! Welcome to Ladder.');
+                } else {
+                    alert('Account created successfully! Welcome to Ladder.');
+                }
+                
+                // Redirect back to the game
+                goBack();
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert(`Error creating account: ${error.message}`);
+                submitButton.disabled = false;
+                submitButton.textContent = 'Create Account';
+            }
+        }
+        
+        async function handleSignin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const submitButton = event.target.querySelector('.signup-button:not(.secondary)');
+            
+            console.log('Starting signin process...', { email });
+            
+            // Disable button and show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing In...';
+            
+            try {
+                console.log('Calling supabase.auth.signInWithPassword...');
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+                
+                console.log('Signin response:', { data, error });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (data.session && data.user) {
+                    alert('Signed in successfully! Welcome back to Ladder.');
+                    // Redirect back to the game
+                    goBack();
+                } else {
+                    throw new Error('No session created - this might indicate an authentication issue.');
+                }
+                
+            } catch (error) {
+                console.error('Signin error:', error);
+                
+                // Provide more helpful error messages
+                let errorMessage = error.message;
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMessage = 'Invalid email or password. Please check your credentials and try again.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMessage = 'Please check your email and confirm your account before signing in.';
+                }
+                
+                alert(`Error signing in: ${errorMessage}`);
+                submitButton.disabled = false;
+                submitButton.textContent = 'Sign In';
+            }
+        }
+        
+        // Set initial form handler
+        document.querySelector('.signup-form').onsubmit = handleSignup;
+        
+        // Make goBack function globally available for onclick handlers
+        window.goBack = goBack;
+        
+        // Add form validation styling
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('invalid', function() {
+                this.style.borderColor = 'var(--error-red)';
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.checkValidity()) {
+                    this.style.borderColor = 'var(--gray-200)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

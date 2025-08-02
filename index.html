@@ -4099,9 +4099,8 @@ https://ladder.game/`;
                 
                 primaryButtons.forEach(button => {
                     button.onclick = () => {
-                        console.log('Create Account clicked - would redirect to signup');
-                        // TODO: Implement account creation
-                        alert('Account creation coming soon!');
+                        console.log('Create Account clicked - navigating to signup');
+                        window.location.href = './screens/signup.html';
                     };
                 });
                 
