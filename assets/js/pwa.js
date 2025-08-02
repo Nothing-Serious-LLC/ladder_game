@@ -1,13 +1,32 @@
 // LADDER - PWA Utilities Module
 // Handles Progressive Web App functionality, service worker, and offline detection
 
-// Service Worker Registration
+// Service Worker Registration with Auto-Update Detection
 export function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
                 .then((registration) => {
                     console.log('SW registered: ', registration);
+                    
+                    // Check for updates every 60 seconds
+                    setInterval(() => {
+                        registration.update();
+                    }, 60000);
+                    
+                    // Listen for new service worker
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('New service worker found, updating...');
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available, reload automatically
+                                console.log('New version available, reloading...');
+                                window.location.reload();
+                            }
+                        });
+                    });
                 })
                 .catch((registrationError) => {
                     console.log('SW registration failed: ', registrationError);
