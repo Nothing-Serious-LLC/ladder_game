@@ -996,13 +996,13 @@
         .mobile-keyboard {
             display: none;
             flex-direction: column;
-            gap: 6px;
-            padding: 12px 3px 28px 3px; /* 3px side padding for maximum width */
+            gap: 10px; /* Increased gap between rows for better spacing */
+            padding: 16px 3px 28px 3px; /* Slightly more top padding */
             background: #f8f9fa;
             border-top: 1px solid #d3d6da;
             margin-top: auto;
             flex-shrink: 0; /* Prevent keyboard from shrinking */
-            min-height: 200px; /* Increased height for dynamic keys */
+            min-height: 210px; /* Increased height for larger gaps */
             width: calc(100vw - 6px); /* Full viewport width minus 6px total margin */
             box-sizing: border-box;
         }
@@ -1016,13 +1016,13 @@
         .keyboard-row {
             display: flex;
             justify-content: center;
-            gap: 3px; /* Reduced gap for more key space */
+            gap: 5px; /* Increased gap for better touch accuracy */
         }
 
         .keyboard-key {
             background: #d3d6da;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px; /* Slightly more rounded like Apple */
             color: #1a1a1b;
             font-weight: 600;
             cursor: pointer;
@@ -1032,25 +1032,29 @@
             justify-content: center;
             flex: 1; /* Keys expand to fill available space */
             font-family: inherit;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle depth like Apple */
             
-            /* Dynamic sizing based on screen width */
+            /* Improved dynamic sizing with better gap calculation */
             --available-keyboard-width: calc(100vw - 12px); /* Account for keyboard padding */
-            --key-width: calc(var(--available-keyboard-width) / 10.5); /* ~10 keys per row average */
-            width: clamp(28px, var(--key-width), 42px);
-            height: clamp(40px, calc(var(--key-width) * 1.3), 60px);
-            font-size: clamp(0.9rem, calc(var(--key-width) * 0.4), 1.3rem);
+            --total-horizontal-gaps: calc(9 * 5px); /* 9 gaps at 5px each for 10-key row */
+            --key-space: calc(var(--available-keyboard-width) - var(--total-horizontal-gaps));
+            --key-width: calc(var(--key-space) / 10); /* Divide remaining space by 10 keys */
+            width: clamp(26px, var(--key-width), 40px);
+            height: clamp(42px, calc(var(--key-width) * 1.3), 58px);
+            font-size: clamp(1.1rem, calc(var(--key-width) * 0.5), 1.5rem); /* Bigger letters */
         }
 
         .keyboard-key:active {
             transform: scale(0.95);
             background: #a8adb3;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Pressed state shadow */
         }
 
         .keyboard-key.wide {
             flex: 1.5; /* Take up more space than regular keys */
-            min-width: 60px; /* Larger minimum for wide keys */
-            max-width: 70px; /* Larger maximum for wide keys */
-            font-size: 0.9rem; /* Slightly larger font */
+            min-width: 58px; /* Adjusted for new spacing */
+            max-width: 68px; /* Adjusted for new spacing */
+            font-size: 1rem; /* Bigger letters for wide keys too */
         }
 
         .keyboard-key:disabled {
@@ -1401,9 +1405,9 @@
             .mobile-keyboard {
                 position: fixed;
                 margin-top: 0;
-                min-height: 180px;
+                min-height: 210px; /* Updated to match new keyboard height */
                 gap: 10px;
-                bottom: calc(env(safe-area-inset-bottom, 0) - 15px); /* Move 15px closer to bottom */
+                bottom: calc(env(safe-area-inset-bottom, 0) - 23px); /* Move 23px closer to bottom */
                 left: 3px; /* 3px from left edge */
                 right: 3px; /* 3px from right edge */
                 width: calc(100vw - 6px); /* Explicit width calculation */
@@ -1474,7 +1478,7 @@
                 overflow-y: auto;
                 overflow-x: visible;
                 padding-bottom: 20px; /* Reduced padding */
-                max-height: calc(100vh - 115px - 200px); /* Fine-tuned top calculation */
+                max-height: calc(100vh - 115px - 210px); /* Adjusted for taller keyboard */
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
             }
