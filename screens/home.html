@@ -90,39 +90,17 @@
             color: var(--gray-600);
         }
         
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
+        .content-stack {
+            display: flex;
+            flex-direction: column;
             gap: 24px;
             margin-bottom: 40px;
         }
         
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .hero-section {
-            width: 100%;
-        }
-        
-        .main-row {
+        .two-card-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
-        }
-        
-        .secondary-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
         }
         
         .card {
@@ -139,15 +117,7 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
         
-        .card.compact {
-            padding: 16px;
-            border-radius: 12px;
-        }
-        
-        .card.compact .section-title {
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
+
         
         .daily-puzzle-section {
             background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-hover) 100%);
@@ -240,11 +210,7 @@
             margin-bottom: 16px;
         }
         
-        .stats-grid.compact {
-            grid-template-columns: 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+
         
         .stat-item {
             text-align: center;
@@ -255,10 +221,7 @@
             transition: all 0.2s;
         }
         
-        .stat-item.compact {
-            padding: 12px;
-            border-radius: 8px;
-        }
+
         
         .stat-item:hover {
             transform: translateY(-1px);
@@ -273,10 +236,7 @@
             display: block;
         }
         
-        .stat-number.compact {
-            font-size: 1.4rem;
-            margin-bottom: 4px;
-        }
+
         
         .stat-label {
             font-size: 0.8rem;
@@ -286,9 +246,7 @@
             letter-spacing: 0.5px;
         }
         
-        .stat-label.compact {
-            font-size: 0.75rem;
-        }
+
         
         .view-all-button {
             background: var(--primary-green);
@@ -303,10 +261,7 @@
             width: 100%;
         }
         
-        .view-all-button.compact {
-            padding: 8px 16px;
-            font-size: 0.8rem;
-        }
+
         
         .view-all-button:hover {
             background: var(--primary-green-hover);
@@ -467,8 +422,7 @@
         }
         
         .profile-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border: 1px solid #cbd5e1;
+            background: white;
         }
         
         .profile-header {
@@ -510,10 +464,7 @@
             gap: 8px;
         }
         
-        .profile-actions.compact {
-            grid-template-columns: 1fr;
-            gap: 6px;
-        }
+
         
         .profile-button {
             padding: 8px 12px;
@@ -624,27 +575,13 @@
                 padding: 15px;
             }
             
-            .content-grid {
-                grid-template-columns: 1fr;
+            .content-stack {
                 gap: 20px;
             }
             
-            .main-content {
-                gap: 20px;
-            }
-            
-            .main-row {
+            .two-card-row {
                 grid-template-columns: 1fr;
                 gap: 20px;
-            }
-            
-            .secondary-cards {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-            
-            .sidebar {
-                gap: 16px;
             }
             
             .header {
@@ -668,13 +605,9 @@
                 padding: 15px;
             }
             
-            .content-grid {
+            .content-stack {
                 gap: 16px;
                 margin-bottom: 30px;
-            }
-            
-            .main-content {
-                gap: 16px;
             }
             
             .countdown-timer {
@@ -683,10 +616,6 @@
             
             .card {
                 padding: 20px;
-            }
-            
-            .card.compact {
-                padding: 16px;
             }
         }
     </style>
@@ -698,100 +627,95 @@
             <p class="date-info" id="home-date-display">Loading...</p>
         </header>
         
-        <div class="content-grid">
-            <div class="main-content">
-                <!-- Hero Section: Today's Puzzle -->
-                <div class="hero-section">
-                    <div class="daily-puzzle-section card" id="daily-puzzle-card">
-                        <h2 class="section-title">Today's Puzzle</h2>
-                        <div class="puzzle-status">
-                            <div class="puzzle-info">
-                                <div class="puzzle-name" id="daily-puzzle-name">Loading...</div>
-                                <div class="puzzle-date" id="daily-puzzle-date">Loading...</div>
-                            </div>
-                            <div class="status-badge" id="daily-status">Loading...</div>
+        <div class="content-stack">
+            <!-- 1. Today's Puzzle (Full Width) -->
+            <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                <h2 class="section-title">Today's Puzzle</h2>
+                <div class="puzzle-status">
+                    <div class="puzzle-info">
+                        <div class="puzzle-name" id="daily-puzzle-name">Loading...</div>
+                        <div class="puzzle-date" id="daily-puzzle-date">Loading...</div>
+                    </div>
+                    <div class="status-badge" id="daily-status">Loading...</div>
+                </div>
+                <button class="play-button" id="daily-play-button" onclick="playDailyPuzzle()">
+                    Play Today's Puzzle
+                </button>
+            </div>
+            
+            <!-- 2. Two Cards Side-by-Side: My Puzzles & Store -->
+            <div class="two-card-row">
+                <div class="puzzle-packs-section card">
+                    <h2 class="section-title">My Puzzles</h2>
+                    <div id="puzzle-packs-content">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📦</div>
+                            <div class="empty-state-text">No puzzle packs yet</div>
+                            <div class="empty-state-subtext">Purchase packs from the store to get started</div>
                         </div>
-                        <button class="play-button" id="daily-play-button" onclick="playDailyPuzzle()">
-                            Play Today's Puzzle
-                        </button>
                     </div>
                 </div>
                 
-                <!-- Main Row: Store and My Puzzles -->
-                <div class="main-row">
-                    <div class="store-section card">
-                        <h2 class="section-title">Store</h2>
-                        <div class="store-items">
-                            <div class="store-item">
-                                <div class="item-info">
-                                    <div class="item-name">Premium Pack</div>
-                                    <div class="item-description">100 expert puzzles</div>
-                                    <div class="item-price">$4.99</div>
-                                </div>
-                                <button class="buy-button" onclick="buyItem('premium-pack')">Buy</button>
+                <div class="store-section card">
+                    <h2 class="section-title">Store</h2>
+                    <div class="store-items">
+                        <div class="store-item">
+                            <div class="item-info">
+                                <div class="item-name">Premium Pack</div>
+                                <div class="item-description">100 expert puzzles</div>
+                                <div class="item-price">$4.99</div>
                             </div>
-                            <div class="store-item">
-                                <div class="item-info">
-                                    <div class="item-name">Historical Pack</div>
-                                    <div class="item-description">All past daily puzzles</div>
-                                    <div class="item-price">$2.99</div>
-                                </div>
-                                <button class="buy-button" onclick="buyItem('historical-pack')">Buy</button>
-                            </div>
+                            <button class="buy-button" onclick="buyItem('premium-pack')">Buy</button>
                         </div>
-                    </div>
-                    
-                    <div class="puzzle-packs-section card">
-                        <h2 class="section-title">My Puzzles</h2>
-                        <div id="puzzle-packs-content">
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📦</div>
-                                <div class="empty-state-text">No puzzle packs yet</div>
-                                <div class="empty-state-subtext">Purchase packs from the store to get started</div>
+                        <div class="store-item">
+                            <div class="item-info">
+                                <div class="item-name">Historical Pack</div>
+                                <div class="item-description">All past daily puzzles</div>
+                                <div class="item-price">$2.99</div>
                             </div>
+                            <button class="buy-button" onclick="buyItem('historical-pack')">Buy</button>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Sidebar: Statistics and Settings -->
-            <div class="sidebar">
-                <div class="statistics-section card compact">
-                    <h2 class="section-title">Statistics</h2>
-                    <div class="stats-grid compact">
-                        <div class="stat-item compact">
-                            <div class="stat-number compact" id="total-completed">0</div>
-                            <div class="stat-label compact">Completed</div>
-                        </div>
-                        <div class="stat-item compact">
-                            <div class="stat-number compact" id="current-streak">0</div>
-                            <div class="stat-label compact">Streak</div>
-                        </div>
-                        <div class="stat-item compact">
-                            <div class="stat-number compact" id="best-streak">0</div>
-                            <div class="stat-label compact">Best</div>
-                        </div>
-                        <div class="stat-item compact">
-                            <div class="stat-number compact" id="success-rate">0%</div>
-                            <div class="stat-label compact">Success</div>
-                        </div>
+            <!-- 3. Statistics (Full Width) -->
+            <div class="statistics-section card">
+                <h2 class="section-title">Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" id="total-completed">0</div>
+                        <div class="stat-label">Completed</div>
                     </div>
-                    <button class="view-all-button compact" onclick="viewStatistics()">View Details</button>
+                    <div class="stat-item">
+                        <div class="stat-number" id="current-streak">0</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="best-streak">0</div>
+                        <div class="stat-label">Best</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="success-rate">0%</div>
+                        <div class="stat-label">Success</div>
+                    </div>
                 </div>
-                
-                <div class="profile-section card compact">
-                    <h2 class="section-title">Profile</h2>
-                    <div class="profile-header">
-                        <div class="profile-avatar" id="profile-avatar">U</div>
-                        <div class="profile-info">
-                            <h3 id="profile-name">Loading...</h3>
-                            <p id="profile-email">Loading...</p>
-                        </div>
+                <button class="view-all-button" onclick="viewStatistics()">View Details</button>
+            </div>
+            
+            <!-- 4. Profile (Full Width, Simple) -->
+            <div class="profile-section card">
+                <h2 class="section-title">Profile</h2>
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profile-avatar">U</div>
+                    <div class="profile-info">
+                        <h3 id="profile-name">Loading...</h3>
+                        <p id="profile-email">Loading...</p>
                     </div>
-                    <div class="profile-actions compact">
-                        <button class="profile-button primary" onclick="editProfile()">Edit Profile</button>
-                        <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
-                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="profile-button primary" onclick="editProfile()">Edit Profile</button>
+                    <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
                 </div>
             </div>
         </div>
