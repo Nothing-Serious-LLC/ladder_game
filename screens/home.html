@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Ladder</title>
+    <meta name="description" content="Your daily word ladder puzzle progress and statistics.">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/icon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/icon-180.png">
+    
+    <style>
+        /* Import the same color palette and basic styles from the main game */
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+            
+            /* LADDER Color Palette */
+            --primary-green: #6aaa64;
+            --primary-green-hover: #5d9556;
+            --primary-orange: #ff8c42;
+            --primary-orange-hover: #e06829;
+            --error-red: #e74c3c;
+            --gray-50: #fafafa;
+            --gray-200: #d3d6da;
+            --gray-400: #a8adb3;
+            --gray-600: #787c7e;
+            --gray-900: #1a1a1b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+            padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 8px;
+            color: var(--gray-900);
+        }
+        
+        .date-info {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        
+        .user-greeting {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .greeting-text {
+            font-size: 1.1rem;
+            color: var(--gray-900);
+            margin-bottom: 5px;
+        }
+        
+        .logout-link {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .logout-link:hover {
+            color: var(--primary-orange);
+        }
+        
+        .daily-puzzle-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--gray-900);
+        }
+        
+        .puzzle-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .puzzle-info {
+            flex: 1;
+        }
+        
+        .puzzle-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .puzzle-date {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-completed {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        .status-pending {
+            background: var(--primary-orange);
+            color: white;
+        }
+        
+        .play-button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+        
+        .play-button:hover {
+            background: var(--primary-green-hover);
+        }
+        
+        .play-button.completed {
+            background: var(--gray-400);
+            cursor: not-allowed;
+        }
+        
+        .statistics-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: var(--gray-50);
+            border-radius: 8px;
+        }
+        
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        
+        .view-all-button {
+            background: none;
+            border: 2px solid var(--primary-green);
+            color: var(--primary-green);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .view-all-button:hover {
+            background: var(--primary-green);
+            color: white;
+        }
+        
+        .store-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .store-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .store-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .item-description {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            font-weight: 600;
+            color: var(--primary-orange);
+        }
+        
+        .buy-button {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .buy-button:hover {
+            background: var(--primary-orange-hover);
+        }
+        
+        .puzzle-packs-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .pack-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: var(--gray-50);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 15px;
+        }
+        
+        .pack-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .pack-progress {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 5px;
+        }
+        
+        .progress-bar {
+            background: var(--gray-200);
+            border-radius: 10px;
+            height: 6px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: var(--primary-green);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .pack-button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .pack-button:hover {
+            background: var(--primary-green-hover);
+        }
+        
+        .pack-button.locked {
+            background: var(--gray-400);
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">LADDER</h1>
+            <p class="date-info" id="home-date-display">Loading...</p>
+        </header>
+        
+        <div class="user-greeting">
+            <div class="greeting-text">Welcome back!</div>
+            <a href="#" class="logout-link" onclick="handleLogout()">Sign out</a>
+        </div>
+        
+        <div class="daily-puzzle-section">
+            <h2 class="section-title">Today's Puzzle</h2>
+            <div class="puzzle-status">
+                <div class="puzzle-info">
+                    <div class="puzzle-name" id="daily-puzzle-name">Loading...</div>
+                    <div class="puzzle-date" id="daily-puzzle-date">Loading...</div>
+                </div>
+                <div class="status-badge" id="daily-status">Loading...</div>
+            </div>
+            <button class="play-button" id="daily-play-button" onclick="playDailyPuzzle()">
+                Play Today's Puzzle
+            </button>
+        </div>
+        
+        <div class="statistics-section">
+            <h2 class="section-title">Your Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="total-completed">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="current-streak">0</div>
+                    <div class="stat-label">Current Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="best-streak">0</div>
+                    <div class="stat-label">Best Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="success-rate">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+            <button class="view-all-button" onclick="viewStatistics()">View All Statistics</button>
+        </div>
+        
+        <div class="store-section">
+            <h2 class="section-title">Store</h2>
+            <div class="store-items">
+                <div class="store-item">
+                    <div class="item-info">
+                        <div class="item-name">Premium Puzzle Pack</div>
+                        <div class="item-description">100 expertly crafted puzzles</div>
+                        <div class="item-price">$4.99</div>
+                    </div>
+                    <button class="buy-button" onclick="buyItem('premium-pack')">Buy</button>
+                </div>
+                <div class="store-item">
+                    <div class="item-info">
+                        <div class="item-name">Historical Puzzles</div>
+                        <div class="item-description">Access to all past daily puzzles</div>
+                        <div class="item-price">$2.99</div>
+                    </div>
+                    <button class="buy-button" onclick="buyItem('historical-pack')">Buy</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="puzzle-packs-section">
+            <h2 class="section-title">Your Puzzle Packs</h2>
+            
+            <div class="pack-item">
+                <div class="item-info">
+                    <div class="item-name">Premium Puzzle Pack</div>
+                    <div class="pack-progress">Progress: <span id="premium-progress">0</span>/100</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="premium-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button class="pack-button locked" id="premium-button" onclick="playPuzzlePack('premium')">
+                    Locked
+                </button>
+            </div>
+            
+            <div class="pack-item">
+                <div class="item-info">
+                    <div class="item-name">Historical Puzzles</div>
+                    <div class="pack-progress">Available: <span id="historical-count">0</span> puzzles</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="historical-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <button class="pack-button locked" id="historical-button" onclick="playPuzzlePack('historical')">
+                    Locked
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Supabase for user management -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script type="module">
+        // Import Supabase config
+        import { supabaseConfig } from '../config/supabase-config.js';
+        
+        // Initialize Supabase client
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        
+        // Make supabase available globally
+        window.supabase = supabaseClient;
+        
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeHomePage();
+            updateDateDisplay();
+            loadUserData();
+            loadDailyPuzzle();
+            loadStatistics();
+            loadPurchases();
+        });
+        
+        async function initializeHomePage() {
+            // Check if user is logged in
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
+                // Redirect to signup if not logged in
+                window.location.href = './signup.html';
+                return;
+            }
+            
+            // Update greeting with user email
+            const greetingText = document.querySelector('.greeting-text');
+            if (session.user.email) {
+                greetingText.textContent = `Welcome back, ${session.user.email.split('@')[0]}!`;
+            }
+        }
+        
+        function updateDateDisplay() {
+            // Update header date to match game format
+            const today = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('home-date-display').textContent = today.toLocaleDateString('en-US', options);
+        }
+        
+        async function loadUserData() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (user) {
+                    // Update greeting
+                    const greetingText = document.querySelector('.greeting-text');
+                    const displayName = user.email ? user.email.split('@')[0] : 'there';
+                    greetingText.textContent = `Welcome back, ${displayName}!`;
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+        
+        async function loadDailyPuzzle() {
+            try {
+                // Get today's date in YYYY-MM-DD format
+                const today = new Date().toISOString().split('T')[0];
+                
+                // This would integrate with your existing daily puzzle system
+                // For now, using placeholder data
+                const puzzleName = 'Camera Work'; // This should come from your daily puzzle API
+                const puzzleDate = new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                document.getElementById('daily-puzzle-name').textContent = puzzleName;
+                document.getElementById('daily-puzzle-date').textContent = puzzleDate;
+                
+                // Check if user has completed today's puzzle
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    // Query user's puzzle completions for today
+                    const { data: completion } = await supabase
+                        .from('puzzle_completions')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .eq('puzzle_date', today)
+                        .single();
+                    
+                    const statusBadge = document.getElementById('daily-status');
+                    const playButton = document.getElementById('daily-play-button');
+                    
+                    if (completion) {
+                        statusBadge.textContent = 'Completed';
+                        statusBadge.className = 'status-badge status-completed';
+                        playButton.textContent = 'View Results';
+                        playButton.className = 'play-button completed';
+                    } else {
+                        statusBadge.textContent = 'Not Started';
+                        statusBadge.className = 'status-badge status-pending';
+                        playButton.textContent = 'Play Today\'s Puzzle';
+                        playButton.className = 'play-button';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading daily puzzle:', error);
+                document.getElementById('daily-puzzle-name').textContent = 'Camera Work';
+                document.getElementById('daily-puzzle-date').textContent = new Date().toLocaleDateString();
+            }
+        }
+        
+        async function loadStatistics() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (user) {
+                    // Query user statistics from puzzle_completions table
+                    const { data: completions } = await supabase
+                        .from('puzzle_completions')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .order('puzzle_date', { ascending: false });
+                    
+                    if (completions) {
+                        const totalCompleted = completions.length;
+                        const currentStreak = calculateCurrentStreak(completions);
+                        const bestStreak = calculateBestStreak(completions);
+                        const successRate = totalCompleted > 0 ? Math.round((completions.filter(c => c.completed).length / totalCompleted) * 100) : 0;
+                        
+                        document.getElementById('total-completed').textContent = totalCompleted;
+                        document.getElementById('current-streak').textContent = currentStreak;
+                        document.getElementById('best-streak').textContent = bestStreak;
+                        document.getElementById('success-rate').textContent = `${successRate}%`;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+                // Show placeholder stats
+                document.getElementById('total-completed').textContent = '0';
+                document.getElementById('current-streak').textContent = '0';
+                document.getElementById('best-streak').textContent = '0';
+                document.getElementById('success-rate').textContent = '0%';
+            }
+        }
+        
+        function calculateCurrentStreak(completions) {
+            if (!completions || completions.length === 0) return 0;
+            
+            let streak = 0;
+            const today = new Date();
+            
+            for (let i = 0; i < completions.length; i++) {
+                const completionDate = new Date(completions[i].puzzle_date);
+                const daysDiff = Math.floor((today - completionDate) / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff === i && completions[i].completed) {
+                    streak++;
+                } else {
+                    break;
+                }
+            }
+            
+            return streak;
+        }
+        
+        function calculateBestStreak(completions) {
+            if (!completions || completions.length === 0) return 0;
+            
+            let maxStreak = 0;
+            let currentStreak = 0;
+            
+            for (const completion of completions) {
+                if (completion.completed) {
+                    currentStreak++;
+                    maxStreak = Math.max(maxStreak, currentStreak);
+                } else {
+                    currentStreak = 0;
+                }
+            }
+            
+            return maxStreak;
+        }
+        
+        async function loadPurchases() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (user) {
+                    // Query user purchases
+                    const { data: purchases } = await supabase
+                        .from('user_purchases')
+                        .select('*')
+                        .eq('user_id', user.id);
+                    
+                    if (purchases) {
+                        // Update puzzle pack availability based on purchases
+                        const premiumPurchased = purchases.some(p => p.product_id === 'premium-pack');
+                        const historicalPurchased = purchases.some(p => p.product_id === 'historical-pack');
+                        
+                        const premiumButton = document.getElementById('premium-button');
+                        const historicalButton = document.getElementById('historical-button');
+                        
+                        if (premiumPurchased) {
+                            premiumButton.textContent = 'Play';
+                            premiumButton.className = 'pack-button';
+                        }
+                        
+                        if (historicalPurchased) {
+                            historicalButton.textContent = 'Browse';
+                            historicalButton.className = 'pack-button';
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading purchases:', error);
+            }
+        }
+        
+        // Global functions for button handlers
+        window.handleLogout = async function() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                // Redirect to main game
+                window.location.href = '../index.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('Error signing out. Please try again.');
+            }
+        };
+        
+        window.playDailyPuzzle = function() {
+            // Navigate to main game to play today's puzzle
+            window.location.href = '../index.html';
+        };
+        
+        window.viewStatistics = function() {
+            // TODO: Navigate to detailed statistics page
+            alert('Detailed statistics page coming soon!');
+        };
+        
+        window.buyItem = function(itemId) {
+            // TODO: Implement purchase flow with Stripe/PayPal
+            alert(`Purchase flow for ${itemId} coming soon!`);
+        };
+        
+        window.playPuzzlePack = function(packType) {
+            const button = document.getElementById(`${packType}-button`);
+            if (button.classList.contains('locked')) {
+                alert('Purchase this pack in the store to unlock!');
+                return;
+            }
+            
+            // TODO: Navigate to puzzle pack selection
+            alert(`${packType} puzzle pack coming soon!`);
+        };
+    </script>
+</body>
+</html>

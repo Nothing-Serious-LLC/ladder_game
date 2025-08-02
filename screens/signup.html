@@ -348,8 +348,8 @@
                     alert('Account created successfully! Welcome to Ladder.');
                 }
                 
-                // Redirect back to the game
-                goBack();
+                // Redirect to home screen
+                window.location.href = './home.html';
                 
             } catch (error) {
                 console.error('Signup error:', error);
@@ -387,8 +387,8 @@
                 
                 if (data.session && data.user) {
                     alert('Signed in successfully! Welcome back to Ladder.');
-                    // Redirect back to the game
-                    goBack();
+                    // Redirect to home screen
+                    window.location.href = './home.html';
                 } else {
                     throw new Error('No session created - this might indicate an authentication issue.');
                 }
