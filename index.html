@@ -1520,6 +1520,14 @@
                 background: #fafafa;
             }
             
+            /* Keep landing header visible during transition like other screens */
+            .landing-page .landing-header {
+                position: relative;
+                z-index: 100;
+                background: #fafafa;
+                border-bottom: 1px solid #d3d6da;
+            }
+            
             .completion-page .title,
             .failure-page .title {
                 font-size: 1.5rem;
