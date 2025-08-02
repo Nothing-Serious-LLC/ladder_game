@@ -447,7 +447,7 @@
         .stats {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 32px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
@@ -536,11 +536,64 @@
             color: #787c7e;
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+        
+        .letter-box.hint-revealed {
+            background-color: white !important;
+            border-color: #d3d6da !important;
+            color: #ff8c42 !important;
+        }
+        
+        /* Ensure hint letters stay orange even when filled class is also present */
+        .letter-box.hint-revealed.filled {
+            background-color: white !important;
+            border-color: #d3d6da !important;
+            color: #ff8c42 !important;
+        }
+        
+        .letter-box.hint-revealed.current {
+            /* Hint letters get orange border when selected and keep orange text */
+            background-color: white !important;
+            border-color: #ff8c42 !important; /* Orange border when selected */
+            border-width: 2px !important; /* Same as default - no size change */
+            box-shadow: 0 0 8px rgba(255, 140, 66, 0.4) !important;
+            animation: pulse 1.5s infinite !important;
+            color: #ff8c42 !important; /* Keep orange text color for hints */
+        }
+        
+        .letter-box.hint-revealed.typed-through {
+            background-color: #ff8c42 !important;
+            border-color: #ff8c42 !important;
+            color: white !important;
+        }
+        
+        /* Remove blue focus outline from letter boxes */
+        .letter-box:focus {
+            outline: none !important;
+        }
+        
+        .time-penalty-popup {
+            position: fixed;
+            background-color: #e74c3c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.3s ease-out;
+            pointer-events: none;
+            border: none;
+        }
+        
+        .time-penalty-popup.fade-out {
+            opacity: 0;
+        }
 
         .letter-box.current {
             border-color: #ff8c42;
-            border-width: 3px;
-            box-shadow: 0 0 12px rgba(255, 140, 66, 0.4);
+            border-width: 2px; /* Same as default - no size change */
+            box-shadow: 0 0 8px rgba(255, 140, 66, 0.4);
             animation: pulse 1.5s infinite;
             background-color: rgba(255, 140, 66, 0.1);
         }
@@ -978,20 +1031,18 @@
             color: #787c7e !important;
         }
         
-        /* Selected hint letters - maintain grey indication */
-        .letter-box.filled.selected {
-            background-color: #a8adb3 !important; /* Intermediate grey to show selection */
-            border-color: #6aaa64 !important; /* Green border to show selection */
-            color: #1a1a1b !important; /* Dark gray text for better visibility when selected */
-        }
-        
-        /* Current position (first letter) takes priority over selected hint styling */
+        /* Current position (first letter) styling */
         .letter-box.filled.current {
-            background-color: #d3d6da !important; /* Keep original grey */
+            background-color: white !important; /* White background for revealed letters */
             border-color: #ff8c42 !important; /* Orange border for current position */
-            border-width: 3px !important;
-            box-shadow: 0 0 12px rgba(255, 140, 66, 0.4) !important;
+            border-width: 2px !important; /* Same as default - no size change */
+            box-shadow: 0 0 8px rgba(255, 140, 66, 0.3) !important;
             animation: pulse 1.5s infinite !important;
+            color: #787c7e !important; /* Medium gray text for revealed letters */
+        }
+        /* Hint-revealed letters that are also filled & current should stay orange */
+        .letter-box.hint-revealed.filled.current {
+            color: #ff8c42 !important;
         }
         
         /* Mobile Keyboard Styles - hidden by default, shown on mobile */
@@ -1454,7 +1505,7 @@
             
             .mobile-header .stats {
                 display:flex !important;
-                gap: 12px;
+                gap: 24px;
                 margin-bottom: 0;
                 justify-content: center;
             }
@@ -1784,8 +1835,8 @@
                 <div class="stat-label">Time</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="current-rung">1</div>
-                <div class="stat-label">Rung</div>
+                <div class="stat-value" id="hints-remaining">3</div>
+                <div class="stat-label">Hints</div>
             </div>
             <div class="stat">
                 <div class="stat-value" id="tries-left">5</div>
@@ -1810,8 +1861,8 @@
                     <div class="stat-label">Time</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="mobile-current-rung">1</div>
-                    <div class="stat-label">Rung</div>
+                    <div class="stat-value" id="mobile-hints-remaining">3</div>
+                    <div class="stat-label">Hints</div>
                 </div>
                 <div class="stat">
                     <div class="stat-value" id="mobile-tries-left">5</div>
@@ -2572,6 +2623,7 @@
                 this.maxWrongGuesses = 5;
                 this.hintsUsed = 0;
                 this.maxHints = 3;
+                this.hintsRemaining = 3;
                 this.hintedWords = new Set();
                 this.wordRevealed = false;
                 this.gameEnded = false;
@@ -2746,11 +2798,11 @@
             syncMobileUI() {
                 // Sync mobile stats with desktop stats
                 const mobileTimer = document.getElementById('mobile-timer');
-                const mobileCurrentRung = document.getElementById('mobile-current-rung');
+                const mobileHintsRemaining = document.getElementById('mobile-hints-remaining');
                 const mobileTriesLeft = document.getElementById('mobile-tries-left');
                 
                 if (mobileTimer) mobileTimer.textContent = document.getElementById('timer').textContent;
-                if (mobileCurrentRung) mobileCurrentRung.textContent = document.getElementById('current-rung').textContent;
+                if (mobileHintsRemaining) mobileHintsRemaining.textContent = document.getElementById('hints-remaining').textContent;
                 if (mobileTriesLeft) mobileTriesLeft.textContent = document.getElementById('tries-left').textContent;
             }
             
@@ -2848,8 +2900,163 @@
                 // Prevent native mobile keyboard on letter boxes
                 this.preventNativeMobileKeyboard();
                 
+                // Set up hint click handlers (mobile uses direct hints, no selection)
+                this.setupHintClickHandlers();
+                
                 // Initialize the word display
                 this.updateWordDisplay();
+            }
+            
+            setupHintClickHandlers() {
+                // Add click listeners to all letter boxes for hint functionality (desktop)
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('letter-box') && e.target.classList.contains('interactive')) {
+                        this.handleLetterBoxClick(e.target);
+                    }
+                });
+                
+                // Add touch handlers for mobile since preventDefault blocks click events
+                document.addEventListener('touchend', (e) => {
+                    if (e.target.classList.contains('letter-box') && e.target.classList.contains('interactive')) {
+                        e.preventDefault(); // Prevent click event from also firing
+                        this.handleLetterBoxClick(e.target);
+                    }
+                });
+            }
+            
+            handleLetterBoxClick(letterBox) {
+                // Check if hints are available
+                if (this.hintsRemaining <= 0) {
+                    return; // Silent failure when no hints left
+                }
+                
+                // Check if this letter is already revealed
+                const isRevealed = letterBox.dataset.isRevealed === 'true';
+                const isHintRevealed = letterBox.classList.contains('hint-revealed');
+                
+                if (isRevealed || isHintRevealed) {
+                    return; // Don't hint already revealed letters
+                }
+                
+                // Check if this is the current word
+                const wordIndex = parseInt(letterBox.dataset.wordIndex);
+                if (wordIndex !== this.currentRungIndex) {
+                    return; // Only allow hints on current word
+                }
+                
+                // Use a hint to reveal this letter
+                this.useHint(letterBox);
+            }
+            
+            useHint(letterBox) {
+                // Decrease hints remaining
+                this.hintsRemaining--;
+                this.hintsUsed++;
+                
+                // Update hints display
+                document.getElementById('hints-remaining').textContent = this.hintsRemaining;
+                const mobileHintsRemaining = document.getElementById('mobile-hints-remaining');
+                if (mobileHintsRemaining) mobileHintsRemaining.textContent = this.hintsRemaining;
+                
+                // Reveal the letter with hint styling
+                const correctLetter = letterBox.dataset.correctLetter;
+                letterBox.textContent = correctLetter;
+                
+                // Remove any conflicting classes first
+                letterBox.classList.remove('user-typed', 'current', 'typed-through');
+                
+                // Add hint classes
+                letterBox.classList.add('hint-revealed', 'filled');
+                letterBox.dataset.isRevealed = 'true'; // Important: this makes it work with auto-correct
+                
+                // Force the hint styling with inline styles - orange text, white background initially
+                letterBox.style.backgroundColor = 'white';
+                letterBox.style.borderColor = '#d3d6da';
+                letterBox.style.color = '#ff8c42';
+                
+                // Hint letters now get proper current styling with orange border
+                
+                // Debug log
+                console.log('Hint used on letter:', correctLetter, letterBox);
+                
+                // Add time penalty (30 seconds)
+                this.addTimePenalty();
+                
+                // Play hint sound
+                this.playSound('hint');
+                this.vibrate(100);
+                
+                // Don't call updateWordDisplay here as it might override our hint styling
+            }
+            
+            addTimePenalty() {
+                // Add 30 seconds by subtracting 30000ms from start time
+                if (this.startTime) {
+                    this.startTime -= 30000;
+                    
+                    // Force timer update immediately to show the penalty
+                    const elapsed = Date.now() - this.startTime;
+                    const minutes = Math.floor(elapsed / 60000);
+                    const seconds = Math.floor((elapsed % 60000) / 1000);
+                    const timeText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    document.getElementById('timer').textContent = timeText;
+                    const mobileTimer = document.getElementById('mobile-timer');
+                    if (mobileTimer) mobileTimer.textContent = timeText;
+                }
+                
+                // Show red popup
+                this.showTimePenaltyPopup();
+            }
+            
+            showTimePenaltyPopup() {
+                // Create popup element
+                const popup = document.createElement('div');
+                popup.className = 'time-penalty-popup';
+                popup.textContent = '+30s';
+                
+                // Different positioning for mobile vs desktop
+                const isMobile = window.innerWidth <= 480;
+                const timer = document.getElementById('timer');
+                
+                if (isMobile) {
+                    // Mobile: position exactly in line with header, to the left of timer
+                    const mobileHeader = document.querySelector('.mobile-header');
+                    if (mobileHeader && timer) {
+                        const timerRect = timer.getBoundingClientRect();
+                        popup.style.left = (timerRect.left - 60) + 'px';
+                        popup.style.top = (timerRect.top + (timerRect.height / 2) - 10) + 'px'; // Center with timer
+                        popup.style.zIndex = '1000'; // Ensure it appears above other elements
+                    } else {
+                        // Fallback for mobile
+                        popup.style.top = '60px';
+                        popup.style.left = '20px';
+                        popup.style.zIndex = '1000';
+                    }
+                } else {
+                    // Desktop positioning
+                    if (timer) {
+                        const timerRect = timer.getBoundingClientRect();
+                        popup.style.left = (timerRect.left - 70) + 'px';
+                        popup.style.top = (timerRect.top + (timerRect.height / 2) - 12) + 'px';
+                    } else {
+                        popup.style.top = '20px';
+                        popup.style.left = '50px';
+                    }
+                }
+                
+                // Add to document
+                document.body.appendChild(popup);
+                
+                // Fade out and remove after delay
+                setTimeout(() => {
+                    popup.classList.add('fade-out');
+                    setTimeout(() => {
+                        if (popup.parentNode) {
+                            popup.parentNode.removeChild(popup);
+                        }
+                    }, 300);
+                }, 1800); // Slower fade away
             }
             
             setupMobileKeyboard() {
@@ -2896,15 +3103,22 @@
                         e.target.blur(); // Immediately blur to prevent keyboard
                     });
                     box.addEventListener('touchstart', (e) => {
-                        e.preventDefault(); // Prevent touch focus
+                        // Only prevent touch focus if this isn't an interactive hint box
+                        if (!box.classList.contains('interactive')) {
+                            e.preventDefault(); // Prevent touch focus
+                        }
                     });
                 });
                 
-                // Also prevent focus on the game area
+                // Also prevent focus on the game area, but allow hints
                 const gameArea = document.querySelector('.game-area');
                 if (gameArea) {
                     gameArea.addEventListener('touchstart', (e) => {
-                        // Allow normal touch behavior but prevent letter box focus
+                        // Allow hint interactions but prevent letter box focus for typing
+                        if (e.target.classList.contains('letter-box') && e.target.classList.contains('interactive')) {
+                            // Don't preventDefault here - let the touchend handler deal with hints
+                            return;
+                        }
                         if (e.target.classList.contains('letter-box')) {
                             e.preventDefault();
                         }
@@ -2986,11 +3200,12 @@
                 // Clear previous state
                 forEachPair((box) => {
                     if (!box) return;
-                    box.classList.remove('current', 'user-typed', 'typed-through');
+                    box.classList.remove('current', 'user-typed', 'typed-through', 'selected');
                     if (box.dataset.isRevealed !== 'true') {
                         box.classList.remove('filled');
                         box.textContent = '';
                     }
+                    // Preserve hint-revealed styling by not removing the class or inline styles
                 });
                 
                 // Fill in typed letters
@@ -3223,6 +3438,28 @@
                             osc.stop(ctx.currentTime + i * 0.2 + 0.5);
                         });
                         break;
+                    case 'hint':
+                        // Hint sound - between type and correct, gentle positive acknowledgment
+                        oscillator.type = 'triangle';
+                        oscillator.frequency.setValueAtTime(440, ctx.currentTime); // A note
+                        oscillator.frequency.exponentialRampToValueAtTime(550, ctx.currentTime + 0.1);
+                        gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                        oscillator.start(ctx.currentTime);
+                        oscillator.stop(ctx.currentTime + 0.2);
+                        
+                        // Add a subtle harmonic for richness
+                        const hintHarmonic = ctx.createOscillator();
+                        const hintHarmonicGain = ctx.createGain();
+                        hintHarmonic.connect(hintHarmonicGain);
+                        hintHarmonicGain.connect(ctx.destination);
+                        hintHarmonic.type = 'sine';
+                        hintHarmonic.frequency.setValueAtTime(660, ctx.currentTime); // Fifth above
+                        hintHarmonicGain.gain.setValueAtTime(0.03, ctx.currentTime);
+                        hintHarmonicGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                        hintHarmonic.start(ctx.currentTime);
+                        hintHarmonic.stop(ctx.currentTime + 0.15);
+                        break;
                 }
             }
             
@@ -3323,13 +3560,12 @@
                 this.renderLadder();
                 this.updateTimerColors(); // Immediately restore current colors after rebuild
                 
-                // Cap the step counter at 5 (never show step 6 for FINISH)
-                const stepNumber = Math.min(this.currentRungIndex + 1, 5);
-                document.getElementById('current-rung').textContent = stepNumber;
+                // Update hints display
+                document.getElementById('hints-remaining').textContent = this.hintsRemaining;
                 
-                        // Sync mobile current rung
-                        const mobileCurrentRung = document.getElementById('mobile-current-rung');
-                        if (mobileCurrentRung) mobileCurrentRung.textContent = stepNumber;
+                        // Sync mobile hints
+                        const mobileHintsRemaining = document.getElementById('mobile-hints-remaining');
+                        if (mobileHintsRemaining) mobileHintsRemaining.textContent = this.hintsRemaining;
                 
                 if (this.currentRungIndex >= this.currentPuzzle.words.length - 1) {
                             // Show FINISH rung cascade then completion
@@ -3351,7 +3587,7 @@
                         letterBox.classList.add('cascade-fill');
                         
                         // Apply permanent completed state immediately
-                        letterBox.classList.remove('typed-through'); // Override gray styling
+                        letterBox.classList.remove('typed-through', 'hint-revealed'); // Override gray and hint styling
                         letterBox.classList.add('filled'); // Add filled class for permanent green
                         
                         // Set permanent completed styling (green background/border)
@@ -3392,7 +3628,7 @@
                     // Immediately turn all FINISH letters green (no cascade animation)
                     allBoxes.forEach((letterBox) => {
                         // Remove finish-placeholder styling and apply permanent completed state
-                        letterBox.classList.remove('finish-placeholder', 'typed-through');
+                        letterBox.classList.remove('finish-placeholder', 'typed-through', 'hint-revealed');
                         letterBox.classList.add('filled'); // Add filled class for permanent green
                         
                         // Set permanent completed styling (same as other completed words)
@@ -3434,7 +3670,7 @@
                         letterBox.classList.add('cascade-fill');
                         
                         // Apply permanent completed state immediately
-                        letterBox.classList.remove('finish-placeholder', 'typed-through');
+                        letterBox.classList.remove('finish-placeholder', 'typed-through', 'hint-revealed');
                         letterBox.classList.add('filled');
                         
                         // Set permanent completed styling (green background/border)
@@ -3513,7 +3749,7 @@
                         
                         // Reveal the letter and override any existing styling
                         letterBox.textContent = correctLetter;
-                        letterBox.classList.remove('filled', 'typed-through', 'finish-placeholder', 'current', 'selected', 'interactive', 'user-typed'); // Remove ALL styling classes
+                        letterBox.classList.remove('filled', 'typed-through', 'finish-placeholder', 'current', 'interactive', 'user-typed'); // Remove ALL styling classes
                         letterBox.classList.add('failure-cascade');
                         
                         // Force remove any orange styling immediately
@@ -3865,28 +4101,7 @@ https://ladder.game/`;
                 });
             }
             
-            useHint() {
-                if (this.hintsUsed >= this.maxHints || this.gameEnded) {
-                    this.showFeedback('No hints available!', 'error');
-                    return;
-                }
-                
-                const clue = this.currentPuzzle.words[this.currentRungIndex].clue;
-                this.showFeedback(`💡 ${clue}`, 'hint');
-                
-                if (!this.hintedWords.has(this.currentRungIndex)) {
-                    this.hintsUsed++;
-                    this.hintedWords.add(this.currentRungIndex);
-                    document.getElementById('hints-remaining').textContent = this.maxHints - this.hintsUsed;
-                    
-                    if (this.hintsUsed >= this.maxHints) {
-                        const hintButton = document.getElementById('hint-button');
-                        hintButton.disabled = true;
-                    }
-                }
-                
-                document.getElementById('guess-input').focus();
-            }
+
             
             revealWord() {
                 if (this.gameEnded || this.wordRevealed) {
