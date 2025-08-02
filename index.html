@@ -1476,6 +1476,8 @@
                 overflow-x: visible;
                 padding-bottom: 40px; /* More padding for larger cards */
                 max-height: calc(100vh - 140px - 220px); /* Account for header + keyboard */
+                scroll-snap-type: y mandatory;
+                scroll-behavior: smooth;
             }
             
             .mobile-ladder {
@@ -1560,6 +1562,8 @@
                 flex-direction: column;
                 justify-content: center; /* Center the word + hint unit */
                 align-items: center;
+                scroll-snap-align: center;
+                scroll-margin-top: 20px;
             }
             
             /* FINISH rung - center letters vertically when no hint */
@@ -2741,6 +2745,9 @@
                 // Set up mobile keyboard event listeners
                 this.setupMobileKeyboard();
                 
+                // Set up mobile scroll snap behavior
+                this.setupMobileScrollSnap();
+                
                 // Prevent native mobile keyboard on letter boxes
                 this.preventNativeMobileKeyboard();
                 
@@ -3809,6 +3816,34 @@ https://ladder.game/`;
                 mobileViewport.scrollTo({
                     top: scrollPosition,
                     behavior: 'smooth'
+                });
+            }
+
+            setupMobileScrollSnap() {
+                // Only setup on mobile
+                if (window.innerWidth > 480) return;
+                
+                const mobileViewport = document.querySelector('.mobile-ladder-viewport');
+                if (!mobileViewport) return;
+                
+                let scrollTimeout;
+                
+                // Add scroll event listener for snap-back behavior
+                mobileViewport.addEventListener('scroll', () => {
+                    // Clear existing timeout
+                    clearTimeout(scrollTimeout);
+                    
+                    // Set timeout to snap back to current active card after 1 second of no scrolling
+                    scrollTimeout = setTimeout(() => {
+                        const currentRung = document.getElementById(`mobile-rung-${this.currentRungIndex}`);
+                        if (currentRung) {
+                            // Scroll to center the current active card
+                            currentRung.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    }, 1000); // 1 second delay
                 });
             }
         }

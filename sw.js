@@ -1,5 +1,5 @@
 // LADDER PWA Service Worker
-const CACHE_NAME = 'ladder-v118';
+const CACHE_NAME = 'ladder-v119';
 const CORE_ASSETS = [
   './',
   './index.html',
