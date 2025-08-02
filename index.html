@@ -1412,6 +1412,8 @@
                 right: 3px; /* 3px from right edge */
                 width: calc(100vw - 6px); /* Explicit width calculation */
                 z-index: 9999;
+                opacity: 0;
+                transition: opacity 0.4s ease-in;
             }
             /* Reduce bottom padding so ladder isn't cut off */
             .container {
@@ -1437,6 +1439,7 @@
                 background: #fafafa;
                 border-bottom: 1px solid #d3d6da;
                 flex-shrink: 0;
+                transition: opacity 0.4s ease-in;
             }
             
             .mobile-header .title {
@@ -2009,17 +2012,32 @@
                     // Fade in the game page
                     setTimeout(() => {
                         gamePage.style.opacity = '1';
+                        
+                        // Fade in mobile elements on mobile
+                        if (window.innerWidth <= 480) {
+                            const mobileHeader = document.querySelector('.mobile-header');
+                            const mobileKeyboard = document.querySelector('.mobile-keyboard');
+                            if (mobileHeader) {
+                                mobileHeader.style.opacity = '1';
+                            }
+                            if (mobileKeyboard) {
+                                mobileKeyboard.style.opacity = '1';
+                            }
+                        }
+                        
                         // After game page visible, hide landing page to avoid flicker
                         setTimeout(() => {
                             landingPage.style.display = 'none';
                         }, 350);
                     }, 50); // Small delay to ensure display is set
                     
-                    // Play loading sound
-                    if (window.LadderGame && window.LadderGame.prototype.playSound) {
-                        const tempGame = { playSound: window.LadderGame.prototype.playSound };
-                        tempGame.playSound('loading');
-                    }
+                    // Delay loading sound to match animation start
+                    setTimeout(() => {
+                        if (window.LadderGame && window.LadderGame.prototype.playSound) {
+                            const tempGame = { playSound: window.LadderGame.prototype.playSound };
+                            tempGame.playSound('loading');
+                        }
+                    }, 900); // Same delay as animation
                     
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
@@ -2028,100 +2046,124 @@
                     ladder.innerHTML = ''; // Clear any existing content
                     if (mobileLadder) mobileLadder.innerHTML = '';
                     
-                    // Create 5 temporary rungs that match the real game styling
-                    for (let i = 0; i < 6; i++) {
-                        // Create desktop rung
-                        const rung = document.createElement('div');
-                        rung.className = 'rung';
-                        rung.id = `loading-rung-${i}`;
-                        rung.style.opacity = '0.3';
+                    // Create temporary rungs for desktop only (not mobile)
+                    if (window.innerWidth > 480) {
+                        for (let i = 0; i < 6; i++) {
+                            // Create desktop rung
+                            const rung = document.createElement('div');
+                            rung.className = 'rung';
+                            rung.id = `loading-rung-${i}`;
+                            rung.style.opacity = '0.3';
                         
-                        // Create mobile rung with special initial state
-                        const isFinish = i === 5;
-                        const mobileRung = document.createElement('div');
-                        mobileRung.className = isFinish ? 'rung finish-rung' : 'rung';
-                        mobileRung.id = `mobile-loading-rung-${i}`;
-                        mobileRung.style.opacity = isFinish ? '0.8' : '0.1'; // FINISH visible, others faded
-                        mobileRung.style.transform = 'translateY(20px) scale(0.95)'; // Start slightly down and small
+                        // Mobile will use simple cascade cards instead of complex rungs
+                        // So we don't create mobile rungs here anymore
                         
-                        // Create word display with placeholder letter boxes
+                        // Create word display with placeholder letter boxes (desktop only)
                         const wordDisplay = document.createElement('div');
                         wordDisplay.className = 'word-display';
                         
-                        const mobileWordDisplay = document.createElement('div');
-                        mobileWordDisplay.className = 'word-display';
-                        
                         // Create letter boxes (6 for FINISH, varies for others)
-                        const letterCount = isFinish ? 6 : 4 + (i % 4) + 1;
+                        const letterCount = (i === 5) ? 6 : 4 + (i % 4) + 1;
                         for (let j = 0; j < letterCount; j++) {
                             const letterBox = document.createElement('div');
                             letterBox.className = 'letter-box';
                             letterBox.style.opacity = '0.3';
                             wordDisplay.appendChild(letterBox);
-                            
-                            const mobileLetterBox = document.createElement('div');
-                            mobileLetterBox.className = 'letter-box';
-                            mobileLetterBox.style.opacity = '0.3';
-                            mobileWordDisplay.appendChild(mobileLetterBox);
                         }
                         
                         rung.appendChild(wordDisplay);
                         
                         // Only add hint if not FINISH
-                        if (!isFinish) {
+                        if (i !== 5) {
                             const hint = document.createElement('div');
                             hint.className = 'word-hint';
                             hint.innerHTML = '&nbsp;';
                             rung.appendChild(hint);
-                            
-                            const mobileHint = document.createElement('div');
-                            mobileHint.className = 'word-hint';
-                            mobileHint.innerHTML = '&nbsp;';
-                            mobileRung.appendChild(mobileHint);
                         }
                         
                         ladder.appendChild(rung);
-                        
-                        if (mobileLadder) {
-                            mobileRung.appendChild(mobileWordDisplay);
-                            mobileLadder.appendChild(mobileRung);
                         }
                     }
                     
-                    // For mobile: Start scrolled to bottom to show FINISH card
-                    if (mobileViewport && window.innerWidth <= 480) {
-                        setTimeout(() => {
-                            mobileViewport.scrollTop = mobileViewport.scrollHeight;
-                        }, 100);
-                    }
+                    // Mobile will use compact cascade animation - all cards fit in viewport
                     
-                    // Mobile-specific upward cascade animation
+                    // Mobile-specific cascade animation - copy normal game structure  
                     if (window.innerWidth <= 480) {
-                        // Upward cascade: Start from bottom (5) to top (0)
+                        // Calculate dynamic height to fit all 6 cards - fix viewport calculation
+                        const viewportHeight = window.innerHeight;
+                        const mobileHeaderHeight = 80; // Approximate mobile header height
+                        const mobileKeyboardHeight = 210; // Mobile keyboard height
+                        const ladderPadding = 32; // 12px top + 20px bottom padding
+                        const cardGaps = 5 * 12; // 5 gaps of 12px each
+                        
+                        const actualAvailableHeight = viewportHeight - mobileHeaderHeight - mobileKeyboardHeight;
+                        const usableHeight = actualAvailableHeight - ladderPadding - cardGaps;
+                        const dynamicCardHeight = Math.max(55, usableHeight / 6); // Each card gets 1/6, min 55px (few pixels shorter)
+                        
+                        // Apply dynamic height to mobile-ladder container and let CSS handle the rest
+                        if (mobileLadder) {
+                            mobileLadder.style.cssText = `
+                                display: flex;
+                                flex-direction: column;
+                                gap: 12px;
+                                padding: 12px 0 20px 0;
+                            `;
+                            
+                            // Create 6 normal mobile rungs using exact game structure, just with dynamic height
+                            for (let i = 0; i < 6; i++) {
+                                const isFinish = i === 5;
+                                const mobileRung = document.createElement('div');
+                                mobileRung.className = isFinish ? 'rung finish-rung' : 'rung';
+                                mobileRung.id = `mobile-loading-rung-${i}`;
+                                
+                                // Override only the height - everything else uses normal CSS
+                                mobileRung.style.cssText = `
+                                    opacity: ${isFinish ? '0.8' : '0.3'};
+                                    transform: translateY(20px) scale(0.95);
+                                    height: ${dynamicCardHeight}px;
+                                    min-height: ${dynamicCardHeight}px;
+                                    max-height: ${dynamicCardHeight}px;
+                                `;
+                                
+                                // Create empty word display - no letters during loading
+                                const wordDisplay = document.createElement('div');
+                                wordDisplay.className = 'word-display';
+                                wordDisplay.style.minHeight = '20px'; // Just maintain spacing
+                                
+                                mobileRung.appendChild(wordDisplay);
+                                
+                                // Add hint for non-finish rungs
+                                if (!isFinish) {
+                                    const hint = document.createElement('div');
+                                    hint.className = 'word-hint';
+                                    hint.innerHTML = '&nbsp;';
+                                    mobileRung.appendChild(hint);
+                                }
+                                
+                                mobileLadder.appendChild(mobileRung);
+                            }
+                        }
+                        
+                        // Delay animation start to let keyboard/header load first
+                        const animationStartDelay = 900; // 900ms delay for UI to load
+                        
+                        // Upward cascade animation with delay
                         for (let i = 5; i >= 0; i--) {
-                            const delay = (5 - i) * 150; // 150ms between each rung, bottom to top
+                            const delay = animationStartDelay + (5 - i) * 150;
                             
                             setTimeout(() => {
                                 const mobileRung = document.getElementById(`mobile-loading-rung-${i}`);
-                                
                                 if (mobileRung) {
-                                    // Animate upward with bounce
-                                    mobileRung.style.transition = 'all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-                                    mobileRung.style.opacity = '0.8';
+                                    mobileRung.classList.add('loading-animation');
+                                    mobileRung.style.opacity = '1';
                                     mobileRung.style.transform = 'translateY(0px) scale(1)';
+                                    
+                                    setTimeout(() => {
+                                        mobileRung.classList.remove('loading-animation');
+                                    }, 800);
                                 }
                             }, delay);
                         }
-                        
-                        // After upward cascade, scroll to top
-                        setTimeout(() => {
-                            if (mobileViewport) {
-                                mobileViewport.scrollTo({
-                                    top: 0,
-                                    behavior: 'smooth'
-                                });
-                            }
-                        }, 900); // After cascade completes
                         
                     } else {
                         // Desktop animation (unchanged)
@@ -2144,7 +2186,7 @@
                     
                     // Resolve after all animations complete
                     const totalAnimationTime = window.innerWidth <= 480 
-                        ? 1500 // Mobile: 900ms cascade + 600ms scroll
+                        ? 2400 // Mobile: 900ms delay + 900ms cascade + 600ms buffer
                         : (6 * 200) + 800 + 200; // Desktop: stagger + animation + buffer
                     setTimeout(() => {
                         resolve();
@@ -2355,9 +2397,18 @@
             
             // Start the game after button turns green (shorter delay)
             setTimeout(() => {
-                // Add fade out animation to landing content only (not header)
+                // Add fade out animation to landing content and mobile header
                 const landingContent = document.getElementById('landing-content');
                 landingContent.classList.add('fade-out');
+                
+                // Fade out mobile header on mobile
+                if (window.innerWidth <= 480) {
+                    const landingHeader = document.querySelector('.landing-header');
+                    if (landingHeader) {
+                        landingHeader.style.transition = 'opacity 0.4s ease-out';
+                        landingHeader.style.opacity = '0';
+                    }
+                }
                 
                 // Start game after fade completes
                 setTimeout(() => {
@@ -2682,7 +2733,11 @@
                 this.syncMobileUI();
                 
                 this.renderLadder();
-                this.startTimer();
+                
+                // Delay timer start to match animation/chime delay
+                setTimeout(() => {
+                    this.startTimer();
+                }, 900);
             }
             
             syncMobileUI() {
@@ -3914,11 +3969,13 @@ https://ladder.game/`;
                     gamePage.style.opacity = '1';
                 }, 50); // Small delay to ensure display is set
                 
-                // Play loading sound
-                if (window.LadderGame && window.LadderGame.prototype.playSound) {
-                    const tempGame = { playSound: window.LadderGame.prototype.playSound };
-                    tempGame.playSound('loading');
-                }
+                // Delay loading sound to match animation start
+                setTimeout(() => {
+                    if (window.LadderGame && window.LadderGame.prototype.playSound) {
+                        const tempGame = { playSound: window.LadderGame.prototype.playSound };
+                        tempGame.playSound('loading');
+                    }
+                }, 600); // Same delay as animation
                 
                 // Create temporary ladder that matches real game structure
                 const ladder = document.getElementById('ladder');
