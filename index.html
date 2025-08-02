@@ -1441,6 +1441,136 @@
             border-color: #5d9556;
         }
         
+        /* Auth Card Styles */
+        .auth-card {
+            animation-delay: 0.15s;
+        }
+        
+        .auth-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a1a1b;
+            margin-bottom: 8px;
+        }
+        
+        .auth-text {
+            font-size: 0.9rem;
+            color: #787c7e;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        
+        .auth-button {
+            padding: 12px 24px;
+            border: 1px solid #6aaa64;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            background: #6aaa64;
+            color: white;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        
+        .auth-button:hover {
+            background: #5d9556;
+            border-color: #5d9556;
+            transform: translateY(-1px);
+        }
+        
+        /* More Puzzles Card Styles */
+        .more-puzzles-card {
+            animation-delay: 0.3s;
+        }
+        
+        .more-puzzles-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1a1a1b;
+            margin-bottom: 16px;
+        }
+        
+        .puzzle-pack-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #d3d6da;
+        }
+        
+        .puzzle-pack-item:last-child {
+            border-bottom: none;
+        }
+        
+        .puzzle-pack-info {
+            flex: 1;
+        }
+        
+        .puzzle-pack-name {
+            font-weight: 600;
+            color: #1a1a1b;
+            margin-bottom: 4px;
+        }
+        
+        .puzzle-pack-description {
+            font-size: 0.85rem;
+            color: #787c7e;
+        }
+        
+        .puzzle-pack-button {
+            padding: 8px 16px;
+            border: 1px solid #6aaa64;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+            color: #6aaa64;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .puzzle-pack-button:hover {
+            background: #6aaa64;
+            color: white;
+        }
+        
+        .empty-puzzles {
+            text-align: center;
+            padding: 20px;
+            color: #787c7e;
+        }
+        
+        .empty-puzzles-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        
+        .store-link-button {
+            margin-top: 16px;
+            padding: 10px 20px;
+            border: 1px solid #6aaa64;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #6aaa64;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .store-link-button:hover {
+            background: #5d9556;
+            border-color: #5d9556;
+        }
+        
         /* Countdown Page Styles */
         .countdown-page {
             display: none;
@@ -1999,12 +2129,16 @@
                 <button class="completion-button tomorrow" onclick="showCountdownScreen()">Tomorrow</button>
             </div>
             
-            <div class="signup-card card">
-                <h3 class="signup-title">Save Progress</h3>
-                <p class="signup-text">Track your stats and get daily reminders</p>
-                <div class="signup-buttons">
-                    <button class="signup-button primary">Sign Up</button>
-                    <button class="signup-button secondary">Skip</button>
+            <!-- Authentication-aware card for completion -->
+            <div class="auth-card card" id="completion-auth-card">
+                <!-- Will be populated by JavaScript based on auth status -->
+            </div>
+            
+            <!-- More puzzles section for authenticated users -->
+            <div class="more-puzzles-card card" id="completion-more-puzzles" style="display: none;">
+                <h3 class="more-puzzles-title">More Puzzles</h3>
+                <div class="more-puzzles-content" id="completion-puzzles-content">
+                    <!-- Will be populated by JavaScript -->
                 </div>
             </div>
         </div>
@@ -2037,12 +2171,16 @@
                 </div>
             </div>
             
-            <div class="signup-card card">
-                <h3 class="signup-title">Save Progress</h3>
-                <p class="signup-text">Track your stats and get daily reminders</p>
-                <div class="signup-buttons">
-                    <button class="signup-button primary">Sign Up</button>
-                    <button class="signup-button secondary">Skip</button>
+            <!-- Authentication-aware card for failure -->
+            <div class="auth-card card" id="failure-auth-card">
+                <!-- Will be populated by JavaScript based on auth status -->
+            </div>
+            
+            <!-- More puzzles section for authenticated users -->
+            <div class="more-puzzles-card card" id="failure-more-puzzles" style="display: none;">
+                <h3 class="more-puzzles-title">More Puzzles</h3>
+                <div class="more-puzzles-content" id="failure-puzzles-content">
+                    <!-- Will be populated by JavaScript -->
                 </div>
             </div>
         </div>
@@ -4023,8 +4161,8 @@
                     document.getElementById('completion-theme').textContent = `Theme: ${this.currentPuzzle.theme}`;
                     document.getElementById('completion-date-display').textContent = document.getElementById('date-display').textContent;
                     
-                    // Set up signup button functionality
-                    this.setupSignupButtons();
+                    // Set up authentication-aware cards
+                    this.setupAuthCards('completion');
                     
                     // Track completion for authenticated users
                     this.trackCompletion(timeString);
@@ -4099,8 +4237,8 @@ https://ladder.game/`;
                     document.getElementById('failure-theme').textContent = `Theme: ${this.currentPuzzle.theme}`;
                     document.getElementById('failure-date-display').textContent = document.getElementById('date-display').textContent;
                     
-                    // Set up signup button functionality
-                    this.setupSignupButtons();
+                    // Set up authentication-aware cards
+                    this.setupAuthCards('failure');
                     
                     // Set up failure screen sharing
                     const currentDate = new Date().toLocaleDateString('en-US', { 
@@ -4138,28 +4276,134 @@ https://ladder.game/`;
                 }, 200); // Wait for fade out to complete
             }
             
-            setupSignupButtons() {
-                // Find all signup buttons on both completion and failure pages
-                const primaryButtons = document.querySelectorAll('.signup-button.primary');
-                const secondaryButtons = document.querySelectorAll('.signup-button.secondary');
-                
-                primaryButtons.forEach(button => {
-                    button.onclick = () => {
-                        console.log('Create Account clicked - navigating to signup');
-                        window.location.href = './screens/signup.html';
-                    };
-                });
-                
-                secondaryButtons.forEach(button => {
-                    button.onclick = () => {
-                        console.log('Maybe Later clicked - dismissing signup');
-                        // Could hide the signup card or just do nothing
-                        button.closest('.signup-card').style.opacity = '0.5';
-                        setTimeout(() => {
-                            button.closest('.signup-card').style.display = 'none';
-                        }, 300);
-                    };
-                });
+            async setupAuthCards(pageType) {
+                try {
+                    const authCardId = `${pageType}-auth-card`;
+                    const morePuzzlesId = `${pageType}-more-puzzles`;
+                    const authCard = document.getElementById(authCardId);
+                    const morePuzzlesCard = document.getElementById(morePuzzlesId);
+                    
+                    // Check if user is authenticated
+                    let isAuthenticated = false;
+                    let user = null;
+                    
+                    if (window.supabaseClient) {
+                        const { data: { user: authUser } } = await window.supabaseClient.auth.getUser();
+                        if (authUser) {
+                            isAuthenticated = true;
+                            user = authUser;
+                        }
+                    }
+                    
+                    if (isAuthenticated) {
+                        // Show authenticated user cards
+                        authCard.innerHTML = `
+                            <h3 class="auth-title">Great Job!</h3>
+                            <p class="auth-text">View your progress and stats on your dashboard</p>
+                            <a href="./screens/home.html" class="auth-button">Go to Dashboard</a>
+                        `;
+                        
+                        // Set up more puzzles card
+                        this.setupMorePuzzlesCard(morePuzzlesCard, user);
+                        
+                    } else {
+                        // Show signup card for non-authenticated users
+                        authCard.innerHTML = `
+                            <h3 class="auth-title">Save Progress</h3>
+                            <p class="auth-text">Track your stats and get daily reminders</p>
+                            <div class="signup-buttons">
+                                <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
+                                <button class="signup-button secondary" onclick="this.closest('.auth-card').style.opacity='0.5'; setTimeout(() => this.closest('.auth-card').style.display='none', 300)">Skip</button>
+                            </div>
+                        `;
+                        
+                        // Hide more puzzles card for non-authenticated users
+                        morePuzzlesCard.style.display = 'none';
+                    }
+                    
+                } catch (error) {
+                    console.error('Error setting up auth cards:', error);
+                    // Fallback to basic signup card
+                    document.getElementById(`${pageType}-auth-card`).innerHTML = `
+                        <h3 class="auth-title">Save Progress</h3>
+                        <p class="auth-text">Track your stats and get daily reminders</p>
+                        <div class="signup-buttons">
+                            <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
+                            <button class="signup-button secondary">Skip</button>
+                        </div>
+                    `;
+                }
+            }
+            
+            async setupMorePuzzlesCard(morePuzzlesCard, user) {
+                try {
+                    // Check for purchased puzzle packs
+                    let hasPuzzlePacks = false;
+                    let puzzlePacks = [];
+                    
+                    if (window.supabaseClient && user) {
+                        const { data: purchases } = await window.supabaseClient
+                            .from('user_purchases')
+                            .select('*')
+                            .eq('user_id', user.id);
+                        
+                        if (purchases && purchases.length > 0) {
+                            hasPuzzlePacks = true;
+                            // Convert purchases to puzzle pack format
+                            puzzlePacks = purchases.map(purchase => ({
+                                name: purchase.item_name || 'Puzzle Pack',
+                                description: purchase.item_description || 'Collection of puzzles',
+                                id: purchase.item_id
+                            }));
+                        }
+                    }
+                    
+                    if (hasPuzzlePacks) {
+                        // Show user's puzzle packs
+                        const puzzlePacksHtml = puzzlePacks.map(pack => `
+                            <div class="puzzle-pack-item">
+                                <div class="puzzle-pack-info">
+                                    <div class="puzzle-pack-name">${pack.name}</div>
+                                    <div class="puzzle-pack-description">${pack.description}</div>
+                                </div>
+                                <a href="#" class="puzzle-pack-button" onclick="alert('Puzzle pack selection coming soon!')">Play</a>
+                            </div>
+                        `).join('');
+                        
+                        morePuzzlesCard.innerHTML = `
+                            <h3 class="more-puzzles-title">Your Puzzles</h3>
+                            <div class="more-puzzles-content">
+                                ${puzzlePacksHtml}
+                            </div>
+                        `;
+                        morePuzzlesCard.style.display = 'block';
+                        
+                    } else {
+                        // Show empty state with store link
+                        morePuzzlesCard.innerHTML = `
+                            <h3 class="more-puzzles-title">More Puzzles</h3>
+                            <div class="empty-puzzles">
+                                <div class="empty-puzzles-icon">📦</div>
+                                <p>Get more puzzles to continue playing!</p>
+                                <a href="./screens/home.html" class="store-link-button">Browse Store</a>
+                            </div>
+                        `;
+                        morePuzzlesCard.style.display = 'block';
+                    }
+                    
+                } catch (error) {
+                    console.error('Error setting up more puzzles card:', error);
+                    // Show basic store link
+                    morePuzzlesCard.innerHTML = `
+                        <h3 class="more-puzzles-title">More Puzzles</h3>
+                        <div class="empty-puzzles">
+                            <div class="empty-puzzles-icon">🧩</div>
+                            <p>Discover more puzzle collections</p>
+                            <a href="./screens/home.html" class="store-link-button">Browse Store</a>
+                        </div>
+                    `;
+                    morePuzzlesCard.style.display = 'block';
+                }
             }
             
             async trackCompletion(timeString) {
