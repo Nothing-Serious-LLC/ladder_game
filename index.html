@@ -1508,6 +1508,16 @@
                 opacity: 0;
                 transition: opacity 0.4s ease-in;
             }
+            
+            /* PWA standalone mode adjustments - move keyboard up and extend game area */
+            .pwa-mode .mobile-keyboard {
+                bottom: calc(env(safe-area-inset-bottom, 0) + 10px); /* Move keyboard UP in PWA mode */
+            }
+            
+            /* Extend game area down to meet keyboard in PWA mode */
+            .pwa-mode .mobile-game-area {
+                padding-bottom: 240px; /* Account for keyboard height + gap */
+            }
             /* Reduce bottom padding so ladder isn't cut off */
             .container {
                 padding: 0;
