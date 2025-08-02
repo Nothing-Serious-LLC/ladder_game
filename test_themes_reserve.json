@@ -1,0 +1,124 @@
+{
+  "unique_test_themes": [
+    {
+      "theme": "Mountain Climbing",
+      "domain": "Physical Adventure",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "2-4"
+    },
+    {
+      "theme": "Ancient Philosophy",
+      "domain": "Intellectual History", 
+      "connection_type": "Abstract/Conceptual",
+      "difficulty_range": "4-6"
+    },
+    {
+      "theme": "Blacksmith Forge",
+      "domain": "Traditional Crafts",
+      "connection_type": "Physical/Causal",
+      "difficulty_range": "2-5"
+    },
+    {
+      "theme": "Stock Market",
+      "domain": "Economics/Finance",
+      "connection_type": "Functional/Process",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Hurricane Season",
+      "domain": "Natural Disasters",
+      "connection_type": "Physical/Causal",
+      "difficulty_range": "2-4"
+    },
+    {
+      "theme": "Monastery Life",
+      "domain": "Religious/Spiritual",
+      "connection_type": "Cultural/Hierarchical",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Murder Mystery",
+      "domain": "Crime/Investigation",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Species Evolution",
+      "domain": "Biology/Science",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "4-6"
+    },
+    {
+      "theme": "Wedding Ceremony",
+      "domain": "Cultural Traditions",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "1-3"
+    },
+    {
+      "theme": "Desert Oasis",
+      "domain": "Geography/Survival",
+      "connection_type": "Physical/Causal",
+      "difficulty_range": "2-4"
+    },
+    {
+      "theme": "Space Exploration",
+      "domain": "Technology/Science",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "3-6"
+    },
+    {
+      "theme": "Refugee Journey",
+      "domain": "Human Migration",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Pottery Making",
+      "domain": "Traditional Arts",
+      "connection_type": "Physical/Process",
+      "difficulty_range": "2-4"
+    },
+    {
+      "theme": "Ocean Currents",
+      "domain": "Marine Science",
+      "connection_type": "Physical/Causal",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Library Research",
+      "domain": "Academic/Information",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "2-4"
+    },
+    {
+      "theme": "Forest Fire",
+      "domain": "Environmental Crisis",
+      "connection_type": "Physical/Causal",
+      "difficulty_range": "2-4"
+    },
+    {
+      "theme": "Archaeological Dig",
+      "domain": "Historical Investigation",
+      "connection_type": "Process/Sequential",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Dream Analysis",
+      "domain": "Psychology/Subconscious",
+      "connection_type": "Abstract/Conceptual",
+      "difficulty_range": "4-6"
+    },
+    {
+      "theme": "Courtroom Trial",
+      "domain": "Legal System",
+      "connection_type": "Institutional/Process",
+      "difficulty_range": "3-5"
+    },
+    {
+      "theme": "Lighthouse Beacon",
+      "domain": "Maritime Safety",
+      "connection_type": "Functional/Purpose",
+      "difficulty_range": "2-4"
+    }
+  ]
+}

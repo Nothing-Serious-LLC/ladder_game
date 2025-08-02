@@ -1,0 +1,24 @@
+{
+  "level2_example": {
+    "theme": "Morning Exercise",
+    "words": [
+      {"word": "ALARM", "clue": "Device that signals start time", "hint": "Wake sound", "revealed_letters": [0]},
+      {"word": "SHOES", "clue": "Footwear for physical activity", "hint": "Athletic gear", "revealed_letters": [2]},
+      {"word": "TRAIL", "clue": "Outdoor path for movement", "hint": "Nature route", "revealed_letters": [0]},
+      {"word": "SWEAT", "clue": "Body response to physical effort", "hint": "Effort moisture", "revealed_letters": [3]},
+      {"word": "ENERGY", "clue": "Feeling gained from activity", "hint": "Power boost", "revealed_letters": [0, 4]}
+    ],
+    "notes": "Level 2 - 25-30% letters, 60-70% first letters, 5-6 letter words"
+  },
+  "level3_example": {
+    "theme": "Banking System",
+    "words": [
+      {"word": "MONEY", "clue": "Currency used for transactions", "hint": "Payment medium", "revealed_letters": [3]},
+      {"word": "DEPOSIT", "clue": "Action to place currency in institution", "hint": "Put funds in", "revealed_letters": [0]},
+      {"word": "ACCOUNT", "clue": "Record system for deposits", "hint": "Balance tracker", "revealed_letters": [4]},
+      {"word": "INTEREST", "clue": "Percentage earned on balance", "hint": "Growth rate", "revealed_letters": [0, 5]},
+      {"word": "SAVINGS", "clue": "Goal of earning percentage", "hint": "Future fund", "revealed_letters": [2]}
+    ],
+    "notes": "Level 3 - 20-25% letters, 50-60% first letters, 6-7 letter words, basic education"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "theme": "Building Home",
+  "complexity_level": 1,
+  "words": [
+    {
+      "word": "BRICK",
+      "clue": "Red building block material",
+      "hint": "Clay rectangle",
+      "revealed_letters": [0]
+    },
+    {
+      "word": "WALLS",
+      "clue": "Structures made from bricks",
+      "hint": "Room barriers",
+      "revealed_letters": [2]
+    },
+    {
+      "word": "FRAME",
+      "clue": "Wooden structure inside walls",
+      "hint": "Support skeleton",
+      "revealed_letters": [0]
+    },
+    {
+      "word": "HOUSE",
+      "clue": "Building with frame and walls",
+      "hint": "Family dwelling",
+      "revealed_letters": [2]
+    },
+    {
+      "word": "FAMILY",
+      "clue": "People who live in house together",
+      "hint": "Related group",
+      "revealed_letters": [0, 3]
+    }
+  ],
+  "notes": "Level 1 ADJUSTED reserve - 25% letters, 60% first letters, 5-6 letter words, building process theme"
+}

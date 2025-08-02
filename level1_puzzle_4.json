@@ -1,0 +1,37 @@
+{
+  "theme": "Growing Plant",
+  "complexity_level": 1,
+  "words": [
+    {
+      "word": "WATER",
+      "clue": "Essential liquid plants need daily",
+      "hint": "H2O for roots",
+      "revealed_letters": [2]
+    },
+    {
+      "word": "ROOTS",
+      "clue": "Underground parts that absorb water",
+      "hint": "Plant anchors",
+      "revealed_letters": [0]
+    },
+    {
+      "word": "STEMS",
+      "clue": "Green parts that carry water upward",
+      "hint": "Plant highways",
+      "revealed_letters": [3]
+    },
+    {
+      "word": "LEAVES",
+      "clue": "Flat green parts fed by stems",
+      "hint": "Solar panels",
+      "revealed_letters": [0]
+    },
+    {
+      "word": "OXYGEN",
+      "clue": "Gas that leaves release for us",
+      "hint": "Breathing air",
+      "revealed_letters": [0, 4]
+    }
+  ],
+  "notes": "Level 1 ADJUSTED - Plant growth process theme, 25% letters, 60% first letters"
+}

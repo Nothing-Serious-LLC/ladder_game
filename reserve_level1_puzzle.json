@@ -1,0 +1,37 @@
+{
+  "theme": "Morning Routine",
+  "complexity_level": 1,
+  "words": [
+    {
+      "word": "WAKE",
+      "clue": "What you do when you stop sleeping",
+      "hint": "Open your eyes",
+      "revealed_letters": [0, 2]
+    },
+    {
+      "word": "BRUSH",
+      "clue": "Clean your teeth with this",
+      "hint": "Dental hygiene",
+      "revealed_letters": [0, 3]
+    },
+    {
+      "word": "DRESS",
+      "clue": "Put on your clothes",
+      "hint": "Get ready to go",
+      "revealed_letters": [0, 3]
+    },
+    {
+      "word": "EAT",
+      "clue": "Have breakfast food",
+      "hint": "Morning meal",
+      "revealed_letters": [0]
+    },
+    {
+      "word": "LEAVE",
+      "clue": "Go out the door to work",
+      "hint": "Exit your home",
+      "revealed_letters": [0, 2, 4]
+    }
+  ],
+  "notes": "Level 1 reserve - Morning routine theme with universal daily activities and very direct clues"
+}
