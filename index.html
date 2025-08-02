@@ -2452,12 +2452,155 @@
                 } catch (error) {
                     console.error('Error updating landing info:', error);
                 }
+            },
+            
+            initializeApp: async () => {
+                try {
+                    // First, update basic puzzle info
+                    await window.gameModule.updateLandingInfo();
+                    
+                    // Check authentication status
+                    const isAuthenticated = await window.gameModule.checkAuthentication();
+                    
+                    // Check if user has already played today's puzzle
+                    const hasPlayedToday = await window.gameModule.checkTodaysPuzzleStatus(isAuthenticated);
+                    
+                    if (hasPlayedToday) {
+                        // Show countdown screen instead of landing page
+                        window.gameModule.showCountdownFromStart();
+                    } else if (isAuthenticated) {
+                        // Authenticated user who hasn't played - could redirect to home screen or show landing
+                        // For now, show landing page but could redirect to home in the future
+                        window.gameModule.showLandingPage();
+                    } else {
+                        // Non-authenticated user who hasn't played - show landing page
+                        window.gameModule.showLandingPage();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error initializing app:', error);
+                    // Fallback to landing page
+                    window.gameModule.showLandingPage();
+                }
+            },
+            
+            checkAuthentication: async () => {
+                try {
+                    if (!window.supabaseClient) {
+                        return false;
+                    }
+                    
+                    const { data: { user }, error } = await window.supabaseClient.auth.getUser();
+                    return !error && user !== null;
+                } catch (error) {
+                    console.error('Error checking authentication:', error);
+                    return false;
+                }
+            },
+            
+            checkTodaysPuzzleStatus: async (isAuthenticated) => {
+                const today = new Date().toISOString().split('T')[0];
+                
+                if (isAuthenticated) {
+                    // Check database for authenticated users
+                    try {
+                        const { data: { user } } = await window.supabaseClient.auth.getUser();
+                        if (!user) return false;
+                        
+                        const { data: completions, error } = await window.supabaseClient
+                            .from('puzzle_completions')
+                            .select('*')
+                            .eq('user_id', user.id)
+                            .eq('puzzle_date', today);
+                        
+                        if (error) {
+                            console.error('Error checking puzzle completion:', error);
+                            return false;
+                        }
+                        
+                        return completions && completions.length > 0;
+                    } catch (error) {
+                        console.error('Error checking authenticated puzzle status:', error);
+                        return false;
+                    }
+                } else {
+                    // Check cookies for non-authenticated users
+                    const cookieName = `ladder_played_${today}`;
+                    return document.cookie.split(';').some(c => c.trim().startsWith(cookieName + '='));
+                }
+            },
+            
+            setPuzzlePlayedCookie: () => {
+                const today = new Date().toISOString().split('T')[0];
+                const cookieName = `ladder_played_${today}`;
+                // Set cookie to expire at end of day
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+                document.cookie = `${cookieName}=true; expires=${tomorrow.toUTCString()}; path=/`;
+            },
+            
+            showLandingPage: () => {
+                document.getElementById('landing-page').style.display = 'flex';
+                document.getElementById('game-page').style.display = 'none';
+                document.getElementById('completion-page').style.display = 'none';
+                document.getElementById('failure-page').style.display = 'none';
+                document.getElementById('countdown-page').style.display = 'none';
+            },
+            
+            showCountdownFromStart: () => {
+                // Update countdown page info
+                const { puzzleNumber } = getTodaysPuzzleInfo();
+                const today = new Date();
+                const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                const formattedDate = today.toLocaleDateString('en-US', options);
+                document.getElementById('countdown-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+                
+                // Show countdown page
+                document.getElementById('landing-page').style.display = 'none';
+                document.getElementById('game-page').style.display = 'none';
+                document.getElementById('completion-page').style.display = 'none';
+                document.getElementById('failure-page').style.display = 'none';
+                document.getElementById('countdown-page').style.display = 'flex';
+                
+                // Start countdown timer
+                window.gameModule.startCountdownTimer();
+            },
+            
+            startCountdownTimer: () => {
+                function updateCountdown() {
+                    const now = new Date();
+                    const tomorrow = new Date(now);
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    tomorrow.setHours(0, 0, 0, 0);
+                    
+                    const timeLeft = tomorrow - now;
+                    
+                    if (timeLeft <= 0) {
+                        // New day - reload the page to reset
+                        location.reload();
+                        return;
+                    }
+                    
+                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    
+                    const timerDisplay = document.getElementById('countdown-timer');
+                    if (timerDisplay) {
+                        timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }
+                
+                // Update immediately and then every second
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
             }
         };
         
-        // Initialize landing page info when DOM is ready
+        // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            window.gameModule.updateLandingInfo();
+            window.gameModule.initializeApp();
         });
     </script>
 
@@ -2502,6 +2645,11 @@
             setTimeout(() => {
                 gameContent.classList.remove('fade-out');
             }, 50);
+            
+            // Set cookie when user starts playing (for non-authenticated users)
+            if (window.gameModule && window.gameModule.setPuzzlePlayedCookie) {
+                window.gameModule.setPuzzlePlayedCookie();
+            }
             
             game = new LadderGame();
             
@@ -4164,8 +4312,13 @@
                     // Set up authentication-aware cards
                     this.setupAuthCards('completion');
                     
-                    // Track completion for authenticated users
+                    // Track completion for authenticated users and set cookie for non-authenticated
                     this.trackCompletion(timeString);
+                    
+                    // Set cookie for non-authenticated users
+                    if (window.gameModule && window.gameModule.setPuzzlePlayedCookie) {
+                        window.gameModule.setPuzzlePlayedCookie();
+                    }
                 }, 200); // Wait for fade out to complete
                 
                 // Set up completion screen sharing (outside setTimeout to prevent header animation)
@@ -4239,6 +4392,11 @@ https://ladder.game/`;
                     
                     // Set up authentication-aware cards
                     this.setupAuthCards('failure');
+                    
+                    // Set cookie for non-authenticated users (they attempted the puzzle)
+                    if (window.gameModule && window.gameModule.setPuzzlePlayedCookie) {
+                        window.gameModule.setPuzzlePlayedCookie();
+                    }
                     
                     // Set up failure screen sharing
                     const currentDate = new Date().toLocaleDateString('en-US', { 
