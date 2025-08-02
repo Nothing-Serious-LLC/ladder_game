@@ -2033,13 +2033,14 @@
                         }, 350);
                     }, 50); // Small delay to ensure display is set
                     
-                    // Delay loading sound to match animation start
+                    // Delay loading sound to match animation start (different for desktop vs mobile)
+                    const soundDelay = window.innerWidth <= 480 ? 900 : 600; // Desktop starts sooner than mobile
                     setTimeout(() => {
                         if (window.LadderGame && window.LadderGame.prototype.playSound) {
                             const tempGame = { playSound: window.LadderGame.prototype.playSound };
                             tempGame.playSound('loading');
                         }
-                    }, 900); // Same delay as animation
+                    }, soundDelay);
                     
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
@@ -2168,9 +2169,11 @@
                         }
                         
                     } else {
-                        // Desktop animation (unchanged)
+                        // Desktop animation with slight delay to let UI load first
+                        const desktopAnimationDelay = 600; // 600ms delay for desktop UI to load
+                        
                         for (let i = 0; i < 6; i++) {
-                            const delay = i * 200;
+                            const delay = desktopAnimationDelay + (i * 200);
                             
                             setTimeout(() => {
                                 const rung = document.getElementById(`loading-rung-${i}`);
@@ -2189,7 +2192,7 @@
                     // Resolve after all animations complete
                     const totalAnimationTime = window.innerWidth <= 480 
                         ? 2400 // Mobile: 900ms delay + 900ms cascade + 600ms buffer
-                        : (6 * 200) + 800 + 200; // Desktop: stagger + animation + buffer
+                        : 600 + (6 * 200) + 800 + 200; // Desktop: 600ms delay + stagger + animation + buffer
                     setTimeout(() => {
                         resolve();
                     }, totalAnimationTime);
@@ -2736,10 +2739,8 @@
                 
                 this.renderLadder();
                 
-                // Delay timer start to match animation/chime delay
-                setTimeout(() => {
-                    this.startTimer();
-                }, 900);
+                // Start timer immediately when content loads for responsive feel
+                this.startTimer();
             }
             
             syncMobileUI() {
@@ -3374,36 +3375,111 @@
                 const mobileRung  = document.getElementById(`mobile-rung-${finishIndex}`);
                 if (!desktopRung) return;
                 
-                // Get all letter boxes from both desktop and mobile
-                const allBoxes = [
-                    ...desktopRung.querySelectorAll('.letter-box'),
-                    ...(mobileRung ? mobileRung.querySelectorAll('.letter-box') : [])
-                ];
+                // Check if mobile for different completion animation
+                const isMobile = window.innerWidth <= 480;
                 
-                // Immediately turn all FINISH letters green (no cascade animation)
-                allBoxes.forEach((letterBox) => {
-                    // Remove finish-placeholder styling and apply permanent completed state
-                    letterBox.classList.remove('finish-placeholder', 'typed-through');
-                    letterBox.classList.add('filled'); // Add filled class for permanent green
+                if (isMobile) {
+                    // Mobile: Play letter cascade with chime, then fade screen
+                    this.playMobileFinishCascade(desktopRung, mobileRung);
+                } else {
+                    // Desktop: Keep existing immediate green behavior
+                    // Get all letter boxes from both desktop and mobile
+                    const allBoxes = [
+                        ...desktopRung.querySelectorAll('.letter-box'),
+                        ...(mobileRung ? mobileRung.querySelectorAll('.letter-box') : [])
+                    ];
                     
-                    // Set permanent completed styling (same as other completed words)
-                    letterBox.style.backgroundColor = '#6aaa64';
-                    letterBox.style.borderColor = '#6aaa64';
-                    letterBox.style.color = 'white';
-                });
+                    // Immediately turn all FINISH letters green (no cascade animation)
+                    allBoxes.forEach((letterBox) => {
+                        // Remove finish-placeholder styling and apply permanent completed state
+                        letterBox.classList.remove('finish-placeholder', 'typed-through');
+                        letterBox.classList.add('filled'); // Add filled class for permanent green
+                        
+                        // Set permanent completed styling (same as other completed words)
+                        letterBox.style.backgroundColor = '#6aaa64';
+                        letterBox.style.borderColor = '#6aaa64';
+                        letterBox.style.color = 'white';
+                    });
+                    
+                    // Immediately turn the entire FINISH rung green (like regular words)
+                    desktopRung.classList.add('completed');
+                    if (mobileRung) mobileRung.classList.add('completed');
+                    
+                    // Play finish celebration sound and haptic feedback
+                    this.playSound('finish');
+                    this.vibrate([200, 100, 200, 100, 300]);
+                    
+                    // Small delay to ensure FINISH box color change is visible before cascade
+                    setTimeout(() => {
+                        this.playCompletionAnimation();
+                    }, 400); // Longer delay for mobile timing fix
+                }
+            }
+            
+            // Mobile-specific finish cascade animation with chime sync and screen fade
+            playMobileFinishCascade(desktopRung, mobileRung) {
+                // Get mobile letter boxes (prioritize mobile if available)
+                const letterBoxes = mobileRung ? 
+                    Array.from(mobileRung.querySelectorAll('.letter-box')) :
+                    Array.from(desktopRung.querySelectorAll('.letter-box'));
                 
-                // Immediately turn the entire FINISH rung green (like regular words)
-                desktopRung.classList.add('completed');
-                if (mobileRung) mobileRung.classList.add('completed');
-                
-                // Play finish celebration sound and haptic feedback
+                // Start the chime immediately
                 this.playSound('finish');
                 this.vibrate([200, 100, 200, 100, 300]);
                 
-                // Small delay to ensure FINISH box color change is visible before cascade
+                // Play letter cascade animation (similar to regular word cascade)
+                letterBoxes.forEach((letterBox, index) => {
+                    setTimeout(() => {
+                        // Start the cascade animation
+                        letterBox.classList.add('cascade-fill');
+                        
+                        // Apply permanent completed state immediately
+                        letterBox.classList.remove('finish-placeholder', 'typed-through');
+                        letterBox.classList.add('filled');
+                        
+                        // Set permanent completed styling (green background/border)
+                        letterBox.style.backgroundColor = '#6aaa64';
+                        letterBox.style.borderColor = '#6aaa64';
+                        letterBox.style.color = 'white'; // Use white like other cascade animations
+                        
+                        // Remove animation class after it completes but keep completed styling
+                        setTimeout(() => {
+                            letterBox.classList.remove('cascade-fill');
+                        }, 400);
+                    }, index * 80); // 80ms stagger between each letter (slower than regular words for emphasis)
+                });
+                
+                // Mark the rungs as completed after cascade starts
                 setTimeout(() => {
-                    this.playCompletionAnimation();
-                }, 400); // Longer delay for mobile timing fix
+                    desktopRung.classList.add('completed');
+                    if (mobileRung) mobileRung.classList.add('completed');
+                }, 200); // Small delay to see first letters start cascading
+                
+                // Calculate total cascade time: (number of letters * 80ms) + animation duration + extended buffer
+                const cascadeTime = (letterBoxes.length * 80) + 400 + 800; // Increased buffer from 300ms to 800ms
+                
+                // After cascade completes, fade out screen and go to completion page
+                setTimeout(() => {
+                    this.showMobileCompletionTransition();
+                }, cascadeTime);
+            }
+            
+            // Mobile screen fade transition to completion page
+            showMobileCompletionTransition() {
+                const gameContent = document.getElementById('game-content');
+                
+                // Fade out the game content
+                gameContent.classList.add('fade-out');
+                
+                // After fade completes, show completion page
+                setTimeout(() => {
+                    const finalTime = this.finalTimeMs !== undefined ? this.finalTimeMs : Date.now() - this.startTime;
+                    const minutes = Math.floor(finalTime / 60000);
+                    const seconds = Math.floor((finalTime % 60000) / 1000);
+                    const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    this.showCompletionPage(timeString);
+                }, 200); // Wait for fade out to complete
             }
             
             // Show failure cascade - reveal only the current word in red
@@ -3517,7 +3593,11 @@
                     // Game over - show failure cascade then end game
                     this.playFailureCascade();
                 } else {
-                    this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
+                    // Only show feedback popup on desktop, not mobile
+                    const isMobile = window.innerWidth <= 480;
+                    if (!isMobile) {
+                        this.showFeedback(`Not quite right. ${triesLeft} tries remaining.`, 'error');
+                    }
                     
                     // Show red shake animation on user-typed letters
                     this.showWrongWordAnimation();
