@@ -2620,11 +2620,14 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     // Hide landing page immediately
                     landingPage.style.display = 'none';
                     
-                    // Play loading sound immediately
-                    if (window.LadderGame && window.LadderGame.prototype.playSound) {
-                        const tempGame = { playSound: window.LadderGame.prototype.playSound };
-                        tempGame.playSound('loading');
-                    }
+                    // Delay loading sound to match animation start (different for desktop vs mobile)
+                    const soundDelay = window.innerWidth <= 480 ? 900 : 600; // Desktop starts sooner than mobile
+                    setTimeout(() => {
+                        if (window.LadderGame && window.LadderGame.prototype.playSound) {
+                            const tempGame = { playSound: window.LadderGame.prototype.playSound };
+                            tempGame.playSound('loading');
+                        }
+                    }, soundDelay);
                     
                     // Create temporary ladder that matches real game structure
                     const ladder = document.getElementById('ladder');
