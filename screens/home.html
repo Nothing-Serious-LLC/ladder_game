@@ -375,6 +375,7 @@
             border-radius: 12px;
             border: 1px solid #fed7aa;
             transition: all 0.2s;
+            gap: 16px;
         }
         
         .store-item:hover {
@@ -415,6 +416,8 @@
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
+            flex-shrink: 0;
+            white-space: nowrap;
         }
         
         .buy-button:hover {
@@ -783,7 +786,7 @@
                             <button class="buy-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
                         </div>
                     </div>
-                    <button class="view-all-button" onclick="window.location.href='store.html'" style="margin-top: 20px;">
+                    <button class="view-all-button" onclick="window.location.href='store.html'" style="margin-top: 20px; width: 100%;">
                         See All Packs
                     </button>
                 </div>
@@ -1388,29 +1391,36 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                         // User has purchases, show them
                         let packsHTML = '';
                         
-                        // Load completion counts
+                        // Load completion counts - get all completions, not just completed ones
                         const { data: completions } = await supabase
                             .from('puzzle_pack_completions')
                             .select('pack_name, completed')
-                            .eq('user_id', user.id)
-                            .eq('completed', true);
+                            .eq('user_id', user.id);
                         
                         const completionCounts = {};
                         if (completions) {
                             completions.forEach(c => {
-                                completionCounts[c.pack_name] = (completionCounts[c.pack_name] || 0) + 1;
+                                if (!completionCounts[c.pack_name]) {
+                                    completionCounts[c.pack_name] = { completed: 0, total: 0 };
+                                }
+                                completionCounts[c.pack_name].total += 1;
+                                if (c.completed) {
+                                    completionCounts[c.pack_name].completed += 1;
+                                }
                             });
                         }
                         
                         purchases.forEach(purchase => {
                             if (purchase.product_id === 'free-pack') {
-                                const completed = completionCounts['free-pack'] || 0;
-                                const progress = (completed / 10) * 100;
+                                const packStats = completionCounts['free-pack'] || { completed: 0, total: 0 };
+                                const completed = packStats.completed;
+                                const total = 10; // Free pack has 10 puzzles
+                                const progress = (completed / total) * 100;
                                 packsHTML += `
                                     <div class="pack-item">
                                         <div class="item-info">
                                             <div class="item-name">Free Pack</div>
-                                            <div class="pack-progress">${completed}/10 puzzles completed</div>
+                                            <div class="pack-progress">${completed}/${total} puzzles completed</div>
                                             <div class="progress-bar">
                                                 <div class="progress-fill" style="width: ${progress}%"></div>
                                             </div>
@@ -1421,13 +1431,15 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                             }
                             
                             if (purchase.product_id === 'complete-pack') {
-                                const completed = completionCounts['complete-pack'] || 0;
-                                const progress = (completed / 100) * 100;
+                                const packStats = completionCounts['complete-pack'] || { completed: 0, total: 0 };
+                                const completed = packStats.completed;
+                                const total = 100; // Complete pack has 100 puzzles
+                                const progress = (completed / total) * 100;
                                 packsHTML += `
                                     <div class="pack-item">
                                         <div class="item-info">
                                             <div class="item-name">Complete Pack</div>
-                                            <div class="pack-progress">${completed}/100 puzzles completed</div>
+                                            <div class="pack-progress">${completed}/${total} puzzles completed</div>
                                             <div class="progress-bar">
                                                 <div class="progress-fill" style="width: ${progress}%"></div>
                                             </div>
