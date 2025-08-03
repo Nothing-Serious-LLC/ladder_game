@@ -408,9 +408,9 @@
                 const purchase = purchases.find(p => p.item_name === pack.name);
                 const isUnlocked = !!purchase;
                 
-                // Mock progress data (in real app, this would come from completion tracking)
-                const completedPuzzles = isUnlocked ? Math.floor(Math.random() * pack.totalPuzzles) : 0;
-                const progressPercent = isUnlocked ? (completedPuzzles / pack.totalPuzzles) * 100 : 0;
+                // TODO: Replace with actual completion tracking from database
+                const completedPuzzles = 0; // Show 0 progress until proper tracking is implemented
+                const progressPercent = 0;
                 
                 const packCard = document.createElement('div');
                 packCard.className = `pack-card ${isUnlocked ? 'unlocked' : 'locked'}`;

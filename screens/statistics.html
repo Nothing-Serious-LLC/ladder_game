@@ -342,6 +342,53 @@
             font-size: 0.9rem;
         }
         
+        .auth-required-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .auth-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--gray-400);
+        }
+        
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--gray-900);
+        }
+        
+        .auth-text {
+            font-size: 1rem;
+            color: var(--gray-600);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        
+        .auth-button {
+            background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+        
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(106, 170, 100, 0.4);
+        }
+        
         @media (max-width: 640px) {
             .puzzle-header {
                 flex-direction: column;
@@ -478,45 +525,41 @@
             return today.toISOString().split('T')[0]; // YYYY-MM-DD format
         }
         
-        // Mock puzzle data for demonstration
-        const mockPuzzles = [
-            {
-                puzzle_number: 214,
-                puzzle_date: '2025-08-02',
-                theme: 'Animals',
-                completed: true,
-                completion_time: '2:45',
-                hints_used: 1,
-                puzzle_type: 'daily'
-            },
-            {
-                puzzle_number: 213,
-                puzzle_date: '2025-08-01',
-                theme: 'Technology',
-                completed: true,
-                completion_time: '1:32',
-                hints_used: 0,
-                puzzle_type: 'daily'
-            },
-            {
-                puzzle_number: 212,
-                puzzle_date: '2025-07-31',
-                theme: 'Food',
-                completed: false,
-                completion_time: null,
-                hints_used: 2,
-                puzzle_type: 'daily'
-            },
-            {
-                puzzle_number: 211,
-                puzzle_date: '2025-07-30',
-                theme: 'Music',
-                completed: true,
-                completion_time: '3:21',
-                hints_used: 1,
-                puzzle_type: 'daily'
-            }
-        ];
+
+        
+        function showAuthenticationRequired() {
+            // Show authentication required message in puzzle details
+            const puzzleDetails = document.getElementById('puzzle-details');
+            const currentDateEl = document.getElementById('current-date');
+            
+            currentDateEl.textContent = 'Sign In Required';
+            
+            puzzleDetails.innerHTML = `
+                <div class="auth-required-state">
+                    <div class="auth-icon">🔒</div>
+                    <div class="auth-title">Create an Account</div>
+                    <div class="auth-text">Sign up to track your puzzle history and view detailed statistics</div>
+                    <button class="auth-button" onclick="window.location.href='signup.html'">Sign Up</button>
+                </div>
+            `;
+            
+            // Hide navigation buttons
+            document.getElementById('prev-button').style.display = 'none';
+            document.getElementById('next-button').style.display = 'none';
+            
+            // Show empty statistics
+            showEmptyStats();
+        }
+        
+        function showEmptyStats() {
+            // Reset all statistics to empty/zero state
+            document.getElementById('total-completed').textContent = '--';
+            document.getElementById('current-streak').textContent = '--';
+            document.getElementById('average-time').textContent = '--:--';
+            document.getElementById('success-rate').textContent = '--%';
+            document.getElementById('fastest-time').textContent = '--:--';
+            document.getElementById('total-hints').textContent = '--';
+        }
         
         async function loadPuzzleHistory() {
             try {
@@ -524,10 +567,8 @@
                 const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
                 
                 if (authError || !user) {
-                    // Not authenticated - show mock data or empty state
-                    allPuzzleHistory = mockPuzzles;
-                    renderCurrentDay();
-                    loadOverallStats();
+                    // Not authenticated - show authentication prompt
+                    showAuthenticationRequired();
                     return;
                 }
                 
@@ -540,7 +581,7 @@
                 
                 if (completionError) {
                     console.error('Error fetching completions:', completionError);
-                    allPuzzleHistory = mockPuzzles;
+                    allPuzzleHistory = [];
                 } else {
                     // Transform database data to expected format
                     allPuzzleHistory = (completions || []).map((completion, index) => {
@@ -562,19 +603,16 @@
                         };
                     });
                     
-                    // If no completions, use mock data
-                    if (allPuzzleHistory.length === 0) {
-                        allPuzzleHistory = mockPuzzles;
-                    }
+                    // Keep empty array if no completions
                 }
                 
-                renderPuzzleHistory();
+                renderCurrentDay();
                 loadOverallStats();
                 
             } catch (error) {
                 console.error('Error loading puzzle history:', error);
-                allPuzzleHistory = mockPuzzles;
-                renderPuzzleHistory();
+                allPuzzleHistory = [];
+                renderCurrentDay();
                 loadOverallStats();
             }
         }
