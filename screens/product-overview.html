@@ -264,15 +264,15 @@
             <h3 class="features-title">What's Included</h3>
             <ul class="features-list" id="features-list">
                 <li class="feature-item">
-                    <span class="feature-icon">-</span>
+                    <span class="feature-icon">✓</span>
                     <div class="feature-text">100 Unique Puzzles</div>
                 </li>
                 <li class="feature-item">
-                    <span class="feature-icon">-</span>
+                    <span class="feature-icon">✓</span>
                     <div class="feature-text">Progressive Difficulty</div>
                 </li>
                 <li class="feature-item">
-                    <span class="feature-icon">-</span>
+                    <span class="feature-icon">✓</span>
                     <div class="feature-text">Achievement Tracking</div>
                 </li>
             </ul>
@@ -290,20 +290,32 @@
         
         // Product data
         const products = {
+            'starter-pack': {
+                icon: '🎁',
+                name: 'Starter Pack',
+                description: 'Complete puzzle collection',
+                price: '$4.99',
+                features: [
+                    '100 Unique Puzzles',
+                    'Complete Puzzle Archive',
+                    'Progressive Difficulty',
+                    'Achievement Tracking'
+                ]
+            },
             'puzzle-pack': {
-                icon: '●',
+                icon: '🧩',
                 name: 'Puzzle Pack',
                 description: '100 carefully crafted puzzles',
-                price: '$4.99',
+                price: '$2.99',
                 features: [
                     '100 Unique Puzzles',
                     'Progressive Difficulty',
                     'Achievement Tracking'
                 ]
             },
-            'historic-puzzles': {
-                icon: '■',
-                name: 'Historic Puzzles',
+            'archive': {
+                icon: '📚',
+                name: 'Archive',
                 description: 'All past daily puzzles',
                 price: '$2.99',
                 features: [
@@ -336,7 +348,7 @@
                 const featureItem = document.createElement('li');
                 featureItem.className = 'feature-item';
                 featureItem.innerHTML = `
-                    <span class="feature-icon">-</span>
+                    <span class="feature-icon">✓</span>
                     <div class="feature-text">${feature}</div>
                 `;
                 featuresList.appendChild(featureItem);

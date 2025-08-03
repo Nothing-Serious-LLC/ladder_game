@@ -128,11 +128,11 @@
             margin-bottom: 40px;
         }
         
-        /* Desktop: side-by-side cards */
+        /* Desktop: three columns */
         @media (min-width: 768px) {
             .products-grid {
-                grid-template-columns: 1fr 1fr;
-                max-width: 800px;
+                grid-template-columns: 1fr 1fr 1fr;
+                max-width: 1000px;
             }
         }
         
@@ -248,24 +248,35 @@
         <h2 class="store-title">Store</h2>
         
         <div class="products-grid">
+            <div class="product-card" onclick="viewProduct('starter-pack')">
+                <div class="product-icon">🎁</div>
+                <div class="product-name">Starter Pack</div>
+                <div class="product-description">Complete puzzle collection</div>
+                <div class="product-price">$4.99</div>
+                <div class="price-subtitle">One-time purchase</div>
+                <button class="product-button" onclick="event.stopPropagation(); viewProduct('starter-pack')">
+                    View Details
+                </button>
+            </div>
+            
             <div class="product-card" onclick="viewProduct('puzzle-pack')">
-                <div class="product-icon">●</div>
+                <div class="product-icon">🧩</div>
                 <div class="product-name">Puzzle Pack</div>
                 <div class="product-description">100 carefully crafted puzzles</div>
-                <div class="product-price">$4.99</div>
+                <div class="product-price">$2.99</div>
                 <div class="price-subtitle">One-time purchase</div>
                 <button class="product-button" onclick="event.stopPropagation(); viewProduct('puzzle-pack')">
                     View Details
                 </button>
             </div>
             
-            <div class="product-card" onclick="viewProduct('historic-puzzles')">
-                <div class="product-icon">■</div>
-                <div class="product-name">Historic Puzzles</div>
+            <div class="product-card" onclick="viewProduct('archive')">
+                <div class="product-icon">📚</div>
+                <div class="product-name">Archive</div>
                 <div class="product-description">All past daily puzzles</div>
                 <div class="product-price">$2.99</div>
                 <div class="price-subtitle">One-time purchase</div>
-                <button class="product-button" onclick="event.stopPropagation(); viewProduct('historic-puzzles')">
+                <button class="product-button" onclick="event.stopPropagation(); viewProduct('archive')">
                     View Details
                 </button>
             </div>

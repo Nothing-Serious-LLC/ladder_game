@@ -684,21 +684,29 @@
                 <div class="store-section card">
                     <h2 class="section-title">Store</h2>
                     <div class="store-items">
+                        <div class="store-item" onclick="viewProduct('starter-pack')">
+                            <div class="item-info">
+                                <div class="item-name">Starter Pack</div>
+                                <div class="item-description">Complete collection</div>
+                                <div class="item-price">$4.99</div>
+                            </div>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('starter-pack')">View</button>
+                        </div>
                         <div class="store-item" onclick="viewProduct('puzzle-pack')">
                             <div class="item-info">
                                 <div class="item-name">Puzzle Pack</div>
                                 <div class="item-description">100 puzzles</div>
-                                <div class="item-price">$4.99</div>
+                                <div class="item-price">$2.99</div>
                             </div>
                             <button class="buy-button" onclick="event.stopPropagation(); viewProduct('puzzle-pack')">View</button>
                         </div>
-                        <div class="store-item" onclick="viewProduct('historic-puzzles')">
+                        <div class="store-item" onclick="viewProduct('archive')">
                             <div class="item-info">
-                                <div class="item-name">Historic Puzzles</div>
+                                <div class="item-name">Archive</div>
                                 <div class="item-description">All past daily puzzles</div>
                                 <div class="item-price">$2.99</div>
                             </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('historic-puzzles')">View</button>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
                         </div>
                     </div>
                 </div>
