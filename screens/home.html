@@ -391,6 +391,8 @@
             border: 1px solid #fed7aa;
             transition: all 0.2s;
             gap: 16px;
+            min-height: 80px;
+            flex-wrap: nowrap;
         }
         
         .store-item:hover {
@@ -400,24 +402,33 @@
         
         .item-info {
             flex: 1;
+            min-width: 0;
+            overflow: hidden;
         }
         
         .item-name {
             font-weight: 700;
             margin-bottom: 4px;
             color: var(--gray-900);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .item-description {
             font-size: 0.85rem;
             color: var(--gray-600);
             margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .item-price {
             font-weight: 700;
             color: var(--primary-orange);
             font-size: 1.1rem;
+            white-space: nowrap;
         }
         
         .buy-button {
@@ -433,6 +444,7 @@
             box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
             flex-shrink: 0;
             white-space: nowrap;
+            min-width: 70px;
         }
         
         .buy-button:hover {
@@ -717,6 +729,16 @@
             .puzzle-subtitle {
                 font-size: 1.1rem;
             }
+            
+            /* Ensure store items stay horizontal on mobile */
+            .store-item {
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+            }
+            
+            .buy-button {
+                min-width: 60px !important;
+            }
         }
         
         @media (max-width: 480px) {
@@ -736,6 +758,19 @@
             
             .card {
                 padding: 20px;
+            }
+            
+            /* Ensure store items stay horizontal on small mobile */
+            .store-item {
+                flex-wrap: nowrap !important;
+                align-items: center !important;
+                padding: 16px !important;
+            }
+            
+            .buy-button {
+                min-width: 50px !important;
+                padding: 8px 12px !important;
+                font-size: 0.8rem !important;
             }
         }
     </style>
