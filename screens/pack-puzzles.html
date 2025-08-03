@@ -506,7 +506,8 @@
         
         // Global state
         let packPuzzles = [];
-        let allCompletions = {};
+        let completions = {}; // Pack puzzle completions
+        let allCompletions = {}; // Historical daily puzzle completions
         let currentPackId = null;
         let currentFolder = '';
         let currentFilter = 'all';
@@ -607,16 +608,29 @@
                         .order('created_at');
                     
                     puzzles = packPuzzles || [];
-                } else {
-                    // For all other packs, load based on pack_id or use all puzzles
+                    console.log('Free pack puzzles loaded:', puzzles.length);
+                } else if (packId === 'complete-pack') {
+                    // Load all puzzles from puzzle_pack for complete pack
                     const { data: packPuzzles } = await supabaseClient
                         .from('puzzle_pack')
                         .select('*')
-                        .or(`pack_id.eq.${packId},pack_id.is.null`)
+                        .eq('pack_id', 'complete-pack')
                         .order('pack_level', { ascending: true })
                         .order('created_at');
                     
                     puzzles = packPuzzles || [];
+                    console.log('Complete pack puzzles loaded:', puzzles.length);
+                } else {
+                    // For other specific packs
+                    const { data: packPuzzles } = await supabaseClient
+                        .from('puzzle_pack')
+                        .select('*')
+                        .eq('pack_id', packId)
+                        .order('pack_level', { ascending: true })
+                        .order('created_at');
+                    
+                    puzzles = packPuzzles || [];
+                    console.log(`Pack ${packId} puzzles loaded:`, puzzles.length);
                     
                     // If pack has specific puzzle count, limit results
                     if (packInfo.total_puzzles && puzzles.length > packInfo.total_puzzles) {
@@ -627,19 +641,27 @@
                 packPuzzles = puzzles;
                 
                 // Load user's completions for these puzzles
-                const puzzleIds = puzzles.map(p => p.id);
-                const { data: userCompletions } = await supabaseClient
-                    .from('puzzle_pack_completions')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .in('puzzle_id', puzzleIds);
-                
-                // Convert to map for easy lookup
-                completions = {};
-                if (userCompletions) {
-                    userCompletions.forEach(c => {
-                        completions[c.puzzle_id] = c;
-                    });
+                completions = {}; // Reset completions
+                if (puzzles.length > 0) {
+                    const puzzleIds = puzzles.map(p => p.id);
+                    console.log('Loading completions for puzzle IDs:', puzzleIds);
+                    
+                    const { data: userCompletions } = await supabaseClient
+                        .from('puzzle_pack_completions')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .in('puzzle_id', puzzleIds);
+                    
+                    console.log('User completions found:', userCompletions?.length || 0);
+                    
+                    // Convert to map for easy lookup
+                    if (userCompletions) {
+                        userCompletions.forEach(c => {
+                            completions[c.puzzle_id] = c;
+                        });
+                    }
+                } else {
+                    console.warn('No puzzles found for pack:', packId);
                 }
                 
                 // Render puzzles
@@ -647,11 +669,14 @@
                 
             } catch (error) {
                 console.error('Error loading pack puzzles:', error);
+                console.error('Pack ID:', packId);
+                console.error('Error details:', error.message);
                 document.getElementById('puzzles-grid').innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">❌</div>
                         <p>Error loading puzzles</p>
-                        <p style="font-size: 0.9rem; margin-top: 10px;">Please refresh the page and try again</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px; color: var(--gray-600);">Pack: ${packId}</p>
+                        <p style="font-size: 0.9rem; margin-top: 5px; color: var(--gray-600);">${error.message}</p>
                         <button onclick="window.location.reload()" style="margin-top: 15px; padding: 10px 20px; background: var(--primary-green); color: white; border: none; border-radius: 8px; cursor: pointer;">
                             Retry
                         </button>
