@@ -48,14 +48,17 @@ if (existingPurchase) {
 
 #### **Database Recording**
 ```javascript
-// Record the purchase
+// Record the purchase (matching exact database schema)
 const { error: purchaseError } = await window.supabaseClient
     .from('user_purchases')
     .insert({
         user_id: user.id,
         product_id: productId,
+        product_name: product.name,
+        price_cents: product.price === 'Free' ? 0 : Math.round(parseFloat(product.price.replace('$', '')) * 100),
         purchase_date: new Date().toISOString(),
-        price_paid: product.price === 'Free' ? 0 : parseFloat(product.price.replace('$', ''))
+        payment_method: 'free_claim',
+        status: 'completed'
     });
 ```
 
@@ -99,10 +102,14 @@ if (productId === 'free-pack' || productId === 'complete-pack' || productId === 
 
 ### `user_purchases` Table
 ```sql
+- id (UUID): Primary key
 - user_id (UUID): References auth.users
 - product_id (TEXT): Product identifier (e.g., 'free-pack')
+- product_name (TEXT): Display name of product
+- price_cents (INTEGER): Price in cents (0 for free items)
+- payment_method (TEXT): How payment was made
 - purchase_date (TIMESTAMP): When purchased
-- price_paid (DECIMAL): Amount paid (0 for free items)
+- status (TEXT): Purchase status (e.g., 'completed')
 ```
 
 ### `puzzle_packs` Table
@@ -146,6 +153,14 @@ if (productId === 'free-pack' || productId === 'complete-pack' || productId === 
 - Alert: "You already own this product!"
 - No database transaction
 - User remains on current page
+
+### **Database Schema Mismatch**
+**Issue**: User sees confirmation page but purchase doesn't appear on home screen
+**Cause**: Code tries to insert `price_paid` but database expects `price_cents`
+**Solution**: 
+- Use correct field names in insert statement
+- Include all required fields (`product_name`, `payment_method`, `status`)
+- Convert price to cents: `Math.round(parseFloat(price.replace('$', '')) * 100)`
 
 ## Future Payment Integration
 
