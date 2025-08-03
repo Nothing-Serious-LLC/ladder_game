@@ -1159,6 +1159,8 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
 
         async function loadDailyPuzzle() {
             try {
+                const today = getCurrentPuzzleDate();
+                
                 // Check for URL parameters indicating recent puzzle completion/failure
                 const urlParams = new URLSearchParams(window.location.search);
                 const justCompleted = urlParams.get('completed');
@@ -1170,36 +1172,52 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
                 
-                // Only show countdown if URL params are for today's puzzle
-                if (hasPlayed === 'true' || justCompleted === 'true' || justFailed === 'true') {
-                    // Check if there's a date param and it matches today
-                    const dateParam = urlParams.get('date');
-                    const today = getCurrentPuzzleDate();
+                // Check if user should see countdown based on localStorage or URL params
+                const countdownKey = `ladder_countdown_${today}`;
+                const shouldShowCountdown = localStorage.getItem(countdownKey) === 'true';
+                
+                // Check if we're still in countdown period (before 3 AM ET next day)
+                function isInCountdownPeriod() {
+                    const now = new Date();
+                    const nextPuzzleTime = new Date();
+                    nextPuzzleTime.setDate(nextPuzzleTime.getDate() + 1);
+                    nextPuzzleTime.setHours(3, 0, 0, 0); // 3 AM ET tomorrow
                     
-                    if (dateParam && dateParam === today) {
-                        // Check if we're still in countdown period (before 3 AM ET next day)
-                        const now = new Date();
-                        const nextPuzzleTime = new Date();
-                        nextPuzzleTime.setDate(nextPuzzleTime.getDate() + 1);
-                        nextPuzzleTime.setHours(3, 0, 0, 0); // 3 AM ET tomorrow
-                        
-                        // Adjust for ET timezone
-                        const etOffset = -5 * 60; // ET is UTC-5
-                        const localOffset = now.getTimezoneOffset();
-                        const offsetDiff = localOffset + etOffset;
-                        nextPuzzleTime.setMinutes(nextPuzzleTime.getMinutes() + offsetDiff);
-                        
-                        if (now < nextPuzzleTime) {
-                            // Still in countdown period
+                    // Adjust for ET timezone
+                    const etOffset = -5 * 60; // ET is UTC-5
+                    const localOffset = now.getTimezoneOffset();
+                    const offsetDiff = localOffset + etOffset;
+                    nextPuzzleTime.setMinutes(nextPuzzleTime.getMinutes() + offsetDiff);
+                    
+                    return now < nextPuzzleTime;
+                }
+                
+                // If countdown period is over, clear the localStorage flag
+                if (!isInCountdownPeriod()) {
+                    localStorage.removeItem(countdownKey);
+                }
+                
+                // Show countdown if URL params indicate recent completion OR if localStorage says so (and still in countdown period)
+                if ((hasPlayed === 'true' || justCompleted === 'true' || justFailed === 'true') || 
+                    (shouldShowCountdown && isInCountdownPeriod())) {
+                    
+                    // For URL params, check if they're for today's puzzle
+                    if (hasPlayed === 'true' || justCompleted === 'true' || justFailed === 'true') {
+                        const dateParam = urlParams.get('date');
+                        if (!dateParam || dateParam !== today) {
+                            // Stale URL params, continue with normal flow
+                        } else if (isInCountdownPeriod()) {
+                            // Set localStorage flag and show countdown
+                            localStorage.setItem(countdownKey, 'true');
                             showCountdown();
                             return;
                         }
+                    } else if (shouldShowCountdown && isInCountdownPeriod()) {
+                        // Show countdown based on localStorage
+                        showCountdown();
+                        return;
                     }
-                    // Otherwise ignore stale URL params and continue with normal flow
                 }
-                
-                // Get today's puzzle date based on ET timezone and 3am reset
-                const today = getCurrentPuzzleDate();
                 
                 const dateObj = new Date();
                 const puzzleDate = formatPuzzleDate(dateObj);
@@ -1808,8 +1826,12 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         };
         
         window.togglePuzzleView = function() {
+            const today = getCurrentPuzzleDate();
+            const countdownKey = `ladder_countdown_${today}`;
+            
             if (currentView === 'countdown') {
-                // Switch back to completion view
+                // Switch back to completion view - clear localStorage flag
+                localStorage.removeItem(countdownKey);
                 if (completionData && puzzleDateData) {
                     showCompletedPuzzle(completionData, puzzleDateData);
                     currentView = 'completion';
@@ -1818,7 +1840,8 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     loadDailyPuzzle();
                 }
             } else {
-                // Switch to countdown view
+                // Switch to countdown view - set localStorage flag
+                localStorage.setItem(countdownKey, 'true');
                 showCountdown();
             }
         };
