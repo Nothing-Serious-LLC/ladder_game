@@ -190,6 +190,14 @@
             font-weight: 500;
         }
         
+        .puzzle-theme {
+            font-size: 1.0rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            margin: 8px 0;
+            font-style: italic;
+        }
+        
         .status-badge {
             padding: 8px 16px;
             border-radius: 20px;
@@ -1024,6 +1032,7 @@
                     <div class="puzzle-info centered">
                         <div class="puzzle-name">Puzzle #${puzzleNumber}</div>
                         <div class="puzzle-date">${puzzleDate}</div>
+                        <div class="puzzle-theme">Theme: ${completion.puzzle_theme || completion.theme || 'Unknown'}</div>
                         <div class="status-badge status-${wasCompleted ? 'completed' : 'failed'}">${statusIcon} ${statusText}</div>
                     </div>
                 </div>
