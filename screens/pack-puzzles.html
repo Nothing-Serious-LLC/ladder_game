@@ -707,8 +707,9 @@
             let completedCount = 0;
             const puzzleCards = packPuzzles.map((puzzle, index) => {
                 const completion = completions[puzzle.id];
-                const isCompleted = completion?.completed || false;
-                const isFailed = completion && !completion.completed && completion.attempts > 0;
+                // Check if puzzle was EVER completed by looking at completion_time (more reliable than 'completed' flag)
+                const isCompleted = completion && completion.completion_time ? true : false;
+                const isFailed = completion && !isCompleted && completion.attempts > 0;
                 const attempts = completion?.attempts || 0;
                 
                 if (isCompleted) completedCount++;
