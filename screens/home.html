@@ -831,15 +831,34 @@
         // Refresh puzzle status when page becomes visible (handles navigation from other screens)
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                // Page is now visible, refresh daily puzzle status
-                loadDailyPuzzle();
+                // Page is now visible, refresh data but maintain current view
+                refreshCurrentView();
             }
         });
         
         // Also refresh when window gains focus
         window.addEventListener('focus', function() {
-            loadDailyPuzzle();
+            refreshCurrentView();
         });
+        
+        function refreshCurrentView() {
+            // Refresh the current view without changing view state
+            if (currentView === 'countdown') {
+                // If showing countdown, just restart the countdown timer
+                const timer = document.getElementById('countdown-timer');
+                if (timer) {
+                    startCountdown();
+                }
+            } else {
+                // If showing completion, refresh the completion data
+                if (completionData && puzzleDateData) {
+                    showCompletedPuzzle(completionData, puzzleDateData);
+                } else {
+                    // Fallback to loading daily puzzle only if no completion data
+                    loadDailyPuzzle();
+                }
+            }
+        }
         
         async function initializeHomePage() {
             // Check if user is logged in
@@ -1313,7 +1332,6 @@
             
             dailyCard.innerHTML = `
                 <div class="countdown-timer" id="countdown-timer">Loading...</div>
-                <div class="countdown-label">until next puzzle</div>
                 <button class="back-to-puzzle" onclick="togglePuzzleView()">Back to Today's Puzzle</button>
             `;
             
