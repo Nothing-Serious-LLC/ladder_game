@@ -737,7 +737,7 @@
         
         <div class="content-stack">
             <!-- 1. Today's Puzzle (Full Width) -->
-            <div class="daily-puzzle-section card" id="daily-puzzle-card">
+            <div class="card" id="daily-puzzle-card">
                 <div class="puzzle-status centered">
                     <div class="puzzle-info centered">
                         <div class="puzzle-name" id="daily-puzzle-name">Loading...</div>
@@ -836,6 +836,7 @@
     <script type="module">
         // Import Supabase config
         import { supabaseConfig } from '../config/supabase-config.js';
+import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../assets/js/timeUtils.js';
         
         // Initialize Supabase client
         const { createClient } = supabase;
@@ -936,41 +937,8 @@
         }
         
         function getCurrentPuzzleDate() {
-            // Returns the current puzzle date based on ET timezone and 3am reset
-            // If it's before 3am ET, we're still on "yesterday's" puzzle
-            // If it's 3am ET or later, we're on "today's" puzzle
+            return getGameDayString();
             
-            const now = new Date();
-            
-            // Get current date/time in Eastern timezone
-            const etFormatter = new Intl.DateTimeFormat('en-US', {
-                timeZone: 'America/New_York',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            
-            const etParts = etFormatter.formatToParts(now);
-            const etYear = parseInt(etParts.find(part => part.type === 'year').value);
-            const etMonth = parseInt(etParts.find(part => part.type === 'month').value) - 1; // 0-indexed
-            const etDay = parseInt(etParts.find(part => part.type === 'day').value);
-            const etHour = parseInt(etParts.find(part => part.type === 'hour').value);
-            
-            // Create the current puzzle date
-            const puzzleDate = new Date();
-            puzzleDate.setFullYear(etYear, etMonth, etDay);
-            
-            if (etHour < 3) {
-                // Before 3am ET, so we're still on yesterday's puzzle
-                puzzleDate.setDate(puzzleDate.getDate() - 1);
-            }
-            
-            // Return in YYYY-MM-DD format
-            return puzzleDate.toISOString().split('T')[0];
         }
         
         function formatPuzzleDate(date) {
@@ -1002,10 +970,15 @@
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
                 
-                // If user has played today, show countdown timer
-                if (hasPlayed === 'true') {
-                    showCountdown();
-                    return;
+                // Only show countdown if URL params are for today's puzzle
+                if (hasPlayed === 'true' || justCompleted === 'true' || justFailed === 'true') {
+                    // Check if there's a date param and it matches today
+                    const dateParam = urlParams.get('date');
+                    if (dateParam && dateParam === getCurrentPuzzleDate()) {
+                        showCountdown();
+                        return;
+                    }
+                    // Otherwise ignore stale URL params and continue with normal flow
                 }
                 
                 // Get today's puzzle date based on ET timezone and 3am reset
@@ -1025,53 +998,34 @@
                         .eq('puzzle_date', today)
                         .single();
                     
-                    const statusBadge = document.getElementById('daily-status');
-                    const playButton = document.getElementById('daily-play-button');
-                    const puzzleName = document.getElementById('daily-puzzle-name');
-                    const puzzleDateEl = document.getElementById('daily-puzzle-date');
-                    
                     if (completion) {
                         // Show completed state with theme, time, hints
                         showCompletedPuzzle(completion, puzzleDate);
                     } else {
-                        // Show not started state - puzzle number and date only
-                        puzzleName.textContent = `Puzzle #${getPuzzleNumber()}`;
-                        puzzleDateEl.textContent = puzzleDate;
-                        statusBadge.style.display = 'none'; // Hide status badge for not started
-                        playButton.textContent = 'Play Today\'s Puzzle';
-                        playButton.className = 'play-button';
-                        playButton.onclick = playDailyPuzzle;
+                        // Show play card with ladder logo
+                        renderPlayCard();
                     }
                 } else {
                     // Not logged in - check cookies for completion status
                     const hasPlayedToday = checkTodaysPuzzleStatusLocal();
                     
-                    const statusBadge = document.getElementById('daily-status');
-                    const playButton = document.getElementById('daily-play-button');
-                    const puzzleName = document.getElementById('daily-puzzle-name');
-                    const puzzleDateEl = document.getElementById('daily-puzzle-date');
-                    
                     if (hasPlayedToday) {
                         // Show countdown timer for users who have played
                         showCountdown();
                     } else {
-                        // Show not started state - puzzle number and date only
-                        puzzleName.textContent = `Puzzle #${getPuzzleNumber()}`;
-                        puzzleDateEl.textContent = puzzleDate;
-                        statusBadge.style.display = 'none'; // Hide status badge for not started
-                        playButton.textContent = 'Play Today\'s Puzzle';
-                        playButton.className = 'play-button';
-                        playButton.onclick = playDailyPuzzle;
+                        // Show play card with ladder logo
+                        renderPlayCard();
                     }
                 }
             } catch (error) {
                 console.error('Error loading daily puzzle:', error);
-                document.getElementById('daily-puzzle-name').textContent = `Puzzle #${getPuzzleNumber()}`;
-                document.getElementById('daily-puzzle-date').textContent = new Date().toLocaleDateString();
+                // Show play card as fallback
+                renderPlayCard();
             }
         }
         
-        function getPuzzleNumber(puzzleDate) {
+        function getPuzzleNumber() {
+            return getPuzzleNumberHelper();
             // Use same calculation as index.html - days since launch date
             const now = new Date();
             const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
@@ -1116,37 +1070,59 @@
                 remainingTries = 0;
             }
             
-            // Set appropriate styling and messaging based on completion status
-            const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
+            // Use standard card styling for consistency
             
             dailyCard.innerHTML = `
-                <div class="puzzle-theme-section">
-                    <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
-                    <div class="puzzle-subtitle">Puzzle #${puzzleNumber} • ${puzzleDate}</div>
+                <div class="puzzle-theme-section" style="text-align: center; margin-bottom: 24px;">
+                    <div class="puzzle-theme-large" style="color: var(--gray-900); font-size: 2.2rem; font-weight: 700; font-style: italic; margin-bottom: 8px;">${completion.puzzle_name || 'Unknown'}</div>
+                    <div class="puzzle-subtitle" style="color: var(--gray-600); font-size: 1.3rem;">${wasCompleted ? 'Completed' : 'Failed'} • Puzzle #${puzzleNumber} • ${puzzleDate}</div>
                 </div>
                 
                 <div class="completion-stats three-column">
-                    <div class="completion-stat">
-                        <div class="completion-stat-value">${formatTime(completionTime)}</div>
-                        <div class="completion-stat-label">Time</div>
+                    <div class="completion-stat" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
+                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${formatTime(completionTime)}</div>
+                        <div class="completion-stat-label" style="color: var(--gray-600);">Time</div>
                     </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value">${hintsRemaining}</div>
-                        <div class="completion-stat-label">Hints Remaining</div>
+                    <div class="completion-stat" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
+                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${hintsRemaining}</div>
+                        <div class="completion-stat-label" style="color: var(--gray-600);">Hints Remaining</div>
                     </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value">${remainingTries}</div>
-                        <div class="completion-stat-label">Tries Remaining</div>
+                    <div class="completion-stat" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
+                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${remainingTries}</div>
+                        <div class="completion-stat-label" style="color: var(--gray-600);">Tries Remaining</div>
                     </div>
                 </div>
                 
-                <button class="play-button countdown-button" onclick="togglePuzzleView()">
+                <button class="play-button" style="background: var(--primary-green); color: white;" onclick="togglePuzzleView()">
                     Countdown to Next Puzzle
                 </button>
             `;
             
-            // Apply the appropriate card styling
-            dailyCard.className = `${cardClass} card`;
+            // Apply standard card styling for consistency
+            dailyCard.className = 'card';
+        }
+        
+        function renderPlayCard() {
+            const dailyCard = document.getElementById('daily-puzzle-card');
+            const puzzleNumber = getPuzzleNumber();
+            const dateObj = new Date();
+            const puzzleDate = formatPuzzleDate(dateObj);
+            
+            // Apply standard white card background
+            dailyCard.className = 'card';
+            
+            dailyCard.innerHTML = `
+                <div style="text-align: center; padding: 20px 0;">
+                    <img src="../assets/icons/ladder_transparent.png" 
+                         alt="Ladder Logo" 
+                         style="width: 120px; height: 120px; margin-bottom: 20px; opacity: 0.9;">
+                    <div class="puzzle-name" style="color: var(--gray-900); margin-bottom: 8px; font-size: 2.2rem; font-weight: 800;">Puzzle #${puzzleNumber}</div>
+                    <div class="puzzle-date" style="color: var(--gray-600); margin-bottom: 24px; font-size: 1.4rem;">${puzzleDate}</div>
+                </div>
+                <button class="play-button" style="background: var(--primary-green); color: white;" onclick="playDailyPuzzle()">
+                    Play Today's Puzzle
+                </button>
+            `;
         }
         
         function formatTime(timeString) {
@@ -1205,10 +1181,12 @@
                     if (completions) {
                         console.log('HOME SCREEN - Raw completions data:', completions);
                         
-                        const totalCompleted = completions.length;
+                        const totalAttempts = completions.length;
+                        const totalCompleted = completions.filter(c => c.completed).length;
                         const currentStreak = calculateCurrentStreak(completions);
+                        console.log('HOME SCREEN - Calculated streak:', currentStreak);
                         const averageTime = calculateAverageTime(completions);
-                        const successRate = totalCompleted > 0 ? Math.round((completions.filter(c => c.completed).length / totalCompleted) * 100) : 0;
+                        const successRate = totalAttempts > 0 ? Math.round((totalCompleted / totalAttempts) * 100) : 0;
                         
                         console.log('HOME SCREEN - Calculated average time:', averageTime);
                         console.log('HOME SCREEN - Completed puzzles:', completions.filter(c => c.completed));
@@ -1232,20 +1210,56 @@
         function calculateCurrentStreak(completions) {
             if (!completions || completions.length === 0) return 0;
             
-            let streak = 0;
-            const today = new Date();
+            // Get today's game day
+            const todayGameDay = getGameDayString();
+            // Parse as midnight UTC to avoid timezone issues
+            const todayDate = new Date(todayGameDay + 'T00:00:00Z');
             
-            for (let i = 0; i < completions.length; i++) {
-                const completionDate = new Date(completions[i].puzzle_date);
-                const daysDiff = Math.floor((today - completionDate) / (1000 * 60 * 60 * 24));
-                
-                if (daysDiff === i && completions[i].completed) {
-                    streak++;
-                } else {
-                    break;
-                }
+            // Sort completions by date descending (most recent first)
+            const sortedCompletions = [...completions].sort((a, b) => 
+                new Date(b.puzzle_date + 'T00:00:00Z') - new Date(a.puzzle_date + 'T00:00:00Z')
+            );
+            
+            let streak = 0;
+            let currentDate = new Date(todayDate);
+            let foundTodayOrYesterday = false;
+            
+            // Check if we have a completion for today or yesterday
+            const firstCompletion = sortedCompletions[0];
+            if (!firstCompletion) return 0;
+            
+            const firstCompletionDate = new Date(firstCompletion.puzzle_date + 'T00:00:00Z');
+            const daysSinceFirst = Math.floor((todayDate - firstCompletionDate) / (1000 * 60 * 60 * 24));
+            
+            // If the most recent completion is more than 1 day old, streak is broken
+            if (daysSinceFirst > 1) return 0;
+            
+            console.log('Streak calculation - Today:', todayGameDay, 'First completion:', firstCompletion.puzzle_date, 'Days since:', daysSinceFirst);
+            
+            // Start checking from yesterday if we haven't played today
+            if (daysSinceFirst === 1) {
+                currentDate.setDate(currentDate.getDate() - 1);
             }
             
+            // Count consecutive completed days going backwards
+            for (const completion of sortedCompletions) {
+                const completionDateStr = completion.puzzle_date;
+                const currentDateStr = currentDate.toISOString().split('T')[0];
+                
+                console.log('Checking date:', currentDateStr, 'vs completion:', completionDateStr, 'completed:', completion.completed);
+                
+                if (completionDateStr === currentDateStr && completion.completed) {
+                    streak++;
+                    currentDate.setDate(currentDate.getDate() - 1);
+                } else if (completionDateStr < currentDateStr) {
+                    // We've skipped a day, streak is broken
+                    console.log('Streak broken - skipped day');
+                    break;
+                }
+                // If the completion is for a future date or failed, skip it
+            }
+            
+            console.log('Final streak value:', streak);
             return streak;
         }
         
@@ -1505,12 +1519,17 @@
             const dailyCard = document.getElementById('daily-puzzle-card');
             
             dailyCard.innerHTML = `
-                <div class="countdown-timer" id="countdown-timer">Loading...</div>
-                <button class="back-to-puzzle" onclick="togglePuzzleView()">Back to Today's Puzzle</button>
+                <div style="text-align: center; padding: 20px 0;">
+                    <h2 style="color: var(--gray-900); margin-bottom: 20px; font-size: 1.8rem;">Next Puzzle In</h2>
+                    <div class="countdown-timer" id="countdown-timer" style="color: var(--primary-orange);">Loading...</div>
+                    <button class="back-to-puzzle" onclick="togglePuzzleView()" style="background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        Back to Today's Puzzle
+                    </button>
+                </div>
             `;
             
-            // Add countdown styling
-            dailyCard.className = 'countdown-section card';
+            // Apply standard card styling for consistency
+            dailyCard.className = 'card';
             
             // Start countdown
             startCountdown();
@@ -1638,8 +1657,8 @@
             // Track that user started playing today's puzzle
             trackPuzzleStart();
             
-            // Navigate to main game with auto-start parameter to skip intro
-            window.location.href = '../index.html?autostart=true';
+            // Navigate to new play screen for daily puzzle
+            window.location.href = './play.html?type=daily';
         };
         
         async function trackPuzzleStart() {
