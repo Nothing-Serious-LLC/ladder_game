@@ -335,6 +335,10 @@
             color: white;
         }
         
+        .puzzle-card.failed .puzzle-number {
+            color: white;
+        }
+        
         .puzzle-card.failed {
             background: var(--error-red);
             color: white;
@@ -726,7 +730,7 @@
                         <div class="puzzle-theme">
                             ${isCompleted || isFailed ? puzzle.theme : '???'}
                         </div>
-                        ${attempts > 0 ? `<div class="puzzle-attempts">Attempts: ${attempts}</div>` : ''}
+                        ${(isCompleted || isFailed) ? `<div class="puzzle-attempts">Attempts: ${Math.max(attempts, 1)}</div>` : ''}
                     </div>
                 `;
             }).join('');
