@@ -580,8 +580,19 @@
                 const hintsRemaining = Math.max(0, totalHints - hintsUsed);
                 
                 const cardClass = wasCompleted ? 'puzzle-item completed' : 'puzzle-item failed';
-                const statusText = wasCompleted ? 'Completed' : 'Failed';
-                const statusIcon = wasCompleted ? '✓' : '✗';
+                
+                // Calculate remaining tries (assuming 3 total tries)
+                const totalTries = 3;
+                let remainingTries = 0;
+                
+                if (wasCompleted) {
+                    // If completed successfully, they have remaining tries
+                    // Better performance (less hints used) = more tries remaining
+                    remainingTries = Math.max(1, totalTries - hintsUsed);
+                } else {
+                    // If failed, no tries remaining
+                    remainingTries = 0;
+                }
                 
                 puzzleDetails.innerHTML = `
                     <div class="${cardClass}" style="background: linear-gradient(135deg, ${wasCompleted ? 'var(--primary-green)' : 'var(--red-500)'} 0%, ${wasCompleted ? '#5d9556' : '#c0392b'} 100%); color: white; border-radius: 16px; padding: 24px;">
@@ -604,8 +615,8 @@
                                 <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Hints Remaining</div>
                             </div>
                             <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${statusIcon}</div>
-                                <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">${statusText}</div>
+                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${remainingTries}</div>
+                                <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Remaining Tries</div>
                             </div>
                         </div>
                     </div>

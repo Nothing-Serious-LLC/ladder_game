@@ -1073,8 +1073,19 @@
             
             // Set appropriate styling and messaging based on completion status
             const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
-            const statusText = wasCompleted ? 'Completed' : 'Failed';
-            const statusIcon = wasCompleted ? '✓' : '✗';
+            
+            // Calculate remaining tries (assuming 3 total tries)
+            const totalTries = 3;
+            let remainingTries = 0;
+            
+            if (wasCompleted) {
+                // If completed successfully, they have remaining tries
+                // Better performance (less hints used) = more tries remaining
+                remainingTries = Math.max(1, totalTries - hintsUsed);
+            } else {
+                // If failed, no tries remaining
+                remainingTries = 0;
+            }
             
             dailyCard.innerHTML = `
                 <div class="puzzle-theme-section">
@@ -1098,8 +1109,8 @@
                         <div class="completion-stat-label">Hints Remaining</div>
                     </div>
                     <div class="completion-stat">
-                        <div class="completion-stat-value">${statusIcon}</div>
-                        <div class="completion-stat-label">${statusText}</div>
+                        <div class="completion-stat-value">${remainingTries}</div>
+                        <div class="completion-stat-label">Remaining Tries</div>
                     </div>
                 </div>
                 
