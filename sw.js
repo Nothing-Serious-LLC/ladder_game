@@ -1,5 +1,5 @@
 // LADDER PWA Service Worker
-const CACHE_NAME = 'ladder-v123';
+const CACHE_NAME = 'ladder-v124';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,10 @@ const CORE_ASSETS = [
   './assets/js/game.js',
   './assets/js/database.js', 
   './assets/js/pwa.js',
+  './assets/js/timeUtils.js',
   './config/supabase-config.js',
+  './screens/play.html',
+  './screens/home.html',
   './assets/icons/icon.svg',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
