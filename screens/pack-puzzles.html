@@ -399,6 +399,8 @@
             text-align: center;
             min-height: 400px;
             width: 100%;
+            grid-column: 1 / -1; /* Span all grid columns when inside a grid */
+            margin: 0 auto; /* Center horizontally */
         }
         
         .loading-spinner {
@@ -428,6 +430,11 @@
             
             .title {
                 font-size: 1.8rem;
+            }
+            
+            .loading-state {
+                padding: 2rem 1rem;
+                min-height: 300px;
             }
             
             .back-button {
