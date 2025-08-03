@@ -71,22 +71,19 @@
         }
         
         .header {
-            text-align: center;
-            padding: 20px 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             background: var(--gray-50);
-            z-index: 100;
-            width: 100vw;
-            margin-left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .header-content {
-            max-width: 800px;
-            margin: 0 auto;
+            z-index: 1000;
+            text-align: center;
             padding: 20px 20px 30px 20px;
             border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .container {
+            padding-top: 120px; /* Space for fixed header */
         }
         
         .title {
@@ -652,10 +649,8 @@
 <body>
     <div class="container">
         <header class="header">
-            <div class="header-content">
-                <h1 class="title">LADDER</h1>
-                <p class="date-info" id="home-date-display">Loading...</p>
-            </div>
+            <h1 class="title">LADDER</h1>
+            <p class="date-info" id="home-date-display">Loading...</p>
         </header>
         
         <div class="content-stack">

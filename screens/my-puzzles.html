@@ -43,20 +43,13 @@
         }
         
         .header {
-            text-align: center;
-            padding: 20px 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             background: var(--gray-50);
-            z-index: 100;
-            width: 100vw;
-            margin-left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .header-content {
-            max-width: 800px;
-            margin: 0 auto;
+            z-index: 1000;
+            text-align: center;
             padding: 20px 20px 30px 20px;
             border-bottom: 1px solid var(--gray-200);
         }
@@ -96,8 +89,7 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
-            margin-top: 40px;
+            padding: 160px 20px 0 20px; /* Top padding for fixed header */
         }
         
         .page-title {
@@ -310,14 +302,12 @@
 </head>
 <body>
     <div class="header">
-        <button class="back-button" onclick="goBack()">←</button>
-        <div class="header-content">
-            <h1 class="title">LADDER</h1>
-            <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
-        </div>
+        <h1 class="title">LADDER</h1>
+        <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
     </div>
     
     <div class="container">
+        <button class="back-button" onclick="goBack()" style="position: relative; left: auto; top: auto; transform: none; margin-bottom: 20px;">← Back</button>
         <h1 class="page-title">My Puzzle Packs</h1>
         
         <div class="inventory-grid" id="inventory-grid">

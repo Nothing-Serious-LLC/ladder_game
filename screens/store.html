@@ -44,20 +44,13 @@
         }
         
         .header {
-            text-align: center;
-            padding: 20px 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             background: var(--gray-50);
-            z-index: 100;
-            width: 100vw;
-            margin-left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .header-content {
-            max-width: 800px;
-            margin: 0 auto;
+            z-index: 1000;
+            text-align: center;
             padding: 20px 20px 30px 20px;
             border-bottom: 1px solid var(--gray-200);
         }
@@ -78,9 +71,8 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 160px 20px 0 20px; /* Top padding for fixed header */
             flex: 1;
-            margin-top: 40px;
         }
         
         .back-button {
@@ -225,10 +217,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-content">
-            <h1 class="title">LADDER</h1>
-            <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
-        </div>
+        <h1 class="title">LADDER</h1>
+        <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
     </div>
     
     <div class="container">

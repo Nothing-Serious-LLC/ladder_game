@@ -48,20 +48,13 @@
         }
         
         .header {
-            text-align: center;
-            padding: 20px 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             background: var(--gray-50);
-            z-index: 100;
-            width: 100vw;
-            margin-left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .header-content {
-            max-width: 600px;
-            margin: 0 auto;
+            z-index: 1000;
+            text-align: center;
             padding: 20px 20px 30px 20px;
             border-bottom: 1px solid var(--gray-200);
         }
@@ -82,7 +75,7 @@
         .container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 140px 20px 20px 20px; /* Top padding for fixed header */
         }
         
         .back-button {
