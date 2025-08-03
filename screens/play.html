@@ -1447,6 +1447,88 @@
             opacity: 0.8;
             margin-top: 4px;
         }
+
+        /* Recommendations Card Styles */
+        .recommendations-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 20px;
+        }
+        
+        .recommendations-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 12px 0;
+            text-align: center;
+        }
+        
+        .recommendations-description {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            text-align: center;
+            margin: 0 0 20px 0;
+            line-height: 1.4;
+        }
+        
+        .recommendations-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .recommendation-button {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .recommendation-button.primary {
+            background: var(--primary-green);
+            color: white;
+            box-shadow: 0 2px 8px rgba(106, 170, 100, 0.2);
+        }
+        
+        .recommendation-button.primary:hover {
+            background: var(--primary-green-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+        
+        .recommendation-button.secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .recommendation-button.secondary:hover {
+            background: var(--gray-200);
+            color: var(--gray-900);
+        }
+        
+        .recommendation-text {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        
+        .recommendation-subtitle {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
         
         .failure-buttons .failure-button {
             background: white !important;
@@ -2298,6 +2380,23 @@
                 </div>
                 
                     <button class="completion-button primary" id="completion-home-button">Go to Home</button>
+                </div>
+            </div>
+            
+            <!-- Smart puzzle recommendations card for daily puzzle completions -->
+            <div class="recommendations-card card" id="puzzle-recommendations" style="display: none;">
+                <h3 class="recommendations-title">Continue Playing</h3>
+                <div class="recommendations-content">
+                    <p class="recommendations-description" id="recommendations-text">Discover more puzzles</p>
+                    <div class="recommendations-buttons">
+                        <button class="recommendation-button primary" id="recommendation-primary" style="display: none;">
+                            <span class="recommendation-text">Play Free Pack</span>
+                            <span class="recommendation-subtitle">10 starter puzzles</span>
+                        </button>
+                        <button class="recommendation-button secondary" id="recommendation-secondary" style="display: none;">
+                            Browse Store
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -4821,6 +4920,9 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     // Set up pack navigation if this is a pack puzzle
                     this.setupPackNavigation();
                     
+                    // Set up recommendations for daily puzzles
+                    this.setupRecommendations();
+                    
                     // Track completion for authenticated users and set cookie for non-authenticated
                     this.trackCompletion(timeString);
                     
@@ -4908,6 +5010,9 @@ https://ladder.game/`;
                     
                     // Set up pack navigation if this is a pack puzzle
                     this.setupPackNavigation();
+                    
+                    // Set up recommendations for daily puzzles
+                    this.setupRecommendations();
                     
                     // Set cookie for non-authenticated users (they attempted the puzzle)
                     if (window.gameModule && window.gameModule.setPuzzlePlayedCookie) {
@@ -5009,10 +5114,8 @@ https://ladder.game/`;
                         
                         if (isAuthenticated) {
                             // For authenticated users, go to home screen
-                            const urlParam = pageType === 'completion' ? 'completed=true' : 'failed=true';
                             homeButton.onclick = () => {
-                                const gameDay = getGameDayString();
-                                window.location.href = `./home.html?${urlParam}&date=${gameDay}`;
+                                window.location.href = `./home.html`;
                             };
                         } else {
                             // For non-authenticated users, show signup screen
@@ -5119,6 +5222,120 @@ https://ladder.game/`;
                 } catch (error) {
                     console.error('Error setting up next puzzle button:', error);
                     nextPuzzleBtn.style.display = 'none';
+                }
+            }
+            
+            async setupRecommendations() {
+                try {
+                    // Get URL parameters to determine puzzle type
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const puzzleType = urlParams.get('type');
+                    
+                    const recommendationsCard = document.getElementById('puzzle-recommendations');
+                    const recommendationText = document.getElementById('recommendations-text');
+                    const primaryBtn = document.getElementById('recommendation-primary');
+                    const secondaryBtn = document.getElementById('recommendation-secondary');
+                    
+                    // Only show recommendations for daily puzzles (not pack/archive)
+                    if (puzzleType !== 'pack' && puzzleType !== 'archive') {
+                        // Check if user is authenticated
+                        if (window.supabaseClient) {
+                            try {
+                                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                                if (user) {
+                                    // Check user's puzzle pack ownership
+                                    const { data: purchases } = await window.supabaseClient
+                                        .from('user_purchases')
+                                        .select('product_id')
+                                        .eq('user_id', user.id);
+                                        
+                                    const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
+                                    const hasFreepack = ownedProducts.includes('free-pack');
+                                    const hasOtherPacks = ownedProducts.some(id => id !== 'free-pack');
+                                    
+                                    if (hasOtherPacks) {
+                                        // User has puzzle packs - offer to play them
+                                        recommendationText.textContent = 'Keep the momentum going! Play more puzzles from your collection.';
+                                        primaryBtn.innerHTML = `
+                                            <span class="recommendation-text">Play My Puzzles</span>
+                                            <span class="recommendation-subtitle">Continue your collection</span>
+                                        `;
+                                        primaryBtn.style.display = 'block';
+                                        primaryBtn.onclick = () => {
+                                            window.location.href = './my-puzzles.html';
+                                        };
+                                        
+                                        secondaryBtn.textContent = 'Browse Store';
+                                        secondaryBtn.style.display = 'block';
+                                        secondaryBtn.onclick = () => {
+                                            window.location.href = './store.html';
+                                        };
+                                    } else if (hasFreepack) {
+                                        // User has free pack but no others - offer store
+                                        recommendationText.textContent = 'Ready for more challenges? Discover premium puzzle packs.';
+                                        primaryBtn.innerHTML = `
+                                            <span class="recommendation-text">Play Free Pack</span>
+                                            <span class="recommendation-subtitle">Continue your free puzzles</span>
+                                        `;
+                                        primaryBtn.style.display = 'block';
+                                        primaryBtn.onclick = () => {
+                                            window.location.href = './pack-puzzles.html?pack=free-pack';
+                                        };
+                                        
+                                        secondaryBtn.textContent = 'Browse Store';
+                                        secondaryBtn.style.display = 'block';
+                                        secondaryBtn.onclick = () => {
+                                            window.location.href = './store.html';
+                                        };
+                                    } else {
+                                        // User has no packs - offer free pack
+                                        recommendationText.textContent = 'Want more puzzles? Start with our free starter pack!';
+                                        primaryBtn.innerHTML = `
+                                            <span class="recommendation-text">Get Free Pack</span>
+                                            <span class="recommendation-subtitle">10 starter puzzles</span>
+                                        `;
+                                        primaryBtn.style.display = 'block';
+                                        primaryBtn.onclick = () => {
+                                            window.location.href = './product-overview.html?product=free-pack';
+                                        };
+                                        
+                                        secondaryBtn.textContent = 'Browse Store';
+                                        secondaryBtn.style.display = 'block';
+                                        secondaryBtn.onclick = () => {
+                                            window.location.href = './store.html';
+                                        };
+                                    }
+                                    
+                                    recommendationsCard.style.display = 'block';
+                                } else {
+                                    // Not authenticated - offer signup with free pack
+                                    recommendationText.textContent = 'Sign up to unlock more puzzles and track your progress!';
+                                    primaryBtn.innerHTML = `
+                                        <span class="recommendation-text">Sign Up Free</span>
+                                        <span class="recommendation-subtitle">Get started with 10 free puzzles</span>
+                                    `;
+                                    primaryBtn.style.display = 'block';
+                                    primaryBtn.onclick = () => {
+                                        window.location.href = './signup.html?from=daily-completion';
+                                    };
+                                    
+                                    recommendationsCard.style.display = 'block';
+                                }
+                            } catch (error) {
+                                console.error('Error checking user authentication:', error);
+                                recommendationsCard.style.display = 'none';
+                            }
+                        } else {
+                            // No Supabase client - hide recommendations
+                            recommendationsCard.style.display = 'none';
+                        }
+                    } else {
+                        // Hide recommendations for pack/archive puzzles
+                        recommendationsCard.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Error setting up recommendations:', error);
+                    document.getElementById('puzzle-recommendations').style.display = 'none';
                 }
             }
             
