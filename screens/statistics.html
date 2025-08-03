@@ -774,19 +774,20 @@
     <div class="container">
         <a href="home.html" class="back-button">← Back</a>
         
+        <!-- Statistics Filter Controls -->
+        <div class="filter-controls">
+            <div class="filter-title">Filter Statistics Below</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" id="all-filter" onclick="setStatsFilter('all')">All</button>
+                <button class="filter-btn" id="daily-filter" onclick="setStatsFilter('daily')">Daily</button>
+                <button class="filter-btn" id="archive-filter" onclick="setStatsFilter('archive')">Archive</button>
+                <button class="filter-btn" id="puzzles-filter" onclick="setStatsFilter('puzzles')">Puzzles</button>
+            </div>
+        </div>
+
         <!-- Puzzle History (Top Priority) -->
         <div class="puzzle-history-card">
-            <h2 class="section-title">Puzzle History</h2>
-            
-            <div class="filter-controls">
-                <div class="filter-title">Filter Statistics</div>
-                <div class="filter-buttons">
-                    <button class="filter-btn active" id="all-filter" onclick="setStatsFilter('all')">All</button>
-                    <button class="filter-btn" id="daily-filter" onclick="setStatsFilter('daily')">Daily</button>
-                    <button class="filter-btn" id="archive-filter" onclick="setStatsFilter('archive')">Archive</button>
-                    <button class="filter-btn" id="puzzles-filter" onclick="setStatsFilter('puzzles')">Puzzles</button>
-                </div>
-            </div>
+            <h2 class="section-title">Today's Puzzle</h2>
             
             <div class="puzzle-navigation">
                 <button class="nav-button" id="prev-button" onclick="navigateToDay(1)" title="Previous day">←</button>
@@ -875,6 +876,102 @@
             today.setDate(today.getDate() - daysAgo);
             return today.toISOString().split('T')[0]; // YYYY-MM-DD format
         }
+
+        // Load all completions data for filtering
+        async function loadAllCompletions(userId) {
+            try {
+                // Load daily puzzle completions
+                const { data: dailyCompletions, error: dailyError } = await supabaseClient
+                    .from('puzzle_completions')
+                    .select('puzzle_date, puzzle_name, completed, completion_time, hints_used, tries_used')
+                    .eq('user_id', userId);
+
+                if (dailyError) {
+                    console.error('Error loading daily completions:', dailyError);
+                    return;
+                }
+
+                // Load pack puzzle completions
+                const { data: packCompletions, error: packError } = await supabaseClient
+                    .from('puzzle_pack_completions')
+                    .select('puzzle_id, pack_name, completed, completion_time, hints_used, tries_used, created_at')
+                    .eq('user_id', userId);
+
+                if (packError) {
+                    console.error('Error loading pack completions:', packError);
+                }
+
+                // Combine and standardize data
+                const todayString = getCurrentPuzzleDate();
+                allCompletionsData = [
+                    ...(dailyCompletions || []).map(c => ({ 
+                        ...c, 
+                        puzzle_type: 'daily', 
+                        date_key: c.puzzle_date,
+                        is_archive: c.puzzle_date < todayString
+                    })),
+                    ...(packCompletions || []).map(c => ({ 
+                        ...c, 
+                        puzzle_type: 'pack', 
+                        date_key: c.created_at.split('T')[0],
+                        puzzle_name: c.pack_name || 'Pack Puzzle'
+                    }))
+                ];
+
+                // Sort by date (newest first)
+                allCompletionsData.sort((a, b) => new Date(b.date_key) - new Date(a.date_key));
+                
+                console.log('Loaded all completions data:', allCompletionsData.length, 'items');
+                
+                // Render statistics with current filter
+                filterAndRenderStats();
+
+            } catch (error) {
+                console.error('Error loading completions data:', error);
+            }
+        }
+
+        // Filter and render statistics based on current filter
+        function filterAndRenderStats() {
+            const todayString = getCurrentPuzzleDate();
+            
+            let filteredData = [];
+            
+            if (currentStatsFilter === 'all') {
+                filteredData = allCompletionsData;
+            } else if (currentStatsFilter === 'daily') {
+                filteredData = allCompletionsData.filter(item => 
+                    item.puzzle_type === 'daily' && item.date_key >= todayString
+                );
+            } else if (currentStatsFilter === 'archive') {
+                filteredData = allCompletionsData.filter(item => 
+                    item.puzzle_type === 'daily' && item.date_key < todayString
+                );
+            } else if (currentStatsFilter === 'puzzles') {
+                filteredData = allCompletionsData.filter(item => 
+                    item.puzzle_type === 'pack'
+                );
+            }
+            
+            console.log(`Filtering stats: ${currentStatsFilter} -> ${filteredData.length} items`);
+            
+            // Update the statistics display with filtered data
+            renderOverallStats(filteredData);
+        }
+
+        // Set statistics filter
+        window.setStatsFilter = function(filter) {
+            currentStatsFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`${filter}-filter`).classList.add('active');
+            
+            // Re-render stats with new filter
+            if (allCompletionsData.length > 0) {
+                filterAndRenderStats();
+            }
+        };
         
 
         
@@ -1337,8 +1434,11 @@
                     }
                 } else {
                     // They have data - render normally
+                    allPuzzleHistory = completions || [];
                     await renderCurrentDayPuzzle();
-                    loadOverallStats();
+                    
+                    // Load all completions data for filtering
+                    await loadAllCompletions(user.id);
                 }
                 
                 // Clear timeout on successful completion
@@ -1348,7 +1448,8 @@
                 console.error('Error loading puzzle history:', error);
                 allPuzzleHistory = [];
                 await renderCurrentDayPuzzle();
-                loadOverallStats();
+                // Initialize empty stats
+                renderOverallStats([]);
                 
                 // Clear timeout on error
                 clearTimeout(loadingTimeout);
@@ -1418,15 +1519,16 @@
             }
         }
         
-        function loadOverallStats() {
-            const completed = allPuzzleHistory.filter(p => p.completed).length;
-            const total = allPuzzleHistory.length;
+        function renderOverallStats(data) {
+            const completed = data.filter(p => p.completed).length;
+            const total = data.length;
             const successRate = total > 0 ? Math.round((completed / total) * 100) : 0;
             
-            // Calculate streak
+            // Calculate streak (only for daily puzzles in chronological order)
             let streak = 0;
-            const sortedPuzzles = [...allPuzzleHistory].sort((a, b) => new Date(b.puzzle_date) - new Date(a.puzzle_date));
-            for (const puzzle of sortedPuzzles) {
+            const dailyPuzzles = data.filter(p => p.puzzle_type === 'daily')
+                .sort((a, b) => new Date(b.date_key) - new Date(a.date_key));
+            for (const puzzle of dailyPuzzles) {
                 if (puzzle.completed) {
                     streak++;
                 } else {
@@ -1435,20 +1537,19 @@
             }
             
             // Calculate average time (with PostgreSQL interval support)
-            console.log('STATISTICS SCREEN - Raw puzzle history:', allPuzzleHistory);
+            console.log('STATISTICS SCREEN - Filtered data for stats:', data.length, 'items');
             
-            const completedWithTimes = allPuzzleHistory.filter(p => 
+            const completedWithTimes = data.filter(p => 
                 p.completed && p.completion_time && p.completion_time !== '--:--' && p.completion_time !== 'Unknown'
             );
             
-            console.log('STATISTICS SCREEN - Completed puzzles with times:', completedWithTimes);
+            console.log('STATISTICS SCREEN - Completed puzzles with times:', completedWithTimes.length);
             
             let totalSeconds = 0;
             let validTimes = 0;
             
             for (const puzzle of completedWithTimes) {
                 let seconds = 0;
-                console.log('STATISTICS SCREEN - Processing completion time:', puzzle.completion_time, 'Type:', typeof puzzle.completion_time);
                 
                 // Handle PostgreSQL interval format like "00:00:13" (HH:MM:SS)
                 if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes(':')) {
@@ -1459,13 +1560,11 @@
                         const minutes = parseInt(timeParts[1]) || 0;
                         const secs = parseInt(timeParts[2]) || 0;
                         seconds = (hours * 3600) + (minutes * 60) + secs;
-                        console.log('STATISTICS SCREEN - Parsed HH:MM:SS format:', hours, 'h', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
                     } else if (timeParts.length === 2) {
                         // MM:SS format fallback
                         const minutes = parseInt(timeParts[0]) || 0;
                         const secs = parseInt(timeParts[1]) || 0;
                         seconds = (minutes * 60) + secs;
-                        console.log('STATISTICS SCREEN - Parsed MM:SS format:', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
                     }
                 }
                 // Handle legacy PostgreSQL text format like "120 seconds" (if any exist)
@@ -1473,25 +1572,21 @@
                     const match = puzzle.completion_time.match(/(\d+)\s*seconds/);
                     if (match) {
                         seconds = parseInt(match[1]);
-                        console.log('STATISTICS SCREEN - Parsed PostgreSQL text interval:', seconds, 'seconds');
                     }
                 }
                 // Handle raw number (seconds)
                 else if (typeof puzzle.completion_time === 'number') {
                     seconds = puzzle.completion_time;
-                    console.log('STATISTICS SCREEN - Raw number:', seconds, 'seconds');
                 } else if (typeof puzzle.completion_time === 'string') {
                     const parsed = parseInt(puzzle.completion_time);
                     if (!isNaN(parsed)) {
                         seconds = parsed;
-                        console.log('STATISTICS SCREEN - Parsed string number:', seconds, 'seconds');
                     }
                 }
                 
                 if (seconds > 0) {
                     totalSeconds += seconds;
                     validTimes++;
-                    console.log('STATISTICS SCREEN - Added', seconds, 'seconds. Total:', totalSeconds, 'Valid times:', validTimes);
                 }
             }
             
@@ -1500,36 +1595,38 @@
                     const avgSeconds = Math.round(totalSeconds / validTimes);
                     const avgMinutes = Math.floor(avgSeconds / 60);
                     const remainingSeconds = avgSeconds % 60;
-                    const result = `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-                    console.log('STATISTICS SCREEN - Final calculation: totalSeconds:', totalSeconds, 'validTimes:', validTimes, 'avgSeconds:', avgSeconds, 'result:', result);
-                    return result;
+                    return `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
                 })() : '--:--';
             
             // Calculate hint statistics
-            const totalHints = allPuzzleHistory
+            const totalHints = data
                 .reduce((sum, p) => sum + (p.hints_used || 0), 0);
             
-            const puzzlesWithHints = allPuzzleHistory.filter(p => p.hints_used !== undefined && p.hints_used !== null);
+            const puzzlesWithHints = data.filter(p => p.hints_used !== undefined && p.hints_used !== null);
             const avgHints = puzzlesWithHints.length > 0 ? 
                 (totalHints / puzzlesWithHints.length).toFixed(1) : '0.0';
             
             // Calculate tries statistics
-            const totalTries = allPuzzleHistory
+            const totalTries = data
                 .reduce((sum, p) => sum + (p.tries_used || 0), 0);
             
-            const puzzlesWithTries = allPuzzleHistory.filter(p => p.tries_used !== undefined && p.tries_used !== null);
+            const puzzlesWithTries = data.filter(p => p.tries_used !== undefined && p.tries_used !== null);
             const avgTries = puzzlesWithTries.length > 0 ? 
                 (totalTries / puzzlesWithTries.length).toFixed(1) : '0.0';
             
             // Update display
-            document.getElementById('total-completed').textContent = completed;
-            document.getElementById('current-streak').textContent = streak;
+            document.getElementById('total-completed').textContent = completed || 0;
+            document.getElementById('current-streak').textContent = streak || 0;
             document.getElementById('average-time').textContent = avgTime;
             document.getElementById('success-rate').textContent = `${successRate}%`;
             document.getElementById('average-hints').textContent = avgHints;
-            document.getElementById('total-hints').textContent = totalHints;
+            document.getElementById('total-hints').textContent = totalHints || 0;
             document.getElementById('average-tries').textContent = avgTries;
-            document.getElementById('total-tries').textContent = totalTries;
+            document.getElementById('total-tries').textContent = totalTries || 0;
+            
+            console.log(`Stats updated with filter '${currentStatsFilter}':`, {
+                total, completed, successRate, streak, avgTime, totalHints, avgHints, totalTries, avgTries
+            });
         }
         
         window.navigateToDay = async function(direction) {
