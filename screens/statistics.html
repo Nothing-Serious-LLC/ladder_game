@@ -20,6 +20,7 @@
             --gray-900: #1a1a1b;
             --green-500: #6aaa64;
             --green-600: #5a9a5a;
+            --primary-green: #6aaa64;
             --orange-500: #f5a623;
             --red-500: #ed4a2a;
             --safe-area-inset-top: env(safe-area-inset-top);
@@ -276,16 +277,9 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin-bottom: 16px;
-        }
-        
-        /* Mobile: 2 columns */
-        @media (max-width: 480px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
         }
         
         .stat-item {
@@ -483,14 +477,6 @@
                     <div class="stat-number" id="success-rate">0%</div>
                     <div class="stat-label">Success</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="fastest-time">--:--</div>
-                    <div class="stat-label">Fastest Time</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" id="total-hints">0</div>
-                    <div class="stat-label">Total Hints</div>
-                </div>
             </div>
         </div>
     </div>
@@ -557,14 +543,24 @@
             document.getElementById('current-streak').textContent = '--';
             document.getElementById('average-time').textContent = '--:--';
             document.getElementById('success-rate').textContent = '--%';
-            document.getElementById('fastest-time').textContent = '--:--';
-            document.getElementById('total-hints').textContent = '--';
         }
         
         async function loadPuzzleHistory() {
+            // Set up loading timeout
+            const loadingTimeout = setTimeout(() => {
+                // Show no data message if loading takes too long
+                const currentDateEl = document.getElementById('current-date');
+                if (currentDateEl && currentDateEl.textContent === 'Loading...') {
+                    currentDateEl.textContent = 'No puzzle data available';
+                }
+            }, 5000); // 5 second timeout
+            
             try {
                 // Check authentication
                 const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+                
+                // Clear timeout on successful authentication check
+                clearTimeout(loadingTimeout);
                 
                 if (authError || !user) {
                     // Not authenticated - show authentication prompt
@@ -609,11 +605,17 @@
                 renderCurrentDay();
                 loadOverallStats();
                 
+                // Clear timeout on successful completion
+                clearTimeout(loadingTimeout);
+                
             } catch (error) {
                 console.error('Error loading puzzle history:', error);
                 allPuzzleHistory = [];
                 renderCurrentDay();
                 loadOverallStats();
+                
+                // Clear timeout on error
+                clearTimeout(loadingTimeout);
             }
         }
         
@@ -742,21 +744,11 @@
             const avgTime = avgSeconds > 0 ? 
                 `${Math.floor(avgSeconds / 60)}:${(avgSeconds % 60).toString().padStart(2, '0')}` : '--:--';
             
-            // Find fastest time
-            const fastestSeconds = completedTimes.length > 0 ? Math.min(...completedTimes) : 0;
-            const fastestTime = fastestSeconds > 0 ? 
-                `${Math.floor(fastestSeconds / 60)}:${(fastestSeconds % 60).toString().padStart(2, '0')}` : '--:--';
-            
-            // Total hints
-            const totalHints = allPuzzleHistory.reduce((sum, p) => sum + (p.hints_used || 0), 0);
-            
             // Update display
             document.getElementById('total-completed').textContent = completed;
             document.getElementById('current-streak').textContent = streak;
             document.getElementById('average-time').textContent = avgTime;
             document.getElementById('success-rate').textContent = `${successRate}%`;
-            document.getElementById('fastest-time').textContent = fastestTime;
-            document.getElementById('total-hints').textContent = totalHints;
         }
         
         window.navigateToDay = function(direction) {
