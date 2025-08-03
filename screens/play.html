@@ -1639,6 +1639,32 @@
             transform: translateY(-1px);
         }
         
+        /* Try Again Section */
+        .try-again-section {
+            margin-top: 16px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .try-again-button {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 12px 24px;
+            min-width: 120px;
+        }
+        
+        .try-again-button:hover {
+            background: var(--primary-orange-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
+        }
+        
         /* Signup Card Styles */
         .signup-card {
             animation-delay: 0.15s;
@@ -2475,7 +2501,6 @@
             <div class="failure-card card failure-error">
                 <div class="failure-header">
                     <h2 class="failure-title">Puzzle Incomplete</h2>
-                    <div class="failure-status">✗ Failed</div>
                 </div>
                 
                 <div class="failure-details">
@@ -2496,11 +2521,15 @@
                 <div class="failure-actions">
                 <div class="failure-buttons">
                         <button class="failure-button share" id="failure-share">Share Result</button>
-                        <button class="failure-button retry" id="failure-retry" onclick="retryPuzzle()">Try Again</button>
                     </div>
                     
                     <button class="failure-button primary" id="failure-home-button">Go to Home</button>
                 </div>
+            </div>
+            
+            <!-- Try Again Button -->
+            <div class="try-again-section">
+                <button class="try-again-button" id="failure-retry" onclick="retryPuzzle()">Try Again</button>
             </div>
             
             <!-- Pack navigation section for pack/archive puzzles -->
@@ -5124,6 +5153,12 @@ https://ladder.game/`;
                 try {
                     const morePuzzlesId = `${pageType}-more-puzzles`;
                     const morePuzzlesCard = document.getElementById(morePuzzlesId);
+                    
+                    // Skip if element doesn't exist (pack puzzles use different navigation)
+                    if (!morePuzzlesCard) {
+                        console.log('More puzzles card not found - using pack navigation instead');
+                        return;
+                    }
                     
                     // Check if user is authenticated
                     let isAuthenticated = false;
