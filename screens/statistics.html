@@ -976,141 +976,185 @@
             // Set appropriate styling and messaging based on completion status
             const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
             
-            dailyCard.innerHTML = `
-                <div class="puzzle-theme-section">
-                    <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
-                    <div class="puzzle-subtitle">${wasCompleted ? 'Completed' : 'Failed'} • Puzzle #${finalPuzzleNumber} • ${puzzleDate}</div>
-                </div>
-                        
-                <div class="completion-stats">
-                    <div class="completion-stat">
-                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${formatTimeForStats(completionTime)}</div>
-                        <div class="completion-stat-label">Time</div>
-                    </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${hintsRemaining}</div>
-                        <div class="completion-stat-label">Hints Remaining</div>
-                    </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${remainingTries}</div>
-                        <div class="completion-stat-label">Tries Remaining</div>
+            // Replace shimmer loading with actual content
+            const puzzleDetails = document.getElementById('puzzle-details');
+            puzzleDetails.innerHTML = `
+                <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                    <div class="puzzle-status centered">
+                        <div class="puzzle-info centered">
+                            <div class="puzzle-theme-section">
+                                <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
+                                <div class="puzzle-subtitle">${wasCompleted ? 'Completed' : 'Failed'} • Puzzle #${finalPuzzleNumber} • ${puzzleDate}</div>
+                            </div>
+                                    
+                            <div class="completion-stats">
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${formatTimeForStats(completionTime)}</div>
+                                    <div class="completion-stat-label">Time</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${hintsRemaining}</div>
+                                    <div class="completion-stat-label">Hints Remaining</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${remainingTries}</div>
+                                    <div class="completion-stat-label">Tries Remaining</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
             
-            // Apply the appropriate card styling and reset inline styles
-            dailyCard.className = `${cardClass} card`;
-            dailyCard.style.background = '';
-            
-            // Reset button styles (in case it was disabled from previous state)
-            const playButton = document.getElementById('daily-play-button');
-            if (playButton) {
-                playButton.disabled = false;
-                playButton.style.opacity = '';
-                playButton.style.cursor = '';
-                playButton.style.display = 'none'; // Hide play button for completed puzzles
-            }
+            // Content is already properly structured
         }
         
         function showTodayPuzzleCard(puzzleNumber, date) {
-            const dailyCard = document.getElementById('daily-puzzle-card');
+            const puzzleDetails = document.getElementById('puzzle-details');
             
-            // Show not played message with play button
-            dailyCard.innerHTML = `
-                <div class="not-played-message">
-                    <div class="not-played-title">Today's Puzzle Not Played</div>
-                    <div class="not-played-description">Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
-                    <button class="play-button" style="background: var(--primary-green); color: white;" onclick="window.location.href = '../index.html?autostart=true'">
-                        Play Today's Puzzle
-                    </button>
+            // Replace shimmer with actual content
+            puzzleDetails.innerHTML = `
+                <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                    <div class="puzzle-status centered">
+                        <div class="puzzle-info centered">
+                            <div class="puzzle-theme-section">
+                                <div class="puzzle-theme-large">Today's Puzzle</div>
+                                <div class="puzzle-subtitle">Not Played • Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
+                            </div>
+                                    
+                            <div class="completion-stats">
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">--:--</div>
+                                    <div class="completion-stat-label">Time</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">3</div>
+                                    <div class="completion-stat-label">Hints Available</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">5</div>
+                                    <div class="completion-stat-label">Tries Available</div>
+                                </div>
+                            </div>
+                            
+                            <button class="play-button" onclick="window.location.href='../index.html'" style="margin-top: 20px; background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Play Today's Puzzle
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
-            
-            // Apply styling and reset any previous inline styles
-            dailyCard.className = 'daily-puzzle-section card';
-            dailyCard.style.background = '';
         }
         
         function showArchivePuzzleCard(puzzleNumber, date, targetDate) {
-            const dailyCard = document.getElementById('daily-puzzle-card');
-            const puzzleName = document.getElementById('daily-puzzle-name');
-            const puzzleDateEl = document.getElementById('daily-puzzle-date');
-            const statusBadge = document.getElementById('daily-status');
-            const playButton = document.getElementById('daily-play-button');
+            const puzzleDetails = document.getElementById('puzzle-details');
             
-            // Update content
-            puzzleName.textContent = `Puzzle #${puzzleNumber}`;
-            puzzleDateEl.textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-            statusBadge.style.display = 'block';
-            statusBadge.textContent = 'Archive Puzzle';
-            statusBadge.className = 'status-badge status-pending';
-            playButton.textContent = 'Play Archive Puzzle';
-            playButton.className = 'play-button';
-            playButton.onclick = () => playArchivePuzzle(targetDate, puzzleNumber);
-            
-            // Apply orange styling for archive and reset button styles
-            dailyCard.className = 'daily-puzzle-section card';
-            dailyCard.style.background = 'linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-orange-hover) 100%)';
-            playButton.disabled = false;
-            playButton.style.opacity = '';
-            playButton.style.cursor = '';
-            playButton.style.display = 'block';
+            // Replace shimmer with actual content
+            puzzleDetails.innerHTML = `
+                <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                    <div class="puzzle-status centered">
+                        <div class="puzzle-info centered">
+                            <div class="puzzle-theme-section">
+                                <div class="puzzle-theme-large">Archive Puzzle</div>
+                                <div class="puzzle-subtitle">Not Played • Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
+                            </div>
+                                    
+                            <div class="completion-stats">
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">--:--</div>
+                                    <div class="completion-stat-label">Time</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">3</div>
+                                    <div class="completion-stat-label">Hints Available</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">5</div>
+                                    <div class="completion-stat-label">Tries Available</div>
+                                </div>
+                            </div>
+                            
+                            <button class="play-button" onclick="playArchivePuzzle('${targetDate}', ${puzzleNumber})" style="margin-top: 20px; background: var(--primary-orange); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Play Archive Puzzle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
         
         function showArchiveUpsellCard(puzzleNumber, date) {
-            const dailyCard = document.getElementById('daily-puzzle-card');
-            const puzzleName = document.getElementById('daily-puzzle-name');
-            const puzzleDateEl = document.getElementById('daily-puzzle-date');
-            const statusBadge = document.getElementById('daily-status');
-            const playButton = document.getElementById('daily-play-button');
+            const puzzleDetails = document.getElementById('puzzle-details');
             
-            // Update content
-            puzzleName.textContent = `Puzzle #${puzzleNumber}`;
-            puzzleDateEl.textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-            statusBadge.style.display = 'block';
-            statusBadge.textContent = 'Archive Access Required';
-            statusBadge.className = 'status-badge';
-            statusBadge.style.background = 'rgba(255, 255, 255, 0.2)';
-            statusBadge.style.color = 'white';
-            playButton.textContent = 'Buy Archive Access';
-            playButton.className = 'play-button';
-            playButton.onclick = () => window.location.href = 'product-overview.html?product=archive&from=statistics';
-            
-            // Apply gray styling for locked archive
-            dailyCard.className = 'daily-puzzle-section card';
-            dailyCard.style.background = 'linear-gradient(135deg, var(--gray-600) 0%, var(--gray-900) 100%)';
-            playButton.disabled = false;
-            playButton.style.opacity = '';
-            playButton.style.cursor = '';
-            playButton.style.display = 'block';
+            // Replace shimmer with actual content
+            puzzleDetails.innerHTML = `
+                <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                    <div class="puzzle-status centered">
+                        <div class="puzzle-info centered">
+                            <div class="puzzle-theme-section">
+                                <div class="puzzle-theme-large">Archive Puzzle</div>
+                                <div class="puzzle-subtitle">Requires Archive Access • Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
+                            </div>
+                                    
+                            <div class="completion-stats">
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">🔒</div>
+                                    <div class="completion-stat-label">Time</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">🔒</div>
+                                    <div class="completion-stat-label">Hints</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">🔒</div>
+                                    <div class="completion-stat-label">Tries</div>
+                                </div>
+                            </div>
+                            
+                            <button class="play-button" onclick="window.location.href='store.html'" style="margin-top: 20px; background: var(--primary-orange); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Unlock Archive Access
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
         
         function showFuturePuzzleCard(puzzleNumber, date) {
-            const dailyCard = document.getElementById('daily-puzzle-card');
-            const puzzleName = document.getElementById('daily-puzzle-name');
-            const puzzleDateEl = document.getElementById('daily-puzzle-date');
-            const statusBadge = document.getElementById('daily-status');
-            const playButton = document.getElementById('daily-play-button');
+            const puzzleDetails = document.getElementById('puzzle-details');
             
-            // Update content
-            puzzleName.textContent = `Puzzle #${puzzleNumber}`;
-            puzzleDateEl.textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-            statusBadge.style.display = 'block';
-            statusBadge.textContent = 'Coming Soon';
-            statusBadge.className = 'status-badge';
-            statusBadge.style.background = 'rgba(255, 255, 255, 0.2)';
-            statusBadge.style.color = 'white';
-            playButton.textContent = 'Not Available Yet';
-            playButton.className = 'play-button';
-            playButton.disabled = true;
-            playButton.style.opacity = '0.6';
-            playButton.style.cursor = 'not-allowed';
-            playButton.onclick = null;
-            
-            // Apply gray styling for future puzzle  
-            dailyCard.className = 'daily-puzzle-section card';
-            dailyCard.style.background = 'linear-gradient(135deg, var(--gray-400) 0%, var(--gray-600) 100%)';
-            playButton.style.display = 'block';
+            // Replace shimmer with actual content
+            puzzleDetails.innerHTML = `
+                <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                    <div class="puzzle-status centered">
+                        <div class="puzzle-info centered">
+                            <div class="puzzle-theme-section">
+                                <div class="puzzle-theme-large">Future Puzzle</div>
+                                <div class="puzzle-subtitle">Not Available Yet • Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
+                            </div>
+                                    
+                            <div class="completion-stats">
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">--:--</div>
+                                    <div class="completion-stat-label">Time</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">3</div>
+                                    <div class="completion-stat-label">Hints Available</div>
+                                </div>
+                                <div class="completion-stat">
+                                    <div class="completion-stat-value">5</div>
+                                    <div class="completion-stat-label">Tries Available</div>
+                                </div>
+                            </div>
+                            
+                            <div class="future-puzzle-message" style="margin-top: 20px; padding: 16px; background: var(--gray-50); border-radius: 8px; text-align: center;">
+                                <p style="margin: 0; color: var(--gray-600);">This puzzle will be available soon!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
         
         function getPuzzleNumberForDate(dateString) {
@@ -1276,9 +1320,13 @@
         function updateDayNavigation() {
             const prevButton = document.getElementById('prev-button');
             const nextButton = document.getElementById('next-button');
-            const maxDaysBack = 90;
             
-            console.log('Updating navigation - currentDayIndex:', currentDayIndex);
+            // Calculate days back to earliest puzzle (2024-07-30)
+            const today = new Date(getCurrentPuzzleDate());
+            const earliestPuzzleDate = new Date('2024-07-30');
+            const maxDaysBack = Math.floor((today - earliestPuzzleDate) / (1000 * 60 * 60 * 24));
+            
+            console.log('Updating navigation - currentDayIndex:', currentDayIndex, 'maxDaysBack:', maxDaysBack);
             
             // Next button (→) - goes forward in time (decreases currentDayIndex)
             if (nextButton) {
@@ -1290,10 +1338,10 @@
             
             // Prev button (←) - goes back in time (increases currentDayIndex)
             if (prevButton) {
-                prevButton.disabled = currentDayIndex >= maxDaysBack; // Limit historical browsing
+                prevButton.disabled = currentDayIndex >= maxDaysBack; // Limit to earliest puzzle
                 prevButton.style.opacity = prevButton.disabled ? '0.5' : '1';
                 prevButton.style.cursor = prevButton.disabled ? 'not-allowed' : 'pointer';
-                console.log('Prev button (←) disabled:', prevButton.disabled, '(max', maxDaysBack, 'days back)');
+                console.log('Prev button (←) disabled:', prevButton.disabled, '(days back:', currentDayIndex, '/ max:', maxDaysBack, ')');
             }
         }
         
