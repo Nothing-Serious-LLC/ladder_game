@@ -184,7 +184,7 @@
         
         .feature-icon {
             font-size: 1rem;
-            color: var(--green-600);
+            color: var(--gray-600);
             margin-top: 2px;
         }
         
@@ -264,15 +264,15 @@
             <h3 class="features-title">What's Included</h3>
             <ul class="features-list" id="features-list">
                 <li class="feature-item">
-                    <span class="feature-icon">•</span>
+                    <span class="feature-icon">-</span>
                     <div class="feature-text">100 Unique Puzzles</div>
                 </li>
                 <li class="feature-item">
-                    <span class="feature-icon">•</span>
+                    <span class="feature-icon">-</span>
                     <div class="feature-text">Progressive Difficulty</div>
                 </li>
                 <li class="feature-item">
-                    <span class="feature-icon">•</span>
+                    <span class="feature-icon">-</span>
                     <div class="feature-text">Achievement Tracking</div>
                 </li>
             </ul>
@@ -336,7 +336,7 @@
                 const featureItem = document.createElement('li');
                 featureItem.className = 'feature-item';
                 featureItem.innerHTML = `
-                    <span class="feature-icon">•</span>
+                    <span class="feature-icon">-</span>
                     <div class="feature-text">${feature}</div>
                 `;
                 featuresList.appendChild(featureItem);
