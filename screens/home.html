@@ -368,27 +368,14 @@
             min-height: 300px;
         }
         
-        .store-items {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            flex: 1;
-        }
-        
-        #puzzle-packs-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .packs-content {
+        .store-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
         
-        .store-item {
+        .store-pack-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -397,48 +384,15 @@
             border-radius: 12px;
             border: 1px solid #fed7aa;
             transition: all 0.2s;
-            gap: 16px;
-            min-height: 80px;
-            flex-wrap: nowrap;
+            cursor: pointer;
         }
         
-        .store-item:hover {
+        .store-pack-item:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(255, 140, 66, 0.15);
         }
         
-        .item-info {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-        }
-        
-        .item-name {
-            font-weight: 700;
-            margin-bottom: 4px;
-            color: var(--gray-900);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .item-description {
-            font-size: 0.85rem;
-            color: var(--gray-600);
-            margin-bottom: 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .item-price {
-            font-weight: 700;
-            color: var(--primary-orange);
-            font-size: 1.1rem;
-            white-space: nowrap;
-        }
-        
-        .buy-button {
+        .store-button {
             background: var(--primary-orange);
             color: white;
             border: none;
@@ -454,10 +408,49 @@
             min-width: 70px;
         }
         
-        .buy-button:hover {
+        .store-button:hover {
             background: var(--primary-orange-hover);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(255, 140, 66, 0.4);
+        }
+        
+        #puzzle-packs-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .packs-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        /* Shared item info styles for both pack-item and store-pack-item */
+        .item-info {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+        
+        .item-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--gray-900);
+        }
+        
+        .item-description {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+        
+        .item-price {
+            font-weight: 700;
+            color: var(--primary-orange);
+            font-size: 1.1rem;
         }
         
         .pack-item {
@@ -483,7 +476,7 @@
         
         .pack-item + .view-all-button,
         .empty-state + .view-all-button,
-        .store-items + .view-all-button {
+        .store-content + .view-all-button {
             margin-top: 20px;
         }
         
@@ -796,12 +789,12 @@
             }
             
             /* Ensure store items stay horizontal on mobile */
-            .store-item {
+            .store-pack-item {
                 flex-wrap: nowrap !important;
                 align-items: center !important;
             }
             
-            .buy-button {
+            .store-button {
                 min-width: 60px !important;
             }
         }
@@ -826,13 +819,13 @@
             }
             
             /* Ensure store items stay horizontal on small mobile */
-            .store-item {
+            .store-pack-item {
                 flex-wrap: nowrap !important;
                 align-items: center !important;
                 padding: 16px !important;
             }
             
-            .buy-button {
+            .store-button {
                 min-width: 50px !important;
                 padding: 8px 12px !important;
                 font-size: 0.8rem !important;
@@ -877,30 +870,30 @@
                 
                 <div class="store-section card">
                     <h2 class="section-title">Store</h2>
-                    <div class="store-items">
-                        <div class="store-item" onclick="viewProduct('free-pack')">
+                    <div class="store-content">
+                        <div class="store-pack-item" onclick="viewProduct('free-pack')">
                             <div class="item-info">
                                 <div class="item-name">Free Pack</div>
                                 <div class="item-description">10 starter puzzles</div>
                                 <div class="item-price">Free</div>
                             </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
+                            <button class="store-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
                         </div>
-                        <div class="store-item" onclick="viewProduct('complete-pack')">
+                        <div class="store-pack-item" onclick="viewProduct('complete-pack')">
                             <div class="item-info">
                                 <div class="item-name">Complete Pack</div>
                                 <div class="item-description">Everything included</div>
                                 <div class="item-price">$4.99</div>
                             </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
+                            <button class="store-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
                         </div>
-                        <div class="store-item" onclick="viewProduct('archive')">
+                        <div class="store-pack-item" onclick="viewProduct('archive')">
                             <div class="item-info">
                                 <div class="item-name">Archive</div>
                                 <div class="item-description">Access to all past daily puzzles</div>
                                 <div class="item-price">$2.99</div>
                             </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
+                            <button class="store-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
                         </div>
                     </div>
                     
@@ -1621,12 +1614,12 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         }
         
         function updateStoreItemsOwnership(ownedProducts) {
-            const freePackItem = document.querySelector('.store-item[onclick*="free-pack"]');
-            const completePackItem = document.querySelector('.store-item[onclick*="complete-pack"]');
-            const archivePackItem = document.querySelector('.store-item[onclick*="archive"]');
-            const storeItemsContainer = document.querySelector('.store-items');
+            const freePackItem = document.querySelector('.store-pack-item[onclick*="free-pack"]');
+            const completePackItem = document.querySelector('.store-pack-item[onclick*="complete-pack"]');
+            const archivePackItem = document.querySelector('.store-pack-item[onclick*="archive"]');
+            const storeContentContainer = document.querySelector('.store-content');
             const everythingOwnedContainer = document.getElementById('everything-owned');
-            const viewAllButton = document.querySelector('.view-all-button');
+            const viewAllButton = document.querySelector('.store-section .view-all-button');
             
             // Check ownership status
             const hasFreePack = ownedProducts.includes('free-pack');
@@ -1638,12 +1631,12 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             if (ownsEverything) {
                 // Show "everything owned" state
-                if (storeItemsContainer) storeItemsContainer.style.display = 'none';
+                if (storeContentContainer) storeContentContainer.style.display = 'none';
                 if (everythingOwnedContainer) everythingOwnedContainer.style.display = 'block';
                 if (viewAllButton) viewAllButton.style.display = 'none';
             } else {
                 // Show regular store items
-                if (storeItemsContainer) storeItemsContainer.style.display = 'block';
+                if (storeContentContainer) storeContentContainer.style.display = 'flex';
                 if (everythingOwnedContainer) everythingOwnedContainer.style.display = 'none';
                 
                 // Hide owned items
@@ -1660,7 +1653,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 }
                 
                 // Show view all button if there are visible items
-                const visibleStoreItems = document.querySelectorAll('.store-item:not([style*="display: none"])');
+                const visibleStoreItems = document.querySelectorAll('.store-pack-item:not([style*="display: none"])');
                 if (viewAllButton) {
                     viewAllButton.style.display = visibleStoreItems.length > 0 ? 'block' : 'none';
                 }
