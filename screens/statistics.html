@@ -558,11 +558,15 @@
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             currentDateEl.textContent = date.toLocaleDateString('en-US', options);
             
-            // Calculate puzzle number (day of year)
-            const start = new Date(date.getFullYear(), 0, 0);
-            const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
-            const oneDay = 1000 * 60 * 60 * 24;
-            const puzzleNumber = Math.floor(diff / oneDay);
+            // Calculate puzzle number using same logic as index.html - days since launch date
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const est = new Date(utc + (-5 * 3600000));
+            
+            // Launch date set so today is puzzle #4 (matches index.html)
+            const launchDate = new Date('2025-07-28');
+            const diffTime = est - launchDate;
+            const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
             
             // Find puzzle for this specific date
             const puzzle = allPuzzleHistory.find(p => p.puzzle_date === targetDate);
