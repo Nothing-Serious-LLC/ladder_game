@@ -342,7 +342,7 @@
                 
                 <div class="form-group">
                     <label class="form-label" for="email">Email</label>
-                    <input type="email" id="email" class="form-input" disabled placeholder="Loading...">
+                    <input type="email" id="email" class="form-input" disabled>
                 </div>
                 
                 <div class="button-group">
@@ -357,31 +357,11 @@
             
             <div class="setting-item">
                 <div class="setting-info">
-                    <div class="setting-label">Show Hints</div>
-                    <div class="setting-description">Display hint button during gameplay</div>
-                </div>
-                <div class="setting-control">
-                    <div class="toggle-switch active" id="hints-toggle" onclick="toggleSetting('hints')"></div>
-                </div>
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-info">
                     <div class="setting-label">Sound Effects</div>
                     <div class="setting-description">Play sounds for game interactions</div>
                 </div>
                 <div class="setting-control">
                     <div class="toggle-switch" id="sound-toggle" onclick="toggleSetting('sound')"></div>
-                </div>
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-info">
-                    <div class="setting-label">Auto-save Progress</div>
-                    <div class="setting-description">Automatically save your puzzle progress</div>
-                </div>
-                <div class="setting-control">
-                    <div class="toggle-switch active" id="autosave-toggle" onclick="toggleSetting('autosave')"></div>
                 </div>
             </div>
         </div>
@@ -477,14 +457,26 @@
                 }
                 
                 // Populate form with user data
-                document.getElementById('email').value = user.email;
-                document.getElementById('display-name').value = user.user_metadata?.display_name || '';
+                const emailField = document.getElementById('email');
+                const displayNameField = document.getElementById('display-name');
+                
+                if (emailField && user.email) {
+                    emailField.value = user.email;
+                }
+                if (displayNameField) {
+                    displayNameField.value = user.user_metadata?.display_name || '';
+                }
                 
                 // Load user preferences from localStorage
                 loadPreferences();
                 
             } catch (error) {
                 console.error('Error loading user profile:', error);
+                // Show error in email field if loading fails
+                const emailField = document.getElementById('email');
+                if (emailField) {
+                    emailField.value = 'Error loading email';
+                }
             }
         }
         
@@ -512,9 +504,7 @@
         // Load preferences from localStorage
         function loadPreferences() {
             const preferences = {
-                hints: localStorage.getItem('pref_hints') !== 'false',
                 sound: localStorage.getItem('pref_sound') === 'true',
-                autosave: localStorage.getItem('pref_autosave') !== 'false',
                 stats: localStorage.getItem('pref_stats') === 'true',
                 notifications: localStorage.getItem('pref_notifications') !== 'false'
             };
@@ -617,12 +607,40 @@
             if (!doubleConfirmation) return;
             
             try {
-                // Note: In a production app, account deletion should be handled server-side
-                // For now, we'll just sign out the user
-                const { error } = await _supabase.auth.signOut();
-                if (error) throw error;
+                const { data: { user }, error: userError } = await _supabase.auth.getUser();
+                if (userError || !user) {
+                    alert('No authenticated user found.');
+                    return;
+                }
                 
-                alert('Account deletion requested. Please contact support to complete the process.');
+                // Delete user's puzzle completions
+                const { error: completionsError } = await _supabase
+                    .from('puzzle_completions')
+                    .delete()
+                    .eq('user_id', user.id);
+                
+                if (completionsError) {
+                    console.error('Error deleting puzzle completions:', completionsError);
+                }
+                
+                // Delete user's purchases
+                const { error: purchasesError } = await _supabase
+                    .from('user_purchases')
+                    .delete()
+                    .eq('user_id', user.id);
+                
+                if (purchasesError) {
+                    console.error('Error deleting purchases:', purchasesError);
+                }
+                
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Sign out user
+                const { error: signOutError } = await _supabase.auth.signOut();
+                if (signOutError) throw signOutError;
+                
+                alert('Your account and all data have been permanently deleted.');
                 window.location.href = '../index.html';
                 
             } catch (error) {
