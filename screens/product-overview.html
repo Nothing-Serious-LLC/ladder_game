@@ -456,8 +456,11 @@
                     .insert({
                         user_id: user.id,
                         product_id: productId,
+                        product_name: product.name,
+                        price_cents: product.price === 'Free' ? 0 : Math.round(parseFloat(product.price.replace('$', '')) * 100),
                         purchase_date: new Date().toISOString(),
-                        price_paid: product.price === 'Free' ? 0 : parseFloat(product.price.replace('$', ''))
+                        payment_method: 'free_claim',
+                        status: 'completed'
                     });
                 
                 if (purchaseError) {
