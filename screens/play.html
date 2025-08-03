@@ -139,7 +139,7 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 120px 20px 20px 20px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -222,7 +222,13 @@
 
         /* Mobile instruction adjustments */
         @media (max-width: 480px) {
-
+            .header {
+                padding: 16px 16px 20px 16px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
             
             .week-difficulty-text {
                 font-size: 0.85rem;
@@ -406,10 +412,15 @@
         }
 
         .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fafafa;
+            z-index: 1000;
             text-align: center;
-            padding: 20px 0 30px;
+            padding: 20px 20px 30px 20px;
             border-bottom: 1px solid #d3d6da;
-            margin-bottom: 20px;
         }
 
         .title {
@@ -1733,7 +1744,7 @@
             }
             /* Reduce bottom padding so ladder isn't cut off */
             .container {
-                padding: 0;
+                padding: 90px 0 0 0; /* Less padding on mobile due to smaller header */
                 height: 100vh;
                 overflow: hidden;
             }
@@ -1796,7 +1807,7 @@
                 overflow-y: auto;
                 overflow-x: visible;
                 padding-bottom: 20px; /* Reduced padding */
-                max-height: calc(100vh - 115px - 210px); /* Adjusted for taller keyboard */
+                max-height: calc(100vh - 90px - 210px); /* Adjusted for mobile fixed header and keyboard */
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
             }
@@ -1823,13 +1834,13 @@
                 flex-shrink: 0;
             }
             
-            /* Hide desktop elements on mobile */
+            /* Keep header visible on mobile */
             .header {
-                display: none;
+                display: block;
             }
             
             .stats {
-                display: none;
+                display: flex;
             }
             
             .game-area {
@@ -1841,9 +1852,9 @@
                 display: none;
             }
             
-            /* Show mobile elements on mobile */
+            /* Hide mobile header since we're using main header */
             .mobile-header {
-                display: block;
+                display: none;
             }
             
             .mobile-game-area {
@@ -2066,19 +2077,19 @@
 
         <div class="game-content" id="game-content">
             <div class="stats">
-            <div class="stat timer">
-                <div class="stat-value" id="timer">0:00</div>
-                <div class="stat-label">Time</div>
+                <div class="stat timer">
+                    <div class="stat-value" id="timer">0:00</div>
+                    <div class="stat-label">Time</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="hints-remaining">3</div>
+                    <div class="stat-label">Hints</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="tries-left">5</div>
+                    <div class="stat-label">Tries</div>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-value" id="hints-remaining">3</div>
-                <div class="stat-label">Hints</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="tries-left">5</div>
-                <div class="stat-label">Tries</div>
-            </div>
-        </div>
 
         <div class="game-area">
             <div class="ladder" id="ladder"></div>
