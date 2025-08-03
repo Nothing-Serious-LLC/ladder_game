@@ -94,7 +94,7 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 160px 20px 0 20px; /* Top padding for fixed header */
+            padding: 140px 20px 0 20px; /* Top padding for fixed header */
         }
         
         /* Better spacing on desktop */
@@ -303,6 +303,45 @@
             box-shadow: 0 6px 16px rgba(106, 170, 100, 0.3);
         }
         
+        /* Section Styling */
+        .owned-section,
+        .available-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        /* Completion tag for owned packs */
+        .completion-fraction {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        
+        .completed-tag {
+            background: var(--green-500);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+            display: inline-block;
+        }
+        
+        /* Remove progress bar styling for owned packs */
+        .pack-card.owned .pack-progress {
+            display: none;
+        }
+        
         @media (max-width: 640px) {
             .inventory-grid {
                 grid-template-columns: 1fr;
@@ -343,14 +382,26 @@
         <a href="home.html" class="back-button">← Back</a>
         <h1 class="page-title">My Puzzle Packs</h1>
         
+        <!-- Owned Packs Section -->
+        <div class="owned-section" id="owned-section" style="display: none;">
+            <h2 class="section-title">Owned Packs</h2>
+            <div class="inventory-grid" id="owned-grid">
+                <!-- Owned puzzle packs will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Available Packs Section -->
+        <div class="available-section" id="available-section">
+            <h2 class="section-title" id="available-title">Available Packs</h2>
+            <div class="inventory-grid" id="available-grid">
+                <!-- Available puzzle packs will be loaded here -->
+            </div>
+        </div>
+        
         <div class="no-packs-message" id="no-packs-message" style="display: none;">
             <div class="message-icon">📦</div>
             <div class="message-title">No Puzzle Packs Yet</div>
             <div class="message-text">Purchase packs below to unlock exciting puzzle collections</div>
-        </div>
-        
-        <div class="inventory-grid" id="inventory-grid">
-            <!-- Puzzle packs will be loaded here -->
         </div>
     </div>
     
@@ -435,17 +486,17 @@
             try {
                 const { data: completions } = await supabaseClient
                     .from('puzzle_pack_completions')
-                    .select('pack_name, completed')
+                    .select('pack_id, completed')
                     .eq('user_id', userId)
                     .eq('completed', true);
                 
                 window.packCompletions = {};
                 if (completions) {
                     completions.forEach(completion => {
-                        if (!window.packCompletions[completion.pack_name]) {
-                            window.packCompletions[completion.pack_name] = 0;
+                        if (!window.packCompletions[completion.pack_id]) {
+                            window.packCompletions[completion.pack_id] = 0;
                         }
-                        window.packCompletions[completion.pack_name]++;
+                        window.packCompletions[completion.pack_id]++;
                     });
                 }
             } catch (error) {
@@ -455,57 +506,96 @@
         }
         
         function renderInventory(purchases) {
-            const inventoryGrid = document.getElementById('inventory-grid');
+            const ownedSection = document.getElementById('owned-section');
+            const availableSection = document.getElementById('available-section');
+            const ownedGrid = document.getElementById('owned-grid');
+            const availableGrid = document.getElementById('available-grid');
+            const availableTitle = document.getElementById('available-title');
             const noPacksMessage = document.getElementById('no-packs-message');
             
-            // Check if user has any purchases
-            const hasPurchases = purchases.length > 0;
+            // Clear grids
+            ownedGrid.innerHTML = '';
+            availableGrid.innerHTML = '';
             
-            // Show message if no purchases, otherwise hide it
-            if (!hasPurchases) {
-                noPacksMessage.style.display = 'block';
-            } else {
-                noPacksMessage.style.display = 'none';
-            }
-            
-            // Always show the grid with all available puzzle packs
-            inventoryGrid.style.display = 'grid';
-            inventoryGrid.innerHTML = '';
+            // Separate owned and unowned packs
+            const ownedPacks = [];
+            const unownedPacks = [];
             
             puzzlePacks.forEach(pack => {
                 const purchase = purchases.find(p => p.product_id === pack.id);
-                const isUnlocked = !!purchase;
+                if (purchase) {
+                    ownedPacks.push({ pack, purchase });
+                } else {
+                    unownedPacks.push(pack);
+                }
+            });
+            
+            // Show/hide sections based on content
+            if (ownedPacks.length > 0) {
+                ownedSection.style.display = 'block';
+                availableTitle.textContent = unownedPacks.length > 0 ? 'Available Packs' : '';
+                availableSection.style.display = unownedPacks.length > 0 ? 'block' : 'none';
+                noPacksMessage.style.display = 'none';
                 
+                // Render owned packs
+                renderOwnedPacks(ownedPacks, ownedGrid);
+                
+                // Render available packs if any
+                if (unownedPacks.length > 0) {
+                    renderAvailablePacks(unownedPacks, availableGrid);
+                }
+            } else {
+                // No owned packs - show all as available
+                ownedSection.style.display = 'none';
+                availableSection.style.display = 'block';
+                availableTitle.textContent = 'Available Packs';
+                noPacksMessage.style.display = 'block';
+                
+                renderAvailablePacks(puzzlePacks, availableGrid);
+            }
+        }
+        
+        function renderOwnedPacks(ownedPacks, container) {
+            ownedPacks.forEach(({ pack, purchase }) => {
                 // Get completion progress from pack completions
                 let completedPuzzles = 0;
-                if (isUnlocked && window.packCompletions && window.packCompletions[pack.id]) {
+                if (window.packCompletions && window.packCompletions[pack.id]) {
                     completedPuzzles = window.packCompletions[pack.id];
                 }
-                const progressPercent = pack.totalPuzzles > 0 ? (completedPuzzles / pack.totalPuzzles) * 100 : 0;
+                const isCompleted = completedPuzzles >= pack.totalPuzzles;
                 
                 const packCard = document.createElement('div');
-                packCard.className = `pack-card ${isUnlocked ? 'unlocked' : 'locked'}`;
-                packCard.onclick = () => handlePackClick(pack, isUnlocked);
+                packCard.className = `pack-card unlocked owned`;
+                packCard.onclick = () => handlePackClick(pack, true);
                 
                 packCard.innerHTML = `
                     <div class="pack-icon">${pack.icon}</div>
                     <div class="pack-name">${pack.name}</div>
                     <div class="pack-description">${pack.description}</div>
-                    ${isUnlocked ? `
-                        <div class="pack-progress">
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${progressPercent}%"></div>
-                            </div>
-                            <div class="progress-text">${completedPuzzles}/${pack.totalPuzzles}</div>
-                        </div>
-                    ` : `
-                        <button class="unlock-button" onclick="event.stopPropagation(); unlockPack('${pack.id}')">
-                            Unlock ${pack.price}
-                        </button>
-                    `}
+                    <div class="completion-fraction">${completedPuzzles}/${pack.totalPuzzles} puzzles</div>
+                    ${isCompleted ? '<div class="completed-tag">All Complete!</div>' : ''}
                 `;
                 
-                inventoryGrid.appendChild(packCard);
+                container.appendChild(packCard);
+            });
+        }
+        
+        function renderAvailablePacks(packs, container) {
+            packs.forEach(pack => {
+                const packCard = document.createElement('div');
+                packCard.className = `pack-card locked`;
+                packCard.onclick = () => handlePackClick(pack, false);
+                
+                packCard.innerHTML = `
+                    <div class="pack-icon">${pack.icon}</div>
+                    <div class="pack-name">${pack.name}</div>
+                    <div class="pack-description">${pack.description}</div>
+                    <button class="unlock-button" onclick="event.stopPropagation(); unlockPack('${pack.id}')">
+                        Unlock ${pack.price}
+                    </button>
+                `;
+                
+                container.appendChild(packCard);
             });
         }
         
