@@ -274,12 +274,8 @@
     
     <script>
         function goBack() {
-            // Go back to previous page or home if no history
-            if (document.referrer && document.referrer.includes(window.location.hostname)) {
-                window.history.back();
-            } else {
-                window.location.href = 'home.html';
-            }
+            // Always go back to home screen to avoid navigation loops
+            window.location.href = 'home.html';
         }
         
         function viewProduct(productId) {
