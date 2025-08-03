@@ -1190,9 +1190,88 @@
             animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         
-        /* Make failure card slightly wider */
-        .failure-card {
+        /* Completion and Failure Card Styles */
+        .completion-card, .failure-card {
             max-width: 550px;
+            margin: 0 auto;
+        }
+        
+        .completion-success {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-hover) 100%);
+            color: white;
+        }
+        
+        .failure-error {
+            background: linear-gradient(135deg, var(--error-red) 0%, #c0392b 100%);
+            color: white;
+        }
+        
+        .completion-header, .failure-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        
+        .completion-title, .failure-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
+        }
+        
+        .completion-status, .failure-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .completion-details, .failure-details {
+            margin-bottom: 28px;
+        }
+        
+        .completion-stats, .failure-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .completion-stats .stat-item, .failure-stats .stat-item {
+            text-align: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .completion-stats .stat-value, .failure-stats .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .completion-stats .stat-label, .failure-stats .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .completion-actions, .failure-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .completion-buttons, .failure-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
         
         .card:nth-child(2) {
@@ -1210,45 +1289,11 @@
             }
         }
         
-        /* Result Card Styles */
-        .result-word {
-            display: flex;
-            gap: 6px;
-            justify-content: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .letter-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .letter-circle.green {
-            background: #6aaa64;
-        }
-        
-        .letter-circle.grey {
-            background: #878a8c;
-        }
-        
-        .letter-circle.red {
-            background: #e74c3c;
-        }
-        
         .result-theme {
-            font-size: 1.3rem;
-            color: #787c7e;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
             margin-bottom: 20px;
-            font-style: italic;
-            font-weight: normal;
+            font-weight: 500;
         }
         
         .completion-time,
@@ -1300,45 +1345,42 @@
         
         .completion-button,
         .failure-button {
-            padding: 14px 28px;
-            border: 1px solid #d3d6da;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            background: white;
-            color: #1a1a1b;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .completion-button:hover,
         .failure-button:hover {
-            border-color: #6aaa64;
-            color: #6aaa64;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
         
-        .completion-button.tomorrow,
-        .failure-button.tomorrow {
-            background: #6aaa64 !important;
-            color: white !important;
-            border-color: #6aaa64 !important;
+        .completion-button.primary,
+        .failure-button.primary {
+            background: white;
+            color: var(--primary-green);
+            border: none;
+            font-weight: 700;
+            margin-top: 8px;
+            width: 100%;
         }
         
-        .completion-button.tomorrow:hover,
-        .failure-button.tomorrow:hover {
-            background: #5d9556 !important;
-            border-color: #5d9556 !important;
+        .completion-button.primary:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
-        .completion-buttons .completion-button.tomorrow {
-            margin-top: 0 !important;
-            width: auto !important;
-        }
-        
-        /* Completion tomorrow full width */
-        .completion-page .completion-button.tomorrow {
-            width: 100% !important;
-            margin-top: 12px !important;
+        .failure-button.primary {
+            color: var(--error-red);
         }
         
         .failure-buttons {
@@ -2167,32 +2209,35 @@
         </header>
         
         <div class="completion-content">
-            <div class="completion-card card">
-                <div class="result-word">
-                    <span class="letter-circle green">C</span>
-                    <span class="letter-circle green">O</span>
-                    <span class="letter-circle green">M</span>
-                    <span class="letter-circle green">P</span>
-                    <span class="letter-circle green">L</span>
-                    <span class="letter-circle green">E</span>
-                    <span class="letter-circle green">T</span>
-                    <span class="letter-circle green">E</span>
+            <div class="completion-card card completion-success">
+                <div class="completion-header">
+                    <h2 class="completion-title">Puzzle Complete!</h2>
+                    <div class="completion-status">✓ Completed</div>
                 </div>
                 
-                <p class="result-theme" id="completion-theme">Parliamentary Democracy</p>
-                <div class="completion-time" id="completion-time">2:34</div>
+                <div class="completion-details">
+                    <p class="result-theme" id="completion-theme">Theme: Parliamentary Democracy</p>
+                    
+                    <div class="completion-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="completion-time">2:34</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="completion-hints">0</div>
+                            <div class="stat-label">Hints</div>
+                        </div>
+                    </div>
+                </div>
                 
+                <div class="completion-actions">
                 <div class="completion-buttons">
                     <button class="completion-button share" id="completion-share-result">Share Result</button>
                     <button class="completion-button copy" id="completion-copy-link">Copy Link</button>
                 </div>
                 
-                <button class="completion-button tomorrow" onclick="showCountdownScreen()">Tomorrow</button>
-            </div>
-            
-            <!-- Authentication-aware card for completion -->
-            <div class="auth-card card" id="completion-auth-card">
-                <!-- Will be populated by JavaScript based on auth status -->
+                    <button class="completion-button primary" id="completion-home-button">Go to Home</button>
+                </div>
             </div>
             
             <!-- More puzzles section for authenticated users -->
@@ -2213,28 +2258,34 @@
         </header>
         
         <div class="failure-content">
-            <div class="failure-card card">
-                <div class="result-word">
-                    <span class="letter-circle red">F</span>
-                    <span class="letter-circle red">A</span>
-                    <span class="letter-circle red">I</span>
-                    <span class="letter-circle red">L</span>
-                    <span class="letter-circle red">E</span>
-                    <span class="letter-circle red">D</span>
+            <div class="failure-card card failure-error">
+                <div class="failure-header">
+                    <h2 class="failure-title">Puzzle Incomplete</h2>
+                    <div class="failure-status">✗ Failed</div>
                 </div>
                 
+                <div class="failure-details">
                 <p class="result-theme" id="failure-theme">Theme: Parliamentary Democracy</p>
-                <div class="failure-time" id="failure-time">2:34</div>
-                
-                <div class="failure-buttons">
-                    <button class="failure-button share" id="failure-share">Share</button>
-                    <button class="failure-button tomorrow" onclick="showCountdownScreen()">Tomorrow</button>
+                    
+                    <div class="failure-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="failure-time">2:34</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="failure-hints">0</div>
+                            <div class="stat-label">Hints</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Authentication-aware card for failure -->
-            <div class="auth-card card" id="failure-auth-card">
-                <!-- Will be populated by JavaScript based on auth status -->
+                
+                <div class="failure-actions">
+                <div class="failure-buttons">
+                        <button class="failure-button share" id="failure-share">Share Result</button>
+                    </div>
+                    
+                    <button class="failure-button primary" id="failure-home-button">Go to Home</button>
+                </div>
             </div>
             
             <!-- More puzzles section for authenticated users -->
@@ -4498,9 +4549,13 @@
                     document.getElementById('completion-time').textContent = timeString;
                     document.getElementById('completion-theme').textContent = `Theme: ${this.currentPuzzle.theme}`;
                     document.getElementById('completion-date-display').textContent = document.getElementById('date-display').textContent;
+                    document.getElementById('completion-hints').textContent = this.hintsUsed || 0;
                     
                     // Set up authentication-aware cards
                     this.setupAuthCards('completion');
+                    
+                    // Set up Go to Home button functionality
+                    this.setupHomeButton('completion');
                     
                     // Track completion for authenticated users and set cookie for non-authenticated
                     this.trackCompletion(timeString);
@@ -4579,9 +4634,13 @@ https://ladder.game/`;
                     document.getElementById('failure-time').textContent = timeString;
                     document.getElementById('failure-theme').textContent = `Theme: ${this.currentPuzzle.theme}`;
                     document.getElementById('failure-date-display').textContent = document.getElementById('date-display').textContent;
+                    document.getElementById('failure-hints').textContent = this.hintsUsed || 0;
                     
                     // Set up authentication-aware cards
                     this.setupAuthCards('failure');
+                    
+                    // Set up Go to Home button functionality
+                    this.setupHomeButton('failure');
                     
                     // Set cookie for non-authenticated users (they attempted the puzzle)
                     if (window.gameModule && window.gameModule.setPuzzlePlayedCookie) {
@@ -4626,9 +4685,7 @@ https://ladder.game/`;
             
             async setupAuthCards(pageType) {
                 try {
-                    const authCardId = `${pageType}-auth-card`;
                     const morePuzzlesId = `${pageType}-more-puzzles`;
-                    const authCard = document.getElementById(authCardId);
                     const morePuzzlesCard = document.getElementById(morePuzzlesId);
                     
                     // Check if user is authenticated
@@ -4648,50 +4705,55 @@ https://ladder.game/`;
                     }
                     
                     if (isAuthenticated) {
-                        // Show authenticated user cards with appropriate message based on page type
-                        const isCompletion = pageType === 'completion';
-                        const title = isCompletion ? 'Great Job!' : 'Keep Trying!';
-                        const text = isCompletion ? 'View your progress and stats on your dashboard' : 'Check your stats and try again tomorrow';
-                        const urlParam = isCompletion ? 'completed=true' : 'failed=true';
-                        
-                        authCard.innerHTML = `
-                            <h3 class="auth-title">${title}</h3>
-                            <p class="auth-text">${text}</p>
-                            <a href="./screens/home.html?${urlParam}" class="auth-button">Go to Dashboard</a>
-                        `;
-                        
-                        // Set up more puzzles card
+                        // Set up more puzzles card for authenticated users
                         this.setupMorePuzzlesCard(morePuzzlesCard, user);
-                        
                     } else {
-                        // Show signup card for non-authenticated users
-                        const isCompletion = pageType === 'completion';
-                        const urlParam = isCompletion ? 'completed=true' : 'failed=true';
-                        
-                        authCard.innerHTML = `
-                            <h3 class="auth-title">Save Progress</h3>
-                            <p class="auth-text">Track your stats and get daily reminders</p>
-                            <div class="signup-buttons">
-                                <button class="signup-button primary" onclick="window.location.href='./screens/signup.html?from=${pageType}'">Sign Up</button>
-                                <button class="signup-button secondary" onclick="this.closest('.auth-card').style.opacity='0.5'; setTimeout(() => this.closest('.auth-card').style.display='none', 300)">Skip</button>
-                            </div>
-                        `;
-                        
                         // Hide more puzzles card for non-authenticated users
                         morePuzzlesCard.style.display = 'none';
                     }
                     
                 } catch (error) {
                     console.error('Error setting up auth cards:', error);
-                    // Fallback to basic signup card
-                    document.getElementById(`${pageType}-auth-card`).innerHTML = `
-                        <h3 class="auth-title">Save Progress</h3>
-                        <p class="auth-text">Track your stats and get daily reminders</p>
-                        <div class="signup-buttons">
-                            <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
-                            <button class="signup-button secondary">Skip</button>
-                        </div>
-                    `;
+                }
+            }
+            
+            async setupHomeButton(pageType) {
+                try {
+                    const homeButtonId = `${pageType}-home-button`;
+                    const homeButton = document.getElementById(homeButtonId);
+                    
+                    if (homeButton) {
+                        // Check if user is authenticated
+                        let isAuthenticated = false;
+                        
+                        if (window.supabaseClient) {
+                            try {
+                                const { data: { user }, error } = await window.supabaseClient.auth.getUser();
+                                if (!error && user) {
+                                    isAuthenticated = true;
+                                }
+                            } catch (error) {
+                                console.error('Error checking authentication in setupHomeButton:', error);
+                            }
+                        }
+                        
+                        if (isAuthenticated) {
+                            // For authenticated users, go to home screen
+                            const urlParam = pageType === 'completion' ? 'completed=true' : 'failed=true';
+                            homeButton.onclick = () => {
+                                window.location.href = `./screens/home.html?${urlParam}`;
+                            };
+                        } else {
+                            // For non-authenticated users, show signup screen
+                            homeButton.textContent = 'Sign Up';
+                            homeButton.onclick = () => {
+                                window.location.href = `./screens/signup.html?from=${pageType}`;
+                            };
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error setting up home button:', error);
                 }
             }
             
