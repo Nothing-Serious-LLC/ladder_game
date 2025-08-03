@@ -277,7 +277,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 16px;
         }
@@ -430,14 +430,14 @@
 </head>
 <body>
     <div class="header">
+        <a href="home.html" class="back-button" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); margin: 0;">
+            ← Back
+        </a>
         <h1 class="title">LADDER</h1>
         <p class="date-info" id="stats-date-display">Saturday, August 2, 2025</p>
     </div>
     
     <div class="container">
-        <a href="home.html" class="back-button">
-            ← Back to Home
-        </a>
         
         <!-- Puzzle History (Top Priority) -->
         <div class="puzzle-history-card">
@@ -476,6 +476,14 @@
                 <div class="stat-item">
                     <div class="stat-number" id="success-rate">0%</div>
                     <div class="stat-label">Success</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="average-hints">0.0</div>
+                    <div class="stat-label">Avg Hints</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="total-hints">0</div>
+                    <div class="stat-label">Total Hints</div>
                 </div>
             </div>
         </div>
@@ -556,11 +564,17 @@
             currentDateEl.textContent = today;
             
             puzzleDetails.innerHTML = `
-                <div class="today-puzzle-prompt">
-                    <div class="prompt-icon">🎯</div>
-                    <div class="prompt-title">Today's Puzzle</div>
-                    <div class="prompt-text">You haven't completed today's puzzle yet</div>
-                    <button class="action-button" onclick="window.location.href='../index.html?autostart=true'">Play Today's Puzzle</button>
+                <div class="puzzle-item" style="border: 1px dashed var(--gray-400); background: var(--gray-50);">
+                    <div class="puzzle-info">
+                        <div class="puzzle-header">
+                            <div class="puzzle-number">Today's Puzzle</div>
+                            <div class="status-badge status-not-attempted">Not Started</div>
+                        </div>
+                        <div class="puzzle-theme">Complete today's puzzle to track your progress</div>
+                        <div class="puzzle-details">
+                            <button onclick="window.location.href='../index.html?autostart=true'" style="background: var(--primary-green); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">Play Now</button>
+                        </div>
+                    </div>
                 </div>
             `;
             
@@ -575,6 +589,8 @@
             document.getElementById('current-streak').textContent = '--';
             document.getElementById('average-time').textContent = '--:--';
             document.getElementById('success-rate').textContent = '--%';
+            document.getElementById('average-hints').textContent = '--';
+            document.getElementById('total-hints').textContent = '--';
         }
         
         async function loadPuzzleHistory() {
@@ -775,11 +791,21 @@
             const avgTime = avgSeconds > 0 ? 
                 `${Math.floor(avgSeconds / 60)}:${(avgSeconds % 60).toString().padStart(2, '0')}` : '--:--';
             
+            // Calculate hint statistics
+            const totalHints = allPuzzleHistory
+                .reduce((sum, p) => sum + (p.hints_used || 0), 0);
+            
+            const puzzlesWithHints = allPuzzleHistory.filter(p => p.hints_used !== undefined && p.hints_used !== null);
+            const avgHints = puzzlesWithHints.length > 0 ? 
+                (totalHints / puzzlesWithHints.length).toFixed(1) : '0.0';
+            
             // Update display
             document.getElementById('total-completed').textContent = completed;
             document.getElementById('current-streak').textContent = streak;
             document.getElementById('average-time').textContent = avgTime;
             document.getElementById('success-rate').textContent = `${successRate}%`;
+            document.getElementById('average-hints').textContent = avgHints;
+            document.getElementById('total-hints').textContent = totalHints;
         }
         
         window.navigateToDay = function(direction) {
