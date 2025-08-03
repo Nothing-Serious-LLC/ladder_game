@@ -52,7 +52,7 @@
             background: var(--gray-50);
             z-index: 1000;
             text-align: center;
-            padding: 20px 20px 30px 20px;
+            padding: 15px 20px 25px 20px;
             border-bottom: 1px solid var(--gray-200);
         }
         
@@ -72,14 +72,14 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 120px 20px 0 20px; /* Top padding for fixed header */
+            padding: 110px 20px 0 20px; /* Top padding for fixed header */
             flex: 1;
         }
         
         /* Better spacing on desktop */
         @media (min-width: 768px) {
             .container {
-                padding: 120px 40px 0 40px;
+                padding: 110px 40px 0 40px;
             }
         }
         
@@ -594,27 +594,23 @@
                 }
                 
                 puzzleDetails.innerHTML = `
-                    <div class="${cardClass}" style="background: linear-gradient(135deg, ${wasCompleted ? 'var(--primary-green)' : 'var(--red-500)'} 0%, ${wasCompleted ? '#5d9556' : '#c0392b'} 100%); color: white; border-radius: 16px; padding: 24px;">
-                        <div class="puzzle-header" style="text-align: center; margin-bottom: 20px;">
-                            <div class="puzzle-number" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;">Puzzle #${puzzleNumber}</div>
-                            <div class="puzzle-date" style="font-size: 1.1rem; opacity: 0.95;">${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                    <div class="${cardClass}" style="background: linear-gradient(135deg, ${wasCompleted ? 'var(--primary-green)' : 'var(--red-500)'} 0%, ${wasCompleted ? '#5d9556' : '#c0392b'} 100%); color: white; border-radius: 16px; padding: 32px;">
+                        <div class="puzzle-theme-section" style="text-align: center; margin-bottom: 40px;">
+                            <div class="puzzle-theme-large" style="font-size: 2.2rem; font-weight: 700; font-style: italic; line-height: 1.3; margin-bottom: 12px;">${puzzle.puzzle_name || 'Unknown'}</div>
+                            <div class="puzzle-subtitle" style="font-size: 1.0rem; color: rgba(255, 255, 255, 0.8); font-weight: 400; font-style: italic;">Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                         </div>
                         
-                        <div class="puzzle-theme-section" style="text-align: center; margin: 24px 0;">
-                            <div class="puzzle-theme-large" style="font-size: 1.4rem; font-weight: 600; font-style: italic; line-height: 1.3;">${puzzle.puzzle_name || 'Unknown'}</div>
-                        </div>
-                        
-                        <div class="completion-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-                            <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${formatTimeForStats(completionTime)}</div>
+                        <div class="completion-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div class="completion-stat" style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="completion-stat-value" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">${formatTimeForStats(completionTime)}</div>
                                 <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Time</div>
                             </div>
-                            <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${hintsRemaining}</div>
+                            <div class="completion-stat" style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="completion-stat-value" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">${hintsRemaining}</div>
                                 <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Hints Remaining</div>
                             </div>
-                            <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
-                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${remainingTries}</div>
+                            <div class="completion-stat" style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="completion-stat-value" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;">${remainingTries}</div>
                                 <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Tries Remaining</div>
                             </div>
                         </div>
@@ -639,12 +635,12 @@
                 }
                 
                 puzzleDetails.innerHTML = `
-                    <div class="puzzle-item" style="border: 1px dashed var(--gray-400); background: var(--gray-50); text-align: center; padding: 40px 20px; border-radius: 16px;">
-                        <div class="puzzle-header" style="margin-bottom: 20px;">
-                            <div class="puzzle-number" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; color: var(--gray-600);">Puzzle #${puzzleNumber}</div>
-                            <div class="puzzle-date" style="font-size: 1.1rem; color: var(--gray-600);">${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                    <div class="puzzle-item" style="border: 1px dashed var(--gray-400); background: var(--gray-50); text-align: center; padding: 48px 32px; border-radius: 16px;">
+                        <div class="puzzle-header" style="margin-bottom: 32px;">
+                            <div class="puzzle-number" style="font-size: 2.0rem; font-weight: 700; margin-bottom: 12px; color: var(--gray-700);">Puzzle #${puzzleNumber}</div>
+                            <div class="puzzle-date" style="font-size: 1.0rem; color: var(--gray-600); font-style: italic;">${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                         </div>
-                        <div class="empty-state-text" style="color: var(--gray-600); margin-bottom: 8px;">${description}</div>
+                        <div class="empty-state-text" style="color: var(--gray-600); margin-bottom: 16px; font-size: 1.1rem;">${description}</div>
                         ${actionButton}
                     </div>
                 `;
