@@ -1003,7 +1003,7 @@
                         showCompletedPuzzle(completion, puzzleDate);
                     } else {
                         // Show not started state - puzzle number and date only
-                        puzzleName.textContent = `Puzzle #${getDayOfYear()}`;
+                        puzzleName.textContent = `Puzzle #${getPuzzleNumber(getCurrentPuzzleDate())}`;
                         puzzleDateEl.textContent = puzzleDate;
                         statusBadge.style.display = 'none'; // Hide status badge for not started
                         playButton.textContent = 'Play Today\'s Puzzle';
@@ -1024,7 +1024,7 @@
                         showCountdown();
                     } else {
                         // Show not started state - puzzle number and date only
-                        puzzleName.textContent = `Puzzle #${getDayOfYear()}`;
+                        puzzleName.textContent = `Puzzle #${getPuzzleNumber(getCurrentPuzzleDate())}`;
                         puzzleDateEl.textContent = puzzleDate;
                         statusBadge.style.display = 'none'; // Hide status badge for not started
                         playButton.textContent = 'Play Today\'s Puzzle';
@@ -1034,15 +1034,16 @@
                 }
             } catch (error) {
                 console.error('Error loading daily puzzle:', error);
-                document.getElementById('daily-puzzle-name').textContent = `Puzzle #${getDayOfYear()}`;
+                document.getElementById('daily-puzzle-name').textContent = `Puzzle #${getPuzzleNumber(getCurrentPuzzleDate())}`;
                 document.getElementById('daily-puzzle-date').textContent = new Date().toLocaleDateString();
             }
         }
         
-        function getDayOfYear() {
-            const now = new Date();
-            const start = new Date(now.getFullYear(), 0, 0);
-            const diff = (now - start) + ((start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000);
+        function getPuzzleNumber(puzzleDate) {
+            // Calculate puzzle number based on the puzzle date (respecting 3am ET reset)
+            const date = new Date(puzzleDate || getCurrentPuzzleDate());
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
             const oneDay = 1000 * 60 * 60 * 24;
             return Math.floor(diff / oneDay);
         }
@@ -1059,7 +1060,7 @@
             const wasCompleted = completion.completed;
             const completionTime = completion.completion_time || 'Unknown';
             const hintsUsed = completion.hints_used || 0;
-            const puzzleNumber = getDayOfYear();
+            const puzzleNumber = getPuzzleNumber(getCurrentPuzzleDate());
             
             // Calculate hints remaining (assuming 3 total hints available)
             const totalHints = 3;
@@ -1071,15 +1072,15 @@
             const statusIcon = wasCompleted ? '✓' : '✗';
             
             dailyCard.innerHTML = `
+                <div class="puzzle-theme-section">
+                    <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
+                </div>
+                
                 <div class="puzzle-status centered">
                     <div class="puzzle-info centered">
                         <div class="puzzle-name">Puzzle #${puzzleNumber}</div>
                         <div class="puzzle-date">${puzzleDate}</div>
                     </div>
-                </div>
-                
-                <div class="puzzle-theme-section">
-                    <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
                 </div>
                 
                 <div class="completion-stats three-column">
@@ -1528,7 +1529,7 @@
                         .insert({
                             user_id: user.id,
                             puzzle_date: today,
-                            puzzle_name: `Puzzle #${getDayOfYear()}`, // Will be updated when completed
+                            puzzle_name: `Puzzle #${getPuzzleNumber(getCurrentPuzzleDate())}`, // Will be updated when completed
                             completed: false,
                             created_at: new Date().toISOString()
                         });
