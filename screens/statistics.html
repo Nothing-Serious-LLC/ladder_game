@@ -22,6 +22,7 @@
             --gray-50: #fafafa;
             --gray-200: #d3d6da;
             --gray-400: #a8adb3;
+            --gray-100: #f3f4f6;
             --gray-600: #787c7e;
             --gray-700: #565959;
             --gray-900: #1a1a1b;
@@ -125,7 +126,7 @@
             border: 1px solid var(--gray-200);
             padding: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
         
         .section-title {
@@ -153,6 +154,8 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.2s;
+            color: var(--gray-700);
+            font-weight: 500;
         }
         
         .nav-button:hover:not(:disabled) {
@@ -629,6 +632,57 @@
             }
         }
         
+        /* Shimmer Loading Animation */
+        .shimmer-wrapper {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .shimmer-content {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 1px;
+        }
+        
+        .shimmer-line {
+            background: var(--gray-200);
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+        
+        .shimmer-line.title {
+            height: 32px;
+            width: 60%;
+            margin: 0 auto 20px;
+        }
+        
+        .shimmer-line.subtitle {
+            height: 20px;
+            width: 40%;
+            margin: 0 auto 24px;
+        }
+        
+        .shimmer-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .shimmer-stat {
+            background: var(--gray-100);
+            border-radius: 8px;
+            height: 80px;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
         @media (max-width: 480px) {
             .container {
                 padding: 110px 16px 0 16px;
@@ -664,6 +718,11 @@
             .puzzle-date {
                 font-size: 1.2rem;
             }
+            
+            .shimmer-stats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
         }
     </style>
 </head>
@@ -674,16 +733,16 @@
     </div>
     
     <div class="container">
-        <a href="home.html" class="back-button">← Back</a>
+        <button class="back-button" onclick="window.location.href='home.html'">← Back</button>
         
         <!-- Puzzle History (Top Priority) -->
         <div class="puzzle-history-card">
             <h2 class="section-title">Puzzle History</h2>
             
             <div class="puzzle-navigation">
-                <button class="nav-button" id="prev-button" onclick="navigateToDay(-1)">←</button>
+                <button class="nav-button" id="prev-button" onclick="navigateToDay(1)" title="Previous day">←</button>
                 <div class="current-date" id="current-date">Loading...</div>
-                <button class="nav-button" id="next-button" onclick="navigateToDay(1)">→</button>
+                <button class="nav-button" id="next-button" onclick="navigateToDay(-1)" title="Next day">→</button>
             </div>
             
             <div class="puzzle-details" id="puzzle-details">
@@ -803,8 +862,9 @@
             const puzzleDetails = document.getElementById('puzzle-details');
             const currentDateEl = document.getElementById('current-date');
             
-            // Show loading
+            // Show loading with shimmer animation
             currentDateEl.textContent = 'Loading...';
+            showShimmerLoading();
             
             // Get the date for current day index
             const targetDate = getDateByOffset(currentDayIndex);
@@ -1064,6 +1124,23 @@
             window.location.href = `../index.html?archive=true&date=${puzzleDate}&puzzle=${puzzleNumber}`;
         };
         
+        function showShimmerLoading() {
+            const puzzleDetails = document.getElementById('puzzle-details');
+            puzzleDetails.innerHTML = `
+                <div class="shimmer-wrapper">
+                    <div class="shimmer-content">
+                        <div class="shimmer-line title"></div>
+                        <div class="shimmer-line subtitle"></div>
+                        <div class="shimmer-stats">
+                            <div class="shimmer-stat"></div>
+                            <div class="shimmer-stat"></div>
+                            <div class="shimmer-stat"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
         function formatTimeForStats(timeString) {
             if (!timeString || timeString === 'Unknown') return '--:--';
             
@@ -1195,24 +1272,24 @@
         function updateDayNavigation() {
             const prevButton = document.getElementById('prev-button');
             const nextButton = document.getElementById('next-button');
+            const maxDaysBack = 90;
             
             console.log('Updating navigation - currentDayIndex:', currentDayIndex);
             
-            // Disable next button if we're already at today (currentDayIndex = 0)
+            // Next button (→) - goes forward in time (decreases currentDayIndex)
             if (nextButton) {
-                nextButton.disabled = currentDayIndex === 0;
-                nextButton.style.opacity = currentDayIndex === 0 ? '0.5' : '1';
-                nextButton.style.cursor = currentDayIndex === 0 ? 'not-allowed' : 'pointer';
-                console.log('Next button disabled:', nextButton.disabled);
+                nextButton.disabled = currentDayIndex === 0; // Can't go beyond today
+                nextButton.style.opacity = nextButton.disabled ? '0.5' : '1';
+                nextButton.style.cursor = nextButton.disabled ? 'not-allowed' : 'pointer';
+                console.log('Next button (→) disabled:', nextButton.disabled, '(cannot go beyond today)');
             }
             
-            // Always enable prev button (can go back in time) - but limit to reasonable history
+            // Prev button (←) - goes back in time (increases currentDayIndex)
             if (prevButton) {
-                const maxDaysBack = 90; // Limit to 90 days back
-                prevButton.disabled = currentDayIndex >= maxDaysBack;
+                prevButton.disabled = currentDayIndex >= maxDaysBack; // Limit historical browsing
                 prevButton.style.opacity = prevButton.disabled ? '0.5' : '1';
                 prevButton.style.cursor = prevButton.disabled ? 'not-allowed' : 'pointer';
-                console.log('Prev button disabled:', prevButton.disabled, 'Days back:', currentDayIndex);
+                console.log('Prev button (←) disabled:', prevButton.disabled, '(max', maxDaysBack, 'days back)');
             }
         }
         
@@ -1365,21 +1442,27 @@
         
         window.navigateToDay = async function(direction) {
             const newDayIndex = currentDayIndex + direction;
+            const maxDaysBack = 90; // Limit to 90 days back
             
             console.log('Navigation Debug:', {
                 currentDayIndex,
                 direction,
                 newDayIndex,
-                today: getCurrentPuzzleDate()
+                today: getCurrentPuzzleDate(),
+                interpretation: direction === 1 ? 'Going back in time' : 'Going forward in time'
             });
             
-            // Don't allow going to future days (newDayIndex < 0)
-            if (newDayIndex >= 0) {
+            // Prevent going to future days (currentDayIndex < 0) or too far back
+            if (newDayIndex >= 0 && newDayIndex <= maxDaysBack) {
                 currentDayIndex = newDayIndex;
-                console.log('Navigating to day index:', currentDayIndex);
+                console.log('Navigating to day index:', currentDayIndex, '(' + (currentDayIndex === 0 ? 'today' : currentDayIndex + ' days ago') + ')');
                 await renderCurrentDayPuzzle();
             } else {
-                console.log('Cannot navigate to future day, newDayIndex:', newDayIndex);
+                if (newDayIndex < 0) {
+                    console.log('Cannot navigate to future day, newDayIndex:', newDayIndex);
+                } else {
+                    console.log('Cannot navigate beyond', maxDaysBack, 'days back');
+                }
             }
         };
         
