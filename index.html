@@ -4783,6 +4783,10 @@ https://ladder.game/`;
                     const today = window.gameModule.getCurrentPuzzleDate();
                     const completionTime = this.finalTimeMs || Date.now() - this.startTime;
                     
+                    // Convert completion time to PostgreSQL interval format
+                    const completionSeconds = Math.floor(completionTime / 1000);
+                    const completionInterval = `${completionSeconds} seconds`;
+                    
                     // Try to insert completion record
                     const { data, error } = await window.supabaseClient
                         .from('puzzle_completions')
@@ -4791,7 +4795,7 @@ https://ladder.game/`;
                             puzzle_date: today,
                             puzzle_name: this.currentPuzzle.theme,
                             completed: true,
-                            completion_time: Math.floor(completionTime / 1000), // Store in seconds
+                            completion_time: completionInterval, // Store as PostgreSQL interval
                             hints_used: this.hintsUsed || 0,
                             created_at: new Date().toISOString(),
                             updated_at: new Date().toISOString()

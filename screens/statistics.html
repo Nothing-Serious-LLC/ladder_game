@@ -336,7 +336,7 @@
             font-size: 0.9rem;
         }
         
-        .auth-required-state {
+        .no-data-state, .today-puzzle-prompt {
             text-align: center;
             padding: 60px 20px;
             background: white;
@@ -345,27 +345,27 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
         
-        .auth-icon {
+        .no-data-icon, .prompt-icon {
             font-size: 4rem;
             margin-bottom: 20px;
             color: var(--gray-400);
         }
         
-        .auth-title {
+        .no-data-title, .prompt-title {
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 12px;
             color: var(--gray-900);
         }
         
-        .auth-text {
+        .no-data-text, .prompt-text {
             font-size: 1rem;
             color: var(--gray-600);
             margin-bottom: 24px;
             line-height: 1.5;
         }
         
-        .auth-button {
+        .action-button {
             background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
             color: white;
             border: none;
@@ -378,7 +378,7 @@
             box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
         }
         
-        .auth-button:hover {
+        .action-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(106, 170, 100, 0.4);
         }
@@ -513,19 +513,24 @@
         
 
         
-        function showAuthenticationRequired() {
-            // Show authentication required message in puzzle details
+        function showNoDataMessage(message, actionButton = null) {
+            // Show message in puzzle details
             const puzzleDetails = document.getElementById('puzzle-details');
             const currentDateEl = document.getElementById('current-date');
             
-            currentDateEl.textContent = 'Sign In Required';
+            currentDateEl.textContent = 'No Data Available';
+            
+            let actionButtonHTML = '';
+            if (actionButton) {
+                actionButtonHTML = `<button class="action-button" onclick="${actionButton.onclick}">${actionButton.text}</button>`;
+            }
             
             puzzleDetails.innerHTML = `
-                <div class="auth-required-state">
-                    <div class="auth-icon">🔒</div>
-                    <div class="auth-title">Create an Account</div>
-                    <div class="auth-text">Sign up to track your puzzle history and view detailed statistics</div>
-                    <button class="auth-button" onclick="window.location.href='signup.html'">Sign Up</button>
+                <div class="no-data-state">
+                    <div class="no-data-icon">📊</div>
+                    <div class="no-data-title">No Puzzle Data</div>
+                    <div class="no-data-text">${message}</div>
+                    ${actionButtonHTML}
                 </div>
             `;
             
@@ -535,6 +540,33 @@
             
             // Show empty statistics
             showEmptyStats();
+        }
+        
+        function showTodaysPuzzlePrompt() {
+            const puzzleDetails = document.getElementById('puzzle-details');
+            const currentDateEl = document.getElementById('current-date');
+            
+            const today = new Date().toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+            
+            currentDateEl.textContent = today;
+            
+            puzzleDetails.innerHTML = `
+                <div class="today-puzzle-prompt">
+                    <div class="prompt-icon">🎯</div>
+                    <div class="prompt-title">Today's Puzzle</div>
+                    <div class="prompt-text">You haven't completed today's puzzle yet</div>
+                    <button class="action-button" onclick="window.location.href='../index.html?autostart=true'">Play Today's Puzzle</button>
+                </div>
+            `;
+            
+            // Hide navigation buttons
+            document.getElementById('prev-button').style.display = 'none';
+            document.getElementById('next-button').style.display = 'none';
         }
         
         function showEmptyStats() {
@@ -563,8 +595,8 @@
                 clearTimeout(loadingTimeout);
                 
                 if (authError || !user) {
-                    // Not authenticated - show authentication prompt
-                    showAuthenticationRequired();
+                    // Not authenticated - show different message
+                    showNoDataMessage("Sign up to track your puzzle history");
                     return;
                 }
                 
@@ -579,31 +611,30 @@
                     console.error('Error fetching completions:', completionError);
                     allPuzzleHistory = [];
                 } else {
-                    // Transform database data to expected format
-                    allPuzzleHistory = (completions || []).map((completion, index) => {
-                        // Calculate puzzle number based on date (rough approximation)
-                        const puzzleDate = new Date(completion.puzzle_date);
-                        const startDate = new Date('2024-01-01'); // Adjust this to your actual start date
-                        const daysDiff = Math.floor((puzzleDate - startDate) / (1000 * 60 * 60 * 24));
-                        
-                        return {
-                            puzzle_number: daysDiff + 1,
-                            puzzle_date: completion.puzzle_date,
-                            theme: completion.puzzle_name || 'Daily Puzzle',
-                            completed: completion.completed || false,
-                            completion_time: completion.completion_time ? 
-                                `${Math.floor(completion.completion_time / 60)}:${(completion.completion_time % 60).toString().padStart(2, '0')}` : 
-                                null,
-                            hints_used: completion.hints_used || 0,
-                            puzzle_type: 'daily' // For now, all are daily puzzles
-                        };
-                    });
-                    
-                    // Keep empty array if no completions
+                    allPuzzleHistory = (completions || []);
                 }
                 
-                renderCurrentDay();
-                loadOverallStats();
+                // Check different states and show appropriate content
+                if (!allPuzzleHistory || allPuzzleHistory.length === 0) {
+                    // No puzzle data - check if they should play today's puzzle
+                    const today = getCurrentPuzzleDate();
+                    const hasCompletedToday = allPuzzleHistory.some(p => p.puzzle_date === today);
+                    
+                    if (!hasCompletedToday) {
+                        // They haven't played today - prompt them to play
+                        showTodaysPuzzlePrompt();
+                    } else {
+                        // They have some history but we're viewing a day without data
+                        showNoDataMessage("No puzzle data for this period", {
+                            text: "Buy Historic Puzzles",
+                            onclick: "window.location.href='product-overview.html?product=historic-puzzles'"
+                        });
+                    }
+                } else {
+                    // They have data - render normally
+                    renderCurrentDay();
+                    loadOverallStats();
+                }
                 
                 // Clear timeout on successful completion
                 clearTimeout(loadingTimeout);
