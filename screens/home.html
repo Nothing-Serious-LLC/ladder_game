@@ -198,6 +198,19 @@
             font-style: italic;
         }
         
+        .puzzle-theme-section {
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .puzzle-theme-large {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            font-style: italic;
+            line-height: 1.3;
+        }
+        
         .status-badge {
             padding: 8px 16px;
             border-radius: 20px;
@@ -253,6 +266,8 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
+            font-size: 1.0rem;
+            font-weight: 600;
         }
         
         .countdown-text {
@@ -660,6 +675,10 @@
                 grid-template-columns: 1fr;
                 gap: 12px;
             }
+            
+            .puzzle-theme-large {
+                font-size: 1.2rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1037,12 +1056,14 @@
                     <div class="puzzle-info centered">
                         <div class="puzzle-name">Puzzle #${puzzleNumber}</div>
                         <div class="puzzle-date">${puzzleDate}</div>
-                        <div class="puzzle-theme">Theme: ${completion.puzzle_theme || completion.theme || 'Unknown'}</div>
-                        <div class="status-badge status-${wasCompleted ? 'completed' : 'failed'}">${statusIcon} ${statusText}</div>
                     </div>
                 </div>
                 
-                <div class="completion-stats">
+                <div class="puzzle-theme-section">
+                    <div class="puzzle-theme-large">${completion.puzzle_theme || completion.theme || 'Unknown'}</div>
+                </div>
+                
+                <div class="completion-stats three-column">
                     <div class="completion-stat">
                         <div class="completion-stat-value">${formatTime(completionTime)}</div>
                         <div class="completion-stat-label">Time</div>
@@ -1051,19 +1072,19 @@
                         <div class="completion-stat-value">${hintsRemaining}</div>
                         <div class="completion-stat-label">Hints Remaining</div>
                     </div>
+                    <div class="completion-stat">
+                        <div class="completion-stat-value">${statusIcon}</div>
+                        <div class="completion-stat-label">${statusText}</div>
+                    </div>
                 </div>
                 
                 <button class="play-button countdown-button" onclick="togglePuzzleView()">
-                    <div class="countdown-text">Next Puzzle In</div>
-                    <div class="countdown-time" id="mini-countdown">Loading...</div>
+                    Countdown to Next Puzzle
                 </button>
             `;
             
             // Apply the appropriate card styling
             dailyCard.className = `${cardClass} card`;
-            
-            // Start mini countdown
-            startMiniCountdown();
         }
         
         function formatTime(timeString) {
@@ -1483,5 +1504,6 @@
         };
     </script>
 </body>
+</html>
 </html>
 </html>
