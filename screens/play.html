@@ -4921,7 +4921,12 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     this.setupHomeButton('completion');
                     
                     // Set up pack navigation if this is a pack puzzle
-                    this.setupPackNavigation();
+                    try {
+                        await this.setupPackNavigation();
+                        console.log('Pack navigation setup completed');
+                    } catch (error) {
+                        console.error('Error setting up pack navigation:', error);
+                    }
                     
                     // Set up recommendations for daily puzzles
                     this.setupRecommendations();
@@ -5012,7 +5017,12 @@ https://ladder.game/`;
                     this.setupHomeButton('failure');
                     
                     // Set up pack navigation if this is a pack puzzle
-                    this.setupPackNavigation();
+                    try {
+                        await this.setupPackNavigation();
+                        console.log('Pack navigation setup completed');
+                    } catch (error) {
+                        console.error('Error setting up pack navigation:', error);
+                    }
                     
                     // Set up recommendations for daily puzzles
                     this.setupRecommendations();
