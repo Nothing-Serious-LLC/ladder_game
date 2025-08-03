@@ -380,17 +380,44 @@
         }
         
         function goBack() {
-            window.location.href = 'store.html';
+            // Get the 'from' parameter to determine where to go back to
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromPage = urlParams.get('from');
+            
+            // Navigate back to the appropriate page
+            switch (fromPage) {
+                case 'my-puzzles':
+                    window.location.href = 'my-puzzles.html';
+                    break;
+                case 'home':
+                    window.location.href = 'home.html';
+                    break;
+                case 'store':
+                default:
+                    // Default to store if no 'from' parameter or unrecognized value
+                    window.location.href = 'store.html';
+                    break;
+            }
         }
         
         function purchaseProduct() {
             const product = products[productId];
             if (product) {
+                // Get the 'from' parameter to pass it along
+                const urlParams = new URLSearchParams(window.location.search);
+                const fromPage = urlParams.get('from');
+                
                 const params = new URLSearchParams({
                     item: product.name,
                     price: product.price,
                     description: product.description
                 });
+                
+                // Add the 'from' parameter if it exists
+                if (fromPage) {
+                    params.set('from', fromPage);
+                }
+                
                 window.location.href = `purchase-confirmation.html?${params.toString()}`;
             }
         }

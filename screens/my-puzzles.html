@@ -482,12 +482,12 @@
                 // TODO: Navigate to individual pack puzzle selection
             } else {
                 // Navigate to product overview to purchase
-                window.location.href = `product-overview.html?product=${pack.id}`;
+                window.location.href = `product-overview.html?product=${pack.id}&from=my-puzzles`;
             }
         }
         
         window.unlockPack = function(packId) {
-            window.location.href = `product-overview.html?product=${packId}`;
+            window.location.href = `product-overview.html?product=${packId}&from=my-puzzles`;
         };
         
         window.goBack = function() {
