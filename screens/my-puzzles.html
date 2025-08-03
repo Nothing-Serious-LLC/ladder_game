@@ -112,6 +112,19 @@
             overflow: hidden;
         }
         
+        .completion-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--green-500);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+        
         .pack-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
@@ -163,9 +176,11 @@
         }
         
         .pack-description {
-            font-size: 0.9rem;
-            color: var(--gray-600);
+            font-size: 0.8rem;
+            color: var(--gray-500);
             margin-bottom: 12px;
+            opacity: 0.8;
+            line-height: 1.4;
         }
         
         .pack-progress {
@@ -297,23 +312,27 @@
             margin-bottom: 20px;
         }
         
-        /* Completion tag for owned packs */
-        .completion-fraction {
-            font-size: 0.9rem;
-            color: var(--gray-600);
-            margin-top: 8px;
-            font-weight: 500;
-        }
+        /* Remove old completion fraction styling - now using badge */
         
         .completed-tag {
-            background: var(--green-500);
+            background: var(--green-600);
             color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-top: 8px;
+            margin-top: 12px;
             display: inline-block;
+            box-shadow: 0 2px 8px rgba(106, 170, 100, 0.3);
+        }
+        
+        .pack-card.owned .completion-badge {
+            background: var(--green-500);
+        }
+        
+        .pack-card.owned.completed .completion-badge {
+            background: var(--green-600);
+            box-shadow: 0 2px 8px rgba(106, 170, 100, 0.4);
         }
         
         /* Remove progress bar styling for owned packs */
@@ -543,14 +562,14 @@
                 const isCompleted = completedPuzzles >= pack.totalPuzzles;
                 
                 const packCard = document.createElement('div');
-                packCard.className = `pack-card unlocked owned`;
+                packCard.className = `pack-card unlocked owned${isCompleted ? ' completed' : ''}`;
                 packCard.onclick = () => handlePackClick(pack, true);
                 
                 packCard.innerHTML = `
+                    <div class="completion-badge">${completedPuzzles}/${pack.totalPuzzles}</div>
                     <div class="pack-icon">${pack.icon}</div>
                     <div class="pack-name">${pack.name}</div>
                     <div class="pack-description">${pack.description}</div>
-                    <div class="completion-fraction">${completedPuzzles}/${pack.totalPuzzles} puzzles</div>
                     ${isCompleted ? '<div class="completed-tag">All Complete!</div>' : ''}
                 `;
                 
