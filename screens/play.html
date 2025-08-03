@@ -2356,7 +2356,6 @@
             <div class="completion-card card completion-success">
                 <div class="completion-header">
                     <h2 class="completion-title">Puzzle Complete!</h2>
-                    <div class="completion-status">✓ Completed</div>
                 </div>
                 
                 <div class="completion-details">
@@ -5143,41 +5142,61 @@ https://ladder.game/`;
                     const packId = urlParams.get('pack_id');
                     const puzzleId = urlParams.get('puzzle_id');
                     
+                    console.log('Setup pack navigation - Type:', puzzleType, 'PackID:', packId, 'PuzzleID:', puzzleId);
+                    
                     const packNavigationCard = document.getElementById('pack-navigation');
                     const nextPuzzleBtn = document.getElementById('next-puzzle-btn');
                     const returnToPackBtn = document.getElementById('return-to-pack-btn');
                     const remainingCountSpan = document.getElementById('remaining-count');
                     
+                    if (!packNavigationCard) {
+                        console.error('Pack navigation card element not found');
+                        return;
+                    }
+                    
                     // Only show pack navigation for pack and archive puzzles
                     if (puzzleType === 'pack' || puzzleType === 'archive') {
+                        console.log('Showing pack navigation for puzzle type:', puzzleType);
                         packNavigationCard.style.display = 'block';
                         
                         if (puzzleType === 'pack' && packId) {
                             // Set up for pack puzzles
-                            returnToPackBtn.style.display = 'block';
-                            returnToPackBtn.onclick = () => {
-                                window.location.href = `./pack-puzzles.html?pack=${packId}`;
-                            };
+                            if (returnToPackBtn) {
+                                returnToPackBtn.style.display = 'block';
+                                returnToPackBtn.onclick = () => {
+                                    window.location.href = `./pack-puzzles.html?pack=${packId}`;
+                                };
+                                console.log('Return to pack button set up for:', packId);
+                            }
                             
                             // Check if there are more puzzles in the pack
-                            if (window.supabaseClient) {
-                                const { data: { user } } = await window.supabaseClient.auth.getUser();
-                                if (user) {
-                                    await this.setupNextPuzzleButton(packId, puzzleId, nextPuzzleBtn, remainingCountSpan);
+                            if (window.supabaseClient && nextPuzzleBtn && remainingCountSpan) {
+                                try {
+                                    const { data: { user } } = await window.supabaseClient.auth.getUser();
+                                    if (user) {
+                                        await this.setupNextPuzzleButton(packId, puzzleId, nextPuzzleBtn, remainingCountSpan);
+                                    }
+                                } catch (authError) {
+                                    console.error('Error getting user for pack navigation:', authError);
                                 }
+                            } else {
+                                console.warn('Missing supabaseClient or pack navigation elements');
                             }
                         } else if (puzzleType === 'archive') {
                             // Set up for archive puzzles (different navigation)
-                            returnToPackBtn.textContent = 'Return to Archives';
-                            returnToPackBtn.style.display = 'block';
-                            returnToPackBtn.onclick = () => {
-                                window.location.href = './home.html'; // Or archives page when available
-                            };
+                            if (returnToPackBtn) {
+                                returnToPackBtn.textContent = 'Return to Archives';
+                                returnToPackBtn.style.display = 'block';
+                                returnToPackBtn.onclick = () => {
+                                    window.location.href = './home.html'; // Or archives page when available
+                                };
+                            }
                             
                             // Archive puzzles might have different next logic in the future
                         }
                     } else {
                         // Hide pack navigation for daily puzzles
+                        console.log('Hiding pack navigation for daily puzzle');
                         packNavigationCard.style.display = 'none';
                     }
                 } catch (error) {
