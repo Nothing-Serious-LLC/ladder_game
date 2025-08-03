@@ -434,6 +434,7 @@
             display: flex;
             justify-content: center;
             gap: 32px;
+            margin-top: 40px;
             margin-bottom: 30px;
             flex-wrap: wrap;
         }
@@ -1415,6 +1416,19 @@
             border-color: #5d9556 !important;
         }
         
+        .failure-buttons .failure-button.retry {
+            background: var(--primary-orange) !important;
+            color: white !important;
+            border-color: var(--primary-orange) !important;
+            margin-top: 0 !important;
+            width: auto !important;
+        }
+        
+        .failure-buttons .failure-button.retry:hover {
+            background: var(--primary-orange-hover) !important;
+            border-color: var(--primary-orange-hover) !important;
+        }
+        
         /* Signup Card Styles */
         .signup-card {
             animation-delay: 0.15s;
@@ -2240,6 +2254,7 @@
                 <div class="failure-actions">
                 <div class="failure-buttons">
                         <button class="failure-button share" id="failure-share">Share Result</button>
+                        <button class="failure-button retry" id="failure-retry" onclick="retryPuzzle()">Try Again</button>
                     </div>
                     
                     <button class="failure-button primary" id="failure-home-button">Go to Home</button>
@@ -2866,9 +2881,8 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     
                     // Fetch the specific puzzle from the pack
                     const { data: puzzle, error: puzzleError } = await client
-                        .from('puzzle_pack_puzzles')
+                        .from('puzzle_pack')
                         .select('*')
-                        .eq('pack_id', packId)
                         .eq('id', puzzleId)
                         .single();
                     
@@ -4629,6 +4643,12 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                 }, 1000); // 1 second delay to see solution
                 }
                 
+                // Track pack puzzle completion/attempt if this is a pack puzzle
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('type') === 'pack') {
+                    this.trackPackPuzzleAttempt(won, timeString);
+                }
+                
                 // Game ended - no buttons to disable
             }
             
@@ -5019,6 +5039,88 @@ https://ladder.game/`;
                 }
             }
             
+            async trackPackPuzzleAttempt(won, timeString) {
+                try {
+                    // Check if user is authenticated
+                    if (!window.supabaseClient) {
+                        console.log('Supabase not available for pack puzzle tracking');
+                        return;
+                    }
+                    
+                    const { data: { user } } = await window.supabaseClient.auth.getUser();
+                    if (!user) {
+                        console.log('User not authenticated, skipping pack puzzle tracking');
+                        return;
+                    }
+                    
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const packId = urlParams.get('pack_id');
+                    const puzzleId = urlParams.get('puzzle_id');
+                    
+                    if (!packId || !puzzleId) {
+                        console.error('Missing pack or puzzle ID');
+                        return;
+                    }
+                    
+                    const completionTime = this.finalTimeMs || Date.now() - this.startTime;
+                    const completionSeconds = Math.floor(completionTime / 1000);
+                    const completionInterval = `${completionSeconds} seconds`;
+                    
+                    // Check if there's an existing record
+                    const { data: existing } = await window.supabaseClient
+                        .from('puzzle_pack_completions')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .eq('puzzle_id', puzzleId)
+                        .single();
+                    
+                    if (existing) {
+                        // Update existing record
+                        const { error } = await window.supabaseClient
+                            .from('puzzle_pack_completions')
+                            .update({
+                                attempts: existing.attempts + 1,
+                                completed: won,
+                                completion_time: won ? completionInterval : existing.completion_time,
+                                hints_used: won ? (this.hintsUsed || 0) : existing.hints_used,
+                                tries_used: won ? (this.wrongGuesses || 0) : existing.tries_used,
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq('id', existing.id);
+                        
+                        if (error) {
+                            console.error('Error updating pack puzzle completion:', error);
+                        } else {
+                            console.log('Pack puzzle attempt updated successfully');
+                        }
+                    } else {
+                        // Insert new record
+                        const { error } = await window.supabaseClient
+                            .from('puzzle_pack_completions')
+                            .insert({
+                                user_id: user.id,
+                                puzzle_id: puzzleId,
+                                pack_name: packId === 'free-pack' ? 'Free Pack' : 'Complete Pack',
+                                attempts: 1,
+                                completed: won,
+                                completion_time: won ? completionInterval : null,
+                                hints_used: won ? (this.hintsUsed || 0) : 0,
+                                tries_used: won ? (this.wrongGuesses || 0) : 0,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            });
+                        
+                        if (error) {
+                            console.error('Error inserting pack puzzle completion:', error);
+                        } else {
+                            console.log('Pack puzzle attempt tracked successfully');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error in trackPackPuzzleAttempt:', error);
+                }
+            }
+            
             startTimer() {
                 this.startTime = Date.now();
                 this.updateTimerColors(); // Initial color update
@@ -5324,6 +5426,12 @@ https://ladder.game/`;
         
         // Make LadderGame class available globally for module scripts
         window.LadderGame = LadderGame;
+        
+        // Retry puzzle function for failure screen
+        window.retryPuzzle = function() {
+            // Simply reload the page with the same parameters to retry
+            window.location.reload();
+        };
     </script>
 </body>
 </html>

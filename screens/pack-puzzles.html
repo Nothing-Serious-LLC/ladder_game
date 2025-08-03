@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Pack - Ladder</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6aaa64">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/icon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/icon-180.png">
+    
+    <style>
+        :root {
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-right: env(safe-area-inset-right);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --safe-area-inset-left: env(safe-area-inset-left);
+            
+            /* LADDER Color Palette */
+            --primary-green: #6aaa64;
+            --primary-green-hover: #5d9556;
+            --primary-orange: #ff8c42;
+            --primary-orange-hover: #e06829;
+            --error-red: #e74c3c;
+            --gray-50: #fafafa;
+            --gray-200: #d3d6da;
+            --gray-400: #a8adb3;
+            --gray-600: #787c7e;
+            --gray-900: #1a1a1b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+            padding: var(--safe-area-inset-top) var(--safe-area-inset-right) var(--safe-area-inset-bottom) var(--safe-area-inset-left);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 120px 20px 20px 20px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gray-50);
+            z-index: 1000;
+            text-align: center;
+            padding: 20px 20px 30px 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 20px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--gray-600);
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: color 0.2s;
+        }
+        
+        .back-button:hover {
+            color: var(--gray-900);
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: var(--gray-900);
+        }
+        
+        .pack-info {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .pack-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+        
+        .pack-progress {
+            font-size: 1rem;
+            color: var(--gray-600);
+        }
+        
+        .puzzles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .puzzle-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            border: 2px solid var(--gray-200);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .puzzle-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-green);
+        }
+        
+        .puzzle-card.completed {
+            background: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+        }
+        
+        .puzzle-card.failed {
+            background: var(--error-red);
+            color: white;
+            border-color: var(--error-red);
+        }
+        
+        .puzzle-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .puzzle-theme {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        
+        .puzzle-attempts {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+        
+        .puzzle-status {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-600);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-600);
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 110px 15px 15px 15px;
+            }
+            
+            .header {
+                padding: 15px 0 20px;
+                margin-bottom: 30px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .back-button {
+                left: 15px;
+                font-size: 1rem;
+            }
+            
+            .puzzles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
+            }
+            
+            .puzzle-card {
+                padding: 20px;
+                min-height: 100px;
+            }
+            
+            .puzzle-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <button class="back-button" onclick="goBack()">
+                ← Back
+            </button>
+            <h1 class="title">LADDER</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="pack-info">
+            <h2 class="pack-name" id="pack-name">Loading...</h2>
+            <p class="pack-progress" id="pack-progress">Loading...</p>
+        </div>
+        
+        <div class="puzzles-grid" id="puzzles-grid">
+            <div class="loading">Loading puzzles...</div>
+        </div>
+    </div>
+    
+    <!-- Include Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script type="module">
+        import { supabaseConfig } from '../config/supabase-config.js';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        
+        let packPuzzles = [];
+        let completions = {};
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const packId = urlParams.get('pack');
+            
+            if (!packId) {
+                window.location.href = './home.html';
+                return;
+            }
+            
+            await loadPackPuzzles(packId);
+        });
+        
+        async function loadPackPuzzles(packId) {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = './signup.html';
+                    return;
+                }
+                
+                // Check if user owns this pack
+                const { data: purchase } = await supabaseClient
+                    .from('user_purchases')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .eq('product_id', packId)
+                    .single();
+                
+                if (!purchase && packId !== 'free-pack') {
+                    alert('You do not own this puzzle pack');
+                    window.location.href = './home.html';
+                    return;
+                }
+                
+                // Update pack info
+                updatePackInfo(packId);
+                
+                // Load puzzles based on pack
+                let puzzles = [];
+                if (packId === 'free-pack') {
+                    // Load first 10 puzzles from pack_level 1
+                    const { data: packPuzzles } = await supabaseClient
+                        .from('puzzle_pack')
+                        .select('*')
+                        .eq('pack_level', 1)
+                        .order('created_at')
+                        .limit(10);
+                    
+                    puzzles = packPuzzles || [];
+                } else if (packId === 'complete-pack') {
+                    // Load all puzzles from puzzle_pack table
+                    const { data: packPuzzles } = await supabaseClient
+                        .from('puzzle_pack')
+                        .select('*')
+                        .order('pack_level', { ascending: true })
+                        .order('created_at');
+                    
+                    puzzles = packPuzzles || [];
+                }
+                
+                packPuzzles = puzzles;
+                
+                // Load user's completions for these puzzles
+                const puzzleIds = puzzles.map(p => p.id);
+                const { data: userCompletions } = await supabaseClient
+                    .from('puzzle_pack_completions')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .in('puzzle_id', puzzleIds);
+                
+                // Convert to map for easy lookup
+                completions = {};
+                if (userCompletions) {
+                    userCompletions.forEach(c => {
+                        completions[c.puzzle_id] = c;
+                    });
+                }
+                
+                // Render puzzles
+                renderPuzzles();
+                
+            } catch (error) {
+                console.error('Error loading pack puzzles:', error);
+                document.getElementById('puzzles-grid').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">❌</div>
+                        <p>Error loading puzzles</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function updatePackInfo(packId) {
+            const packName = document.getElementById('pack-name');
+            const packProgress = document.getElementById('pack-progress');
+            
+            if (packId === 'free-pack') {
+                packName.textContent = 'Free Pack';
+                packProgress.textContent = '10 starter puzzles';
+            } else if (packId === 'complete-pack') {
+                packName.textContent = 'Complete Pack';
+                packProgress.textContent = 'All puzzles included';
+            }
+        }
+        
+        function renderPuzzles() {
+            const grid = document.getElementById('puzzles-grid');
+            
+            if (packPuzzles.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No puzzles found in this pack</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let completedCount = 0;
+            const puzzleCards = packPuzzles.map((puzzle, index) => {
+                const completion = completions[puzzle.id];
+                const isCompleted = completion?.completed || false;
+                const isFailed = completion && !completion.completed && completion.attempts > 0;
+                const attempts = completion?.attempts || 0;
+                
+                if (isCompleted) completedCount++;
+                
+                let cardClass = 'puzzle-card';
+                if (isCompleted) cardClass += ' completed';
+                else if (isFailed) cardClass += ' failed';
+                
+                return `
+                    <div class="${cardClass}" onclick="playPuzzle('${puzzle.id}')">
+                        ${isCompleted ? '<div class="puzzle-status">✓</div>' : ''}
+                        ${isFailed ? '<div class="puzzle-status">✗</div>' : ''}
+                        <div class="puzzle-number">#${index + 1}</div>
+                        <div class="puzzle-theme">
+                            ${isCompleted || isFailed ? puzzle.theme : '???'}
+                        </div>
+                        ${attempts > 0 ? `<div class="puzzle-attempts">Attempts: ${attempts}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = puzzleCards;
+            
+            // Update progress
+            const packProgress = document.getElementById('pack-progress');
+            const urlParams = new URLSearchParams(window.location.search);
+            const packId = urlParams.get('pack');
+            
+            if (packId === 'free-pack') {
+                packProgress.textContent = `${completedCount} / 10 completed`;
+            } else if (packId === 'complete-pack') {
+                packProgress.textContent = `${completedCount} / ${packPuzzles.length} completed`;
+            }
+        }
+        
+        window.goBack = function() {
+            window.location.href = './home.html';
+        };
+        
+        window.playPuzzle = async function(puzzleId) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const packId = urlParams.get('pack');
+            
+            // Navigate to play screen with pack puzzle parameters
+            window.location.href = `./play.html?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
+        };
+    </script>
+</body>
+</html>

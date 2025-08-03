@@ -1705,13 +1705,17 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         
         window.playPuzzlePack = function(packType) {
             const button = document.getElementById(`${packType}-button`);
-            if (button.classList.contains('locked')) {
+            if (button && button.classList.contains('locked')) {
                 alert('Purchase this pack in the store to unlock!');
                 return;
             }
             
-            // TODO: Navigate to puzzle pack selection
-            alert(`${packType} puzzle pack coming soon!`);
+            // Navigate to puzzle pack selection
+            if (packType === 'free') {
+                window.location.href = './pack-puzzles.html?pack=free-pack';
+            } else if (packType === 'complete') {
+                window.location.href = './pack-puzzles.html?pack=complete-pack';
+            }
         };
     </script>
 </body>
