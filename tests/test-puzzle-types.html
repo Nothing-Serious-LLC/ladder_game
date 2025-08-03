@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Puzzle Types - Ladder</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        h1 {
+            color: #1a1a1b;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #6aaa64;
+            margin-bottom: 15px;
+        }
+        
+        .test-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #6aaa64;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .test-link:hover {
+            background: #5d9556;
+        }
+        
+        .test-link.orange {
+            background: #ff8c42;
+        }
+        
+        .test-link.orange:hover {
+            background: #e06829;
+        }
+        
+        .test-link.blue {
+            background: #3498db;
+        }
+        
+        .test-link.blue:hover {
+            background: #2980b9;
+        }
+        
+        .note {
+            font-size: 0.9em;
+            color: #787c7e;
+            margin-top: 10px;
+        }
+        
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test All Puzzle Types</h1>
+    
+    <div class="test-section">
+        <h2>1. Daily Puzzle</h2>
+        <div class="test-links">
+            <a href="../screens/play.html" class="test-link">
+                Play Today's Puzzle (Default)
+            </a>
+            <a href="../screens/play.html?type=daily" class="test-link">
+                Play Today's Puzzle (Explicit)
+            </a>
+        </div>
+        <p class="note">URL Pattern: <code>play.html?type=daily</code></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Free Pack Puzzles</h2>
+        <div class="test-links">
+            <a href="../screens/pack-puzzles.html?pack=free-pack" class="test-link orange">
+                View Free Pack
+            </a>
+            <a href="../screens/play.html?type=pack&pack_id=free-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c" class="test-link orange">
+                Play "Opening Door" (Free Pack #1)
+            </a>
+            <a href="../screens/play.html?type=pack&pack_id=free-pack&puzzle_id=5b27483c-af3d-43a7-9580-23a4c14c8b50" class="test-link orange">
+                Play "Making Breakfast" (Free Pack #2)
+            </a>
+        </div>
+        <p class="note">URL Pattern: <code>play.html?type=pack&pack_id=free-pack&puzzle_id={uuid}</code></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Complete Pack Puzzles</h2>
+        <div class="test-links">
+            <a href="../screens/pack-puzzles.html?pack=complete-pack" class="test-link blue">
+                View Complete Pack (100 Puzzles)
+            </a>
+            <a href="../screens/play.html?type=pack&pack_id=complete-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c" class="test-link blue">
+                Play Any Puzzle from Complete Pack
+            </a>
+        </div>
+        <p class="note">URL Pattern: <code>play.html?type=pack&pack_id=complete-pack&puzzle_id={uuid}</code></p>
+        <p class="note">⚠️ Requires purchase to play</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Historical/Archived Puzzles</h2>
+        <div class="test-links">
+            <a href="../screens/play.html?type=historical&date=2025-07-28" class="test-link">
+                Play Puzzle from July 28, 2025
+            </a>
+            <a href="../screens/play.html?type=historical&date=2025-07-29" class="test-link">
+                Play Puzzle from July 29, 2025
+            </a>
+            <a href="../screens/play.html?type=historical&date=2025-07-30" class="test-link">
+                Play Puzzle from July 30, 2025
+            </a>
+        </div>
+        <p class="note">URL Pattern: <code>play.html?type=historical&date=YYYY-MM-DD</code></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Future Pack Example</h2>
+        <p>To add a new pack (e.g., "Holiday Pack 2024"):</p>
+        <ol>
+            <li>Add to <code>puzzle_packs</code> table</li>
+            <li>Add puzzles to <code>puzzle_pack</code> table with <code>pack_id='holiday-pack-2024'</code></li>
+            <li>Users purchase via store</li>
+            <li>Play with: <code>play.html?type=pack&pack_id=holiday-pack-2024&puzzle_id={uuid}</code></li>
+        </ol>
+        <p class="note">No code changes needed - the infrastructure handles it automatically!</p>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔍 Test Scenarios</h2>
+        <ul>
+            <li>✅ Daily puzzle for authenticated users</li>
+            <li>✅ Daily puzzle for non-authenticated users</li>
+            <li>✅ Free pack puzzle access</li>
+            <li>✅ Complete pack with purchase verification</li>
+            <li>✅ Historical puzzle by date</li>
+            <li>✅ Attempt tracking and retry functionality</li>
+            <li>✅ Progress tracking in pack view</li>
+        </ul>
+    </div>
+    
+    <div style="margin-top: 40px; text-align: center;">
+        <a href="../screens/home.html" class="test-link">← Back to Home</a>
+    </div>
+</body>
+</html>

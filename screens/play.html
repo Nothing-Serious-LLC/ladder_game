@@ -2869,13 +2869,14 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     
                     // First check if user owns this pack
                     const { data: ownership, error: ownershipError } = await client
-                        .from('user_puzzle_packs')
+                        .from('user_purchases')
                         .select('*')
                         .eq('user_id', user.id)
-                        .eq('pack_id', packId)
+                        .eq('product_id', packId)
                         .single();
                     
-                    if (ownershipError || !ownership) {
+                    // Free pack doesn't require purchase
+                    if (packId !== 'free-pack' && (ownershipError || !ownership)) {
                         throw new Error('User does not own this puzzle pack');
                     }
                     
@@ -2888,6 +2889,35 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     
                     if (puzzleError || !puzzle) {
                         throw new Error('Puzzle not found');
+                    }
+                    
+                    // Get pack name for display
+                    const { data: packInfo } = await client
+                        .from('puzzle_packs')
+                        .select('name')
+                        .eq('id', packId)
+                        .single();
+                    
+                    // Find puzzle index in pack for numbering
+                    let puzzleIndex = 1;
+                    if (packId === 'free-pack') {
+                        // For free pack, get index from first 10 puzzles
+                        const { data: allPuzzles } = await client
+                            .from('puzzle_pack')
+                            .select('id')
+                            .eq('pack_level', 1)
+                            .order('created_at');
+                        
+                        puzzleIndex = allPuzzles.findIndex(p => p.id === puzzleId) + 1;
+                    } else {
+                        // For other packs, use pack_level or similar logic
+                        const { data: allPuzzles } = await client
+                            .from('puzzle_pack')
+                            .select('id')
+                            .order('pack_level')
+                            .order('created_at');
+                        
+                        puzzleIndex = allPuzzles.findIndex(p => p.id === puzzleId) + 1;
                     }
                     
                     // Convert to game format
@@ -2903,9 +2933,11 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                         }))
                     };
                     
+                    const packName = packInfo?.name || 'Pack';
+                    
                     return { 
                         puzzle: puzzleWithReveals, 
-                        puzzleNumber: `Pack ${packId} #${puzzle.sequence_number || puzzleId}`
+                        puzzleNumber: `${packName} #${puzzleIndex}`
                     };
                     
                 } catch (error) {
@@ -4970,7 +5002,17 @@ https://ladder.game/`;
                         return;
                     }
                     
-                    const today = window.gameModule.getCurrentPuzzleDate();
+                    // Determine the puzzle date based on puzzle type
+                    let puzzleDate;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const puzzleType = urlParams.get('type') || 'daily';
+                    
+                    if (puzzleType === 'historical') {
+                        puzzleDate = urlParams.get('date');
+                    } else {
+                        puzzleDate = window.gameModule.getCurrentPuzzleDate();
+                    }
+                    
                     const completionTime = this.finalTimeMs || Date.now() - this.startTime;
                     
                     // Convert completion time to PostgreSQL interval format
@@ -4982,7 +5024,7 @@ https://ladder.game/`;
                         .from('puzzle_completions')
                         .upsert({
                             user_id: user.id,
-                            puzzle_date: today,
+                            puzzle_date: puzzleDate,
                             puzzle_name: this.currentPuzzle.theme,
                             completed: true,
                             completion_time: completionInterval, // Store as PostgreSQL interval
@@ -5009,15 +5051,23 @@ https://ladder.game/`;
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                     if (!user) return;
                     
-                    // Get current date in ET timezone
-                    const today = this.getCurrentPuzzleDate();
+                    // Determine the puzzle date based on puzzle type
+                    let puzzleDate;
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const puzzleType = urlParams.get('type') || 'daily';
+                    
+                    if (puzzleType === 'historical') {
+                        puzzleDate = urlParams.get('date');
+                    } else {
+                        puzzleDate = this.getCurrentPuzzleDate();
+                    }
                     
                     // Track failure in database
                     const { data, error } = await window.supabaseClient
                         .from('puzzle_completions')
                         .upsert({
                             user_id: user.id,
-                            puzzle_date: today,
+                            puzzle_date: puzzleDate,
                             puzzle_name: this.currentPuzzle.theme,
                             completed: false,
                             completion_time: null, // No completion time for failures

@@ -304,8 +304,22 @@
                     return;
                 }
                 
-                // Update pack info
-                updatePackInfo(packId);
+                // Get pack info from database
+                const { data: packInfo } = await supabaseClient
+                    .from('puzzle_packs')
+                    .select('*')
+                    .eq('id', packId)
+                    .single();
+                
+                if (!packInfo) {
+                    alert('Puzzle pack not found');
+                    window.location.href = './home.html';
+                    return;
+                }
+                
+                // Update pack display info
+                document.getElementById('pack-name').textContent = packInfo.name;
+                document.getElementById('pack-progress').textContent = packInfo.description || `${packInfo.total_puzzles} puzzles`;
                 
                 // Load puzzles based on pack
                 let puzzles = [];
@@ -319,15 +333,21 @@
                         .limit(10);
                     
                     puzzles = packPuzzles || [];
-                } else if (packId === 'complete-pack') {
-                    // Load all puzzles from puzzle_pack table
+                } else {
+                    // For all other packs, load based on pack_id or use all puzzles
                     const { data: packPuzzles } = await supabaseClient
                         .from('puzzle_pack')
                         .select('*')
+                        .or(`pack_id.eq.${packId},pack_id.is.null`)
                         .order('pack_level', { ascending: true })
                         .order('created_at');
                     
                     puzzles = packPuzzles || [];
+                    
+                    // If pack has specific puzzle count, limit results
+                    if (packInfo.total_puzzles && puzzles.length > packInfo.total_puzzles) {
+                        puzzles = puzzles.slice(0, packInfo.total_puzzles);
+                    }
                 }
                 
                 packPuzzles = puzzles;
@@ -362,18 +382,7 @@
             }
         }
         
-        function updatePackInfo(packId) {
-            const packName = document.getElementById('pack-name');
-            const packProgress = document.getElementById('pack-progress');
-            
-            if (packId === 'free-pack') {
-                packName.textContent = 'Free Pack';
-                packProgress.textContent = '10 starter puzzles';
-            } else if (packId === 'complete-pack') {
-                packName.textContent = 'Complete Pack';
-                packProgress.textContent = 'All puzzles included';
-            }
-        }
+
         
         function renderPuzzles() {
             const grid = document.getElementById('puzzles-grid');
@@ -418,14 +427,7 @@
             
             // Update progress
             const packProgress = document.getElementById('pack-progress');
-            const urlParams = new URLSearchParams(window.location.search);
-            const packId = urlParams.get('pack');
-            
-            if (packId === 'free-pack') {
-                packProgress.textContent = `${completedCount} / 10 completed`;
-            } else if (packId === 'complete-pack') {
-                packProgress.textContent = `${completedCount} / ${packPuzzles.length} completed`;
-            }
+            packProgress.textContent = `${completedCount} / ${packPuzzles.length} completed`;
         }
         
         window.goBack = function() {
