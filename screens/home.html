@@ -629,6 +629,26 @@
             font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
         }
         
+        /* Minimal countdown styles */
+        .minimal-countdown {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+        }
+        
+        .minimal-countdown:hover {
+            background: rgba(255, 140, 66, 0.05);
+            transform: translateY(-1px);
+        }
+        
+        .countdown-timer.minimal {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            transition: all 0.2s ease;
+        }
+        
+        .minimal-countdown:hover .countdown-timer.minimal {
+            transform: scale(1.02);
+        }
+        
         .countdown-label {
             font-size: 1.1rem;
             margin-bottom: 30px;
@@ -1606,15 +1626,33 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             currentView = 'countdown';
             const dailyCard = document.getElementById('daily-puzzle-card');
             
-            dailyCard.innerHTML = `
-                <div style="text-align: center; padding: 20px 0;">
-                    <h2 style="color: var(--gray-900); margin-bottom: 20px; font-size: 1.8rem;">Next Puzzle In</h2>
-                    <div class="countdown-timer" id="countdown-timer" style="color: var(--primary-orange);">Loading...</div>
-                    <button class="back-to-puzzle" onclick="togglePuzzleView()" style="background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                        Back to Today's Puzzle
-                    </button>
-                </div>
-            `;
+            // Check user preference for minimal countdown
+            const isMinimalCountdown = localStorage.getItem('countdownMinimal') === 'true';
+            
+            if (isMinimalCountdown) {
+                // Minimal countdown - just the timer
+                dailyCard.innerHTML = `
+                    <div class="minimal-countdown" onclick="toggleCountdownView()" style="text-align: center; padding: 40px 20px; cursor: pointer;" title="Click to expand">
+                        <div class="countdown-timer minimal" id="countdown-timer" style="color: var(--primary-orange); font-size: 2.5rem; font-weight: 700; margin: 0;">Loading...</div>
+                    </div>
+                `;
+            } else {
+                // Full countdown with title and button
+                dailyCard.innerHTML = `
+                    <div style="text-align: center; padding: 20px 0;">
+                        <h2 style="color: var(--gray-900); margin-bottom: 20px; font-size: 1.8rem;">Next Puzzle In</h2>
+                        <div class="countdown-timer" id="countdown-timer" style="color: var(--primary-orange);">Loading...</div>
+                        <button class="back-to-puzzle" onclick="togglePuzzleView()" style="background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+                            Back to Today's Puzzle
+                        </button>
+                        <div style="margin-top: 15px;">
+                            <button onclick="toggleCountdownView()" style="background: none; border: none; color: var(--gray-500); font-size: 0.8rem; cursor: pointer; text-decoration: underline;">
+                                Switch to minimal view
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
             
             // Apply standard card styling for consistency
             dailyCard.className = 'card';
@@ -1637,6 +1675,15 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 // Switch to countdown view
                 showCountdown();
             }
+        };
+        
+        window.toggleCountdownView = function() {
+            // Toggle the minimal countdown preference
+            const isCurrentlyMinimal = localStorage.getItem('countdownMinimal') === 'true';
+            localStorage.setItem('countdownMinimal', !isCurrentlyMinimal);
+            
+            // Refresh the countdown view with new preference
+            showCountdown();
         };
         
         function startCountdown() {
