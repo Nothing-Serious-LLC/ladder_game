@@ -124,6 +124,8 @@
         .product-icon {
             font-size: 4rem;
             margin-bottom: 20px;
+            color: var(--green-600);
+            font-weight: 700;
         }
         
         .product-name {
@@ -194,29 +196,19 @@
             line-height: 1.4;
         }
         
-        .purchase-section {
-            position: sticky;
-            bottom: 0;
-            background: var(--gray-50);
-            padding: 20px 0 30px;
-            border-top: 1px solid var(--gray-200);
-            margin: 0 -20px;
-            padding-left: 20px;
-            padding-right: 20px;
-        }
-        
         .purchase-button {
             width: 100%;
             background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
             color: white;
             border: none;
-            padding: 18px 32px;
+            padding: 16px 24px;
             border-radius: 12px;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+            margin-top: 24px;
         }
         
         .purchase-button:hover {
@@ -263,7 +255,7 @@
         </button>
         
         <div class="product-hero">
-            <div class="product-icon" id="product-icon">🧩</div>
+            <div class="product-icon" id="product-icon">●</div>
             <div class="product-name" id="product-name">Puzzle Pack</div>
             <div class="product-description" id="product-description">100 carefully crafted puzzles</div>
             <div class="product-price" id="product-price">$4.99</div>
@@ -274,25 +266,23 @@
             <h3 class="features-title">What's Included</h3>
             <ul class="features-list" id="features-list">
                 <li class="feature-item">
-                    <span class="feature-icon">🎯</span>
+                    <span class="feature-icon">•</span>
                     <div class="feature-text">100 Unique Puzzles</div>
                 </li>
                 <li class="feature-item">
-                    <span class="feature-icon">📈</span>
+                    <span class="feature-icon">•</span>
                     <div class="feature-text">Progressive Difficulty</div>
                 </li>
                 <li class="feature-item">
-                    <span class="feature-icon">🏆</span>
+                    <span class="feature-icon">•</span>
                     <div class="feature-text">Achievement Tracking</div>
                 </li>
             </ul>
+            
+            <button class="purchase-button" onclick="purchaseProduct()">
+                Purchase Now
+            </button>
         </div>
-    </div>
-    
-    <div class="purchase-section">
-        <button class="purchase-button" onclick="purchaseProduct()">
-            Purchase Now
-        </button>
     </div>
     
     <script>
@@ -303,41 +293,41 @@
         // Product data
         const products = {
             'puzzle-pack': {
-                icon: '🧩',
+                icon: '●',
                 name: 'Puzzle Pack',
                 description: '100 carefully crafted puzzles',
                 price: '$4.99',
                 features: [
                     {
-                        icon: '🎯',
+                        icon: '•',
                         title: '100 Unique Puzzles'
                     },
                     {
-                        icon: '📈',
+                        icon: '•',
                         title: 'Progressive Difficulty'
                     },
                     {
-                        icon: '🏆',
+                        icon: '•',
                         title: 'Achievement Tracking'
                     }
                 ]
             },
             'historic-puzzles': {
-                icon: '📚',
+                icon: '■',
                 name: 'Historic Puzzles',
                 description: 'All past daily puzzles',
                 price: '$2.99',
                 features: [
                     {
-                        icon: '📅',
+                        icon: '•',
                         title: 'Complete Archive'
                     },
                     {
-                        icon: '🔍',
+                        icon: '•',
                         title: 'Browse by Date'
                     },
                     {
-                        icon: '🏆',
+                        icon: '•',
                         title: 'Achievement Tracking'
                     }
                 ]
@@ -379,7 +369,7 @@
         }
         
         function goBack() {
-            window.location.href = 'home.html';
+            window.location.href = 'store.html';
         }
         
         function purchaseProduct() {
