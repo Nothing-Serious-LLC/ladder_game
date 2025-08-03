@@ -237,6 +237,35 @@
             box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
         }
         
+        .no-packs-message {
+            text-align: center;
+            padding: 20px 20px 40px 20px;
+            color: var(--gray-600);
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        
+        .message-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+        
+        .message-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gray-900);
+        }
+        
+        .message-text {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+        }
+        
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -317,15 +346,14 @@
         <button class="back-button" onclick="goBack()" style="position: relative; left: auto; top: auto; transform: none; margin-bottom: 20px;">← Back</button>
         <h1 class="page-title">My Puzzle Packs</h1>
         
-        <div class="inventory-grid" id="inventory-grid">
-            <!-- Puzzle packs will be loaded here -->
+        <div class="no-packs-message" id="no-packs-message" style="display: none;">
+            <div class="message-icon">📦</div>
+            <div class="message-title">No Puzzle Packs Yet</div>
+            <div class="message-text">Purchase packs below to unlock exciting puzzle collections</div>
         </div>
         
-        <div class="empty-state" id="empty-state" style="display: none;">
-            <div class="empty-state-icon">📦</div>
-            <div class="empty-state-title">No Puzzle Packs Yet</div>
-            <div class="empty-state-text">Visit the store to unlock exciting puzzle collections</div>
-            <button class="shop-button" onclick="goToStore()">Browse Store</button>
+        <div class="inventory-grid" id="inventory-grid">
+            <!-- Puzzle packs will be loaded here -->
         </div>
     </div>
     
@@ -342,7 +370,7 @@
                 id: 'puzzle-pack',
                 name: 'Puzzle Pack',
                 description: '100 handcrafted puzzles',
-                icon: '🧩',
+                icon: '●',
                 totalPuzzles: 100,
                 price: '$4.99'
             },
@@ -350,7 +378,7 @@
                 id: 'historic-puzzles',
                 name: 'Historic Puzzles',
                 description: 'All past daily puzzles',
-                icon: '📚',
+                icon: '■',
                 totalPuzzles: 150,
                 price: '$2.99'
             }
@@ -389,18 +417,19 @@
         
         function renderInventory(purchases) {
             const inventoryGrid = document.getElementById('inventory-grid');
-            const emptyState = document.getElementById('empty-state');
+            const noPacksMessage = document.getElementById('no-packs-message');
             
             // Check if user has any purchases
             const hasPurchases = purchases.length > 0;
             
+            // Show message if no purchases, otherwise hide it
             if (!hasPurchases) {
-                emptyState.style.display = 'block';
-                inventoryGrid.style.display = 'none';
-                return;
+                noPacksMessage.style.display = 'block';
+            } else {
+                noPacksMessage.style.display = 'none';
             }
             
-            emptyState.style.display = 'none';
+            // Always show the grid with all available puzzle packs
             inventoryGrid.style.display = 'grid';
             inventoryGrid.innerHTML = '';
             
