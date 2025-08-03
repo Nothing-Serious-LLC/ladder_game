@@ -1653,7 +1653,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                             <div class="item-name">Free Pack</div>
                                             <div class="pack-progress">${completed}/${total} puzzles completed</div>
                                         </div>
-                                        <button class="pack-button" onclick="playPuzzlePack('free')">Play</button>
+                                        <button class="pack-button" onclick="event.stopPropagation(); playPuzzlePack('free')">Play</button>
                                     </div>
                                 `;
                             }
@@ -1668,7 +1668,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                             <div class="item-name">Complete Pack</div>
                                             <div class="pack-progress">${completed}/${total} puzzles completed</div>
                                         </div>
-                                        <button class="pack-button" onclick="playPuzzlePack('complete')">Play</button>
+                                        <button class="pack-button" onclick="event.stopPropagation(); playPuzzlePack('complete')">Play</button>
                                     </div>
                                 `;
                             }
