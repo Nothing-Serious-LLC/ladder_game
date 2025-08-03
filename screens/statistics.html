@@ -636,59 +636,90 @@
             }
         }
         
-        /* Shimmer Loading Animation */
-        .shimmer-wrapper {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+        /* Normal Loading Animation */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--gray-600);
+            text-align: center;
+            min-height: 200px;
         }
         
-        .shimmer-content {
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Filter Controls */
+        .filter-controls {
+            margin: 20px 0;
+            padding: 16px;
             background: var(--gray-50);
             border-radius: 12px;
-            padding: 24px;
-            margin: 1px;
+            border: 1px solid var(--gray-200);
         }
         
-        .shimmer-line {
-            background: var(--gray-200);
-            border-radius: 6px;
+        .filter-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-700);
             margin-bottom: 12px;
         }
         
-        .shimmer-line.title {
-            height: 32px;
-            width: 60%;
-            margin: 0 auto 20px;
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
         
-        .shimmer-line.subtitle {
-            height: 20px;
-            width: 40%;
-            margin: 0 auto 24px;
-        }
-        
-        .shimmer-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-        }
-        
-        .shimmer-stat {
-            background: var(--gray-100);
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--gray-200);
             border-radius: 8px;
-            height: 80px;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+        .filter-btn:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+        
+        /* Archive puzzle styling (greyed out instead of locked) */
+        .archive-unavailable {
+            opacity: 0.6;
+            background: var(--gray-100);
+        }
+        
+        .archive-unavailable .completion-stat-value {
+            color: var(--gray-400) !important;
+        }
+        
+        .archive-unavailable .completion-stat-label {
+            color: var(--gray-400) !important;
         }
         
         @media (max-width: 480px) {
@@ -746,6 +777,16 @@
         <!-- Puzzle History (Top Priority) -->
         <div class="puzzle-history-card">
             <h2 class="section-title">Puzzle History</h2>
+            
+            <div class="filter-controls">
+                <div class="filter-title">Filter Statistics</div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" id="all-filter" onclick="setStatsFilter('all')">All</button>
+                    <button class="filter-btn" id="daily-filter" onclick="setStatsFilter('daily')">Daily</button>
+                    <button class="filter-btn" id="archive-filter" onclick="setStatsFilter('archive')">Archive</button>
+                    <button class="filter-btn" id="puzzles-filter" onclick="setStatsFilter('puzzles')">Puzzles</button>
+                </div>
+            </div>
             
             <div class="puzzle-navigation">
                 <button class="nav-button" id="prev-button" onclick="navigateToDay(1)" title="Previous day">←</button>
@@ -819,7 +860,9 @@
         const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
         
         let allPuzzleHistory = [];
+        let allCompletionsData = []; // Unified completion data
         let currentDayIndex = 0; // 0 = today, 1 = yesterday, etc.
+        let currentStatsFilter = 'all'; // all, daily, archive, puzzles
         
         // Function to get current puzzle date based on 3am ET reset (use shared utility)
         function getCurrentPuzzleDate() {
@@ -1090,34 +1133,34 @@
         function showArchiveUpsellCard(puzzleNumber, date) {
             const puzzleDetails = document.getElementById('puzzle-details');
             
-            // Replace shimmer with actual content
+            // Replace with greyed out design instead of locks
             puzzleDetails.innerHTML = `
-                <div class="daily-puzzle-section card" id="daily-puzzle-card">
+                <div class="daily-puzzle-section card archive-unavailable" id="daily-puzzle-card">
                     <div class="puzzle-status centered">
                         <div class="puzzle-info centered">
                             <div class="puzzle-theme-section">
                                 <div class="puzzle-theme-large">Archive Puzzle</div>
-                                <div class="puzzle-subtitle">Requires Archive Access • Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
+                                <div class="puzzle-subtitle">No Data Available • Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
                             </div>
                                     
                             <div class="completion-stats">
                                 <div class="completion-stat">
-                                    <div class="completion-stat-value">🔒</div>
+                                    <div class="completion-stat-value">--:--</div>
                                     <div class="completion-stat-label">Time</div>
                                 </div>
                                 <div class="completion-stat">
-                                    <div class="completion-stat-value">🔒</div>
+                                    <div class="completion-stat-value">--</div>
                                     <div class="completion-stat-label">Hints</div>
                                 </div>
                                 <div class="completion-stat">
-                                    <div class="completion-stat-value">🔒</div>
+                                    <div class="completion-stat-value">--</div>
                                     <div class="completion-stat-label">Tries</div>
                                 </div>
                             </div>
                             
-                            <button class="play-button" onclick="window.location.href='store.html'" style="margin-top: 20px; background: var(--primary-orange); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                                Unlock Archive Access
-                            </button>
+                            <div style="margin-top: 20px; padding: 12px; background: var(--gray-100); border-radius: 8px; text-align: center;">
+                                <p style="margin: 0; color: var(--gray-500); font-size: 0.9rem;">Archive access required for historical data</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1176,19 +1219,12 @@
             window.location.href = `../index.html?archive=true&date=${puzzleDate}&puzzle=${puzzleNumber}`;
         };
         
-        function showShimmerLoading() {
+        function showNormalLoading() {
             const puzzleDetails = document.getElementById('puzzle-details');
             puzzleDetails.innerHTML = `
-                <div class="shimmer-wrapper">
-                    <div class="shimmer-content">
-                        <div class="shimmer-line title"></div>
-                        <div class="shimmer-line subtitle"></div>
-                        <div class="shimmer-stats">
-                            <div class="shimmer-stat"></div>
-                            <div class="shimmer-stat"></div>
-                            <div class="shimmer-stat"></div>
-                        </div>
-                    </div>
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading puzzle data...</p>
                 </div>
             `;
         }
