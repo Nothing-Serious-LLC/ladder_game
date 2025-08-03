@@ -85,6 +85,176 @@
             min-height: 100vh;
         }
         
+        /* Breadcrumb Navigation */
+        .breadcrumb {
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        
+        .breadcrumb-item {
+            cursor: pointer;
+            color: var(--primary-green);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .breadcrumb-item:hover {
+            color: var(--primary-green-hover);
+            text-decoration: underline;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--gray-900);
+            cursor: default;
+            font-weight: 600;
+        }
+        
+        .breadcrumb-separator {
+            margin: 0 8px;
+            color: var(--gray-400);
+        }
+        
+        /* Controls Section */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 24px 0;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .filters {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--gray-300);
+            background: white;
+            color: var(--gray-700);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: var(--gray-50);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+        }
+        
+        .pagination-info {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+        
+        /* Folder Grid */
+        .folders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .folder-item {
+            background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .folder-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.15);
+        }
+        
+        .folder-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+        
+        .folder-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+        
+        .folder-description {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+        
+        .folder-count {
+            font-size: 0.8rem;
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            margin-top: 32px;
+            padding: 20px;
+        }
+        
+        .pagination-btn, .load-more-btn {
+            padding: 10px 20px;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .pagination-btn:hover, .load-more-btn:hover {
+            background: var(--primary-green-hover);
+            transform: translateY(-1px);
+        }
+        
+        .pagination-btn:disabled {
+            background: var(--gray-300);
+            color: var(--gray-500);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .page-info {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .load-more-btn {
+            background: var(--primary-orange);
+            margin-top: 16px;
+        }
+        
+        .load-more-btn:hover {
+            background: var(--primary-orange-hover);
+        }
+        
         .header {
             position: fixed;
             top: 0;
@@ -281,10 +451,43 @@
         <div class="pack-info">
             <h2 class="pack-name" id="pack-name">Loading...</h2>
             <p class="pack-progress" id="pack-progress">Loading...</p>
+            
+            <!-- Breadcrumb Navigation -->
+            <div class="breadcrumb" id="breadcrumb" style="display: none;">
+                <span class="breadcrumb-item" onclick="navigateToFolder('')">📁 Pack Home</span>
+                <span class="breadcrumb-separator"> › </span>
+                <span class="breadcrumb-item active" id="current-folder">Current Folder</span>
+            </div>
         </div>
         
+        <!-- Controls for filtering and pagination -->
+        <div class="controls" id="controls" style="display: none;">
+            <div class="filters">
+                <button class="filter-btn active" id="all-filter" onclick="setFilter('all')">All Puzzles</button>
+                <button class="filter-btn" id="untried-filter" onclick="setFilter('untried')">Untried</button>
+                <button class="filter-btn" id="completed-filter" onclick="setFilter('completed')">Completed</button>
+            </div>
+            <div class="pagination-info" id="pagination-info">
+                <!-- Pagination info will show here -->
+            </div>
+        </div>
+        
+        <!-- Folder View (for hierarchical packs) -->
+        <div class="folders-grid" id="folders-grid" style="display: none;">
+            <!-- Folders will be loaded here -->
+        </div>
+        
+        <!-- Puzzle List View -->
         <div class="puzzles-grid" id="puzzles-grid">
             <div class="loading">Loading puzzles...</div>
+        </div>
+        
+        <!-- Pagination Controls -->
+        <div class="pagination" id="pagination" style="display: none;">
+            <button class="pagination-btn" id="prev-btn" onclick="changePage(-1)">← Previous</button>
+            <span class="page-info" id="page-info">Page 1 of 1</span>
+            <button class="pagination-btn" id="next-btn" onclick="changePage(1)">Next →</button>
+            <button class="load-more-btn" id="load-more-btn" onclick="loadMore()">Load More Puzzles</button>
         </div>
     </div>
     
@@ -292,34 +495,44 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script type="module">
         import { supabaseConfig } from '../config/supabase-config.js';
+        import { getGameDayString } from '../assets/js/timeUtils.js';
         
         const { createClient } = supabase;
         const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
         
+        // Global state
         let packPuzzles = [];
-        let completions = {};
+        let allCompletions = {};
+        let currentPackId = null;
+        let currentFolder = '';
+        let currentFilter = 'all';
+        let currentPage = 1;
+        let itemsPerPage = 30;
+        let complexityLevels = {};
         
         document.addEventListener('DOMContentLoaded', async function() {
-            // Show loading state
-            document.getElementById('puzzles-grid').innerHTML = `
-                <div class="loading-state">
-                    <div class="loading-spinner"></div>
-                    <p>Loading puzzles...</p>
-                </div>
-            `;
-            
             const urlParams = new URLSearchParams(window.location.search);
             const packId = urlParams.get('pack');
+            currentFolder = urlParams.get('folder') || '';
             
             if (!packId) {
                 window.location.href = './home.html';
                 return;
             }
             
-            // Wait a moment for supabase to fully initialize
+            currentPackId = packId;
+            
+            // Show loading state
+            showLoading();
+            
+            // Wait for supabase to initialize
             await new Promise(resolve => setTimeout(resolve, 100));
             
-            await loadPackPuzzles(packId);
+            // Load complexity levels for folder structure
+            await loadComplexityLevels();
+            
+            // Load pack content
+            await loadPackContent(packId);
         });
         
         async function loadPackPuzzles(packId) {
@@ -492,6 +705,224 @@
             // Navigate to play screen with pack puzzle parameters
             window.location.href = `./play.html?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
         };
+        
+        // Enhanced functionality for new pack types
+        async function loadComplexityLevels() {
+            try {
+                const { data } = await supabaseClient
+                    .from('complexity_levels')
+                    .select('*')
+                    .order('level');
+                
+                if (data) {
+                    data.forEach(level => {
+                        complexityLevels[level.level] = level;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading complexity levels:', error);
+            }
+        }
+        
+        async function loadHistoricalPack(userId) {
+            try {
+                // Show controls for filtering and pagination  
+                document.getElementById('controls').style.display = 'flex';
+                
+                // Load user's daily puzzle completions
+                const { data: completions } = await supabaseClient
+                    .from('puzzle_completions')
+                    .select('puzzle_date, puzzle_name, completed, completion_time, hints_used, tries_used')
+                    .eq('user_id', userId)
+                    .order('puzzle_date', { ascending: false });
+                
+                allCompletions = {};
+                if (completions) {
+                    completions.forEach(comp => {
+                        allCompletions[comp.puzzle_date] = comp;
+                    });
+                }
+                
+                // Load historical daily puzzles (past puzzles only)
+                const { data: puzzles } = await supabaseClient
+                    .from('daily_puzzles')
+                    .select('puzzle_date, theme, complexity_level, puzzle_number')
+                    .lt('puzzle_date', getGameDayString())
+                    .order('puzzle_date', { ascending: false });
+                
+                packPuzzles = puzzles || [];
+                renderHistoricalPuzzles();
+                
+            } catch (error) {
+                console.error('Error loading historical pack:', error);
+                showError('Error loading historical puzzles');
+            }
+        }
+        
+        function renderHistoricalPuzzles() {
+            const filteredPuzzles = filterPuzzles();
+            const paginatedPuzzles = paginatePuzzles(filteredPuzzles);
+            renderPuzzleGrid(paginatedPuzzles, true);
+            updatePaginationControls(filteredPuzzles.length);
+        }
+        
+        function filterPuzzles() {
+            if (currentFilter === 'all') return packPuzzles;
+            
+            return packPuzzles.filter(puzzle => {
+                const completionData = allCompletions[puzzle.puzzle_date];
+                const isCompleted = completionData && completionData.completed;
+                const hasAttempts = completionData && completionData.tries_used > 0;
+                
+                if (currentFilter === 'completed') return isCompleted;
+                if (currentFilter === 'untried') return !isCompleted && !hasAttempts;
+                return true;
+            });
+        }
+        
+        function paginatePuzzles(puzzles) {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            return puzzles.slice(startIndex, startIndex + itemsPerPage);
+        }
+        
+        function renderPuzzleGrid(puzzles, isHistorical = false) {
+            const puzzlesGrid = document.getElementById('puzzles-grid');
+            
+            if (puzzles.length === 0) {
+                puzzlesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📝</div>
+                        <p>No puzzles match your current filter</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let puzzlesHTML = '';
+            puzzles.forEach(puzzle => {
+                const completionData = isHistorical 
+                    ? allCompletions[puzzle.puzzle_date]
+                    : completions[puzzle.id];
+                
+                const isCompleted = completionData && completionData.completed;
+                const attempts = completionData ? (completionData.tries_used || 0) : 0;
+                
+                const statusIcon = isCompleted ? '✅' : (attempts > 0 ? '⏳' : '○');
+                const statusClass = isCompleted ? 'completed' : (attempts > 0 ? 'attempted' : 'untried');
+                
+                const displayName = puzzle.theme;
+                const displayLevel = isHistorical 
+                    ? `Puzzle #${puzzle.puzzle_number}` 
+                    : `Level ${puzzle.pack_level}`;
+                
+                const clickAction = isHistorical 
+                    ? `playHistoricalPuzzle('${puzzle.puzzle_date}')`
+                    : `playPuzzle('${puzzle.id}')`;
+                
+                puzzlesHTML += `
+                    <div class="puzzle-item ${statusClass}" onclick="${clickAction}">
+                        <div class="puzzle-status">${statusIcon}</div>
+                        <h3 class="puzzle-theme">${displayName}</h3>
+                        <p class="puzzle-level">${displayLevel}</p>
+                        ${attempts > 0 ? `<p class="puzzle-attempts">${attempts} attempt${attempts > 1 ? 's' : ''}</p>` : ''}
+                    </div>
+                `;
+            });
+            
+            puzzlesGrid.innerHTML = puzzlesHTML;
+        }
+        
+        function updatePaginationControls(totalItems) {
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+            
+            pagination.style.display = 'flex';
+            
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const pageInfo = document.getElementById('page-info');
+            
+            if (prevBtn && nextBtn && pageInfo) {
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                prevBtn.disabled = currentPage <= 1;
+                nextBtn.disabled = currentPage >= totalPages;
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            }
+        }
+        
+        function showError(message) {
+            document.getElementById('puzzles-grid').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        function showLoading() {
+            document.getElementById('puzzles-grid').innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading puzzles...</p>
+                </div>
+            `;
+        }
+        
+        // Global functions for new features
+        window.setFilter = function(filter) {
+            currentFilter = filter;
+            currentPage = 1;
+            
+            // Update filter button states
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const filterBtn = document.getElementById(`${filter}-filter`);
+            if (filterBtn) filterBtn.classList.add('active');
+            
+            // Re-render
+            if (currentPackId === 'archive') {
+                renderHistoricalPuzzles();
+            }
+        };
+        
+        window.changePage = function(direction) {
+            const filteredPuzzles = filterPuzzles();
+            const totalPages = Math.ceil(filteredPuzzles.length / itemsPerPage);
+            currentPage = Math.max(1, Math.min(totalPages, currentPage + direction));
+            renderHistoricalPuzzles();
+        };
+        
+        window.loadMore = function() {
+            itemsPerPage += 30;
+            renderHistoricalPuzzles();
+        };
+        
+        window.playHistoricalPuzzle = function(puzzleDate) {
+            window.location.href = `./play.html?type=daily&date=${puzzleDate}`;
+        };
+        
+        // Enhanced initialization for archive pack
+        const initializeArchivePack = async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const packId = urlParams.get('pack');
+            
+            if (packId === 'archive') {
+                showLoading();
+                await loadComplexityLevels();
+                
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (user) {
+                    await loadHistoricalPack(user.id);
+                    
+                    // Update pack info
+                    document.getElementById('pack-name').textContent = 'Historical Daily Puzzles';
+                    const completed = Object.values(allCompletions).filter(c => c.completed).length;
+                    document.getElementById('pack-progress').textContent = `${completed}/${packPuzzles.length} puzzles completed`;
+                }
+            }
+        };
+        
+        // Add archive pack initialization to existing DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', initializeArchivePack);
     </script>
 </body>
 </html>
