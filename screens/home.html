@@ -684,29 +684,29 @@
                 <div class="store-section card">
                     <h2 class="section-title">Store</h2>
                     <div class="store-items">
-                        <div class="store-item" onclick="viewProduct('starter-pack')">
+                        <div class="store-item" onclick="viewProduct('free-pack')">
                             <div class="item-info">
-                                <div class="item-name">Starter Pack</div>
-                                <div class="item-description">Complete collection</div>
+                                <div class="item-name">Free Pack</div>
+                                <div class="item-description">10 starter puzzles</div>
+                                <div class="item-price">Free</div>
+                            </div>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
+                        </div>
+                        <div class="store-item" onclick="viewProduct('complete-pack')">
+                            <div class="item-info">
+                                <div class="item-name">Complete Pack</div>
+                                <div class="item-description">Everything included</div>
                                 <div class="item-price">$4.99</div>
                             </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('starter-pack')">View</button>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
                         </div>
-                        <div class="store-item" onclick="viewProduct('puzzle-pack')">
+                        <div class="store-item" onclick="window.location.href='store.html'">
                             <div class="item-info">
-                                <div class="item-name">Puzzle Pack</div>
-                                <div class="item-description">100 puzzles</div>
-                                <div class="item-price">$2.99</div>
+                                <div class="item-name">Browse All</div>
+                                <div class="item-description">See all puzzle packs</div>
+                                <div class="item-price">→</div>
                             </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('puzzle-pack')">View</button>
-                        </div>
-                        <div class="store-item" onclick="viewProduct('archive')">
-                            <div class="item-info">
-                                <div class="item-name">Archive</div>
-                                <div class="item-description">Access to all past daily puzzles</div>
-                                <div class="item-price">$2.99</div>
-                            </div>
-                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
+                            <button class="buy-button" onclick="event.stopPropagation(); window.location.href='store.html'">Store</button>
                         </div>
                     </div>
                 </div>

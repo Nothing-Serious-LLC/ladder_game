@@ -290,16 +290,27 @@
         
         // Product data
         const products = {
-            'starter-pack': {
+            'free-pack': {
                 icon: '🎁',
-                name: 'Starter Pack',
-                description: 'Complete puzzle collection',
+                name: 'Free Pack',
+                description: '10 starter puzzles to get you going',
+                price: 'Free',
+                features: [
+                    '10 Starter Puzzles',
+                    'Perfect for Beginners',
+                    'Added to Statistics'
+                ]
+            },
+            'complete-pack': {
+                icon: '💎',
+                name: 'Complete Pack',
+                description: 'Everything included bundle',
                 price: '$4.99',
                 features: [
                     '100 Unique Puzzles',
                     'Complete Puzzle Archive',
                     'Progressive Difficulty',
-                    'Achievement Tracking'
+                    'Added to Statistics'
                 ]
             },
             'puzzle-pack': {
@@ -310,7 +321,7 @@
                 features: [
                     '100 Unique Puzzles',
                     'Progressive Difficulty',
-                    'Achievement Tracking'
+                    'Added to Statistics'
                 ]
             },
             'archive': {
@@ -321,7 +332,7 @@
                 features: [
                     'Complete Archive',
                     'Browse by Date',
-                    'Achievement Tracking'
+                    'Added to Statistics'
                 ]
             }
         };
@@ -339,6 +350,14 @@
             document.getElementById('product-name').textContent = product.name;
             document.getElementById('product-description').textContent = product.description;
             document.getElementById('product-price').textContent = product.price;
+            
+            // Update purchase button text based on product type
+            const purchaseButton = document.querySelector('.purchase-button');
+            if (productId === 'free-pack') {
+                purchaseButton.textContent = 'Claim Now';
+            } else {
+                purchaseButton.textContent = 'Purchase Now';
+            }
             
             // Update features list
             const featuresList = document.getElementById('features-list');

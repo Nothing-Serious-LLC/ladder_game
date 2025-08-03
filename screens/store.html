@@ -123,16 +123,16 @@
         
         .products-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 40px;
         }
         
-        /* Desktop: three columns */
+        /* Desktop: four columns */
         @media (min-width: 768px) {
             .products-grid {
-                grid-template-columns: 1fr 1fr 1fr;
-                max-width: 1000px;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                max-width: 1200px;
             }
         }
         
@@ -248,13 +248,24 @@
         <h2 class="store-title">Store</h2>
         
         <div class="products-grid">
-            <div class="product-card" onclick="viewProduct('starter-pack')">
+            <div class="product-card" onclick="viewProduct('free-pack')">
                 <div class="product-icon">🎁</div>
-                <div class="product-name">Starter Pack</div>
-                <div class="product-description">Complete puzzle collection</div>
+                <div class="product-name">Free Pack</div>
+                <div class="product-description">10 starter puzzles to get you going</div>
+                <div class="product-price">Free</div>
+                <div class="price-subtitle">Just claim it!</div>
+                <button class="product-button" onclick="event.stopPropagation(); viewProduct('free-pack')">
+                    View Details
+                </button>
+            </div>
+            
+            <div class="product-card" onclick="viewProduct('complete-pack')">
+                <div class="product-icon">💎</div>
+                <div class="product-name">Complete Pack</div>
+                <div class="product-description">Everything included bundle</div>
                 <div class="product-price">$4.99</div>
                 <div class="price-subtitle">One-time purchase</div>
-                <button class="product-button" onclick="event.stopPropagation(); viewProduct('starter-pack')">
+                <button class="product-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">
                     View Details
                 </button>
             </div>
