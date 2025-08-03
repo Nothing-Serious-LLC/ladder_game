@@ -1670,11 +1670,10 @@
             margin-top: 16px;
             display: flex;
             justify-content: center;
+            gap: 12px;
         }
         
         .try-again-button {
-            background: var(--primary-orange);
-            color: white;
             border: none;
             border-radius: 10px;
             font-size: 0.9rem;
@@ -1683,12 +1682,45 @@
             transition: all 0.2s ease;
             padding: 12px 24px;
             min-width: 120px;
+            flex: 1;
+            max-width: 150px;
         }
         
-        .try-again-button:hover {
+        .try-again-button.primary {
+            background: var(--primary-orange);
+            color: white;
+        }
+        
+        .try-again-button.primary:hover {
             background: var(--primary-orange-hover);
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
+        }
+        
+        .try-again-button.secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .try-again-button.secondary:hover {
+            background: var(--gray-200);
+            color: var(--gray-800);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Mobile responsive for try again buttons */
+        @media (max-width: 480px) {
+            .try-again-section {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .try-again-button {
+                max-width: none;
+                flex: none;
+            }
         }
         
         /* Signup Card Styles */
@@ -2568,9 +2600,10 @@
                 </div>
             </div>
             
-            <!-- Try Again Button -->
+            <!-- Try Again and Back Buttons -->
             <div class="try-again-section">
-                <button class="try-again-button" id="failure-retry" onclick="retryPuzzle()">Try Again</button>
+                <button class="try-again-button secondary" id="failure-back" onclick="goBackFromFailure()">Back to Pack</button>
+                <button class="try-again-button primary" id="failure-retry" onclick="retryPuzzle()">Try Again</button>
             </div>
             
             <!-- Pack navigation section for pack/archive puzzles -->
@@ -5158,6 +5191,11 @@ https://ladder.game/`;
                         console.error('Error setting up pack navigation:', error);
                     }
                     
+                    // Update back button text based on puzzle type
+                    if (window.updateFailureBackButton) {
+                        window.updateFailureBackButton();
+                    }
+                    
                     // Set up recommendations for daily puzzles
                     this.setupRecommendations();
                     
@@ -6135,6 +6173,41 @@ https://ladder.game/`;
         window.retryPuzzle = function() {
             // Simply reload the page with the same parameters to retry
             window.location.reload();
+        };
+        
+        // Go back from failure screen - intelligent navigation
+        window.goBackFromFailure = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const puzzleType = urlParams.get('type') || 'daily';
+            const packId = urlParams.get('pack_id');
+            
+            if (puzzleType === 'pack' && packId) {
+                // Go back to the specific puzzle pack
+                window.location.href = `./pack-puzzles.html?pack=${packId}`;
+            } else if (puzzleType === 'archive') {
+                // Go back to home (or archives page when available)
+                window.location.href = './home.html';
+            } else {
+                // Default: go back to home for daily puzzles
+                window.location.href = './home.html';
+            }
+        };
+        
+        // Update back button text based on puzzle type
+        window.updateFailureBackButton = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const puzzleType = urlParams.get('type') || 'daily';
+            const backButton = document.getElementById('failure-back');
+            
+            if (backButton) {
+                if (puzzleType === 'pack') {
+                    backButton.textContent = 'Back to Pack';
+                } else if (puzzleType === 'archive') {
+                    backButton.textContent = 'Back to Archives';
+                } else {
+                    backButton.textContent = 'Back to Home';
+                }
+            }
         };
         
         // Global sound toggle function
