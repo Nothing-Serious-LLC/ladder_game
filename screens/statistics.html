@@ -580,16 +580,16 @@
                 
                 const cardClass = wasCompleted ? 'puzzle-item completed' : 'puzzle-item failed';
                 
-                // Calculate remaining tries (assuming 3 total tries)
-                const totalTries = 3;
+                // Calculate remaining tries (5 total tries - same as game)
+                const totalTries = 5;
+                const triesUsed = puzzle.tries_used || 0;
                 let remainingTries = 0;
                 
                 if (wasCompleted) {
-                    // If completed successfully, they have remaining tries
-                    // Better performance (less hints used) = more tries remaining
-                    remainingTries = Math.max(1, totalTries - hintsUsed);
+                    // If completed successfully, show remaining tries
+                    remainingTries = Math.max(0, totalTries - triesUsed);
                 } else {
-                    // If failed, no tries remaining
+                    // If failed, no tries remaining (used all 5)
                     remainingTries = 0;
                 }
                 
@@ -657,15 +657,26 @@
         function formatTimeForStats(timeString) {
             if (!timeString || timeString === 'Unknown') return '--:--';
             
-            // If it's already formatted (like "02:30"), return as is
-            if (typeof timeString === 'string' && timeString.includes(':')) {
-                return timeString;
-            }
-            
             let seconds = 0;
             
-            // Handle PostgreSQL interval format like "120 seconds"
-            if (typeof timeString === 'string' && timeString.includes('seconds')) {
+            // Handle PostgreSQL interval format like "00:00:13" (HH:MM:SS)
+            if (typeof timeString === 'string' && timeString.includes(':')) {
+                const timeParts = timeString.split(':');
+                if (timeParts.length === 3) {
+                    // HH:MM:SS format from PostgreSQL interval
+                    const hours = parseInt(timeParts[0]) || 0;
+                    const minutes = parseInt(timeParts[1]) || 0;
+                    const secs = parseInt(timeParts[2]) || 0;
+                    seconds = (hours * 3600) + (minutes * 60) + secs;
+                } else if (timeParts.length === 2) {
+                    // MM:SS format - already formatted, return as is
+                    return timeString;
+                } else {
+                    return '--:--';
+                }
+            }
+            // Handle PostgreSQL text interval format like "120 seconds"
+            else if (typeof timeString === 'string' && timeString.includes('seconds')) {
                 const match = timeString.match(/(\d+)\s*seconds/);
                 if (match) {
                     seconds = parseInt(match[1]);
@@ -845,22 +856,30 @@
                 let seconds = 0;
                 console.log('STATISTICS SCREEN - Processing completion time:', puzzle.completion_time, 'Type:', typeof puzzle.completion_time);
                 
-                // Handle PostgreSQL interval format like "120 seconds"
-                if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes('seconds')) {
-                    const match = puzzle.completion_time.match(/(\d+)\s*seconds/);
-                    if (match) {
-                        seconds = parseInt(match[1]);
-                        console.log('STATISTICS SCREEN - Parsed PostgreSQL interval:', seconds, 'seconds');
-                    }
-                }
-                // Handle MM:SS format like "2:30"
-                else if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes(':')) {
+                // Handle PostgreSQL interval format like "00:00:13" (HH:MM:SS)
+                if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes(':')) {
                     const timeParts = puzzle.completion_time.split(':');
-                    if (timeParts.length === 2) {
+                    if (timeParts.length === 3) {
+                        // HH:MM:SS format from PostgreSQL interval
+                        const hours = parseInt(timeParts[0]) || 0;
+                        const minutes = parseInt(timeParts[1]) || 0;
+                        const secs = parseInt(timeParts[2]) || 0;
+                        seconds = (hours * 3600) + (minutes * 60) + secs;
+                        console.log('STATISTICS SCREEN - Parsed HH:MM:SS format:', hours, 'h', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
+                    } else if (timeParts.length === 2) {
+                        // MM:SS format fallback
                         const minutes = parseInt(timeParts[0]) || 0;
                         const secs = parseInt(timeParts[1]) || 0;
                         seconds = (minutes * 60) + secs;
                         console.log('STATISTICS SCREEN - Parsed MM:SS format:', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
+                    }
+                }
+                // Handle legacy PostgreSQL text format like "120 seconds" (if any exist)
+                else if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes('seconds')) {
+                    const match = puzzle.completion_time.match(/(\d+)\s*seconds/);
+                    if (match) {
+                        seconds = parseInt(match[1]);
+                        console.log('STATISTICS SCREEN - Parsed PostgreSQL text interval:', seconds, 'seconds');
                     }
                 }
                 // Handle raw number (seconds)

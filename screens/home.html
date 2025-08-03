@@ -1125,15 +1125,26 @@
         function formatTime(timeString) {
             if (!timeString || timeString === 'Unknown') return '--:--';
             
-            // If it's already formatted (like "02:30"), return as is
-            if (typeof timeString === 'string' && timeString.includes(':')) {
-                return timeString;
-            }
-            
             let seconds = 0;
             
-            // Handle PostgreSQL interval format like "120 seconds"
-            if (typeof timeString === 'string' && timeString.includes('seconds')) {
+            // Handle PostgreSQL interval format like "00:00:13" (HH:MM:SS)
+            if (typeof timeString === 'string' && timeString.includes(':')) {
+                const timeParts = timeString.split(':');
+                if (timeParts.length === 3) {
+                    // HH:MM:SS format from PostgreSQL interval
+                    const hours = parseInt(timeParts[0]) || 0;
+                    const minutes = parseInt(timeParts[1]) || 0;
+                    const secs = parseInt(timeParts[2]) || 0;
+                    seconds = (hours * 3600) + (minutes * 60) + secs;
+                } else if (timeParts.length === 2) {
+                    // MM:SS format - already formatted, return as is
+                    return timeString;
+                } else {
+                    return '--:--';
+                }
+            }
+            // Handle PostgreSQL text interval format like "120 seconds"
+            else if (typeof timeString === 'string' && timeString.includes('seconds')) {
                 const match = timeString.match(/(\d+)\s*seconds/);
                 if (match) {
                     seconds = parseInt(match[1]);
@@ -1239,22 +1250,30 @@
                 let seconds = 0;
                 console.log('HOME SCREEN - Processing completion time:', completion.completion_time, 'Type:', typeof completion.completion_time);
                 
-                // Handle PostgreSQL interval format like "120 seconds"
-                if (typeof completion.completion_time === 'string' && completion.completion_time.includes('seconds')) {
-                    const match = completion.completion_time.match(/(\d+)\s*seconds/);
-                    if (match) {
-                        seconds = parseInt(match[1]);
-                        console.log('HOME SCREEN - Parsed PostgreSQL interval:', seconds, 'seconds');
-                    }
-                }
-                // Handle MM:SS format like "2:30"
-                else if (typeof completion.completion_time === 'string' && completion.completion_time.includes(':')) {
+                // Handle PostgreSQL interval format like "00:00:13" (HH:MM:SS)
+                if (typeof completion.completion_time === 'string' && completion.completion_time.includes(':')) {
                     const timeParts = completion.completion_time.split(':');
-                    if (timeParts.length === 2) {
+                    if (timeParts.length === 3) {
+                        // HH:MM:SS format from PostgreSQL interval
+                        const hours = parseInt(timeParts[0]) || 0;
+                        const minutes = parseInt(timeParts[1]) || 0;
+                        const secs = parseInt(timeParts[2]) || 0;
+                        seconds = (hours * 3600) + (minutes * 60) + secs;
+                        console.log('HOME SCREEN - Parsed HH:MM:SS format:', hours, 'h', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
+                    } else if (timeParts.length === 2) {
+                        // MM:SS format fallback
                         const minutes = parseInt(timeParts[0]) || 0;
                         const secs = parseInt(timeParts[1]) || 0;
                         seconds = (minutes * 60) + secs;
                         console.log('HOME SCREEN - Parsed MM:SS format:', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
+                    }
+                }
+                // Handle legacy PostgreSQL text format like "120 seconds" (if any exist)
+                else if (typeof completion.completion_time === 'string' && completion.completion_time.includes('seconds')) {
+                    const match = completion.completion_time.match(/(\d+)\s*seconds/);
+                    if (match) {
+                        seconds = parseInt(match[1]);
+                        console.log('HOME SCREEN - Parsed PostgreSQL text interval:', seconds, 'seconds');
                     }
                 }
                 // Handle raw number (seconds)
