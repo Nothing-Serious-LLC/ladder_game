@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Statistics - LADDER</title>
     
     <!-- PWA Meta Tags for Full Screen Experience -->
@@ -741,10 +741,11 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script type="module">
         import { supabaseConfig } from '../config/supabase-config.js';
-        import { getGameDayString, getPuzzleNumber } from '../assets/js/timeUtils.js';
+        import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../assets/js/timeUtils.js';
         
-        // Initialize Supabase
-        const supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        // Initialize Supabase client
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
         
         let allPuzzleHistory = [];
         let currentDayIndex = 0; // 0 = today, 1 = yesterday, etc.
@@ -761,14 +762,7 @@
             return today.toISOString().split('T')[0]; // YYYY-MM-DD format
         }
         
-        // Function to get puzzle number for a specific date
-        function getPuzzleNumberForDate(dateString) {
-            const launchDate = new Date('2025-07-28');
-            const targetDate = new Date(dateString);
-            const diffTime = targetDate - launchDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays + 1; // Launch day is puzzle #1
-        }
+
         
 
         
@@ -814,7 +808,7 @@
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             currentDateEl.textContent = date.toLocaleDateString('en-US', options);
             
-            // Calculate puzzle number for the target date
+            // Calculate puzzle number for the target date  
             const puzzleNumber = getPuzzleNumberForDate(targetDate);
             
             // Find puzzle for this specific date
@@ -892,7 +886,7 @@
             const wasCompleted = completion.completed;
             const completionTime = completion.completion_time || 'Unknown';
             const hintsUsed = completion.hints_used || 0;
-            const finalPuzzleNumber = puzzleNumber || getPuzzleNumber();
+            const finalPuzzleNumber = puzzleNumber || getPuzzleNumberHelper();
             
             // Calculate hints remaining (3 total hints available)
             const totalHints = 3;
@@ -1051,22 +1045,8 @@
             playButton.style.display = 'block';
         }
         
-        function getPuzzleNumber() {
-            // Use same calculation as index.html - days since launch date
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const est = new Date(utc + (-5 * 3600000));
-            
-            // Launch date set so today is puzzle #4 (matches index.html)
-            const launchDate = new Date('2025-07-28');
-            const diffTime = est - launchDate;
-            const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            
-            return puzzleNumber;
-        }
-        
         function getPuzzleNumberForDate(dateString) {
-            // Calculate puzzle number for a specific date
+            // Calculate puzzle number for a specific date using same logic as timeUtils
             const targetDate = new Date(dateString);
             const launchDate = new Date('2025-07-28');
             const diffTime = targetDate - launchDate;
