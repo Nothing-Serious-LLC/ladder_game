@@ -298,6 +298,15 @@
         </div>
     </div>
     
+    <!-- Include Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script type="module">
+        import { supabaseUrl, supabaseAnonKey } from '../config/supabase-config.js';
+        
+        // Initialize Supabase client
+        const { createClient } = supabase;
+        window.supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+    </script>
     <script>
         // Get product info from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
@@ -415,9 +424,59 @@
             }
         }
         
-        function purchaseProduct() {
+        async function purchaseProduct() {
             const product = products[productId];
-            if (product) {
+            if (!product) return;
+            
+            try {
+                // Get current user
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (!user) {
+                    alert('Please sign in to make a purchase');
+                    window.location.href = './signup.html';
+                    return;
+                }
+                
+                // Check if already owned
+                const { data: existingPurchase } = await window.supabaseClient
+                    .from('user_purchases')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .eq('product_id', productId)
+                    .single();
+                
+                if (existingPurchase) {
+                    alert('You already own this product!');
+                    return;
+                }
+                
+                // Record the purchase in the database
+                const { error: purchaseError } = await window.supabaseClient
+                    .from('user_purchases')
+                    .insert({
+                        user_id: user.id,
+                        product_id: productId,
+                        purchase_date: new Date().toISOString(),
+                        price_paid: product.price === 'Free' ? 0 : parseFloat(product.price.replace('$', ''))
+                    });
+                
+                if (purchaseError) {
+                    console.error('Purchase error:', purchaseError);
+                    alert('Failed to process purchase. Please try again.');
+                    return;
+                }
+                
+                // For free pack, also add to user_puzzle_packs for backward compatibility
+                if (productId === 'free-pack') {
+                    await window.supabaseClient
+                        .from('user_puzzle_packs')
+                        .insert({
+                            user_id: user.id,
+                            pack_id: productId,
+                            claimed_at: new Date().toISOString()
+                        });
+                }
+                
                 // Add fade-out animation to the entire page
                 document.body.classList.add('page-fade-out');
                 
@@ -441,6 +500,10 @@
                     
                     window.location.href = `purchase-confirmation.html?${params.toString()}`;
                 }, 300); // Match the animation duration
+                
+            } catch (error) {
+                console.error('Purchase process error:', error);
+                alert('An error occurred. Please try again.');
             }
         }
         

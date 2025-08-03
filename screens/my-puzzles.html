@@ -415,11 +415,37 @@
                     return;
                 }
                 
+                // Load pack completions
+                await loadPackCompletions(user.id);
+                
                 renderInventory(purchases || []);
                 
             } catch (error) {
                 console.error('Error loading inventory:', error);
                 renderInventory([]);
+            }
+        }
+        
+        async function loadPackCompletions(userId) {
+            try {
+                const { data: completions } = await supabaseClient
+                    .from('puzzle_pack_completions')
+                    .select('pack_name, completed')
+                    .eq('user_id', userId)
+                    .eq('completed', true);
+                
+                window.packCompletions = {};
+                if (completions) {
+                    completions.forEach(completion => {
+                        if (!window.packCompletions[completion.pack_name]) {
+                            window.packCompletions[completion.pack_name] = 0;
+                        }
+                        window.packCompletions[completion.pack_name]++;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading pack completions:', error);
+                window.packCompletions = {};
             }
         }
         
@@ -442,12 +468,15 @@
             inventoryGrid.innerHTML = '';
             
             puzzlePacks.forEach(pack => {
-                const purchase = purchases.find(p => p.item_name === pack.name);
+                const purchase = purchases.find(p => p.product_id === pack.id);
                 const isUnlocked = !!purchase;
                 
-                // TODO: Replace with actual completion tracking from database
-                const completedPuzzles = 0; // Show 0 progress until proper tracking is implemented
-                const progressPercent = 0;
+                // Get completion progress from pack completions
+                let completedPuzzles = 0;
+                if (isUnlocked && window.packCompletions && window.packCompletions[pack.id]) {
+                    completedPuzzles = window.packCompletions[pack.id];
+                }
+                const progressPercent = pack.totalPuzzles > 0 ? (completedPuzzles / pack.totalPuzzles) * 100 : 0;
                 
                 const packCard = document.createElement('div');
                 packCard.className = `pack-card ${isUnlocked ? 'unlocked' : 'locked'}`;
@@ -477,9 +506,8 @@
         
         function handlePackClick(pack, isUnlocked) {
             if (isUnlocked) {
-                // Navigate to pack puzzles view (would be implemented)
-                console.log(`Opening ${pack.name} puzzles`);
-                // TODO: Navigate to individual pack puzzle selection
+                // Navigate to pack puzzles view
+                window.location.href = `pack-puzzles.html?pack=${pack.id}`;
             } else {
                 // Navigate to product overview to purchase
                 window.location.href = `product-overview.html?product=${pack.id}&from=my-puzzles`;

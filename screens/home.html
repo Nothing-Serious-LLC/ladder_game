@@ -1388,15 +1388,31 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                         // User has purchases, show them
                         let packsHTML = '';
                         
+                        // Load completion counts
+                        const { data: completions } = await supabase
+                            .from('puzzle_pack_completions')
+                            .select('pack_name, completed')
+                            .eq('user_id', user.id)
+                            .eq('completed', true);
+                        
+                        const completionCounts = {};
+                        if (completions) {
+                            completions.forEach(c => {
+                                completionCounts[c.pack_name] = (completionCounts[c.pack_name] || 0) + 1;
+                            });
+                        }
+                        
                         purchases.forEach(purchase => {
                             if (purchase.product_id === 'free-pack') {
+                                const completed = completionCounts['free-pack'] || 0;
+                                const progress = (completed / 10) * 100;
                                 packsHTML += `
                                     <div class="pack-item">
                                         <div class="item-info">
                                             <div class="item-name">Free Pack</div>
-                                            <div class="pack-progress">10 starter puzzles</div>
+                                            <div class="pack-progress">${completed}/10 puzzles completed</div>
                                             <div class="progress-bar">
-                                                <div class="progress-fill" style="width: 100%"></div>
+                                                <div class="progress-fill" style="width: ${progress}%"></div>
                                             </div>
                                         </div>
                                         <button class="pack-button" onclick="playPuzzlePack('free')">Play</button>
@@ -1405,13 +1421,15 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                             }
                             
                             if (purchase.product_id === 'complete-pack') {
+                                const completed = completionCounts['complete-pack'] || 0;
+                                const progress = (completed / 100) * 100;
                                 packsHTML += `
                                     <div class="pack-item">
                                         <div class="item-info">
                                             <div class="item-name">Complete Pack</div>
-                                            <div class="pack-progress">All puzzles included</div>
+                                            <div class="pack-progress">${completed}/100 puzzles completed</div>
                                             <div class="progress-bar">
-                                                <div class="progress-fill" style="width: 100%"></div>
+                                                <div class="progress-fill" style="width: ${progress}%"></div>
                                             </div>
                                         </div>
                                         <button class="pack-button" onclick="playPuzzlePack('complete')">Play</button>
