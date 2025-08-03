@@ -203,6 +203,31 @@
             opacity: 0.5;
         }
         
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: var(--gray-600);
+            text-align: center;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 110px 15px 15px 15px;
@@ -271,6 +296,14 @@
         let completions = {};
         
         document.addEventListener('DOMContentLoaded', async function() {
+            // Show loading state
+            document.getElementById('puzzles-grid').innerHTML = `
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading puzzles...</p>
+                </div>
+            `;
+            
             const urlParams = new URLSearchParams(window.location.search);
             const packId = urlParams.get('pack');
             
@@ -278,6 +311,9 @@
                 window.location.href = './home.html';
                 return;
             }
+            
+            // Wait a moment for supabase to fully initialize
+            await new Promise(resolve => setTimeout(resolve, 100));
             
             await loadPackPuzzles(packId);
         });
@@ -291,14 +327,22 @@
                 }
                 
                 // Check if user owns this pack
-                const { data: purchase } = await supabaseClient
+                const { data: purchases } = await supabaseClient
                     .from('user_purchases')
                     .select('*')
                     .eq('user_id', user.id)
-                    .eq('product_id', packId)
-                    .single();
+                    .in('product_id', [packId, 'complete-pack', 'free-pack']);
                 
-                if (!purchase && packId !== 'free-pack') {
+                const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
+                const hasCompletePack = ownedProducts.includes('complete-pack');
+                const hasThisPack = ownedProducts.includes(packId);
+                
+                // Free pack is accessible if user owns free-pack OR complete-pack
+                const canAccessFreePack = packId === 'free-pack' && (hasThisPack || hasCompletePack);
+                // Other packs require direct ownership OR complete-pack
+                const canAccessPack = packId !== 'free-pack' && (hasThisPack || hasCompletePack);
+                
+                if (!canAccessFreePack && !canAccessPack) {
                     alert('You do not own this puzzle pack');
                     window.location.href = './home.html';
                     return;
@@ -376,6 +420,10 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">❌</div>
                         <p>Error loading puzzles</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">Please refresh the page and try again</p>
+                        <button onclick="window.location.reload()" style="margin-top: 15px; padding: 10px 20px; background: var(--primary-green); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            Retry
+                        </button>
                     </div>
                 `;
             }
