@@ -381,6 +381,13 @@
             flex-direction: column;
         }
         
+        .packs-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
         .store-item {
             display: flex;
             align-items: center;
@@ -1513,7 +1520,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     
                     if (purchases && purchases.length > 0) {
                         // User has purchases, show them
-                        let packsHTML = '';
+                        let packsHTML = '<div class="packs-content">';
                         
                         // Load completion counts - get all completions, not just completed ones
                         const { data: completions } = await supabase
@@ -1566,8 +1573,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                             }
                         });
                         
-                        // Add View All Packs button
+                        // Close packs content div and add View All Packs button
                         packsHTML += `
+                            </div>
                             <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
                                 View All Packs
                             </button>
@@ -1577,10 +1585,12 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     } else {
                         // No purchases, show empty state
                         puzzlePacksContent.innerHTML = `
-                            <div class="empty-state">
-                                <div class="empty-state-icon">📦</div>
-                                <div class="empty-state-text">No puzzle packs yet</div>
-                                <div class="empty-state-subtext">Purchase packs from the store to get started</div>
+                            <div class="packs-content">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">📦</div>
+                                    <div class="empty-state-text">No puzzle packs yet</div>
+                                    <div class="empty-state-subtext">Purchase packs from the store to get started</div>
+                                </div>
                             </div>
                             <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
                                 View All Packs
