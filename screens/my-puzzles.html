@@ -151,15 +151,7 @@
             transform: translateY(-2px);
         }
         
-        .lock-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3rem;
-            opacity: 0.6;
-            z-index: 2;
-        }
+
         
         .pack-icon {
             font-size: 3.5rem;
@@ -462,7 +454,6 @@
                 packCard.onclick = () => handlePackClick(pack, isUnlocked);
                 
                 packCard.innerHTML = `
-                    ${!isUnlocked ? '<div class="lock-overlay">🔒</div>' : ''}
                     <div class="pack-icon">${pack.icon}</div>
                     <div class="pack-name">${pack.name}</div>
                     <div class="pack-description">${pack.description}</div>
