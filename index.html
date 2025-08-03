@@ -1611,6 +1611,67 @@
             letter-spacing: -0.02em;
             font-family: system-ui, -apple-system, sans-serif;
         }
+        
+        .countdown-page .signup-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            text-align: center;
+            margin-top: 40px;
+            max-width: 350px;
+        }
+        
+        .countdown-page .signup-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1a1a1b;
+            margin-bottom: 8px;
+        }
+        
+        .countdown-page .signup-description {
+            font-size: 0.9rem;
+            color: #787c7e;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .countdown-page .signup-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .countdown-page .signup-button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .countdown-page .signup-button.primary {
+            background: #6aaa64;
+            color: white;
+        }
+        
+        .countdown-page .signup-button.primary:hover {
+            background: #5a9a5a;
+            transform: translateY(-1px);
+        }
+        
+        .countdown-page .signup-button.secondary {
+            background: transparent;
+            color: #787c7e;
+            border: 1px solid #d3d6da;
+        }
+        
+        .countdown-page .signup-button.secondary:hover {
+            background: #f8f9fa;
+        }
 
         @media (max-width: 480px) {
             html, body {
@@ -2198,6 +2259,16 @@
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
                 <p class="countdown-subtitle">Next Puzzle</p>
             </div>
+            
+            <!-- Signup card for non-authenticated users -->
+            <div class="signup-card" id="countdown-signup-card" style="display: none;">
+                <h3 class="signup-title">Save Your Progress</h3>
+                <p class="signup-description">Create an account to track your daily streaks and compete with friends</p>
+                <div class="signup-buttons">
+                    <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
+                    <button class="signup-button secondary" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">Skip</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2465,14 +2536,17 @@
                     // Check if user has already played today's puzzle
                     const hasPlayedToday = await window.gameModule.checkTodaysPuzzleStatus(isAuthenticated);
                     
-                    if (hasPlayedToday) {
-                        // Show countdown screen instead of landing page
+                    if (isAuthenticated && hasPlayedToday) {
+                        // Authenticated user who has played - redirect to home screen with timer
+                        window.location.href = './screens/home.html?played=true';
+                    } else if (isAuthenticated && !hasPlayedToday) {
+                        // Authenticated user who hasn't played - show intro screen
+                        window.gameModule.showLandingPage();
+                    } else if (!isAuthenticated && hasPlayedToday) {
+                        // Non-authenticated user who has played - show countdown screen with signup option
                         window.gameModule.showCountdownFromStart();
-                    } else if (isAuthenticated) {
-                        // Authenticated user who hasn't played - redirect to home screen for better UX
-                        window.location.href = './screens/home.html';
                     } else {
-                        // Non-authenticated user who hasn't played - show landing page
+                        // Non-authenticated user who hasn't played - show intro screen
                         window.gameModule.showLandingPage();
                     }
                     
@@ -2641,13 +2715,25 @@
                 document.getElementById('countdown-page').style.display = 'none';
             },
             
-            showCountdownFromStart: () => {
+            showCountdownFromStart: async () => {
                 // Update countdown page info
                 const { puzzleNumber } = getTodaysPuzzleInfo();
                 const today = new Date();
                 const options = { month: 'long', day: 'numeric', year: 'numeric' };
                 const formattedDate = today.toLocaleDateString('en-US', options);
                 document.getElementById('countdown-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+                
+                // Check if user is authenticated to show/hide signup card
+                const isAuthenticated = await window.gameModule.checkAuthentication();
+                const signupCard = document.getElementById('countdown-signup-card');
+                
+                if (!isAuthenticated) {
+                    // Show signup card for non-authenticated users
+                    signupCard.style.display = 'block';
+                } else {
+                    // Hide signup card for authenticated users
+                    signupCard.style.display = 'none';
+                }
                 
                 // Show countdown page
                 document.getElementById('landing-page').style.display = 'none';

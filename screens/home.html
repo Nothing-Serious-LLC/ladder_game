@@ -882,10 +882,17 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const justCompleted = urlParams.get('completed');
                 const justFailed = urlParams.get('failed');
+                const hasPlayed = urlParams.get('played');
                 
                 // Clean URL if we have completion parameters
-                if (justCompleted || justFailed) {
+                if (justCompleted || justFailed || hasPlayed) {
                     window.history.replaceState({}, document.title, window.location.pathname);
+                }
+                
+                // If user has played today, show countdown timer
+                if (hasPlayed === 'true') {
+                    showCountdown();
+                    return;
                 }
                 
                 // Get today's puzzle date based on ET timezone and 3am reset
