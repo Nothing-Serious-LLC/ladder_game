@@ -774,16 +774,7 @@
     <div class="container">
         <a href="home.html" class="back-button">← Back</a>
         
-        <!-- Statistics Filter Controls -->
-        <div class="filter-controls">
-            <div class="filter-title">Filter Statistics Below</div>
-            <div class="filter-buttons">
-                <button class="filter-btn active" id="all-filter" onclick="setStatsFilter('all')">All</button>
-                <button class="filter-btn" id="daily-filter" onclick="setStatsFilter('daily')">Daily</button>
-                <button class="filter-btn" id="archive-filter" onclick="setStatsFilter('archive')">Archive</button>
-                <button class="filter-btn" id="puzzles-filter" onclick="setStatsFilter('puzzles')">Puzzles</button>
-            </div>
-        </div>
+
 
         <!-- Puzzle History (Top Priority) -->
         <div class="puzzle-history-card">
@@ -808,6 +799,16 @@
                         Loading...
                     </button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Statistics Filter Controls -->
+        <div class="filter-controls">
+            <div class="filter-title">Filter Statistics Below</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" id="all-filter" onclick="setStatsFilter('all')">All</button>
+                <button class="filter-btn" id="daily-filter" onclick="setStatsFilter('daily')">Daily</button>
+                <button class="filter-btn" id="puzzles-filter" onclick="setStatsFilter('puzzles')">Puzzles</button>
             </div>
         </div>
         
@@ -940,12 +941,9 @@
             if (currentStatsFilter === 'all') {
                 filteredData = allCompletionsData;
             } else if (currentStatsFilter === 'daily') {
+                // Daily now includes both current daily puzzles AND archive daily puzzles
                 filteredData = allCompletionsData.filter(item => 
-                    item.puzzle_type === 'daily' && item.date_key >= todayString
-                );
-            } else if (currentStatsFilter === 'archive') {
-                filteredData = allCompletionsData.filter(item => 
-                    item.puzzle_type === 'daily' && item.date_key < todayString
+                    item.puzzle_type === 'daily'
                 );
             } else if (currentStatsFilter === 'puzzles') {
                 filteredData = allCompletionsData.filter(item => 
