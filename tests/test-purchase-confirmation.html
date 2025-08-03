@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Purchase Confirmation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .test-links {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #1a1a1b;
+            margin-bottom: 30px;
+        }
+        
+        .test-link {
+            display: block;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #1a1a1b;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+        
+        .test-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .test-link h3 {
+            margin: 0 0 5px 0;
+            color: #6aaa64;
+        }
+        
+        .test-link p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #787c7e;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-links">
+        <h1>🧪 Test Purchase Confirmation Screens</h1>
+        
+        <a href="../screens/purchase-confirmation.html?item=Free%20Pack&price=Free&description=10%20starter%20puzzles&product=free-pack" class="test-link">
+            <h3>Free Pack Confirmation</h3>
+            <p>Test the free pack purchase confirmation</p>
+        </a>
+        
+        <a href="../screens/purchase-confirmation.html?item=Complete%20Pack&price=$4.99&description=All%20100%20puzzles&product=complete-pack" class="test-link">
+            <h3>Complete Pack Confirmation</h3>
+            <p>Test the complete pack purchase confirmation</p>
+        </a>
+        
+        <a href="../screens/purchase-confirmation.html?item=Puzzle%20Pack&price=$2.99&description=100%20carefully%20crafted%20puzzles&product=puzzle-pack" class="test-link">
+            <h3>Puzzle Pack Confirmation</h3>
+            <p>Test the standard puzzle pack confirmation</p>
+        </a>
+        
+        <a href="../screens/purchase-confirmation.html?item=Archive%20Access&price=$2.99&description=Access%20to%20all%20past%20daily%20puzzles&product=archive" class="test-link">
+            <h3>Archive Access Confirmation</h3>
+            <p>Test the archive access confirmation</p>
+        </a>
+        
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #d3d6da;">
+        
+        <h2>Test with Product Overview Flow</h2>
+        <p style="margin-bottom: 20px; color: #787c7e;">These links test the full flow from product overview to confirmation</p>
+        
+        <a href="../screens/product-overview.html?product=free-pack&from=store" class="test-link">
+            <h3>Start from Free Pack Overview</h3>
+            <p>Navigate through product overview → purchase confirmation</p>
+        </a>
+        
+        <a href="../screens/product-overview.html?product=complete-pack&from=store" class="test-link">
+            <h3>Start from Complete Pack Overview</h3>
+            <p>Navigate through product overview → purchase confirmation</p>
+        </a>
+    </div>
+</body>
+</html>

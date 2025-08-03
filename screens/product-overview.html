@@ -239,6 +239,21 @@
                 font-size: 2rem;
             }
         }
+        
+        /* Fade out animation */
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+        
+        .page-fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+        }
     </style>
 </head>
 <body>
@@ -403,22 +418,29 @@
         function purchaseProduct() {
             const product = products[productId];
             if (product) {
-                // Get the 'from' parameter to pass it along
-                const urlParams = new URLSearchParams(window.location.search);
-                const fromPage = urlParams.get('from');
+                // Add fade-out animation to the entire page
+                document.body.classList.add('page-fade-out');
                 
-                const params = new URLSearchParams({
-                    item: product.name,
-                    price: product.price,
-                    description: product.description
-                });
-                
-                // Add the 'from' parameter if it exists
-                if (fromPage) {
-                    params.set('from', fromPage);
-                }
-                
-                window.location.href = `purchase-confirmation.html?${params.toString()}`;
+                // Wait for animation to complete before navigating
+                setTimeout(() => {
+                    // Get the 'from' parameter to pass it along
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const fromPage = urlParams.get('from');
+                    
+                    const params = new URLSearchParams({
+                        item: product.name,
+                        price: product.price,
+                        description: product.description,
+                        product: productId  // Add product ID for proper routing
+                    });
+                    
+                    // Add the 'from' parameter if it exists
+                    if (fromPage) {
+                        params.set('from', fromPage);
+                    }
+                    
+                    window.location.href = `purchase-confirmation.html?${params.toString()}`;
+                }, 300); // Match the animation duration
             }
         }
         
