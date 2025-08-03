@@ -1012,6 +1012,11 @@
         function showCompletedPuzzle(completion, puzzleDate) {
             const dailyCard = document.getElementById('daily-puzzle-card');
             
+            // Store completion data for toggling
+            completionData = completion;
+            puzzleDateData = puzzleDate;
+            currentView = 'completion';
+            
             // Check if puzzle was completed or failed
             const wasCompleted = completion.completed;
             const completionTime = completion.completion_time || 'Unknown';
@@ -1048,7 +1053,7 @@
                     </div>
                 </div>
                 
-                <button class="play-button countdown-button" onclick="showCountdown()">
+                <button class="play-button countdown-button" onclick="togglePuzzleView()">
                     <div class="countdown-text">Next Puzzle In</div>
                     <div class="countdown-time" id="mini-countdown">Loading...</div>
                 </button>
@@ -1275,15 +1280,20 @@
             window.miniCountdownInterval = miniCountdownInterval;
         }
 
+        // State management for countdown/completion toggle
+        let currentView = 'completion'; // 'completion' or 'countdown'
+        let completionData = null; // Store completion data for toggling
+        let puzzleDateData = null; // Store puzzle date for toggling
+
         // Global functions for button handlers
         window.showCountdown = function() {
+            currentView = 'countdown';
             const dailyCard = document.getElementById('daily-puzzle-card');
             
             dailyCard.innerHTML = `
-                <h2 class="section-title">Next Puzzle</h2>
                 <div class="countdown-timer" id="countdown-timer">Loading...</div>
                 <div class="countdown-label">until next puzzle</div>
-                <button class="back-to-puzzle" onclick="loadDailyPuzzle()">Back to Today's Puzzle</button>
+                <button class="back-to-puzzle" onclick="togglePuzzleView()">Back to Today's Puzzle</button>
             `;
             
             // Add countdown styling
@@ -1291,6 +1301,22 @@
             
             // Start countdown
             startCountdown();
+        };
+        
+        window.togglePuzzleView = function() {
+            if (currentView === 'countdown') {
+                // Switch back to completion view
+                if (completionData && puzzleDateData) {
+                    showCompletedPuzzle(completionData, puzzleDateData);
+                    currentView = 'completion';
+                } else {
+                    // Fallback to loading daily puzzle
+                    loadDailyPuzzle();
+                }
+            } else {
+                // Switch to countdown view
+                showCountdown();
+            }
         };
         
         function startCountdown() {
