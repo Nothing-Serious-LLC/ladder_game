@@ -85,6 +85,13 @@
             width: fit-content;
         }
         
+        /* Desktop: better positioning for back button */
+        @media (min-width: 768px) {
+            .back-button {
+                margin-bottom: 40px;
+            }
+        }
+        
         .back-button:hover {
             border-color: var(--gray-400);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -95,6 +102,13 @@
             margin: 0 auto;
             padding: 160px 20px 0 20px; /* Top padding for fixed header */
             flex: 1;
+        }
+        
+        /* Better spacing on desktop */
+        @media (min-width: 768px) {
+            .container {
+                padding: 160px 40px 0 40px;
+            }
         }
         
         .product-hero {

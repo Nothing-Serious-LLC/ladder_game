@@ -69,10 +69,18 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             padding: 160px 20px 0 20px; /* Top padding for fixed header */
             flex: 1;
+        }
+        
+        /* Wider container on desktop for side-by-side layout */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 900px;
+                padding: 160px 40px 0 40px; /* More side padding on desktop */
+            }
         }
         
         .back-button {
@@ -92,6 +100,13 @@
             width: fit-content;
         }
         
+        /* Desktop: better positioning for back button */
+        @media (min-width: 768px) {
+            .back-button {
+                margin-bottom: 40px;
+            }
+        }
+        
         .back-button:hover {
             border-color: var(--gray-400);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -101,20 +116,24 @@
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--gray-900);
-            margin-bottom: 8px;
-        }
-        
-        .store-subtitle {
-            font-size: 1.1rem;
-            color: var(--gray-600);
             margin-bottom: 40px;
         }
+        
+
         
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: 1fr;
             gap: 30px;
             margin-bottom: 40px;
+        }
+        
+        /* Desktop: side-by-side cards */
+        @media (min-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr 1fr;
+                max-width: 800px;
+            }
         }
         
         .product-card {
@@ -227,7 +246,6 @@
         </button>
         
         <h2 class="store-title">Store</h2>
-        <p class="store-subtitle">Choose your puzzle adventure</p>
         
         <div class="products-grid">
             <div class="product-card" onclick="viewProduct('puzzle-pack')">
