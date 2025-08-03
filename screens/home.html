@@ -649,6 +649,44 @@
             transform: scale(1.02);
         }
         
+        /* Everything owned styles */
+        .everything-owned {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .ownership-complete {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .checkmark-circle {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .checkmark-circle svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 12px rgba(106, 170, 100, 0.3));
+        }
+        
+        .ownership-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+        
+        .ownership-description {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin: 0;
+            line-height: 1.4;
+        }
+        
         .countdown-label {
             font-size: 1.1rem;
             margin-bottom: 30px;
@@ -848,6 +886,28 @@
                                 <div class="item-price">$4.99</div>
                             </div>
                             <button class="buy-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
+                        </div>
+                        <div class="store-item" onclick="viewProduct('archive')">
+                            <div class="item-info">
+                                <div class="item-name">Archive</div>
+                                <div class="item-description">Access to all past daily puzzles</div>
+                                <div class="item-price">$2.99</div>
+                            </div>
+                            <button class="buy-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Everything owned state -->
+                    <div class="everything-owned" id="everything-owned" style="display: none;">
+                        <div class="ownership-complete">
+                            <div class="checkmark-circle">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" fill="var(--primary-green)"/>
+                                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h3 class="ownership-title">Everything Owned!</h3>
+                            <p class="ownership-description">You have access to all available puzzle content</p>
                         </div>
                     </div>
                     <button class="view-all-button" onclick="window.location.href='store.html'">
@@ -1551,34 +1611,48 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         }
         
         function updateStoreItemsOwnership(ownedProducts) {
-            // Hide Free Pack if owned
             const freePackItem = document.querySelector('.store-item[onclick*="free-pack"]');
-            if (freePackItem) {
-                if (ownedProducts.includes('free-pack') || ownedProducts.includes('complete-pack')) {
-                    freePackItem.style.display = 'none';
-                } else {
-                    freePackItem.style.display = 'block';
-                }
-            }
-            
-            // Hide Complete Pack if owned
             const completePackItem = document.querySelector('.store-item[onclick*="complete-pack"]');
-            if (completePackItem) {
-                if (ownedProducts.includes('complete-pack')) {
-                    completePackItem.style.display = 'none';
-                } else {
-                    completePackItem.style.display = 'block';
-                }
-            }
-            
-            // Update view all button visibility - only show if there are visible items
-            const storeItems = document.querySelectorAll('.store-item:not([style*="display: none"])');
+            const archivePackItem = document.querySelector('.store-item[onclick*="archive"]');
+            const storeItemsContainer = document.querySelector('.store-items');
+            const everythingOwnedContainer = document.getElementById('everything-owned');
             const viewAllButton = document.querySelector('.view-all-button');
-            if (viewAllButton) {
-                if (storeItems.length === 0) {
-                    viewAllButton.style.display = 'none';
-                } else {
-                    viewAllButton.style.display = 'block';
+            
+            // Check ownership status
+            const hasFreePack = ownedProducts.includes('free-pack');
+            const hasCompletePack = ownedProducts.includes('complete-pack');
+            const hasArchivePack = ownedProducts.includes('archive');
+            
+            // Check if user owns everything (complete pack OR both free + archive)
+            const ownsEverything = hasCompletePack || (hasFreePack && hasArchivePack);
+            
+            if (ownsEverything) {
+                // Show "everything owned" state
+                if (storeItemsContainer) storeItemsContainer.style.display = 'none';
+                if (everythingOwnedContainer) everythingOwnedContainer.style.display = 'block';
+                if (viewAllButton) viewAllButton.style.display = 'none';
+            } else {
+                // Show regular store items
+                if (storeItemsContainer) storeItemsContainer.style.display = 'block';
+                if (everythingOwnedContainer) everythingOwnedContainer.style.display = 'none';
+                
+                // Hide owned items
+                if (freePackItem) {
+                    freePackItem.style.display = (hasFreePack || hasCompletePack) ? 'none' : 'block';
+                }
+                
+                if (completePackItem) {
+                    completePackItem.style.display = hasCompletePack ? 'none' : 'block';
+                }
+                
+                if (archivePackItem) {
+                    archivePackItem.style.display = (hasArchivePack || hasCompletePack) ? 'none' : 'block';
+                }
+                
+                // Show view all button if there are visible items
+                const visibleStoreItems = document.querySelectorAll('.store-item:not([style*="display: none"])');
+                if (viewAllButton) {
+                    viewAllButton.style.display = visibleStoreItems.length > 0 ? 'block' : 'none';
                 }
             }
         }
