@@ -4922,7 +4922,7 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     
                     // Set up pack navigation if this is a pack puzzle
                     try {
-                        await this.setupPackNavigation();
+                        this.setupPackNavigation();
                         console.log('Pack navigation setup completed');
                     } catch (error) {
                         console.error('Error setting up pack navigation:', error);
@@ -5018,7 +5018,7 @@ https://ladder.game/`;
                     
                     // Set up pack navigation if this is a pack puzzle
                     try {
-                        await this.setupPackNavigation();
+                        this.setupPackNavigation();
                         console.log('Pack navigation setup completed');
                     } catch (error) {
                         console.error('Error setting up pack navigation:', error);
