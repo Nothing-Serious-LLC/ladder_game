@@ -1114,9 +1114,22 @@
                 return timeString;
             }
             
-            // If it's in milliseconds or seconds, convert
-            const seconds = typeof timeString === 'string' ? parseInt(timeString) : timeString;
-            if (isNaN(seconds)) return '--:--';
+            let seconds = 0;
+            
+            // Handle PostgreSQL interval format like "120 seconds"
+            if (typeof timeString === 'string' && timeString.includes('seconds')) {
+                const match = timeString.match(/(\d+)\s*seconds/);
+                if (match) {
+                    seconds = parseInt(match[1]);
+                } else {
+                    return '--:--';
+                }
+            }
+            // Handle raw number or string number
+            else {
+                seconds = typeof timeString === 'string' ? parseInt(timeString) : timeString;
+                if (isNaN(seconds)) return '--:--';
+            }
             
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
@@ -1128,10 +1141,10 @@
                 const { data: { user } } = await supabase.auth.getUser();
                 
                 if (user) {
-                    // Query user statistics from puzzle_completions table
+                    // Query user statistics from puzzle_completions table (optimized - only select needed fields)
                     const { data: completions } = await supabase
                         .from('puzzle_completions')
-                        .select('*')
+                        .select('puzzle_date, completed, completion_time')
                         .eq('user_id', user.id)
                         .order('puzzle_date', { ascending: false });
                     
@@ -1182,21 +1195,46 @@
             
             // Filter only completed puzzles with valid completion times
             const completedWithTimes = completions.filter(c => 
-                c.completed && c.completion_time && c.completion_time !== '--:--'
+                c.completed && c.completion_time && c.completion_time !== '--:--' && c.completion_time !== 'Unknown'
             );
             
             if (completedWithTimes.length === 0) return '0:00';
             
-            // Parse time strings and calculate average
+            // Parse time data and calculate average
             let totalSeconds = 0;
             let validTimes = 0;
             
             for (const completion of completedWithTimes) {
-                const timeParts = completion.completion_time.split(':');
-                if (timeParts.length === 2) {
-                    const minutes = parseInt(timeParts[0]) || 0;
-                    const seconds = parseInt(timeParts[1]) || 0;
-                    totalSeconds += (minutes * 60) + seconds;
+                let seconds = 0;
+                
+                // Handle PostgreSQL interval format like "120 seconds"
+                if (typeof completion.completion_time === 'string' && completion.completion_time.includes('seconds')) {
+                    const match = completion.completion_time.match(/(\d+)\s*seconds/);
+                    if (match) {
+                        seconds = parseInt(match[1]);
+                    }
+                }
+                // Handle MM:SS format like "2:30"
+                else if (typeof completion.completion_time === 'string' && completion.completion_time.includes(':')) {
+                    const timeParts = completion.completion_time.split(':');
+                    if (timeParts.length === 2) {
+                        const minutes = parseInt(timeParts[0]) || 0;
+                        const secs = parseInt(timeParts[1]) || 0;
+                        seconds = (minutes * 60) + secs;
+                    }
+                }
+                // Handle raw number (seconds)
+                else if (typeof completion.completion_time === 'number') {
+                    seconds = completion.completion_time;
+                } else if (typeof completion.completion_time === 'string') {
+                    const parsed = parseInt(completion.completion_time);
+                    if (!isNaN(parsed)) {
+                        seconds = parsed;
+                    }
+                }
+                
+                if (seconds > 0) {
+                    totalSeconds += seconds;
                     validTimes++;
                 }
             }
