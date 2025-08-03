@@ -399,7 +399,6 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
         }
         
         .store-pack-item {
@@ -410,8 +409,13 @@
             background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
             border-radius: 12px;
             border: 1px solid #fed7aa;
+            margin-bottom: 16px;
             transition: all 0.2s;
             cursor: pointer;
+        }
+        
+        .store-pack-item:last-child {
+            margin-bottom: 0;
         }
         
         .store-pack-item:hover {
@@ -432,7 +436,7 @@
             box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
             flex-shrink: 0;
             white-space: nowrap;
-            min-width: 70px;
+            min-width: 80px;
         }
         
         .store-button:hover {
@@ -478,6 +482,13 @@
             font-weight: 700;
             color: var(--primary-orange);
             font-size: 1.1rem;
+        }
+        
+        .store-description {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            margin-top: 6px;
+            font-weight: 500;
         }
         
         .pack-item {
@@ -901,24 +912,21 @@
                         <div class="store-pack-item" onclick="viewProduct('free-pack')">
                             <div class="item-info">
                                 <div class="item-name">Free Pack</div>
-                                <div class="item-description">10 starter puzzles</div>
-                                <div class="item-price">Free</div>
+                                <div class="store-description">10 starter puzzles • Free</div>
                             </div>
                             <button class="store-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
                         </div>
                         <div class="store-pack-item" onclick="viewProduct('complete-pack')">
                             <div class="item-info">
                                 <div class="item-name">Complete Pack</div>
-                                <div class="item-description">Everything included</div>
-                                <div class="item-price">$4.99</div>
+                                <div class="store-description">Everything included • $4.99</div>
                             </div>
                             <button class="store-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
                         </div>
                         <div class="store-pack-item" onclick="viewProduct('archive')">
                             <div class="item-info">
                                 <div class="item-name">Archive</div>
-                                <div class="item-description">Access to all past daily puzzles</div>
-                                <div class="item-price">$2.99</div>
+                                <div class="store-description">Access to all past daily puzzles • $2.99</div>
                             </div>
                             <button class="store-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
                         </div>
