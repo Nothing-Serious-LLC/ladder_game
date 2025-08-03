@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="LADDER">
     
+    <!-- Back Button Component -->
+    <link rel="stylesheet" href="../assets/css/back-button.css">
+    
     <style>
         :root {
             --gray-50: #fafafa;
@@ -67,29 +70,7 @@
             color: var(--gray-600);
         }
         
-        .back-button {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            color: var(--gray-600);
-            cursor: pointer;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-            border-radius: 8px;
-            text-decoration: none;
-        }
-        
-        .back-button:hover {
-            color: var(--gray-900);
-            background: var(--gray-200);
-        }
+
         
         .container {
             max-width: 800px;
@@ -314,8 +295,6 @@
             font-weight: 600;
             color: var(--gray-900);
             margin-bottom: 20px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--gray-200);
         }
         
         /* Completion tag for owned packs */
@@ -380,7 +359,6 @@
     
     <div class="container">
         <a href="home.html" class="back-button">← Back</a>
-        <h1 class="page-title">My Puzzle Packs</h1>
         
         <!-- Owned Packs Section -->
         <div class="owned-section" id="owned-section" style="display: none;">

@@ -14,6 +14,9 @@
     <link rel="icon" type="image/svg+xml" href="../assets/icons/icon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/icon-180.png">
     
+    <!-- Back Button Component -->
+    <link rel="stylesheet" href="../assets/css/back-button.css">
+    
     <style>
         :root {
             --safe-area-inset-top: env(safe-area-inset-top);
@@ -67,28 +70,7 @@
             border-bottom: 1px solid var(--gray-200);
         }
         
-        .back-button {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            font-size: 1.1rem;
-            color: var(--gray-600);
-            cursor: pointer;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-            border-radius: 8px;
-        }
-        
-        .back-button:hover {
-            color: var(--gray-900);
-            background: var(--gray-200);
-        }
+
         
         .title {
             font-size: 2.2rem;
@@ -263,13 +245,12 @@
 </head>
 <body>
     <header class="header">
-        <button class="back-button" onclick="goBack()">
-            ← Back
-        </button>
         <h1 class="title">LADDER</h1>
     </header>
     
     <div class="container">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        
         <div class="pack-info">
             <h2 class="pack-name" id="pack-name">Loading...</h2>
             <p class="pack-progress" id="pack-progress">Loading...</p>

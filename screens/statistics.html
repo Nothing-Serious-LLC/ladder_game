@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="LADDER">
     
+    <!-- Back Button Component -->
+    <link rel="stylesheet" href="../assets/css/back-button.css">
+    
     <style>
         :root {
             --gray-50: #fafafa;
@@ -83,35 +86,7 @@
             }
         }
         
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            background: white;
-            border: 1px solid var(--gray-200);
-            border-radius: 10px;
-            text-decoration: none;
-            color: var(--gray-600);
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            margin-top: 40px;
-            margin-bottom: 30px;
-        }
-        
-        /* Desktop: better positioning for back button */
-        @media (min-width: 768px) {
-            .back-button {
-                margin-bottom: 40px;
-            }
-        }
-        
-        .back-button:hover {
-            background: var(--gray-50);
-            border-color: var(--gray-400);
-            color: var(--gray-900);
-        }
+
         
         .puzzle-history-card {
             background: white;
