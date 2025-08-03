@@ -1416,74 +1416,100 @@
             border: 1px solid var(--gray-200);
         }
         
-        .pack-navigation-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin: 0 0 20px 0;
-            text-align: center;
-        }
-        
-        .pack-nav-buttons {
+        /* Pack Navigation Section - Inspired by Home Screen Cards */
+        .pack-navigation-section {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
+            margin-top: 16px;
         }
         
-        .pack-nav-button {
-            width: 100%;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
+        .pack-nav-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
             transition: all 0.2s ease;
-            text-align: center;
-            position: relative;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .pack-nav-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.15);
+            border-color: var(--primary-green);
+        }
+        
+        .pack-nav-card.secondary:hover {
+            box-shadow: 0 4px 12px rgba(120, 124, 126, 0.15);
+            border-color: var(--gray-300);
+        }
+        
+        .pack-nav-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .pack-nav-title {
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: var(--gray-900);
+            font-size: 1rem;
+        }
+        
+        .pack-nav-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .pack-nav-action {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 4px;
         }
         
-        .pack-nav-button.primary {
-            background: white;
-            color: var(--primary-green);
+        .pack-nav-btn {
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
             font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            min-width: 80px;
+            text-align: center;
         }
         
-        .pack-nav-button.primary:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .pack-nav-button.secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .pack-nav-button.secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
+        .pack-nav-btn.primary {
+            background: var(--primary-green);
             color: white;
+            box-shadow: 0 2px 8px rgba(106, 170, 100, 0.3);
+        }
+        
+        .pack-nav-btn.primary:hover {
+            background: #5d9556;
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.4);
         }
         
-        .nav-button-text {
-            display: block;
-            font-size: 1rem;
-            font-weight: 600;
+        .pack-nav-btn.secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
         }
         
-        .nav-button-subtitle {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 400;
-            opacity: 0.8;
-            margin-top: 4px;
+        .pack-nav-btn.secondary:hover {
+            background: var(--gray-200);
+            color: var(--gray-800);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* Recommendations Card Styles */
@@ -2473,19 +2499,34 @@
             </div>
             
             <!-- Pack navigation section for pack/archive puzzles -->
-            <div class="pack-navigation-card card" id="pack-navigation" style="display: none;">
-                <h3 class="pack-navigation-title">Your Puzzles</h3>
-                <div class="pack-navigation-content">
-                    <div class="pack-nav-buttons">
-                        <button class="pack-nav-button primary" id="next-puzzle-btn" style="display: none;">
-                            <span class="nav-button-text">Play Next Puzzle</span>
-                            <span class="nav-button-subtitle" id="remaining-count">3 remaining in pack</span>
-                        </button>
-                        <button class="pack-nav-button secondary" id="return-to-pack-btn" style="display: none;">
-                            Return to Puzzle Pack
+            <div class="pack-navigation-section" id="pack-navigation" style="display: none;">
+                
+                <!-- Play Next Puzzle Card -->
+                <div class="pack-nav-card" id="next-puzzle-card" style="display: none;">
+                    <div class="pack-nav-info">
+                        <div class="pack-nav-title">Play Next Puzzle</div>
+                        <div class="pack-nav-subtitle" id="remaining-count">3 remaining in pack</div>
+                    </div>
+                    <div class="pack-nav-action">
+                        <button class="pack-nav-btn primary" id="next-puzzle-btn">
+                            Play
                         </button>
                     </div>
                 </div>
+                
+                <!-- Return to Pack Card -->
+                <div class="pack-nav-card secondary" id="return-pack-card" style="display: none;">
+                    <div class="pack-nav-info">
+                        <div class="pack-nav-title">Browse More Puzzles</div>
+                        <div class="pack-nav-subtitle">Return to puzzle pack</div>
+                    </div>
+                    <div class="pack-nav-action">
+                        <button class="pack-nav-btn secondary" id="return-to-pack-btn">
+                            Browse
+                        </button>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -2533,19 +2574,34 @@
             </div>
             
             <!-- Pack navigation section for pack/archive puzzles -->
-            <div class="pack-navigation-card card" id="pack-navigation" style="display: none;">
-                <h3 class="pack-navigation-title">Your Puzzles</h3>
-                <div class="pack-navigation-content">
-                    <div class="pack-nav-buttons">
-                        <button class="pack-nav-button primary" id="next-puzzle-btn" style="display: none;">
-                            <span class="nav-button-text">Play Next Puzzle</span>
-                            <span class="nav-button-subtitle" id="remaining-count">3 remaining in pack</span>
-                        </button>
-                        <button class="pack-nav-button secondary" id="return-to-pack-btn" style="display: none;">
-                            Return to Puzzle Pack
+            <div class="pack-navigation-section" id="pack-navigation" style="display: none;">
+                
+                <!-- Play Next Puzzle Card -->
+                <div class="pack-nav-card" id="next-puzzle-card" style="display: none;">
+                    <div class="pack-nav-info">
+                        <div class="pack-nav-title">Play Next Puzzle</div>
+                        <div class="pack-nav-subtitle" id="remaining-count">3 remaining in pack</div>
+                    </div>
+                    <div class="pack-nav-action">
+                        <button class="pack-nav-btn primary" id="next-puzzle-btn">
+                            Play
                         </button>
                     </div>
                 </div>
+                
+                <!-- Return to Pack Card -->
+                <div class="pack-nav-card secondary" id="return-pack-card" style="display: none;">
+                    <div class="pack-nav-info">
+                        <div class="pack-nav-title">Browse More Puzzles</div>
+                        <div class="pack-nav-subtitle">Return to puzzle pack</div>
+                    </div>
+                    <div class="pack-nav-action">
+                        <button class="pack-nav-btn secondary" id="return-to-pack-btn">
+                            Browse
+                        </button>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -5238,25 +5294,27 @@ https://ladder.game/`;
                     
                     console.log('Setup pack navigation - Type:', puzzleType, 'PackID:', packId, 'PuzzleID:', puzzleId);
                     
-                    const packNavigationCard = document.getElementById('pack-navigation');
+                    const packNavigationSection = document.getElementById('pack-navigation');
+                    const nextPuzzleCard = document.getElementById('next-puzzle-card');
+                    const returnPackCard = document.getElementById('return-pack-card');
                     const nextPuzzleBtn = document.getElementById('next-puzzle-btn');
                     const returnToPackBtn = document.getElementById('return-to-pack-btn');
                     const remainingCountSpan = document.getElementById('remaining-count');
                     
-                    if (!packNavigationCard) {
-                        console.error('Pack navigation card element not found');
+                    if (!packNavigationSection) {
+                        console.error('Pack navigation section element not found');
                         return;
                     }
                     
                     // Only show pack navigation for pack and archive puzzles
                     if (puzzleType === 'pack' || puzzleType === 'archive') {
                         console.log('Showing pack navigation for puzzle type:', puzzleType);
-                        packNavigationCard.style.display = 'block';
+                        packNavigationSection.style.display = 'flex';
                         
                         if (puzzleType === 'pack' && packId) {
                             // Set up for pack puzzles
-                            if (returnToPackBtn) {
-                                returnToPackBtn.style.display = 'block';
+                            if (returnPackCard && returnToPackBtn) {
+                                returnPackCard.style.display = 'flex';
                                 returnToPackBtn.onclick = () => {
                                     window.location.href = `./pack-puzzles.html?pack=${packId}`;
                                 };
@@ -5268,7 +5326,7 @@ https://ladder.game/`;
                                 try {
                                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                                     if (user) {
-                                        await this.setupNextPuzzleButton(packId, puzzleId, nextPuzzleBtn, remainingCountSpan);
+                                        await this.setupNextPuzzleButton(packId, puzzleId, nextPuzzleCard, nextPuzzleBtn, remainingCountSpan);
                                     }
                                 } catch (authError) {
                                     console.error('Error getting user for pack navigation:', authError);
@@ -5278,9 +5336,9 @@ https://ladder.game/`;
                             }
                         } else if (puzzleType === 'archive') {
                             // Set up for archive puzzles (different navigation)
-                            if (returnToPackBtn) {
-                                returnToPackBtn.textContent = 'Return to Archives';
-                                returnToPackBtn.style.display = 'block';
+                            if (returnPackCard && returnToPackBtn) {
+                                returnPackCard.style.display = 'flex';
+                                returnToPackBtn.textContent = 'Browse';
                                 returnToPackBtn.onclick = () => {
                                     window.location.href = './home.html'; // Or archives page when available
                                 };
@@ -5291,14 +5349,14 @@ https://ladder.game/`;
                     } else {
                         // Hide pack navigation for daily puzzles
                         console.log('Hiding pack navigation for daily puzzle');
-                        packNavigationCard.style.display = 'none';
+                        packNavigationSection.style.display = 'none';
                     }
                 } catch (error) {
                     console.error('Error setting up pack navigation:', error);
                 }
             }
             
-            async setupNextPuzzleButton(packId, currentPuzzleId, nextPuzzleBtn, remainingCountSpan) {
+            async setupNextPuzzleButton(packId, currentPuzzleId, nextPuzzleCard, nextPuzzleBtn, remainingCountSpan) {
                 try {
                     // Fetch all puzzles in the pack to determine next puzzle
                     let puzzles = [];
@@ -5327,18 +5385,18 @@ https://ladder.game/`;
                         const remainingCount = puzzles.length - currentIndex - 1;
                         remainingCountSpan.textContent = `${remainingCount} remaining in pack`;
                         
-                        nextPuzzleBtn.style.display = 'block';
+                        nextPuzzleCard.style.display = 'flex';
                         nextPuzzleBtn.onclick = () => {
                             const nextPuzzle = puzzles[currentIndex + 1];
                             window.location.href = `./play.html?type=pack&pack_id=${packId}&puzzle_id=${nextPuzzle.id}`;
                         };
                     } else {
                         // No more puzzles in pack
-                        nextPuzzleBtn.style.display = 'none';
+                        nextPuzzleCard.style.display = 'none';
                     }
                 } catch (error) {
                     console.error('Error setting up next puzzle button:', error);
-                    nextPuzzleBtn.style.display = 'none';
+                    nextPuzzleCard.style.display = 'none';
                 }
             }
             
