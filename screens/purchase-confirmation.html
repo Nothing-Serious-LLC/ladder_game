@@ -288,51 +288,7 @@
             transform: translateY(-1px);
         }
         
-        /* Celebration particles */
-        @keyframes float-up {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-150px) scale(0.5);
-            }
-        }
-        
-        .celebration-particle {
-            position: absolute;
-            bottom: -10px;
-            font-size: 2rem;
-            animation: float-up 3s ease-out infinite;
-            pointer-events: none;
-        }
-        
-        .celebration-particle:nth-child(1) {
-            left: 10%;
-            animation-delay: 0s;
-        }
-        
-        .celebration-particle:nth-child(2) {
-            left: 30%;
-            animation-delay: 0.5s;
-        }
-        
-        .celebration-particle:nth-child(3) {
-            left: 50%;
-            animation-delay: 1s;
-        }
-        
-        .celebration-particle:nth-child(4) {
-            left: 70%;
-            animation-delay: 1.5s;
-        }
-        
-        .celebration-particle:nth-child(5) {
-            left: 90%;
-            animation-delay: 2s;
-        }
-        
+
         @media (max-width: 480px) {
             .header {
                 padding: 15px 0 20px;
@@ -387,20 +343,13 @@
                 
                 <div class="actions">
                     <a href="#" class="primary-button" id="start-playing-btn">
-                        Start Playing 🎮
+                        Start Playing
                     </a>
                     <a href="./home.html" class="secondary-button">
                         Back to Home
                     </a>
                 </div>
             </div>
-            
-            <!-- Celebration particles -->
-            <div class="celebration-particle">🎉</div>
-            <div class="celebration-particle">✨</div>
-            <div class="celebration-particle">🎊</div>
-            <div class="celebration-particle">⭐</div>
-            <div class="celebration-particle">🎯</div>
         </div>
     </div>
 
