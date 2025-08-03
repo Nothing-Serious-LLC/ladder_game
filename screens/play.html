@@ -1307,27 +1307,27 @@
         }
         
         .completion-buttons .completion-button {
-            background: white;
-            color: #1a1a1b;
-            border: 1px solid #d3d6da;
-            padding: 14px 28px;
-            border: 1px solid #d3d6da;
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
             border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             flex: 1;
-            min-height: 52px;
+            min-height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
         .completion-buttons .completion-button:hover {
-            background: white;
-            border-color: #6aaa64;
-            color: #6aaa64;
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-1px);
         }
         
         .completion-button,
@@ -1497,6 +1497,26 @@
         .failure-buttons .failure-button.retry:hover {
             background: var(--primary-orange-hover) !important;
             border-color: var(--primary-orange-hover) !important;
+        }
+        
+        /* Share button gets grey styling on failure screen */
+        .failure-buttons .failure-button.share {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: rgba(255, 255, 255, 0.8) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            padding: 8px 16px !important;
+            font-size: 0.85rem !important;
+            font-weight: 500 !important;
+            min-height: 36px !important;
+            max-height: 36px !important;
+            height: 36px !important;
+        }
+        
+        .failure-buttons .failure-button.share:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            color: white !important;
+            transform: translateY(-1px);
         }
         
         /* Signup Card Styles */
