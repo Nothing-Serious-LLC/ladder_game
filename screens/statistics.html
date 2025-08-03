@@ -720,7 +720,7 @@
                 // Get user puzzle completions (optimized - only select needed fields)
                 const { data: completions, error: completionError } = await supabaseClient
                     .from('puzzle_completions')
-                    .select('puzzle_date, puzzle_name, completed, completion_time, hints_used')
+                    .select('puzzle_date, puzzle_name, completed, completion_time, hints_used, tries_used')
                     .eq('user_id', user.id)
                     .order('puzzle_date', { ascending: false });
                 

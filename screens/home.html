@@ -988,7 +988,7 @@
                     // Query user's puzzle completions for today
                     const { data: completion } = await supabase
                         .from('puzzle_completions')
-                        .select('*')
+                        .select('puzzle_name, completed, completion_time, hints_used, tries_used')
                         .eq('user_id', user.id)
                         .eq('puzzle_date', today)
                         .single();
@@ -1067,25 +1067,25 @@
             const hintsUsed = completion.hints_used || 0;
             const puzzleNumber = getPuzzleNumber();
             
-            // Calculate hints remaining (assuming 3 total hints available)
+            // Calculate hints remaining (3 total hints available)
             const totalHints = 3;
             const hintsRemaining = Math.max(0, totalHints - hintsUsed);
             
-            // Set appropriate styling and messaging based on completion status
-            const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
-            
-            // Calculate remaining tries (assuming 3 total tries)
-            const totalTries = 3;
+            // Calculate remaining tries (5 total tries available - same as game)
+            const totalTries = 5;
+            const triesUsed = completion.tries_used || 0;
             let remainingTries = 0;
             
             if (wasCompleted) {
-                // If completed successfully, they have remaining tries
-                // Better performance (less hints used) = more tries remaining
-                remainingTries = Math.max(1, totalTries - hintsUsed);
+                // If completed successfully, show remaining tries
+                remainingTries = Math.max(0, totalTries - triesUsed);
             } else {
-                // If failed, no tries remaining
+                // If failed, no tries remaining (used all 5)
                 remainingTries = 0;
             }
+            
+            // Set appropriate styling and messaging based on completion status
+            const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
             
             dailyCard.innerHTML = `
                 <div class="puzzle-theme-section">
@@ -1160,7 +1160,7 @@
                     // Query user statistics from puzzle_completions table (optimized - only select needed fields)
                     const { data: completions } = await supabase
                         .from('puzzle_completions')
-                        .select('puzzle_date, completed, completion_time')
+                        .select('puzzle_date, completed, completion_time, hints_used, tries_used')
                         .eq('user_id', user.id)
                         .order('puzzle_date', { ascending: false });
                     

@@ -4647,6 +4647,9 @@ https://ladder.game/`;
                         window.gameModule.setPuzzlePlayedCookie();
                     }
                     
+                    // Track failure in database for authenticated users
+                    this.trackFailure(timeString);
+                    
                     // Set up failure screen sharing
                     const currentDate = new Date().toLocaleDateString('en-US', { 
                         year: 'numeric', 
@@ -4859,6 +4862,7 @@ https://ladder.game/`;
                             completed: true,
                             completion_time: completionInterval, // Store as PostgreSQL interval
                             hints_used: this.hintsUsed || 0,
+                            tries_used: this.wrongGuesses || 0, // Track how many tries were used
                             created_at: new Date().toISOString(),
                             updated_at: new Date().toISOString()
                         }, {
@@ -4872,6 +4876,41 @@ https://ladder.game/`;
                     }
                 } catch (error) {
                     console.error('Error in trackCompletion:', error);
+                }
+            }
+            
+            async trackFailure(timeString) {
+                try {
+                    const { data: { user } } = await window.supabaseClient.auth.getUser();
+                    if (!user) return;
+                    
+                    // Get current date in ET timezone
+                    const today = this.getCurrentPuzzleDate();
+                    
+                    // Track failure in database
+                    const { data, error } = await window.supabaseClient
+                        .from('puzzle_completions')
+                        .upsert({
+                            user_id: user.id,
+                            puzzle_date: today,
+                            puzzle_name: this.currentPuzzle.theme,
+                            completed: false,
+                            completion_time: null, // No completion time for failures
+                            hints_used: this.hintsUsed || 0,
+                            tries_used: this.maxWrongGuesses, // Used all 5 tries
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        }, {
+                            onConflict: 'user_id,puzzle_date'
+                        });
+                    
+                    if (error) {
+                        console.error('Error tracking failure:', error);
+                    } else {
+                        console.log('Puzzle failure tracked successfully');
+                    }
+                } catch (error) {
+                    console.error('Error in trackFailure:', error);
                 }
             }
             
