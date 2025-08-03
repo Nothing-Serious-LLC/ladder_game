@@ -1432,38 +1432,44 @@
         
         .pack-nav-button {
             width: 100%;
-            padding: 16px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         .pack-nav-button.primary {
-            background: var(--primary-green);
-            color: white;
-            box-shadow: 0 2px 8px rgba(106, 170, 100, 0.2);
+            background: white;
+            color: var(--primary-green);
+            font-weight: 700;
         }
         
         .pack-nav-button.primary:hover {
-            background: var(--primary-green-hover);
+            background: rgba(255, 255, 255, 0.9);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         
         .pack-nav-button.secondary {
-            background: var(--gray-100);
-            color: var(--gray-700);
-            border: 1px solid var(--gray-200);
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
         .pack-nav-button.secondary:hover {
-            background: var(--gray-200);
-            color: var(--gray-900);
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            color: white;
+            transform: translateY(-1px);
         }
         
         .nav-button-text {
@@ -5278,8 +5284,8 @@ https://ladder.game/`;
                         puzzles = data || [];
                     }
                     
-                    // Find current puzzle index
-                    const currentIndex = puzzles.findIndex(p => p.id === parseInt(currentPuzzleId));
+                    // Find current puzzle index (compare as strings since puzzle IDs can be UUIDs)
+                    const currentIndex = puzzles.findIndex(p => p.id.toString() === currentPuzzleId.toString());
                     
                     if (currentIndex !== -1 && currentIndex < puzzles.length - 1) {
                         // There is a next puzzle
@@ -5417,6 +5423,11 @@ https://ladder.game/`;
             
             async setupMorePuzzlesCard(morePuzzlesCard, user) {
                 try {
+                    // Add null check for safety
+                    if (!morePuzzlesCard) {
+                        console.log('More puzzles card element not found');
+                        return;
+                    }
                     // Check for purchased puzzle packs
                     let hasPuzzlePacks = false;
                     let puzzlePacks = [];
