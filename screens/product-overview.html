@@ -124,8 +124,6 @@
         .product-icon {
             font-size: 4rem;
             margin-bottom: 20px;
-            color: var(--green-600);
-            font-weight: 700;
         }
         
         .product-name {
@@ -192,7 +190,7 @@
         
         .feature-text {
             font-size: 0.9rem;
-            color: var(--gray-900);
+            color: var(--gray-600);
             line-height: 1.4;
         }
         
@@ -255,7 +253,7 @@
         </button>
         
         <div class="product-hero">
-            <div class="product-icon" id="product-icon">●</div>
+            <div class="product-icon" id="product-icon">🧩</div>
             <div class="product-name" id="product-name">Puzzle Pack</div>
             <div class="product-description" id="product-description">100 carefully crafted puzzles</div>
             <div class="product-price" id="product-price">$4.99</div>
@@ -293,43 +291,25 @@
         // Product data
         const products = {
             'puzzle-pack': {
-                icon: '●',
+                icon: '🧩',
                 name: 'Puzzle Pack',
                 description: '100 carefully crafted puzzles',
                 price: '$4.99',
                 features: [
-                    {
-                        icon: '•',
-                        title: '100 Unique Puzzles'
-                    },
-                    {
-                        icon: '•',
-                        title: 'Progressive Difficulty'
-                    },
-                    {
-                        icon: '•',
-                        title: 'Achievement Tracking'
-                    }
+                    '100 Unique Puzzles',
+                    'Progressive Difficulty',
+                    'Achievement Tracking'
                 ]
             },
             'historic-puzzles': {
-                icon: '■',
+                icon: '📚',
                 name: 'Historic Puzzles',
                 description: 'All past daily puzzles',
                 price: '$2.99',
                 features: [
-                    {
-                        icon: '•',
-                        title: 'Complete Archive'
-                    },
-                    {
-                        icon: '•',
-                        title: 'Browse by Date'
-                    },
-                    {
-                        icon: '•',
-                        title: 'Achievement Tracking'
-                    }
+                    'Complete Archive',
+                    'Browse by Date',
+                    'Achievement Tracking'
                 ]
             }
         };
@@ -356,8 +336,8 @@
                 const featureItem = document.createElement('li');
                 featureItem.className = 'feature-item';
                 featureItem.innerHTML = `
-                    <span class="feature-icon">${feature.icon}</span>
-                    <div class="feature-text">${feature.title}</div>
+                    <span class="feature-icon">•</span>
+                    <div class="feature-text">${feature}</div>
                 `;
                 featuresList.appendChild(featureItem);
             });
