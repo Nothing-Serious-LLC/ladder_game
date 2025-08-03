@@ -13,7 +13,9 @@ The Ladder game supports multiple types of puzzles through a flexible URL parame
 
 ### 2. Free Puzzle Pack
 - **URL**: `play.html?type=pack&pack_id=free-pack&puzzle_id={uuid}`
-- **Source**: First 10 puzzles from `puzzle_pack` table (pack_level = 1)
+- **Source**: 10 puzzles with progressive difficulty:
+  - 1 puzzle from each level 1-7
+  - 3 additional puzzles from levels 3-6
 - **Access**: Free for all authenticated users
 - **Tracking**: Stored in `puzzle_pack_completions` table
 
@@ -108,9 +110,10 @@ The `play.html` screen accepts these parameters:
 The system automatically loads pack information from the database, so new packs appear without code changes.
 
 ### 2. Flexible Puzzle Sources
-- Free packs can use subsets of existing puzzles
+- Free packs can use subsets of existing puzzles (via views like `free_pack_puzzles`)
 - Premium packs can have exclusive content
 - Seasonal packs can be time-limited
+- Custom difficulty curves (e.g., free pack uses levels 1-7 with extras from 3-6)
 
 ### 3. Access Control
 - Purchase verification through `user_purchases` table

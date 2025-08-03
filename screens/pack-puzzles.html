@@ -324,13 +324,12 @@
                 // Load puzzles based on pack
                 let puzzles = [];
                 if (packId === 'free-pack') {
-                    // Load first 10 puzzles from pack_level 1
+                    // Load puzzles from the free pack view (1 from each level 1-7, plus 3 from levels 3-6)
                     const { data: packPuzzles } = await supabaseClient
-                        .from('puzzle_pack')
+                        .from('free_pack_puzzles')
                         .select('*')
-                        .eq('pack_level', 1)
-                        .order('created_at')
-                        .limit(10);
+                        .order('pack_level')
+                        .order('created_at');
                     
                     puzzles = packPuzzles || [];
                 } else {

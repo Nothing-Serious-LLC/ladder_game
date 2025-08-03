@@ -2901,11 +2901,11 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     // Find puzzle index in pack for numbering
                     let puzzleIndex = 1;
                     if (packId === 'free-pack') {
-                        // For free pack, get index from first 10 puzzles
+                        // For free pack, get index from the free pack view
                         const { data: allPuzzles } = await client
-                            .from('puzzle_pack')
+                            .from('free_pack_puzzles')
                             .select('id')
-                            .eq('pack_level', 1)
+                            .order('pack_level')
                             .order('created_at');
                         
                         puzzleIndex = allPuzzles.findIndex(p => p.id === puzzleId) + 1;
