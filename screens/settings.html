@@ -369,15 +369,7 @@
         <div class="settings-section">
             <h2 class="section-title">Game Preferences</h2>
             
-            <div class="setting-item">
-                <div class="setting-info">
-                    <div class="setting-label">Sound Effects</div>
-                    <div class="setting-description">Play sounds for game interactions</div>
-                </div>
-                <div class="setting-control">
-                    <div class="toggle-switch" id="sound-toggle" onclick="toggleSetting('sound')"></div>
-                </div>
-            </div>
+
         </div>
         
         <!-- Privacy Settings -->
@@ -445,11 +437,11 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script type="module">
         // Import Supabase configuration
-        import { supabaseUrl, supabaseAnonKey } from '../config/supabase-config.js';
+        import { supabaseConfig } from '../config/supabase-config.js';
         
         // Initialize Supabase client
         const { createClient } = supabase;
-        const _supabase = createClient(supabaseUrl, supabaseAnonKey);
+        const _supabase = createClient(supabaseConfig.url, supabaseConfig.anonKey);
         
         // Set current date in header
         document.getElementById('settings-date-display').textContent = 
@@ -532,7 +524,7 @@
             });
         }
         
-        // Toggle setting
+        // Make toggleSetting available globally
         window.toggleSetting = function(setting) {
             const toggle = document.getElementById(`${setting}-toggle`);
             const isActive = toggle.classList.contains('active');

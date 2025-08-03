@@ -436,6 +436,36 @@
             padding: 20px 0 30px;
             border-bottom: 1px solid #d3d6da;
             margin-bottom: 20px;
+            position: relative;
+        }
+        
+        /* Sound Toggle */
+        .sound-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: #f8f9fa;
+            border: 1px solid #d3d6da;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        
+        .sound-toggle:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+        
+        .sound-toggle.muted {
+            background: #ffebee;
+            border-color: #e57373;
+            color: #d32f2f;
         }
 
         .title {
@@ -2116,6 +2146,9 @@
         <header class="header">
             <h1 class="title">LADDER</h1>
             <p class="date-info" id="date-display">Puzzle # • Loading...</p>
+            <div class="sound-toggle" id="sound-toggle" onclick="toggleSound()" title="Toggle Sound">
+                🔊
+            </div>
         </header>
 
         <div class="game-content" id="game-content">
@@ -3894,6 +3927,9 @@ import { getGameDayString } from './assets/js/timeUtils.js';
             
             // Sound Effects System
             playSound(type) {
+                // Check global sound preference
+                const globalSoundMuted = localStorage.getItem('sound_muted') === 'true';
+                if (globalSoundMuted) return;
                 // Create audio context if it doesn't exist
                 if (!this.audioContext) {
                     try {
@@ -5229,6 +5265,48 @@ https://ladder.game/`;
         
         // Make LadderGame class available globally for module scripts
         window.LadderGame = LadderGame;
+        
+        // Global sound toggle function
+        window.toggleSound = function() {
+            const soundToggle = document.getElementById('sound-toggle');
+            const isCurrentlyMuted = localStorage.getItem('sound_muted') === 'true';
+            const newMutedState = !isCurrentlyMuted;
+            
+            // Update localStorage
+            localStorage.setItem('sound_muted', newMutedState);
+            
+            // Update toggle appearance
+            if (newMutedState) {
+                soundToggle.textContent = '🔇';
+                soundToggle.classList.add('muted');
+                soundToggle.title = 'Sound Off - Click to Enable';
+            } else {
+                soundToggle.textContent = '🔊';
+                soundToggle.classList.remove('muted');
+                soundToggle.title = 'Sound On - Click to Disable';
+            }
+        };
+        
+        // Initialize sound toggle state
+        function initSoundToggle() {
+            const soundToggle = document.getElementById('sound-toggle');
+            if (!soundToggle) return;
+            
+            const isMuted = localStorage.getItem('sound_muted') === 'true';
+            
+            if (isMuted) {
+                soundToggle.textContent = '🔇';
+                soundToggle.classList.add('muted');
+                soundToggle.title = 'Sound Off - Click to Enable';
+            } else {
+                soundToggle.textContent = '🔊';
+                soundToggle.classList.remove('muted');
+                soundToggle.title = 'Sound On - Click to Disable';
+            }
+        }
+        
+        // Initialize sound toggle when page loads
+        document.addEventListener('DOMContentLoaded', initSoundToggle);
     </script>
 </body>
 </html>
