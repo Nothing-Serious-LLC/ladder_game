@@ -1308,8 +1308,8 @@
             // Track that user started playing today's puzzle
             trackPuzzleStart();
             
-            // Navigate to main game to play today's puzzle
-            window.location.href = '../index.html';
+            // Navigate to main game with auto-start parameter to skip intro
+            window.location.href = '../index.html?autostart=true';
         };
         
         async function trackPuzzleStart() {

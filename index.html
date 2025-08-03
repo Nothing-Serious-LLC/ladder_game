@@ -2286,6 +2286,9 @@
         const supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
         setSupabaseClient(supabaseClient);
         
+        // Make Supabase client globally available
+        window.supabaseClient = supabaseClient;
+        
         // Initialize PWA features
         initializePWA();
         
@@ -2527,6 +2530,16 @@
             
             initializeApp: async () => {
                 try {
+                    // Check if we should auto-start the game (skip intro)
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('autostart') === 'true') {
+                        // Clear the URL parameter
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        // Start the game directly
+                        await window.gameModule.startGame();
+                        return;
+                    }
+                    
                     // First, update basic puzzle info
                     await window.gameModule.updateLandingInfo();
                     
@@ -4623,10 +4636,14 @@ https://ladder.game/`;
                     let user = null;
                     
                     if (window.supabaseClient) {
-                        const { data: { user: authUser } } = await window.supabaseClient.auth.getUser();
-                        if (authUser) {
-                            isAuthenticated = true;
-                            user = authUser;
+                        try {
+                            const { data: { user: authUser }, error } = await window.supabaseClient.auth.getUser();
+                            if (!error && authUser) {
+                                isAuthenticated = true;
+                                user = authUser;
+                            }
+                        } catch (error) {
+                            console.error('Error checking authentication in setupAuthCards:', error);
                         }
                     }
                     
