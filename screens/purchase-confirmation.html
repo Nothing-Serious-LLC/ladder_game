@@ -230,50 +230,30 @@
             background: var(--primary-green);
             border: none;
             color: white;
-            padding: 18px 32px;
+            padding: 16px 24px;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             text-decoration: none;
             display: inline-block;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .primary-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .primary-button:hover::before {
-            width: 300px;
-            height: 300px;
         }
         
         .primary-button:hover {
             background: var(--primary-green-hover);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(106, 170, 100, 0.3);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
         }
         
         .secondary-button {
             background: white;
             border: 2px solid var(--gray-200);
             color: var(--gray-700);
-            padding: 16px 32px;
+            padding: 14px 20px;
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -285,7 +265,6 @@
         .secondary-button:hover {
             border-color: var(--primary-green);
             color: var(--primary-green);
-            transform: translateY(-1px);
         }
         
 
@@ -384,35 +363,55 @@
             }, 5000);
         }
         
-        // Set current date in header
-        document.getElementById('confirmation-date-display').textContent = 
-            new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-        
         // Get purchase details from URL parameters
         function loadPurchaseDetails() {
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('product') || 'pack';
+            let productId = urlParams.get('product');
             const itemName = urlParams.get('item') || 'Puzzle Pack';
             
+            // If no product parameter, try to infer from item name
+            if (!productId) {
+                if (itemName.toLowerCase().includes('free pack')) {
+                    productId = 'free-pack';
+                } else if (itemName.toLowerCase().includes('complete pack')) {
+                    productId = 'complete-pack';
+                } else if (itemName.toLowerCase().includes('puzzle pack')) {
+                    productId = 'puzzle-pack';
+                } else {
+                    productId = 'pack';
+                }
+            }
+            
             // Update pack name in message
-            document.getElementById('pack-name').textContent = itemName;
+            const packNameEl = document.getElementById('pack-name');
+            if (packNameEl) {
+                packNameEl.textContent = itemName;
+            }
             
             // Set appropriate start playing link based on product
             const startPlayingBtn = document.getElementById('start-playing-btn');
-            if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack') {
-                startPlayingBtn.href = `./pack-puzzles.html?pack=${productId}`;
-            } else {
-                startPlayingBtn.href = './home.html';
+            if (startPlayingBtn) {
+                if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack') {
+                    startPlayingBtn.href = `./pack-puzzles.html?pack=${productId}`;
+                } else {
+                    startPlayingBtn.href = './home.html';
+                }
             }
         }
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
+            // Set current date in header
+            const dateEl = document.getElementById('confirmation-date-display');
+            if (dateEl) {
+                dateEl.textContent = new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+            
             loadPurchaseDetails();
             
             // Start confetti after a short delay
