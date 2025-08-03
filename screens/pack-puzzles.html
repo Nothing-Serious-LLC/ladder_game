@@ -389,6 +389,8 @@
             padding: 3rem;
             color: var(--gray-600);
             text-align: center;
+            min-height: 400px;
+            width: 100%;
         }
         
         .loading-spinner {
@@ -524,17 +526,27 @@
             
             currentPackId = packId;
             
-            // Show loading state
-            showLoading();
-            
-            // Wait for supabase to initialize
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // Load complexity levels for folder structure
-            await loadComplexityLevels();
-            
-            // Load pack content
-            await loadPackContent(packId);
+                    // Show loading state
+        showLoading();
+        
+        // Wait for supabase to initialize
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Load complexity levels for folder structure
+        await loadComplexityLevels();
+        
+        // Load pack content based on type
+        if (packId === 'archive') {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                await loadHistoricalPack(user.id);
+                document.getElementById('pack-name').textContent = 'Historical Daily Puzzles';
+                const completed = Object.values(allCompletions).filter(c => c.completed).length;
+                document.getElementById('pack-progress').textContent = `${completed}/${packPuzzles.length} puzzles completed`;
+            }
+        } else {
+            await loadPackPuzzles(packId);
+        }
         });
         
         async function loadPackPuzzles(packId) {
@@ -902,29 +914,7 @@
             window.location.href = `./play.html?type=daily&date=${puzzleDate}`;
         };
         
-        // Enhanced initialization for archive pack
-        const initializeArchivePack = async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const packId = urlParams.get('pack');
-            
-            if (packId === 'archive') {
-                showLoading();
-                await loadComplexityLevels();
-                
-                const { data: { user } } = await supabaseClient.auth.getUser();
-                if (user) {
-                    await loadHistoricalPack(user.id);
-                    
-                    // Update pack info
-                    document.getElementById('pack-name').textContent = 'Historical Daily Puzzles';
-                    const completed = Object.values(allCompletions).filter(c => c.completed).length;
-                    document.getElementById('pack-progress').textContent = `${completed}/${packPuzzles.length} puzzles completed`;
-                }
-            }
-        };
-        
-        // Add archive pack initialization to existing DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', initializeArchivePack);
+        // Removed duplicate archive pack initialization - now handled in main DOMContentLoaded
     </script>
 </body>
 </html>

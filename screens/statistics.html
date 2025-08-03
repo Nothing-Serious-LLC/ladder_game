@@ -643,6 +643,10 @@
             animation: shimmer 1.5s infinite;
             border-radius: 12px;
             margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .shimmer-content {
@@ -1494,21 +1498,27 @@
         
         window.navigateToDay = async function(direction) {
             const newDayIndex = currentDayIndex + direction;
-            const maxDaysBack = 90; // Limit to 90 days back
+            
+            // Calculate days back to earliest puzzle (2024-07-30)
+            const today = new Date(getCurrentPuzzleDate());
+            const earliestPuzzleDate = new Date('2024-07-30');
+            const maxDaysBack = Math.floor((today - earliestPuzzleDate) / (1000 * 60 * 60 * 24));
             
             console.log('Navigation Debug:', {
                 currentDayIndex,
                 direction,
                 newDayIndex,
                 today: getCurrentPuzzleDate(),
+                maxDaysBack,
                 interpretation: direction === 1 ? 'Going back in time' : 'Going forward in time'
             });
             
-            // Prevent going to future days (currentDayIndex < 0) or too far back
+            // Prevent going to future days (newDayIndex < 0) or too far back
             if (newDayIndex >= 0 && newDayIndex <= maxDaysBack) {
                 currentDayIndex = newDayIndex;
                 console.log('Navigating to day index:', currentDayIndex, '(' + (currentDayIndex === 0 ? 'today' : currentDayIndex + ' days ago') + ')');
                 await renderCurrentDayPuzzle();
+                updateDayNavigation(); // Update button states after navigation
             } else {
                 if (newDayIndex < 0) {
                     console.log('Cannot navigate to future day, newDayIndex:', newDayIndex);
