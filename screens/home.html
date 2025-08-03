@@ -124,6 +124,8 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(0, 0, 0, 0.04);
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
         
         .card:hover {
@@ -351,6 +353,7 @@
             cursor: pointer;
             transition: all 0.2s;
             width: 100%;
+            margin-top: auto;
         }
         
 
@@ -360,10 +363,22 @@
             transform: translateY(-1px);
         }
         
+        .puzzle-packs-section,
+        .store-section {
+            min-height: 300px;
+        }
+        
         .store-items {
             display: flex;
             flex-direction: column;
             gap: 16px;
+            flex: 1;
+        }
+        
+        #puzzle-packs-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .store-item {
@@ -445,6 +460,12 @@
         
         .pack-item:last-child {
             margin-bottom: 0;
+        }
+        
+        .pack-item + .view-all-button,
+        .empty-state + .view-all-button,
+        .store-items + .view-all-button {
+            margin-top: 20px;
         }
         
         .pack-progress {
@@ -774,7 +795,7 @@
                             <button class="buy-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
                         </div>
                     </div>
-                    <button class="view-all-button" onclick="window.location.href='store.html'" style="margin-top: 20px; width: 100%;">
+                    <button class="view-all-button" onclick="window.location.href='store.html'">
                         See All Packs
                     </button>
                 </div>
@@ -1432,7 +1453,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                         
                         // Add View All Packs button
                         packsHTML += `
-                            <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'" style="margin-top: 20px; width: 100%;">
+                            <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
                                 View All Packs
                             </button>
                         `;
@@ -1446,7 +1467,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                 <div class="empty-state-text">No puzzle packs yet</div>
                                 <div class="empty-state-subtext">Purchase packs from the store to get started</div>
                             </div>
-                            <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'" style="margin-top: 20px; width: 100%;">
+                            <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
                                 View All Packs
                             </button>
                         `;
@@ -1466,7 +1487,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                             <div class="empty-state-text">No puzzle packs yet</div>
                             <div class="empty-state-subtext">Purchase packs from the store to get started</div>
                         </div>
-                        <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'" style="margin-top: 20px; width: 100%;">
+                        <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
                             View All Packs
                         </button>
                     `;
