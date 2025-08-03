@@ -56,7 +56,7 @@
         }
         
         .header-content {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px 20px 30px 20px;
             border-bottom: 1px solid var(--gray-200);
@@ -76,7 +76,7 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px;
             flex: 1;
@@ -257,12 +257,18 @@
         }
         
         .overall-stats {
-            background: white;
+            background: linear-gradient(135deg, var(--green-500) 0%, var(--green-600) 100%);
             border-radius: 16px;
-            border: 1px solid var(--gray-200);
+            border: 1px solid var(--green-600);
             padding: 24px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 20px rgba(106, 170, 100, 0.2);
+            color: white;
+        }
+        
+        .overall-stats .section-title {
+            color: white;
+            margin-bottom: 20px;
         }
         
         .stats-grid {
@@ -274,23 +280,31 @@
         .stat-item {
             text-align: center;
             padding: 16px;
-            background: linear-gradient(135deg, var(--gray-50) 0%, #f8f9fa 100%);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 10px;
-            border: 1px solid var(--gray-200);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
         }
         
         .stat-number {
             font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--gray-900);
+            font-weight: 800;
+            color: white;
             margin-bottom: 4px;
         }
         
         .stat-label {
             font-size: 0.85rem;
-            color: var(--gray-600);
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .filters {
@@ -540,7 +554,30 @@
                     console.error('Error fetching completions:', completionError);
                     allPuzzleHistory = mockPuzzles;
                 } else {
-                    allPuzzleHistory = completions || mockPuzzles;
+                    // Transform database data to expected format
+                    allPuzzleHistory = (completions || []).map((completion, index) => {
+                        // Calculate puzzle number based on date (rough approximation)
+                        const puzzleDate = new Date(completion.puzzle_date);
+                        const startDate = new Date('2024-01-01'); // Adjust this to your actual start date
+                        const daysDiff = Math.floor((puzzleDate - startDate) / (1000 * 60 * 60 * 24));
+                        
+                        return {
+                            puzzle_number: daysDiff + 1,
+                            puzzle_date: completion.puzzle_date,
+                            theme: completion.puzzle_name || 'Daily Puzzle',
+                            completed: completion.completed || false,
+                            completion_time: completion.completion_time ? 
+                                `${Math.floor(completion.completion_time / 60)}:${(completion.completion_time % 60).toString().padStart(2, '0')}` : 
+                                null,
+                            hints_used: completion.hints_used || 0,
+                            puzzle_type: 'daily' // For now, all are daily puzzles
+                        };
+                    });
+                    
+                    // If no completions, use mock data
+                    if (allPuzzleHistory.length === 0) {
+                        allPuzzleHistory = mockPuzzles;
+                    }
                 }
                 
                 renderPuzzleHistory();
@@ -650,7 +687,7 @@
             
             // Calculate average time
             const completedTimes = allPuzzleHistory
-                .filter(p => p.completed && p.completion_time)
+                .filter(p => p.completed && p.completion_time && p.completion_time !== '--:--')
                 .map(p => {
                     const [min, sec] = p.completion_time.split(':').map(Number);
                     return min * 60 + sec;
@@ -658,7 +695,8 @@
             
             const avgSeconds = completedTimes.length > 0 ? 
                 Math.round(completedTimes.reduce((a, b) => a + b, 0) / completedTimes.length) : 0;
-            const avgTime = `${Math.floor(avgSeconds / 60)}:${(avgSeconds % 60).toString().padStart(2, '0')}`;
+            const avgTime = avgSeconds > 0 ? 
+                `${Math.floor(avgSeconds / 60)}:${(avgSeconds % 60).toString().padStart(2, '0')}` : '--:--';
             
             // Find fastest time
             const fastestSeconds = completedTimes.length > 0 ? Math.min(...completedTimes) : 0;
