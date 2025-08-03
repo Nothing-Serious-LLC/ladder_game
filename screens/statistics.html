@@ -550,37 +550,126 @@
             showEmptyStats();
         }
         
-        function showTodaysPuzzlePrompt() {
+        function renderCurrentDayPuzzle() {
             const puzzleDetails = document.getElementById('puzzle-details');
             const currentDateEl = document.getElementById('current-date');
             
-            const today = new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric', 
-                year: 'numeric' 
-            });
+            // Get the date for current day index
+            const targetDate = getDateByOffset(currentDayIndex);
+            const date = new Date(targetDate);
+            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+            currentDateEl.textContent = date.toLocaleDateString('en-US', options);
             
-            currentDateEl.textContent = today;
+            // Calculate puzzle number (day of year)
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = (date - start) + ((start.getTimezoneOffset() - date.getTimezoneOffset()) * 60 * 1000);
+            const oneDay = 1000 * 60 * 60 * 24;
+            const puzzleNumber = Math.floor(diff / oneDay);
             
-            puzzleDetails.innerHTML = `
-                <div class="puzzle-item" style="border: 1px dashed var(--gray-400); background: var(--gray-50);">
-                    <div class="puzzle-info">
-                        <div class="puzzle-header">
-                            <div class="puzzle-number">Today's Puzzle</div>
-                            <div class="status-badge status-not-attempted">Not Started</div>
+            // Find puzzle for this specific date
+            const puzzle = allPuzzleHistory.find(p => p.puzzle_date === targetDate);
+            
+            if (puzzle) {
+                // Show completion data similar to home screen
+                const wasCompleted = puzzle.completed;
+                const completionTime = puzzle.completion_time || 'Unknown';
+                const hintsUsed = puzzle.hints_used || 0;
+                const totalHints = 3;
+                const hintsRemaining = Math.max(0, totalHints - hintsUsed);
+                
+                const cardClass = wasCompleted ? 'puzzle-item completed' : 'puzzle-item failed';
+                const statusText = wasCompleted ? 'Completed' : 'Failed';
+                const statusIcon = wasCompleted ? '✓' : '✗';
+                
+                puzzleDetails.innerHTML = `
+                    <div class="${cardClass}" style="background: linear-gradient(135deg, ${wasCompleted ? 'var(--primary-green)' : 'var(--red-500)'} 0%, ${wasCompleted ? '#5d9556' : '#c0392b'} 100%); color: white; border-radius: 16px; padding: 24px;">
+                        <div class="puzzle-header" style="text-align: center; margin-bottom: 20px;">
+                            <div class="puzzle-number" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;">Puzzle #${puzzleNumber}</div>
+                            <div class="puzzle-date" style="font-size: 1.1rem; opacity: 0.95;">${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
                         </div>
-                        <div class="puzzle-theme">Complete today's puzzle to track your progress</div>
-                        <div class="puzzle-details">
-                            <button onclick="window.location.href='../index.html?autostart=true'" style="background: var(--primary-green); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">Play Now</button>
+                        
+                        <div class="puzzle-theme-section" style="text-align: center; margin: 24px 0;">
+                            <div class="puzzle-theme-large" style="font-size: 1.4rem; font-weight: 600; font-style: italic; line-height: 1.3;">${puzzle.puzzle_name || 'Unknown'}</div>
+                        </div>
+                        
+                        <div class="completion-stats" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                            <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${formatTimeForStats(completionTime)}</div>
+                                <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Time</div>
+                            </div>
+                            <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${hintsRemaining}</div>
+                                <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">Hints Remaining</div>
+                            </div>
+                            <div class="completion-stat" style="text-align: center; padding: 16px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);">
+                                <div class="completion-stat-value" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 4px;">${statusIcon}</div>
+                                <div class="completion-stat-label" style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px;">${statusText}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // Show empty state with smart action button
+                const isToday = currentDayIndex === 0;
+                const isFuture = targetDate > getCurrentPuzzleDate();
+                
+                let actionButton = '';
+                let description = '';
+                
+                if (isFuture) {
+                    description = 'This puzzle is not available yet';
+                } else if (isToday) {
+                    description = 'Play today\'s puzzle to start tracking your progress';
+                    actionButton = `<button onclick="window.location.href='../index.html?autostart=true'" style="background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 16px;">Play Today's Puzzle</button>`;
+                } else {
+                    description = 'This puzzle is from the archive';
+                    actionButton = `<button onclick="window.location.href='product-overview.html?product=archive&from=statistics'" style="background: var(--orange-500); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 16px;">Buy Archive Access</button>`;
+                }
+                
+                puzzleDetails.innerHTML = `
+                    <div class="puzzle-item" style="border: 1px dashed var(--gray-400); background: var(--gray-50); text-align: center; padding: 40px 20px; border-radius: 16px;">
+                        <div class="puzzle-header" style="margin-bottom: 20px;">
+                            <div class="puzzle-number" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; color: var(--gray-600);">Puzzle #${puzzleNumber}</div>
+                            <div class="puzzle-date" style="font-size: 1.1rem; color: var(--gray-600);">${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                        </div>
+                        <div class="empty-state-text" style="color: var(--gray-600); margin-bottom: 8px;">${description}</div>
+                        ${actionButton}
+                    </div>
+                `;
+            }
             
-            // Hide navigation buttons
-            document.getElementById('prev-button').style.display = 'none';
-            document.getElementById('next-button').style.display = 'none';
+            // Update navigation buttons
+            updateDayNavigation();
+        }
+        
+        function formatTimeForStats(timeString) {
+            if (!timeString || timeString === 'Unknown') return '--:--';
+            
+            // If it's already formatted (like "02:30"), return as is
+            if (typeof timeString === 'string' && timeString.includes(':')) {
+                return timeString;
+            }
+            
+            let seconds = 0;
+            
+            // Handle PostgreSQL interval format like "120 seconds"
+            if (typeof timeString === 'string' && timeString.includes('seconds')) {
+                const match = timeString.match(/(\d+)\s*seconds/);
+                if (match) {
+                    seconds = parseInt(match[1]);
+                } else {
+                    return '--:--';
+                }
+            }
+            // Handle raw number or string number
+            else {
+                seconds = typeof timeString === 'string' ? parseInt(timeString) : timeString;
+                if (isNaN(seconds)) return '--:--';
+            }
+            
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
         
         function showEmptyStats() {
@@ -616,10 +705,10 @@
                     return;
                 }
                 
-                // Get user puzzle completions
+                // Get user puzzle completions (optimized - only select needed fields)
                 const { data: completions, error: completionError } = await supabaseClient
                     .from('puzzle_completions')
-                    .select('*')
+                    .select('puzzle_date, puzzle_name, completed, completion_time, hints_used')
                     .eq('user_id', user.id)
                     .order('puzzle_date', { ascending: false });
                 
@@ -637,8 +726,8 @@
                     const hasCompletedToday = allPuzzleHistory.some(p => p.puzzle_date === today);
                     
                     if (!hasCompletedToday) {
-                        // They haven't played today - prompt them to play
-                        showTodaysPuzzlePrompt();
+                        // They haven't played today - show today's puzzle card
+                        renderCurrentDayPuzzle();
                     } else {
                         // They have some history but we're viewing a day without data
                         showNoDataMessage("No puzzle data for this period", {
@@ -648,7 +737,7 @@
                     }
                 } else {
                     // They have data - render normally
-                    renderCurrentDay();
+                    renderCurrentDayPuzzle();
                     loadOverallStats();
                 }
                 
@@ -658,7 +747,7 @@
             } catch (error) {
                 console.error('Error loading puzzle history:', error);
                 allPuzzleHistory = [];
-                renderCurrentDay();
+                renderCurrentDayPuzzle();
                 loadOverallStats();
                 
                 // Clear timeout on error
@@ -666,57 +755,7 @@
             }
         }
         
-        function renderCurrentDay() {
-            const puzzleDetails = document.getElementById('puzzle-details');
-            const currentDateEl = document.getElementById('current-date');
-            
-            // Get the date for current day index
-            const targetDate = getDateByOffset(currentDayIndex);
-            
-            // Find puzzle for this specific date
-            const puzzle = allPuzzleHistory.find(p => p.puzzle_date === targetDate);
-            
-            // Update date display
-            const date = new Date(targetDate);
-            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-            currentDateEl.textContent = date.toLocaleDateString('en-US', options);
-            
-            puzzleDetails.innerHTML = '';
-            
-            if (puzzle) {
-                // Show puzzle details
-                const statusClass = puzzle.completed ? 'status-completed' : 
-                                   puzzle.completion_time === null && puzzle.hints_used > 0 ? 'status-failed' : 
-                                   'status-not-attempted';
-                const statusText = puzzle.completed ? 'Completed' : 
-                                  puzzle.completion_time === null && puzzle.hints_used > 0 ? 'Failed' : 
-                                  'Not Attempted';
-                
-                const puzzleItem = document.createElement('div');
-                puzzleItem.className = 'puzzle-item';
-                puzzleItem.innerHTML = `
-                    <div class="puzzle-info">
-                        <div class="puzzle-header">
-                            <div class="puzzle-number">Puzzle #${puzzle.puzzle_number}</div>
-                            <div class="status-badge ${statusClass}">${statusText}</div>
-                        </div>
-                        <div class="puzzle-theme">${puzzle.theme}</div>
-                        <div class="puzzle-details">
-                            <span>Time: ${puzzle.completion_time || '--:--'}</span>
-                            <span>Hints: ${puzzle.hints_used}</span>
-                        </div>
-                    </div>
-                `;
-                
-                puzzleDetails.appendChild(puzzleItem);
-            } else {
-                // Show empty state or attempt to check cookies for non-authenticated users
-                checkNonAuthenticatedUser(targetDate, puzzleDetails);
-            }
-            
-            // Update navigation buttons
-            updateDayNavigation();
-        }
+
         
         function updateDayNavigation() {
             const prevButton = document.getElementById('prev-button');
@@ -778,18 +817,56 @@
                 }
             }
             
-            // Calculate average time
-            const completedTimes = allPuzzleHistory
-                .filter(p => p.completed && p.completion_time && p.completion_time !== '--:--')
-                .map(p => {
-                    const [min, sec] = p.completion_time.split(':').map(Number);
-                    return min * 60 + sec;
-                });
+            // Calculate average time (with PostgreSQL interval support)
+            const completedWithTimes = allPuzzleHistory.filter(p => 
+                p.completed && p.completion_time && p.completion_time !== '--:--' && p.completion_time !== 'Unknown'
+            );
             
-            const avgSeconds = completedTimes.length > 0 ? 
-                Math.round(completedTimes.reduce((a, b) => a + b, 0) / completedTimes.length) : 0;
-            const avgTime = avgSeconds > 0 ? 
-                `${Math.floor(avgSeconds / 60)}:${(avgSeconds % 60).toString().padStart(2, '0')}` : '--:--';
+            let totalSeconds = 0;
+            let validTimes = 0;
+            
+            for (const puzzle of completedWithTimes) {
+                let seconds = 0;
+                
+                // Handle PostgreSQL interval format like "120 seconds"
+                if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes('seconds')) {
+                    const match = puzzle.completion_time.match(/(\d+)\s*seconds/);
+                    if (match) {
+                        seconds = parseInt(match[1]);
+                    }
+                }
+                // Handle MM:SS format like "2:30"
+                else if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes(':')) {
+                    const timeParts = puzzle.completion_time.split(':');
+                    if (timeParts.length === 2) {
+                        const minutes = parseInt(timeParts[0]) || 0;
+                        const secs = parseInt(timeParts[1]) || 0;
+                        seconds = (minutes * 60) + secs;
+                    }
+                }
+                // Handle raw number (seconds)
+                else if (typeof puzzle.completion_time === 'number') {
+                    seconds = puzzle.completion_time;
+                } else if (typeof puzzle.completion_time === 'string') {
+                    const parsed = parseInt(puzzle.completion_time);
+                    if (!isNaN(parsed)) {
+                        seconds = parsed;
+                    }
+                }
+                
+                if (seconds > 0) {
+                    totalSeconds += seconds;
+                    validTimes++;
+                }
+            }
+            
+            const avgTime = validTimes > 0 ? 
+                (() => {
+                    const avgSeconds = Math.round(totalSeconds / validTimes);
+                    const avgMinutes = Math.floor(avgSeconds / 60);
+                    const remainingSeconds = avgSeconds % 60;
+                    return `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                })() : '--:--';
             
             // Calculate hint statistics
             const totalHints = allPuzzleHistory
@@ -814,7 +891,7 @@
             // Don't allow going to future days (newDayIndex < 0)
             if (newDayIndex >= 0) {
                 currentDayIndex = newDayIndex;
-                renderCurrentDay();
+                renderCurrentDayPuzzle();
             }
         };
         
