@@ -5187,44 +5187,69 @@ https://ladder.game/`;
                         return;
                     }
                     
-                    // Determine the puzzle date based on puzzle type
-                    let puzzleDate;
+                    // Determine the puzzle type and tracking method
                     const urlParams = new URLSearchParams(window.location.search);
                     const puzzleType = urlParams.get('type') || 'daily';
-                    
-                    if (puzzleType === 'historical') {
-                        puzzleDate = urlParams.get('date');
-                    } else {
-                        puzzleDate = window.gameModule.getCurrentPuzzleDate();
-                    }
+                    const packId = urlParams.get('pack_id');
+                    const puzzleId = urlParams.get('puzzle_id');
                     
                     const completionTime = this.finalTimeMs || Date.now() - this.startTime;
-                    
-                    // Convert completion time to PostgreSQL interval format
                     const completionSeconds = Math.floor(completionTime / 1000);
                     const completionInterval = `${completionSeconds} seconds`;
                     
-                    // Try to insert completion record
-                    const { data, error } = await window.supabaseClient
-                        .from('puzzle_completions')
-                        .upsert({
-                            user_id: user.id,
-                            puzzle_date: puzzleDate,
-                            puzzle_name: this.currentPuzzle.theme,
-                            completed: true,
-                            completion_time: completionInterval, // Store as PostgreSQL interval
-                            hints_used: this.hintsUsed || 0,
-                            tries_used: this.wrongGuesses || 0, // Track how many tries were used
-                            created_at: new Date().toISOString(),
-                            updated_at: new Date().toISOString()
-                        }, {
-                            onConflict: 'user_id,puzzle_date'
-                        });
-                    
-                    if (error) {
-                        console.error('Error tracking completion:', error);
+                    if (puzzleType === 'pack' && packId && puzzleId) {
+                        // Track pack puzzle completion in puzzle_pack_completions table
+                        const { data, error } = await window.supabaseClient
+                            .from('puzzle_pack_completions')
+                            .upsert({
+                                user_id: user.id,
+                                puzzle_id: parseInt(puzzleId),
+                                pack_id: packId,
+                                completed: true,
+                                completion_time: completionInterval,
+                                hints_used: this.hintsUsed || 0,
+                                tries_used: this.wrongGuesses || 0,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }, {
+                                onConflict: 'user_id,puzzle_id'
+                            });
+                        
+                        if (error) {
+                            console.error('Error tracking pack completion:', error);
+                        } else {
+                            console.log('Pack puzzle completion tracked successfully');
+                        }
                     } else {
-                        console.log('Puzzle completion tracked successfully');
+                        // Track daily/historical puzzle completion in puzzle_completions table
+                        let puzzleDate;
+                        if (puzzleType === 'historical') {
+                            puzzleDate = urlParams.get('date');
+                        } else {
+                            puzzleDate = window.gameModule.getCurrentPuzzleDate();
+                        }
+                        
+                        const { data, error } = await window.supabaseClient
+                            .from('puzzle_completions')
+                            .upsert({
+                                user_id: user.id,
+                                puzzle_date: puzzleDate,
+                                puzzle_name: this.currentPuzzle.theme,
+                                completed: true,
+                                completion_time: completionInterval,
+                                hints_used: this.hintsUsed || 0,
+                                tries_used: this.wrongGuesses || 0,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }, {
+                                onConflict: 'user_id,puzzle_date'
+                            });
+                        
+                        if (error) {
+                            console.error('Error tracking daily completion:', error);
+                        } else {
+                            console.log('Daily puzzle completion tracked successfully');
+                        }
                     }
                 } catch (error) {
                     console.error('Error in trackCompletion:', error);
@@ -5236,38 +5261,65 @@ https://ladder.game/`;
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                     if (!user) return;
                     
-                    // Determine the puzzle date based on puzzle type
-                    let puzzleDate;
+                    // Determine the puzzle type and tracking method
                     const urlParams = new URLSearchParams(window.location.search);
                     const puzzleType = urlParams.get('type') || 'daily';
+                    const packId = urlParams.get('pack_id');
+                    const puzzleId = urlParams.get('puzzle_id');
                     
-                    if (puzzleType === 'historical') {
-                        puzzleDate = urlParams.get('date');
+                    if (puzzleType === 'pack' && packId && puzzleId) {
+                        // Track pack puzzle failure in puzzle_pack_completions table
+                        const { data, error } = await window.supabaseClient
+                            .from('puzzle_pack_completions')
+                            .upsert({
+                                user_id: user.id,
+                                puzzle_id: parseInt(puzzleId),
+                                pack_id: packId,
+                                completed: false,
+                                completion_time: null,
+                                hints_used: this.hintsUsed || 0,
+                                tries_used: this.maxWrongGuesses, // Used all 5 tries
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }, {
+                                onConflict: 'user_id,puzzle_id'
+                            });
+                        
+                        if (error) {
+                            console.error('Error tracking pack failure:', error);
+                        } else {
+                            console.log('Pack puzzle failure tracked successfully');
+                        }
                     } else {
-                        puzzleDate = this.getCurrentPuzzleDate();
-                    }
-                    
-                    // Track failure in database
-                    const { data, error } = await window.supabaseClient
-                        .from('puzzle_completions')
-                        .upsert({
-                            user_id: user.id,
-                            puzzle_date: puzzleDate,
-                            puzzle_name: this.currentPuzzle.theme,
-                            completed: false,
-                            completion_time: null, // No completion time for failures
-                            hints_used: this.hintsUsed || 0,
-                            tries_used: this.maxWrongGuesses, // Used all 5 tries
-                            created_at: new Date().toISOString(),
-                            updated_at: new Date().toISOString()
-                        }, {
-                            onConflict: 'user_id,puzzle_date'
-                        });
-                    
-                    if (error) {
-                        console.error('Error tracking failure:', error);
-                    } else {
-                        console.log('Puzzle failure tracked successfully');
+                        // Track daily/historical puzzle failure in puzzle_completions table
+                        let puzzleDate;
+                        if (puzzleType === 'historical') {
+                            puzzleDate = urlParams.get('date');
+                        } else {
+                            puzzleDate = this.getCurrentPuzzleDate();
+                        }
+                        
+                        const { data, error } = await window.supabaseClient
+                            .from('puzzle_completions')
+                            .upsert({
+                                user_id: user.id,
+                                puzzle_date: puzzleDate,
+                                puzzle_name: this.currentPuzzle.theme,
+                                completed: false,
+                                completion_time: null, // No completion time for failures
+                                hints_used: this.hintsUsed || 0,
+                                tries_used: this.maxWrongGuesses, // Used all 5 tries
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }, {
+                                onConflict: 'user_id,puzzle_date'
+                            });
+                        
+                        if (error) {
+                            console.error('Error tracking daily failure:', error);
+                        } else {
+                            console.log('Daily puzzle failure tracked successfully');
+                        }
                     }
                 } catch (error) {
                     console.error('Error in trackFailure:', error);
