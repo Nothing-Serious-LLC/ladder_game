@@ -139,22 +139,15 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 120px 20px 20px 20px;
+            padding: 140px 20px 20px 20px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Landing Page Styles */
+        /* Landing Page Styles - Hidden since we go straight to game */
         .landing-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px 20px;
-            max-width: 500px;
-            margin: 0 auto;
+            display: none;
         }
 
         .landing-header {
@@ -223,7 +216,7 @@
         /* Mobile instruction adjustments */
         @media (max-width: 480px) {
             .header {
-                padding: 16px 16px 20px 16px;
+                padding: 15px 0 20px;
             }
             
             .title {
@@ -416,11 +409,11 @@
             top: 0;
             left: 0;
             right: 0;
-            background: #fafafa;
+            background: var(--gray-50);
             z-index: 1000;
             text-align: center;
             padding: 20px 20px 30px 20px;
-            border-bottom: 1px solid #d3d6da;
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .title {
@@ -428,12 +421,12 @@
             font-weight: 700;
             letter-spacing: 0.2em;
             margin-bottom: 8px;
-            color: #1a1a1b;
+            color: var(--gray-900);
         }
 
         .date-info {
             font-size: 0.8rem;
-            color: #787c7e;
+            color: var(--gray-600);
         }
 
         .stats {
@@ -1744,7 +1737,7 @@
             }
             /* Reduce bottom padding so ladder isn't cut off */
             .container {
-                padding: 90px 0 0 0; /* Less padding on mobile due to smaller header */
+                padding: 110px 0 0 0; /* Increased padding to match desktop spacing increase */
                 height: 100vh;
                 overflow: hidden;
             }
@@ -1807,7 +1800,7 @@
                 overflow-y: auto;
                 overflow-x: visible;
                 padding-bottom: 20px; /* Reduced padding */
-                max-height: calc(100vh - 90px - 210px); /* Adjusted for mobile fixed header and keyboard */
+                max-height: calc(100vh - 110px - 210px); /* Adjusted for mobile fixed header and keyboard */
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
             }
