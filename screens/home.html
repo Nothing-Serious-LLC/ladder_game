@@ -211,6 +211,15 @@
             line-height: 1.3;
         }
         
+        .puzzle-subtitle {
+            font-size: 1.0rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+            font-style: italic;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
         .status-badge {
             padding: 8px 16px;
             border-radius: 20px;
@@ -679,6 +688,10 @@
             .puzzle-theme-large {
                 font-size: 1.8rem;
             }
+            
+            .puzzle-subtitle {
+                font-size: 0.9rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1090,12 +1103,7 @@
             dailyCard.innerHTML = `
                 <div class="puzzle-theme-section">
                     <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
-                </div>
-                
-                <div class="puzzle-status centered">
-                    <div class="puzzle-info centered">
-                        <div class="puzzle-name">Puzzle #${puzzleNumber} • ${puzzleDate}</div>
-                    </div>
+                    <div class="puzzle-subtitle">Puzzle #${puzzleNumber} • ${puzzleDate}</div>
                 </div>
                 
                 <div class="completion-stats three-column">
