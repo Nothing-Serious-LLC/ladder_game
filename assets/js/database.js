@@ -3,6 +3,8 @@
 
 // Import Supabase configuration
 import { supabase } from '../../config/supabase-config.js';
+// Shared time helpers (Eastern TZ – 3 AM reset)
+import { getPuzzleNumber, getGameDayString } from './timeUtils.js';
 
 // Validate supabase client is available
 function getSupabaseClient() {
@@ -16,61 +18,17 @@ function getSupabaseClient() {
  * Get today's puzzle information (puzzle number calculation)
  */
 export function getTodaysPuzzleInfo() {
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    
-    // Determine if we're in daylight saving time (roughly March-November)
-    const currentMonth = now.getUTCMonth() + 1; // 1-12
-    const isDST = currentMonth >= 3 && currentMonth <= 11; // Rough DST period
-    
-    // Calculate Eastern time offset: EDT = UTC-4, EST = UTC-5
-    const easternOffset = isDST ? -4 : -5;
-    const easternTime = new Date(utc + (easternOffset * 3600000));
-    
-    // Subtract 3 hours from current Eastern time to get "game day"
-    // This makes 3:00 AM Eastern the daily reset time
-    const gameTime = new Date(easternTime.getTime() - (3 * 3600000));
-    const est = gameTime; // Keep variable name for compatibility
-    
-    // Launch date set so today is puzzle #4
-    const launchDate = new Date('2025-07-28');
-    const diffTime = est - launchDate;
-    const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    
-    return { puzzleNumber };
+    // Centralized helper ensures DST-safe math
+    return { puzzleNumber: getPuzzleNumber() };
 }
 
 /**
  * Fetch today's puzzle from database or fallback to hardcoded puzzles
  */
 export async function fetchTodaysPuzzle() {
-    // Get today's date in Eastern timezone with 3:00 AM reset
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    
-    // Determine if we're in daylight saving time (roughly March-November)
-    const currentMonth = now.getUTCMonth() + 1; // 1-12
-    const isDST = currentMonth >= 3 && currentMonth <= 11; // Rough DST period
-    
-    // Calculate Eastern time offset: EDT = UTC-4, EST = UTC-5
-    const easternOffset = isDST ? -4 : -5;
-    const easternTime = new Date(utc + (easternOffset * 3600000));
-    
-    // Subtract 3 hours from current Eastern time to get "game day"
-    // This makes 3:00 AM Eastern the daily reset time
-    const gameTime = new Date(easternTime.getTime() - (3 * 3600000));
-    const est = gameTime; // Keep variable name for compatibility
-    
-    // Format date for comparison
-    const year = est.getFullYear();
-    const month = String(est.getMonth() + 1).padStart(2, '0');
-    const day = String(est.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-    
-    // Calculate puzzle number (days since launch)
-    const launchDate = new Date('2025-07-28'); // Launch date for puzzle #4 today
-    const diffTime = est - launchDate;
-    const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        // Use shared helper for game-day string and puzzle number
+    const dateStr = getGameDayString();
+    const puzzleNumber = getPuzzleNumber();
     
     // For July 29, 2024 and earlier - use hardcoded puzzles
     if (dateStr <= '2024-07-29') {

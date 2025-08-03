@@ -392,26 +392,50 @@
         
         .puzzle-packs-section,
         .store-section {
-            min-height: 300px;
+            min-height: 340px;
         }
         
         .store-content {
             flex: 1;
             display: flex;
             flex-direction: column;
+            margin-bottom: 16px;
         }
         
         .store-pack-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 20px;
+            gap: 16px;
+            padding: 16px 20px;
             background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
             border-radius: 12px;
             border: 1px solid #fed7aa;
             margin-bottom: 16px;
             transition: all 0.2s;
             cursor: pointer;
+        }
+        
+
+        
+        .store-pack-item .item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .store-pack-item .store-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .store-pack-item .item-price {
+            font-weight: 800;
+            font-size: 1.15rem;
+            color: var(--primary-orange);
+            letter-spacing: -0.5px;
+            text-align: center;
         }
         
         .store-pack-item:last-child {
@@ -427,16 +451,16 @@
             background: var(--primary-orange);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 6px 18px;
             border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
-            flex-shrink: 0;
             white-space: nowrap;
             min-width: 80px;
+            text-align: center;
         }
         
         .store-button:hover {
@@ -467,8 +491,9 @@
         
         .item-name {
             font-weight: 700;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             color: var(--gray-900);
+            font-size: 1rem;
         }
         
         .item-description {
@@ -487,8 +512,8 @@
         .store-description {
             font-size: 0.85rem;
             color: var(--gray-600);
-            margin-top: 6px;
-            font-weight: 500;
+            margin-top: 2px;
+            font-weight: 400;
         }
         
         .pack-item {
@@ -513,7 +538,10 @@
         }
         
         .pack-item + .view-all-button,
-        .empty-state + .view-all-button,
+        .empty-state + .view-all-button {
+            margin-top: 20px;
+        }
+        
         .store-content + .view-all-button {
             margin-top: 20px;
         }
@@ -674,8 +702,9 @@
         }
         
         .minimal-countdown:hover {
-            background: rgba(255, 140, 66, 0.05);
-            transform: translateY(-1px);
+            /* Removed orange hover highlight */
+            background: transparent;
+            transform: none;
         }
         
         .countdown-timer.minimal {
@@ -912,23 +941,32 @@
                         <div class="store-pack-item" onclick="viewProduct('free-pack')">
                             <div class="item-info">
                                 <div class="item-name">Free Pack</div>
-                                <div class="store-description">10 starter puzzles • Free</div>
+                                <div class="store-description">10 puzzles</div>
                             </div>
-                            <button class="store-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
+                            <div class="store-action">
+                                <div class="item-price" style="color: var(--primary-green);">Free</div>
+                                <button class="store-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
+                            </div>
                         </div>
                         <div class="store-pack-item" onclick="viewProduct('complete-pack')">
                             <div class="item-info">
                                 <div class="item-name">Complete Pack</div>
-                                <div class="store-description">Everything included • $4.99</div>
+                                <div class="store-description">Everything included</div>
                             </div>
-                            <button class="store-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">View</button>
+                            <div class="store-action">
+                                <div class="item-price">$4.99</div>
+                                <button class="store-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">Unlock</button>
+                            </div>
                         </div>
                         <div class="store-pack-item" onclick="viewProduct('archive')">
                             <div class="item-info">
                                 <div class="item-name">Archive</div>
-                                <div class="store-description">Access to all past daily puzzles • $2.99</div>
+                                <div class="store-description">Past daily puzzles</div>
                             </div>
-                            <button class="store-button" onclick="event.stopPropagation(); viewProduct('archive')">View</button>
+                            <div class="store-action">
+                                <div class="item-price">$2.99</div>
+                                <button class="store-button" onclick="event.stopPropagation(); viewProduct('archive')">Unlock</button>
+                            </div>
                         </div>
                     </div>
                     
@@ -1061,7 +1099,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             // Update greeting with user email
             const greetingText = document.querySelector('.greeting-text');
-            if (session.user.email) {
+            if (greetingText && session.user.email) {
                 greetingText.textContent = `Welcome back, ${session.user.email.split('@')[0]}!`;
             }
         }
@@ -1136,9 +1174,26 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 if (hasPlayed === 'true' || justCompleted === 'true' || justFailed === 'true') {
                     // Check if there's a date param and it matches today
                     const dateParam = urlParams.get('date');
-                    if (dateParam && dateParam === getCurrentPuzzleDate()) {
-                        showCountdown();
-                        return;
+                    const today = getCurrentPuzzleDate();
+                    
+                    if (dateParam && dateParam === today) {
+                        // Check if we're still in countdown period (before 3 AM ET next day)
+                        const now = new Date();
+                        const nextPuzzleTime = new Date();
+                        nextPuzzleTime.setDate(nextPuzzleTime.getDate() + 1);
+                        nextPuzzleTime.setHours(3, 0, 0, 0); // 3 AM ET tomorrow
+                        
+                        // Adjust for ET timezone
+                        const etOffset = -5 * 60; // ET is UTC-5
+                        const localOffset = now.getTimezoneOffset();
+                        const offsetDiff = localOffset + etOffset;
+                        nextPuzzleTime.setMinutes(nextPuzzleTime.getMinutes() + offsetDiff);
+                        
+                        if (now < nextPuzzleTime) {
+                            // Still in countdown period
+                            showCountdown();
+                            return;
+                        }
                     }
                     // Otherwise ignore stale URL params and continue with normal flow
                 }
@@ -1676,15 +1731,15 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 
                 // Hide owned items
                 if (freePackItem) {
-                    freePackItem.style.display = (hasFreePack || hasCompletePack) ? 'none' : 'block';
+                    freePackItem.style.display = (hasFreePack || hasCompletePack) ? 'none' : 'flex';
                 }
                 
                 if (completePackItem) {
-                    completePackItem.style.display = hasCompletePack ? 'none' : 'block';
+                    completePackItem.style.display = hasCompletePack ? 'none' : 'flex';
                 }
                 
                 if (archivePackItem) {
-                    archivePackItem.style.display = (hasArchivePack || hasCompletePack) ? 'none' : 'block';
+                    archivePackItem.style.display = (hasArchivePack || hasCompletePack) ? 'none' : 'flex';
                 }
                 
                 // Show view all button if there are visible items

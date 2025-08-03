@@ -246,6 +246,72 @@
             color: var(--gray-600);
         }
         
+        /* Completion stats styling */
+        .completion-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .completion-stat {
+            text-align: center;
+            padding: 16px;
+            background: var(--gray-50);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .completion-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--gray-900);
+        }
+        
+        .completion-stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .puzzle-theme-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .puzzle-theme-large {
+            color: var(--gray-900);
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .puzzle-subtitle {
+            color: var(--gray-600);
+            font-size: 1.3rem;
+        }
+        
+        .not-played-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .not-played-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+        
+        .not-played-description {
+            font-size: 1rem;
+            color: var(--gray-600);
+            margin-bottom: 24px;
+        }
+        
         .puzzle-stats {
             display: flex;
             align-items: center;
@@ -509,13 +575,11 @@
         }
         
         .daily-puzzle-section {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-green-hover) 100%);
-            color: white;
+            background: white;
         }
         
         .daily-puzzle-section.failed-puzzle {
-            background: linear-gradient(135deg, var(--error-red) 0%, #c0392b 100%);
-            color: white;
+            background: white;
         }
         
         .card {
@@ -582,11 +646,11 @@
             }
             
             .puzzle-theme-large {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
             
             .puzzle-subtitle {
-                font-size: 0.9rem;
+                font-size: 1.1rem;
             }
             
             .puzzle-name {
@@ -677,6 +741,7 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script type="module">
         import { supabaseConfig } from '../config/supabase-config.js';
+        import { getGameDayString, getPuzzleNumber } from '../assets/js/timeUtils.js';
         
         // Initialize Supabase
         const supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
@@ -684,17 +749,9 @@
         let allPuzzleHistory = [];
         let currentDayIndex = 0; // 0 = today, 1 = yesterday, etc.
         
-        // Function to get current puzzle date based on 3am ET reset
+        // Function to get current puzzle date based on 3am ET reset (use shared utility)
         function getCurrentPuzzleDate() {
-            const now = new Date();
-            const etTime = new Date(now.toLocaleString("en-US", {timeZone: "America/New_York"}));
-            
-            // If it's before 3 AM ET, use previous day
-            if (etTime.getHours() < 3) {
-                etTime.setDate(etTime.getDate() - 1);
-            }
-            
-            return etTime.toISOString().split('T')[0]; // YYYY-MM-DD format
+            return getGameDayString();
         }
         
         // Function to get a specific date offset from today
@@ -702,6 +759,15 @@
             const today = new Date(getCurrentPuzzleDate());
             today.setDate(today.getDate() - daysAgo);
             return today.toISOString().split('T')[0]; // YYYY-MM-DD format
+        }
+        
+        // Function to get puzzle number for a specific date
+        function getPuzzleNumberForDate(dateString) {
+            const launchDate = new Date('2025-07-28');
+            const targetDate = new Date(dateString);
+            const diffTime = targetDate - launchDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays + 1; // Launch day is puzzle #1
         }
         
 
@@ -739,19 +805,17 @@
             const puzzleDetails = document.getElementById('puzzle-details');
             const currentDateEl = document.getElementById('current-date');
             
+            // Show loading
+            currentDateEl.textContent = 'Loading...';
+            
             // Get the date for current day index
             const targetDate = getDateByOffset(currentDayIndex);
-            const date = new Date(targetDate);
+            const date = new Date(targetDate + 'T00:00:00'); // Fix timezone issues
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             currentDateEl.textContent = date.toLocaleDateString('en-US', options);
             
-            // Calculate puzzle number using same logic as index.html
-            const now = new Date();
-            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const est = new Date(utc + (-5 * 3600000));
-            const launchDate = new Date('2025-07-28');
-            const diffTime = est - launchDate;
-            const puzzleNumber = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            // Calculate puzzle number for the target date
+            const puzzleNumber = getPuzzleNumberForDate(targetDate);
             
             // Find puzzle for this specific date
             const puzzle = allPuzzleHistory.find(p => p.puzzle_date === targetDate);
@@ -770,9 +834,19 @@
                 hasArchiveAccess = purchases && purchases.length > 0;
             }
             
+            console.log('Statistics Debug:', {
+                targetDate,
+                puzzleNumber,
+                currentDayIndex,
+                isToday,
+                isFuture,
+                hasPuzzle: !!puzzle,
+                puzzleName: puzzle?.puzzle_name
+            });
+            
             if (puzzle) {
                 // Show completed/failed puzzle using exact home screen structure
-                showCompletedPuzzleCard(puzzle, puzzleNumber, date, targetDate);
+                showCompletedPuzzle(puzzle, targetDate, puzzleNumber);
             } else if (isFuture) {
                 // Future puzzle - not available yet
                 showFuturePuzzleCard(puzzleNumber, date);
@@ -825,42 +899,42 @@
             const hintsRemaining = Math.max(0, totalHints - hintsUsed);
             
             // Calculate remaining tries (5 total tries available - same as game)
-                const totalTries = 5;
+            const totalTries = 5;
             const triesUsed = completion.tries_used || 0;
-                let remainingTries = 0;
-                
-                if (wasCompleted) {
-                    // If completed successfully, show remaining tries
-                    remainingTries = Math.max(0, totalTries - triesUsed);
-                } else {
-                    // If failed, no tries remaining (used all 5)
-                    remainingTries = 0;
-                }
-                
+            let remainingTries = 0;
+            
+            if (wasCompleted) {
+                // If completed successfully, show remaining tries
+                remainingTries = Math.max(0, totalTries - triesUsed);
+            } else {
+                // If failed, no tries remaining (used all 5)
+                remainingTries = 0;
+            }
+            
             // Set appropriate styling and messaging based on completion status
             const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
             
-                        dailyCard.innerHTML = `
+            dailyCard.innerHTML = `
                 <div class="puzzle-theme-section">
                     <div class="puzzle-theme-large">${completion.puzzle_name || 'Unknown'}</div>
-                    <div class="puzzle-subtitle">Puzzle #${finalPuzzleNumber} • ${puzzleDate}</div>
+                    <div class="puzzle-subtitle">${wasCompleted ? 'Completed' : 'Failed'} • Puzzle #${finalPuzzleNumber} • ${puzzleDate}</div>
                 </div>
                         
                 <div class="completion-stats">
                     <div class="completion-stat">
-                        <div class="completion-stat-value">${formatTimeForStats(completionTime)}</div>
+                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${formatTimeForStats(completionTime)}</div>
                         <div class="completion-stat-label">Time</div>
-                            </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value">${hintsRemaining}</div>
-                        <div class="completion-stat-label">Hints Remaining</div>
-                            </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value">${remainingTries}</div>
-                        <div class="completion-stat-label">Tries Remaining</div>
-                        </div>
                     </div>
-                `;
+                    <div class="completion-stat">
+                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${hintsRemaining}</div>
+                        <div class="completion-stat-label">Hints Remaining</div>
+                    </div>
+                    <div class="completion-stat">
+                        <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${remainingTries}</div>
+                        <div class="completion-stat-label">Tries Remaining</div>
+                    </div>
+                </div>
+            `;
             
             // Apply the appropriate card styling and reset inline styles
             dailyCard.className = `${cardClass} card`;
@@ -878,26 +952,21 @@
         
         function showTodayPuzzleCard(puzzleNumber, date) {
             const dailyCard = document.getElementById('daily-puzzle-card');
-            const puzzleName = document.getElementById('daily-puzzle-name');
-            const puzzleDateEl = document.getElementById('daily-puzzle-date');
-            const statusBadge = document.getElementById('daily-status');
-            const playButton = document.getElementById('daily-play-button');
             
-            // Update content
-            puzzleName.textContent = `Puzzle #${puzzleNumber}`;
-            puzzleDateEl.textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-            statusBadge.style.display = 'none';
-            playButton.textContent = 'Play Today\'s Puzzle';
-            playButton.className = 'play-button';
-            playButton.onclick = () => window.location.href = '../index.html?autostart=true';
+            // Show not played message with play button
+            dailyCard.innerHTML = `
+                <div class="not-played-message">
+                    <div class="not-played-title">Today's Puzzle Not Played</div>
+                    <div class="not-played-description">Puzzle #${puzzleNumber} • ${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}</div>
+                    <button class="play-button" style="background: var(--primary-green); color: white;" onclick="window.location.href = '../index.html?autostart=true'">
+                        Play Today's Puzzle
+                    </button>
+                </div>
+            `;
             
             // Apply styling and reset any previous inline styles
             dailyCard.className = 'daily-puzzle-section card';
             dailyCard.style.background = '';
-            playButton.disabled = false;
-            playButton.style.opacity = '';
-            playButton.style.cursor = '';
-            playButton.style.display = 'block';
         }
         
         function showArchivePuzzleCard(puzzleNumber, date, targetDate) {
@@ -1144,7 +1213,16 @@
             const nextButton = document.getElementById('next-button');
             
             // Disable next button if we're already at today (currentDayIndex = 0)
-            nextButton.disabled = currentDayIndex === 0;
+            if (nextButton) {
+                nextButton.disabled = currentDayIndex === 0;
+                nextButton.style.opacity = currentDayIndex === 0 ? '0.5' : '1';
+            }
+            
+            // Always enable prev button (can go back in time)
+            if (prevButton) {
+                prevButton.disabled = false;
+                prevButton.style.opacity = '1';
+            }
             
             // Disable previous button if we're too far back (optional limit)
             prevButton.disabled = false; // Allow unlimited history for now

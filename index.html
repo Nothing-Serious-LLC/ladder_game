@@ -2332,6 +2332,7 @@
         import { supabaseConfig, setSupabaseClient } from './config/supabase-config.js';
         import { initializePWA } from './assets/js/pwa.js';
         import { fetchTodaysPuzzle, getTodaysPuzzleInfo } from './assets/js/database.js';
+import { getGameDayString } from './assets/js/timeUtils.js';
         
         // Initialize Supabase client
         const supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
@@ -2602,7 +2603,8 @@
                     
                     if (isAuthenticated && hasPlayedToday) {
                         // Authenticated user who has played - redirect to home screen with timer
-                        window.location.href = './screens/home.html?played=true';
+                        const gameDay = getGameDayString();
+                        window.location.href = `./screens/home.html?played=true&date=${gameDay}`;
                     } else if (isAuthenticated && !hasPlayedToday) {
                         // Authenticated user who hasn't played - show intro screen
                         window.gameModule.showLandingPage();
@@ -4744,7 +4746,8 @@ https://ladder.game/`;
                             // For authenticated users, go to home screen
                             const urlParam = pageType === 'completion' ? 'completed=true' : 'failed=true';
                             homeButton.onclick = () => {
-                                window.location.href = `./screens/home.html?${urlParam}`;
+                                const gameDay = getGameDayString();
+                                window.location.href = `./screens/home.html?${urlParam}&date=${gameDay}`;
                             };
                         } else {
                             // For non-authenticated users, show signup screen
