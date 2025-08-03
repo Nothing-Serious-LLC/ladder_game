@@ -1166,10 +1166,15 @@
                         .order('puzzle_date', { ascending: false });
                     
                     if (completions) {
+                        console.log('HOME SCREEN - Raw completions data:', completions);
+                        
                         const totalCompleted = completions.length;
                         const currentStreak = calculateCurrentStreak(completions);
                         const averageTime = calculateAverageTime(completions);
                         const successRate = totalCompleted > 0 ? Math.round((completions.filter(c => c.completed).length / totalCompleted) * 100) : 0;
+                        
+                        console.log('HOME SCREEN - Calculated average time:', averageTime);
+                        console.log('HOME SCREEN - Completed puzzles:', completions.filter(c => c.completed));
                         
                         document.getElementById('total-completed').textContent = totalCompleted;
                         document.getElementById('current-streak').textContent = currentStreak;
@@ -1208,14 +1213,24 @@
         }
         
         function calculateAverageTime(completions) {
-            if (!completions || completions.length === 0) return '0:00';
+            console.log('HOME SCREEN - calculateAverageTime called with:', completions);
+            
+            if (!completions || completions.length === 0) {
+                console.log('HOME SCREEN - No completions data, returning 0:00');
+                return '0:00';
+            }
             
             // Filter only completed puzzles with valid completion times
             const completedWithTimes = completions.filter(c => 
                 c.completed && c.completion_time && c.completion_time !== '--:--' && c.completion_time !== 'Unknown'
             );
             
-            if (completedWithTimes.length === 0) return '0:00';
+            console.log('HOME SCREEN - Completed puzzles with times:', completedWithTimes);
+            
+            if (completedWithTimes.length === 0) {
+                console.log('HOME SCREEN - No completed puzzles with valid times, returning 0:00');
+                return '0:00';
+            }
             
             // Parse time data and calculate average
             let totalSeconds = 0;
@@ -1223,12 +1238,14 @@
             
             for (const completion of completedWithTimes) {
                 let seconds = 0;
+                console.log('HOME SCREEN - Processing completion time:', completion.completion_time, 'Type:', typeof completion.completion_time);
                 
                 // Handle PostgreSQL interval format like "120 seconds"
                 if (typeof completion.completion_time === 'string' && completion.completion_time.includes('seconds')) {
                     const match = completion.completion_time.match(/(\d+)\s*seconds/);
                     if (match) {
                         seconds = parseInt(match[1]);
+                        console.log('HOME SCREEN - Parsed PostgreSQL interval:', seconds, 'seconds');
                     }
                 }
                 // Handle MM:SS format like "2:30"
@@ -1238,31 +1255,41 @@
                         const minutes = parseInt(timeParts[0]) || 0;
                         const secs = parseInt(timeParts[1]) || 0;
                         seconds = (minutes * 60) + secs;
+                        console.log('HOME SCREEN - Parsed MM:SS format:', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
                     }
                 }
                 // Handle raw number (seconds)
                 else if (typeof completion.completion_time === 'number') {
                     seconds = completion.completion_time;
+                    console.log('HOME SCREEN - Raw number:', seconds, 'seconds');
                 } else if (typeof completion.completion_time === 'string') {
                     const parsed = parseInt(completion.completion_time);
                     if (!isNaN(parsed)) {
                         seconds = parsed;
+                        console.log('HOME SCREEN - Parsed string number:', seconds, 'seconds');
                     }
                 }
                 
                 if (seconds > 0) {
                     totalSeconds += seconds;
                     validTimes++;
+                    console.log('HOME SCREEN - Added', seconds, 'seconds. Total:', totalSeconds, 'Valid times:', validTimes);
                 }
             }
             
-            if (validTimes === 0) return '0:00';
+            if (validTimes === 0) {
+                console.log('HOME SCREEN - No valid times found, returning 0:00');
+                return '0:00';
+            }
             
             const avgSeconds = Math.round(totalSeconds / validTimes);
             const avgMinutes = Math.floor(avgSeconds / 60);
             const remainingSeconds = avgSeconds % 60;
+            const result = `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
             
-            return `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            console.log('HOME SCREEN - Final calculation: totalSeconds:', totalSeconds, 'validTimes:', validTimes, 'avgSeconds:', avgSeconds, 'result:', result);
+            
+            return result;
         }
         
         async function loadPurchases() {

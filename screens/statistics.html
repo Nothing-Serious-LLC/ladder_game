@@ -277,7 +277,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
             margin-bottom: 16px;
         }
@@ -422,7 +422,6 @@
             }
             
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
                 gap: 16px;
             }
         }
@@ -831,21 +830,27 @@
             }
             
             // Calculate average time (with PostgreSQL interval support)
+            console.log('STATISTICS SCREEN - Raw puzzle history:', allPuzzleHistory);
+            
             const completedWithTimes = allPuzzleHistory.filter(p => 
                 p.completed && p.completion_time && p.completion_time !== '--:--' && p.completion_time !== 'Unknown'
             );
+            
+            console.log('STATISTICS SCREEN - Completed puzzles with times:', completedWithTimes);
             
             let totalSeconds = 0;
             let validTimes = 0;
             
             for (const puzzle of completedWithTimes) {
                 let seconds = 0;
+                console.log('STATISTICS SCREEN - Processing completion time:', puzzle.completion_time, 'Type:', typeof puzzle.completion_time);
                 
                 // Handle PostgreSQL interval format like "120 seconds"
                 if (typeof puzzle.completion_time === 'string' && puzzle.completion_time.includes('seconds')) {
                     const match = puzzle.completion_time.match(/(\d+)\s*seconds/);
                     if (match) {
                         seconds = parseInt(match[1]);
+                        console.log('STATISTICS SCREEN - Parsed PostgreSQL interval:', seconds, 'seconds');
                     }
                 }
                 // Handle MM:SS format like "2:30"
@@ -855,21 +860,25 @@
                         const minutes = parseInt(timeParts[0]) || 0;
                         const secs = parseInt(timeParts[1]) || 0;
                         seconds = (minutes * 60) + secs;
+                        console.log('STATISTICS SCREEN - Parsed MM:SS format:', minutes, 'min', secs, 'sec =', seconds, 'total seconds');
                     }
                 }
                 // Handle raw number (seconds)
                 else if (typeof puzzle.completion_time === 'number') {
                     seconds = puzzle.completion_time;
+                    console.log('STATISTICS SCREEN - Raw number:', seconds, 'seconds');
                 } else if (typeof puzzle.completion_time === 'string') {
                     const parsed = parseInt(puzzle.completion_time);
                     if (!isNaN(parsed)) {
                         seconds = parsed;
+                        console.log('STATISTICS SCREEN - Parsed string number:', seconds, 'seconds');
                     }
                 }
                 
                 if (seconds > 0) {
                     totalSeconds += seconds;
                     validTimes++;
+                    console.log('STATISTICS SCREEN - Added', seconds, 'seconds. Total:', totalSeconds, 'Valid times:', validTimes);
                 }
             }
             
@@ -878,7 +887,9 @@
                     const avgSeconds = Math.round(totalSeconds / validTimes);
                     const avgMinutes = Math.floor(avgSeconds / 60);
                     const remainingSeconds = avgSeconds % 60;
-                    return `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                    const result = `${avgMinutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+                    console.log('STATISTICS SCREEN - Final calculation: totalSeconds:', totalSeconds, 'validTimes:', validTimes, 'avgSeconds:', avgSeconds, 'result:', result);
+                    return result;
                 })() : '--:--';
             
             // Calculate hint statistics
