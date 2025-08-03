@@ -145,6 +145,7 @@
             text-align: center;
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
+            position: relative;
         }
         
         .product-card:hover {
@@ -204,6 +205,34 @@
         
         .product-button:active {
             transform: translateY(0);
+        }
+        
+        .product-card.owned {
+            opacity: 0.7;
+            order: 999; /* Move owned items to the end */
+        }
+        
+        .product-button.owned {
+            background: var(--gray-400);
+            cursor: default;
+        }
+        
+        .product-button.owned:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .owned-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--green-500);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
         }
         
         @media (max-width: 768px) {
@@ -294,7 +323,13 @@
         </div>
     </div>
     
-    <script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script type="module">
+        import { supabaseConfig } from '../config/supabase-config.js';
+        
+        // Initialize Supabase client
+        const supabaseClient = window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
+        
         function goBack() {
             // Always go back to home screen to avoid navigation loops
             window.location.href = 'home.html';
@@ -304,12 +339,98 @@
             window.location.href = `product-overview.html?product=${productId}&from=store`;
         }
         
+        async function loadPurchasesAndUpdateStore() {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                
+                if (user) {
+                    // Query user purchases
+                    const { data: purchases } = await supabaseClient
+                        .from('user_purchases')
+                        .select('*')
+                        .eq('user_id', user.id);
+                    
+                    const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
+                    updateProductCards(ownedProducts);
+                }
+            } catch (error) {
+                console.error('Error loading purchases:', error);
+            }
+        }
+        
+        function updateProductCards(ownedProducts) {
+            const productCards = document.querySelectorAll('.product-card');
+            
+            productCards.forEach(card => {
+                const productId = getProductIdFromCard(card);
+                const button = card.querySelector('.product-button');
+                
+                // Check if this product is owned (or if complete pack is owned for other items)
+                const isOwned = isProductOwned(productId, ownedProducts);
+                
+                if (isOwned) {
+                    // Add owned styling
+                    card.classList.add('owned');
+                    button.classList.add('owned');
+                    button.textContent = 'Owned';
+                    button.onclick = null;
+                    
+                    // Add owned badge
+                    if (!card.querySelector('.owned-badge')) {
+                        const badge = document.createElement('div');
+                        badge.className = 'owned-badge';
+                        badge.textContent = 'Owned';
+                        card.appendChild(badge);
+                    }
+                }
+            });
+            
+            // Sort cards: unowned first, owned last
+            const container = document.querySelector('.products-grid');
+            const cards = Array.from(productCards);
+            
+            cards.sort((a, b) => {
+                const aOwned = a.classList.contains('owned');
+                const bOwned = b.classList.contains('owned');
+                
+                if (aOwned && !bOwned) return 1;
+                if (!aOwned && bOwned) return -1;
+                return 0;
+            });
+            
+            // Re-append cards in sorted order
+            cards.forEach(card => container.appendChild(card));
+        }
+        
+        function getProductIdFromCard(card) {
+            const onclickAttr = card.getAttribute('onclick');
+            const match = onclickAttr.match(/viewProduct\('([^']+)'\)/);
+            return match ? match[1] : '';
+        }
+        
+        function isProductOwned(productId, ownedProducts) {
+            // If user owns complete pack, they own everything
+            if (ownedProducts.includes('complete-pack')) {
+                return true;
+            }
+            
+            // Check if specific product is owned
+            return ownedProducts.includes(productId);
+        }
+        
+        // Make functions globally available
+        window.goBack = goBack;
+        window.viewProduct = viewProduct;
+        
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             // Update header date
             const today = new Date();
             const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
             document.getElementById('header-date').textContent = today.toLocaleDateString('en-US', options);
+            
+            // Load purchases and update store
+            loadPurchasesAndUpdateStore();
         });
     </script>
 </body>

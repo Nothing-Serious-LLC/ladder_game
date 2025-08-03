@@ -113,6 +113,10 @@
             gap: 24px;
         }
         
+        .two-card-row.full-width {
+            grid-template-columns: 1fr;
+        }
+        
         .card {
             background: white;
             border-radius: 16px;
@@ -1330,38 +1334,58 @@
                         .eq('user_id', user.id);
                     
                     const puzzlePacksContent = document.getElementById('puzzle-packs-content');
+                    const storeSection = document.querySelector('.store-section');
+                    const twoCardRow = document.querySelector('.two-card-row');
+                    
+                    // Check what packs the user owns
+                    const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
+                    const hasFreepack = ownedProducts.includes('free-pack');
+                    const hasCompletePack = ownedProducts.includes('complete-pack');
+                    
+                    // If user owns complete pack (which includes everything), hide store
+                    const ownsEverything = hasCompletePack;
+                    
+                    if (ownsEverything) {
+                        // Hide store and make My Puzzles full width
+                        storeSection.style.display = 'none';
+                        twoCardRow.classList.add('full-width');
+                    } else {
+                        // Show store normally
+                        storeSection.style.display = 'block';
+                        twoCardRow.classList.remove('full-width');
+                    }
                     
                     if (purchases && purchases.length > 0) {
                         // User has purchases, show them
                         let packsHTML = '';
                         
                         purchases.forEach(purchase => {
-                            if (purchase.product_id === 'premium-pack') {
+                            if (purchase.product_id === 'free-pack') {
                                 packsHTML += `
                                     <div class="pack-item">
                                         <div class="item-info">
-                                            <div class="item-name">Premium Pack</div>
-                                            <div class="pack-progress">Progress: <span id="premium-progress">0</span>/100</div>
-                                            <div class="progress-bar">
-                                                <div class="progress-fill" style="width: 0%"></div>
-                                            </div>
-                                        </div>
-                                        <button class="pack-button" onclick="playPuzzlePack('premium')">Play</button>
-                                    </div>
-                                `;
-                            }
-                            
-                            if (purchase.product_id === 'historical-pack') {
-                                packsHTML += `
-                                    <div class="pack-item">
-                                        <div class="item-info">
-                                            <div class="item-name">Historical Pack</div>
-                                            <div class="pack-progress">Available: <span id="historical-count">500+</span> puzzles</div>
+                                            <div class="item-name">Free Pack</div>
+                                            <div class="pack-progress">10 starter puzzles</div>
                                             <div class="progress-bar">
                                                 <div class="progress-fill" style="width: 100%"></div>
                                             </div>
                                         </div>
-                                        <button class="pack-button" onclick="playPuzzlePack('historical')">Browse</button>
+                                        <button class="pack-button" onclick="playPuzzlePack('free')">Play</button>
+                                    </div>
+                                `;
+                            }
+                            
+                            if (purchase.product_id === 'complete-pack') {
+                                packsHTML += `
+                                    <div class="pack-item">
+                                        <div class="item-info">
+                                            <div class="item-name">Complete Pack</div>
+                                            <div class="pack-progress">All puzzles included</div>
+                                            <div class="progress-bar">
+                                                <div class="progress-fill" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <button class="pack-button" onclick="playPuzzlePack('complete')">Play</button>
                                     </div>
                                 `;
                             }
@@ -1378,6 +1402,9 @@
                             </div>
                         `;
                     }
+                    
+                    // Update store items to show ownership status
+                    updateStoreItemsOwnership(ownedProducts);
                 }
             } catch (error) {
                 console.error('Error loading purchases:', error);
@@ -1391,6 +1418,30 @@
                             <div class="empty-state-subtext">Purchase packs from the store to get started</div>
                         </div>
                     `;
+                }
+            }
+        }
+        
+        function updateStoreItemsOwnership(ownedProducts) {
+            // Update Free Pack button
+            const freePackButton = document.querySelector('.store-item[onclick*="free-pack"] .buy-button');
+            if (freePackButton) {
+                if (ownedProducts.includes('free-pack') || ownedProducts.includes('complete-pack')) {
+                    freePackButton.textContent = 'Owned';
+                    freePackButton.style.background = 'var(--gray-400)';
+                    freePackButton.style.cursor = 'default';
+                    freePackButton.onclick = null;
+                }
+            }
+            
+            // Update Complete Pack button  
+            const completePackButton = document.querySelector('.store-item[onclick*="complete-pack"] .buy-button');
+            if (completePackButton) {
+                if (ownedProducts.includes('complete-pack')) {
+                    completePackButton.textContent = 'Owned';
+                    completePackButton.style.background = 'var(--gray-400)';
+                    completePackButton.style.cursor = 'default';
+                    completePackButton.onclick = null;
                 }
             }
         }
