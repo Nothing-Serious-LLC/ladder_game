@@ -138,6 +138,11 @@
             color: white;
         }
         
+        .daily-puzzle-section.failed-puzzle {
+            background: linear-gradient(135deg, var(--error-red) 0%, #c0392b 100%);
+            color: white;
+        }
+        
         .daily-puzzle-section .section-title {
             color: white;
             margin-bottom: 20px;
@@ -199,6 +204,12 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
+        .status-failed {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
         .status-pending {
             background: var(--primary-orange);
             color: white;
@@ -227,6 +238,24 @@
             background: rgba(255, 255, 255, 0.3);
             color: white;
             cursor: not-allowed;
+        }
+        
+        .countdown-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .countdown-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .countdown-time {
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
         }
         
         .stats-grid {
@@ -975,35 +1004,52 @@
         function showCompletedPuzzle(completion, puzzleDate) {
             const dailyCard = document.getElementById('daily-puzzle-card');
             
-            // Format completion time
+            // Check if puzzle was completed or failed
+            const wasCompleted = completion.completed;
             const completionTime = completion.completion_time || 'Unknown';
             const hintsUsed = completion.hints_used || 0;
+            const puzzleNumber = getDayOfYear();
+            
+            // Calculate hints remaining (assuming 3 total hints available)
+            const totalHints = 3;
+            const hintsRemaining = Math.max(0, totalHints - hintsUsed);
+            
+            // Set appropriate styling and messaging based on completion status
+            const cardClass = wasCompleted ? 'daily-puzzle-section' : 'daily-puzzle-section failed-puzzle';
+            const statusText = wasCompleted ? 'Completed' : 'Failed';
+            const statusIcon = wasCompleted ? '✓' : '✗';
             
             dailyCard.innerHTML = `
-                <h2 class="section-title">Today's Puzzle</h2>
-                <div class="completion-details">
-                    <div class="puzzle-info">
-                        <div class="puzzle-name">${completion.puzzle_name || 'Daily Puzzle'}</div>
+                <div class="puzzle-status centered">
+                    <div class="puzzle-info centered">
+                        <div class="puzzle-name">Puzzle #${puzzleNumber}</div>
                         <div class="puzzle-date">${puzzleDate}</div>
+                        <div class="status-badge status-${wasCompleted ? 'completed' : 'failed'}">${statusIcon} ${statusText}</div>
                     </div>
-                    <div class="status-badge status-completed">Completed</div>
                 </div>
+                
                 <div class="completion-stats">
                     <div class="completion-stat">
                         <div class="completion-stat-value">${formatTime(completionTime)}</div>
                         <div class="completion-stat-label">Time</div>
                     </div>
                     <div class="completion-stat">
-                        <div class="completion-stat-value">${hintsUsed}</div>
-                        <div class="completion-stat-label">Hints</div>
-                    </div>
-                    <div class="completion-stat">
-                        <div class="completion-stat-value">✓</div>
-                        <div class="completion-stat-label">Done</div>
+                        <div class="completion-stat-value">${hintsRemaining}</div>
+                        <div class="completion-stat-label">Hints Remaining</div>
                     </div>
                 </div>
-                <button class="play-button" onclick="showCountdown()">Next Puzzle</button>
+                
+                <button class="play-button countdown-button" onclick="showCountdown()">
+                    <div class="countdown-text">Next Puzzle In</div>
+                    <div class="countdown-time" id="mini-countdown">Loading...</div>
+                </button>
             `;
+            
+            // Apply the appropriate card styling
+            dailyCard.className = `${cardClass} card`;
+            
+            // Start mini countdown
+            startMiniCountdown();
         }
         
         function formatTime(timeString) {
@@ -1187,6 +1233,39 @@
             }
         }
         
+        function startMiniCountdown() {
+            const miniTimer = document.getElementById('mini-countdown');
+            if (!miniTimer) return;
+            
+            function updateMiniCountdown() {
+                const now = new Date();
+                const nextReset = getNextPuzzleResetTime();
+                
+                const diff = nextReset - now;
+                
+                if (diff <= 0) {
+                    miniTimer.textContent = '00:00:00';
+                    // Reload page when new puzzle is available
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                    return;
+                }
+                
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                miniTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            updateMiniCountdown();
+            const miniCountdownInterval = setInterval(updateMiniCountdown, 1000);
+            
+            // Store interval so we can clear it later
+            window.miniCountdownInterval = miniCountdownInterval;
+        }
+
         // Global functions for button handlers
         window.showCountdown = function() {
             const dailyCard = document.getElementById('daily-puzzle-card');
