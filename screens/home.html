@@ -1391,14 +1391,14 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                         // Load completion counts
                         const { data: completions } = await supabase
                             .from('puzzle_pack_completions')
-                            .select('pack_id, completed')
+                            .select('pack_name, completed')
                             .eq('user_id', user.id)
                             .eq('completed', true);
                         
                         const completionCounts = {};
                         if (completions) {
                             completions.forEach(c => {
-                                completionCounts[c.pack_id] = (completionCounts[c.pack_id] || 0) + 1;
+                                completionCounts[c.pack_name] = (completionCounts[c.pack_name] || 0) + 1;
                             });
                         }
                         

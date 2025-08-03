@@ -486,17 +486,17 @@
             try {
                 const { data: completions } = await supabaseClient
                     .from('puzzle_pack_completions')
-                    .select('pack_id, completed')
+                    .select('pack_name, completed')
                     .eq('user_id', userId)
                     .eq('completed', true);
                 
                 window.packCompletions = {};
                 if (completions) {
                     completions.forEach(completion => {
-                        if (!window.packCompletions[completion.pack_id]) {
-                            window.packCompletions[completion.pack_id] = 0;
+                        if (!window.packCompletions[completion.pack_name]) {
+                            window.packCompletions[completion.pack_name] = 0;
                         }
-                        window.packCompletions[completion.pack_id]++;
+                        window.packCompletions[completion.pack_name]++;
                     });
                 }
             } catch (error) {

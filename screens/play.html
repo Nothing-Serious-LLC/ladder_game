@@ -5203,8 +5203,8 @@ https://ladder.game/`;
                             .from('puzzle_pack_completions')
                             .upsert({
                                 user_id: user.id,
-                                puzzle_id: parseInt(puzzleId),
-                                pack_id: packId,
+                                puzzle_id: puzzleId, // Keep as string UUID
+                                pack_name: packId, // Use pack_name field, not pack_id
                                 completed: true,
                                 completion_time: completionInterval,
                                 hints_used: this.hintsUsed || 0,
@@ -5273,8 +5273,8 @@ https://ladder.game/`;
                             .from('puzzle_pack_completions')
                             .upsert({
                                 user_id: user.id,
-                                puzzle_id: parseInt(puzzleId),
-                                pack_id: packId,
+                                puzzle_id: puzzleId, // Keep as string UUID
+                                pack_name: packId, // Use pack_name field, not pack_id
                                 completed: false,
                                 completion_time: null,
                                 hints_used: this.hintsUsed || 0,
