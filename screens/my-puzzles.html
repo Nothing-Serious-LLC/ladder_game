@@ -393,7 +393,7 @@
             }
             
             .container {
-                padding: 0 16px;
+                padding: 75px 16px 0 16px; /* Proper top padding for mobile header clearance */
             }
             
             .page-title {
@@ -405,7 +405,7 @@
 <body>
     <div class="header">
         <h1 class="title">LADDER</h1>
-        <p class="date-info" id="header-date">Saturday, August 2, 2025</p>
+        <p class="date-info" id="header-date">Loading...</p>
     </div>
     
     <div class="container">
@@ -652,10 +652,14 @@
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            // Update header date
-            const today = new Date();
-            const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-            document.getElementById('header-date').textContent = today.toLocaleDateString('en-US', options);
+            // Update header date with puzzle number
+            import('../assets/js/database.js').then(({ getTodaysPuzzleInfo }) => {
+                const { puzzleNumber } = getTodaysPuzzleInfo();
+                const today = new Date();
+                const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                const formattedDate = today.toLocaleDateString('en-US', options);
+                document.getElementById('header-date').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+            });
             
             // Load inventory
             loadInventory();

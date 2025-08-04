@@ -482,12 +482,17 @@
                 background-color: #fafafa !important;
                 padding-top: 0 !important;
             }
+            
+            .container {
+                padding: 75px 20px 20px 20px; /* Proper top padding for mobile header clearance */
+            }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <h1 class="title">LADDER</h1>
+        <p class="date-info" id="pack-date-display">Loading...</p>
     </header>
     
     <div class="container">
@@ -560,6 +565,19 @@
         let complexityLevels = {};
         
         document.addEventListener('DOMContentLoaded', async function() {
+            // Update header date with puzzle number
+            try {
+                const { getTodaysPuzzleInfo } = await import('../assets/js/database.js');
+                const { puzzleNumber } = getTodaysPuzzleInfo();
+                const today = new Date();
+                const options = { month: 'long', day: 'numeric', year: 'numeric' };
+                const formattedDate = today.toLocaleDateString('en-US', options);
+                document.getElementById('pack-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+            } catch (error) {
+                console.error('Error setting pack header date:', error);
+                document.getElementById('pack-date-display').textContent = 'Pack Puzzles';
+            }
+            
             const urlParams = new URLSearchParams(window.location.search);
             const packId = urlParams.get('pack');
             currentFolder = urlParams.get('folder') || '';

@@ -883,7 +883,7 @@
             
             .container {
                 max-width: 100%;
-                padding: 15px;
+                padding: 75px 15px 15px 15px; /* Proper top padding for mobile header clearance */
             }
             
             .content-stack {
@@ -1119,15 +1119,16 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         }
         
         function updateDateDisplay() {
-            // Update header date to match game format
+            // Update header date to match game format with puzzle number
+            const puzzleNumber = getPuzzleNumber();
             const today = new Date();
             const options = { 
-                weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
                 day: 'numeric' 
             };
-            document.getElementById('home-date-display').textContent = today.toLocaleDateString('en-US', options);
+            const formattedDate = today.toLocaleDateString('en-US', options);
+            document.getElementById('home-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
         }
         
         async function loadUserData() {
@@ -1864,6 +1865,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             // Simple countdown - just the timer, clickable to go back to puzzle
             dailyCard.innerHTML = `
                 <div class="minimal-countdown" onclick="togglePuzzleView()" style="text-align: center; padding: 40px 20px; cursor: pointer;" title="Click to go back to puzzle">
+                    <div class="instruction-logo">
+                        <img src="../assets/icons/ladder-trans-orange.png" alt="Ladder" class="ladder-icon" style="width: 120px; height: 120px; margin-bottom: 20px; opacity: 0.9;">
+                    </div>
                     <div class="countdown-timer minimal" id="countdown-timer" style="color: var(--primary-orange); font-size: 2.5rem; font-weight: 700; margin: 0;">Loading...</div>
                 </div>
             `;

@@ -1740,6 +1740,42 @@
             border-color: #5d9556;
         }
         
+        /* Home Navigation Styles */
+        .home-navigation {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .home-nav-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        
+        .home-navigation p {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .home-nav-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--primary-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .home-nav-button:hover {
+            background: var(--primary-green-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+        
         /* Countdown Page Styles */
         .countdown-page {
             display: none;
@@ -2246,13 +2282,18 @@
             
             /* PWA Installation Card Styles (Mobile Only) */
             .pwa-install-card {
-                display: block !important;
+                display: block;
                 animation-delay: 0.3s;
                 background: white;
                 color: #1a1a1b;
                 border: 2px solid #6aaa64;
                 box-shadow: 0 2px 8px rgba(106, 170, 100, 0.15);
                 position: relative;
+            }
+            
+            /* Allow JavaScript to hide PWA cards */
+            .pwa-install-card.hidden {
+                display: none !important;
             }
             
             .pwa-install-title {
@@ -2326,13 +2367,17 @@
                 color: var(--gray-600);
                 border: 1px solid var(--gray-200);
                 border-radius: 12px;
-                padding: 16px 20px;
+                padding: 8px 20px;
                 font-size: 1rem;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.2s ease;
                 width: 100%;
                 text-align: center;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             
             .pwa-install-dismiss:hover {
@@ -2375,6 +2420,7 @@
             
             /* Failure PWA Card Orange Theme */
             .failure-pwa-card {
+                animation-delay: 0.3s;
                 background: white;
                 color: #1a1a1b;
                 border: 2px solid #ff8c42;
@@ -2419,7 +2465,7 @@
             
             .more-puzzles-signup-button {
                 width: 100%;
-                padding: 16px 20px;
+                padding: 8px 20px;
                 border: none;
                 border-radius: 12px;
                 font-size: 1rem;
@@ -2430,6 +2476,7 @@
                 display: flex;
                 flex-direction: column;
                 align-items: center;
+                min-height: 44px;
             }
             
             .more-puzzles-signup-button.primary {
@@ -2723,14 +2770,13 @@
                         <div class="pwa-step-text">Scroll down and tap "<span class="highlight-green">Add to Home Screen</span>"</div>
                     </div>
                 </div>
-                <button class="card-close" onclick="dismissPWACard(this)">×</button>
                 <button class="pwa-install-dismiss" onclick="dismissPWACard(this)">Maybe Later</button>
             </div>
             
             <!-- More Puzzles Signup Card for non-authenticated users -->
             <div class="more-puzzles-signup-card card" id="more-puzzles-signup-card" style="display: none;">
                 <h3 class="more-puzzles-signup-title">Want more puzzles?</h3>
-                <p class="more-puzzles-signup-description" id="more-puzzles-signup-text">Sign up to unlock 10 free puzzles and track your stats!</p>
+                <p class="more-puzzles-signup-description" id="more-puzzles-signup-text">Sign up to unlock 10 free puzzles, track daily stats, and more!</p>
                 <button class="card-close" onclick="this.closest('.more-puzzles-signup-card').style.opacity='0'; setTimeout(() => this.closest('.more-puzzles-signup-card').style.display='none', 300)">×</button>
                 <div class="more-puzzles-signup-buttons">
                     <button class="more-puzzles-signup-button primary" id="more-puzzles-signup-primary">
@@ -2812,14 +2858,13 @@
                         <div class="pwa-step-text">Scroll down and tap "<span class="highlight-orange">Add to Home Screen</span>"</div>
                     </div>
                 </div>
-                <button class="card-close" onclick="dismissFailurePWACard(this)">×</button>
                 <button class="pwa-install-dismiss" onclick="dismissFailurePWACard(this)">Maybe Later</button>
             </div>
             
             <!-- More Puzzles Signup Card for non-authenticated users - Failure -->
             <div class="more-puzzles-signup-card card" id="failure-more-puzzles-signup-card" style="display: none;">
-                <h3 class="more-puzzles-signup-title">Want more puzzles?</h3>
-                <p class="more-puzzles-signup-description" id="failure-more-puzzles-signup-text">Sign up to try the puzzle again and unlock 10 free puzzles and track your stats!</p>
+                <h3 class="more-puzzles-signup-title">Try again?</h3>
+                <p class="more-puzzles-signup-description" id="failure-more-puzzles-signup-text">Sign up to try the puzzle again and unlock 10 free puzzles, track daily stats, and more!</p>
                 <button class="card-close" onclick="this.closest('.more-puzzles-signup-card').style.opacity='0'; setTimeout(() => this.closest('.more-puzzles-signup-card').style.display='none', 300)">×</button>
                 <div class="more-puzzles-signup-buttons">
                     <button class="more-puzzles-signup-button primary" id="failure-more-puzzles-signup-primary">
@@ -2846,6 +2891,9 @@
         </header>
         
         <div class="countdown-content">
+            <div class="instruction-logo">
+                <img src="./assets/icons/ladder-trans-orange.png" alt="Ladder" class="ladder-icon">
+            </div>
             <div class="countdown-card">
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
             </div>
@@ -3136,6 +3184,11 @@ import { getGameDayString } from './assets/js/timeUtils.js';
                     
                     // Check authentication status
                     const isAuthenticated = await window.gameModule.checkAuthentication();
+                    
+                    // Handle users returning from signup with stored game stats
+                    if (isAuthenticated) {
+                        await window.gameModule.handlePostSignupReturn();
+                    }
                     
                     // Check if user has already played today's puzzle
                     const hasPlayedToday = await window.gameModule.checkTodaysPuzzleStatus(isAuthenticated);
@@ -5118,6 +5171,9 @@ import { getGameDayString } from './assets/js/timeUtils.js';
             }
             
             showCompletionPage(timeString) {
+                // Store completion stats for non-authenticated users
+                this.storeNonAuthUserStats('completed', timeString);
+                
                 // Hide mobile keyboard if showing
                 const kb = document.getElementById('mobile-keyboard');
                 if (kb) kb.classList.add('hide');
@@ -5209,6 +5265,9 @@ https://ladder.game/`;
             }
             
             showFailurePage(timeString) {
+                // Store failure stats for non-authenticated users
+                this.storeNonAuthUserStats('failed', timeString);
+                
                 // Hide mobile keyboard if showing
                 const kb = document.getElementById('mobile-keyboard');
                 if (kb) kb.classList.add('hide');
@@ -5423,10 +5482,17 @@ https://ladder.game/`;
                 
                 const pwaInstallCard = document.getElementById('pwa-install-card');
                 
+                // Check if user already dismissed this card
+                if (window.pwaCardDismissed || (pwaInstallCard && pwaInstallCard.classList.contains('hidden'))) {
+                    if (pwaInstallCard) pwaInstallCard.classList.add('hidden');
+                    return;
+                }
+                
                 if (isMobile && !isStandalone && pwaInstallCard) {
                     pwaInstallCard.style.display = 'block';
+                    pwaInstallCard.classList.remove('hidden');
                 } else if (pwaInstallCard) {
-                    pwaInstallCard.style.display = 'none';
+                    pwaInstallCard.classList.add('hidden');
                 }
             }
             
@@ -5439,10 +5505,17 @@ https://ladder.game/`;
                 
                 const pwaInstallCard = document.getElementById('failure-pwa-install-card');
                 
+                // Check if user already dismissed this card
+                if (window.failurePwaCardDismissed || (pwaInstallCard && pwaInstallCard.classList.contains('hidden'))) {
+                    if (pwaInstallCard) pwaInstallCard.classList.add('hidden');
+                    return;
+                }
+                
                 if (isMobile && !isStandalone && pwaInstallCard) {
                     pwaInstallCard.style.display = 'block';
+                    pwaInstallCard.classList.remove('hidden');
                 } else if (pwaInstallCard) {
-                    pwaInstallCard.style.display = 'none';
+                    pwaInstallCard.classList.add('hidden');
                 }
             }
             
@@ -5451,20 +5524,185 @@ https://ladder.game/`;
                 if (window.supabaseClient) {
                     window.supabaseClient.auth.getUser().then(({ data: { user }, error }) => {
                         const signupCard = document.getElementById('failure-more-puzzles-signup-card');
+                        const signupButton = document.getElementById('failure-more-puzzles-signup-primary');
                         
                         if (!error && user) {
                             // User is authenticated, hide signup card
                             if (signupCard) signupCard.style.display = 'none';
                         } else {
-                            // User is not authenticated, show signup card
+                            // User is not authenticated, show signup card and set up click handler
                             if (signupCard) signupCard.style.display = 'block';
+                            if (signupButton) {
+                                signupButton.onclick = () => {
+                                    // Get stored game stats to determine redirect behavior
+                                    const storedStats = this.getNonAuthUserStats();
+                                    const fromParam = storedStats && storedStats.status === 'completed' 
+                                        ? 'daily-completion' 
+                                        : 'daily-failure';
+                                    window.location.href = `./screens/signup.html?from=${fromParam}`;
+                                };
+                            }
                         }
                     });
                 } else {
-                    // No Supabase client, show signup card
+                    // No Supabase client, show signup card and set up click handler
                     const signupCard = document.getElementById('failure-more-puzzles-signup-card');
+                    const signupButton = document.getElementById('failure-more-puzzles-signup-primary');
                     if (signupCard) signupCard.style.display = 'block';
+                    if (signupButton) {
+                        signupButton.onclick = () => {
+                            // Get stored game stats to determine redirect behavior
+                            const storedStats = this.getNonAuthUserStats();
+                            const fromParam = storedStats && storedStats.status === 'completed' 
+                                ? 'daily-completion' 
+                                : 'daily-failure';
+                            window.location.href = `./screens/signup.html?from=${fromParam}`;
+                        };
+                    }
                 }
+            }
+            
+            // Store game stats for non-authenticated users who might sign up later
+            storeNonAuthUserStats(status, timeString) {
+                // Only store for non-authenticated users
+                if (window.supabaseClient) {
+                    window.supabaseClient.auth.getUser().then(({ data: { user }, error }) => {
+                        if (!user) {
+                            // Non-authenticated user - store their game stats
+                            const gameStats = {
+                                status: status, // 'completed' or 'failed'
+                                time: timeString,
+                                theme: this.currentPuzzle?.theme || '',
+                                hints: this.hintsUsed || 0,
+                                date: document.getElementById('date-display')?.textContent || '',
+                                timestamp: Date.now()
+                            };
+                            localStorage.setItem('nonAuthUserGameStats', JSON.stringify(gameStats));
+                        }
+                    });
+                } else {
+                    // No auth client - definitely non-authenticated, store stats
+                    const gameStats = {
+                        status: status,
+                        time: timeString,
+                        theme: this.currentPuzzle?.theme || '',
+                        hints: this.hintsUsed || 0,
+                        date: document.getElementById('date-display')?.textContent || '',
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem('nonAuthUserGameStats', JSON.stringify(gameStats));
+                }
+            }
+            
+            // Retrieve stored stats for non-authenticated users
+            getNonAuthUserStats() {
+                try {
+                    const stored = localStorage.getItem('nonAuthUserGameStats');
+                    return stored ? JSON.parse(stored) : null;
+                } catch (error) {
+                    console.error('Error retrieving non-auth user stats:', error);
+                    return null;
+                }
+            }
+            
+            // Clear stored stats (called after successful signup processing)
+            clearNonAuthUserStats() {
+                localStorage.removeItem('nonAuthUserGameStats');
+            }
+            
+            // Handle user returning from signup - process their stored game stats
+            async handlePostSignupReturn() {
+                try {
+                    // Check if user is now authenticated
+                    if (!window.supabaseClient) return;
+                    
+                    const { data: { user }, error } = await window.supabaseClient.auth.getUser();
+                    if (error || !user) return; // Not authenticated, nothing to do
+                    
+                    // Get stored stats from before signup
+                    const storedStats = this.getNonAuthUserStats();
+                    if (!storedStats) return; // No stored stats, normal flow
+                    
+                    console.log('Processing post-signup stats:', storedStats);
+                    
+                    if (storedStats.status === 'completed') {
+                        // User completed puzzle before signing up
+                        console.log('User completed puzzle before signup - storing stats and showing countdown');
+                        
+                        // Store their completion stats in the database
+                        await this.storeCompletionStatsForNewUser(storedStats, user);
+                        
+                        // Show countdown timer (they can't play again today)
+                        this.showCountdownForCompletedUser();
+                        
+                    } else if (storedStats.status === 'failed') {
+                        // User failed puzzle before signing up
+                        console.log('User failed puzzle before signup - allowing one more try');
+                        
+                        // Allow them to try the puzzle one more time
+                        // Don't store the failure stats yet - let them try again
+                        this.allowRetryForFailedUser();
+                    }
+                    
+                    // Clear the stored stats since we've processed them
+                    this.clearNonAuthUserStats();
+                    
+                } catch (error) {
+                    console.error('Error handling post-signup return:', error);
+                }
+            }
+            
+            // Store completion stats for a newly signed up user
+            async storeCompletionStatsForNewUser(storedStats, user) {
+                try {
+                    if (!window.supabaseClient) return;
+                    
+                    // Format the stats for database storage
+                    const completionData = {
+                        user_id: user.id,
+                        puzzle_date: storedStats.date,
+                        completed: true,
+                        completion_time: storedStats.time,
+                        hints_used: storedStats.hints,
+                        theme: storedStats.theme,
+                        created_at: new Date(storedStats.timestamp).toISOString()
+                    };
+                    
+                    // Store in daily_completions table (adjust table name as needed)
+                    const { error } = await window.supabaseClient
+                        .from('daily_completions')
+                        .insert([completionData]);
+                        
+                    if (error) {
+                        console.error('Error storing completion stats:', error);
+                    } else {
+                        console.log('Successfully stored completion stats for new user');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error in storeCompletionStatsForNewUser:', error);
+                }
+            }
+            
+            // Show countdown timer for users who already completed today's puzzle
+            showCountdownForCompletedUser() {
+                // Hide game content and show countdown
+                const landingPage = document.getElementById('landing-page');
+                const countdownPage = document.getElementById('countdown-page');
+                
+                if (landingPage) landingPage.style.display = 'none';
+                if (countdownPage) {
+                    countdownPage.style.display = 'flex';
+                    // The countdown timer should already be set up to show next puzzle time
+                }
+            }
+            
+            // Allow retry for users who failed before signing up
+            allowRetryForFailedUser() {
+                // Keep the normal game flow - they can try the puzzle again
+                // This is the default behavior, so we don't need to do anything special
+                // The game will load normally and they can play
+                console.log('Allowing retry for user who failed before signup');
             }
             
             async setupMorePuzzlesSignupCard() {
@@ -5520,71 +5758,28 @@ https://ladder.game/`;
             
             async setupMorePuzzlesCard(morePuzzlesCard, user) {
                 try {
-                    // Check for purchased puzzle packs
-                    let hasPuzzlePacks = false;
-                    let puzzlePacks = [];
+                    // Show home page navigation card for authenticated users
+                    const userDisplayName = user?.email ? user.email.split('@')[0] : 'User';
                     
-                    if (window.supabaseClient && user) {
-                        const { data: purchases } = await window.supabaseClient
-                            .from('user_purchases')
-                            .select('*')
-                            .eq('user_id', user.id);
-                        
-                        if (purchases && purchases.length > 0) {
-                            hasPuzzlePacks = true;
-                            // Convert purchases to puzzle pack format
-                            puzzlePacks = purchases.map(purchase => ({
-                                name: purchase.item_name || 'Puzzle Pack',
-                                description: purchase.item_description || 'Collection of puzzles',
-                                id: purchase.item_id
-                            }));
-                        }
-                    }
-                    
-                    if (hasPuzzlePacks) {
-                        // Show user's puzzle packs
-                        const puzzlePacksHtml = puzzlePacks.map(pack => `
-                            <div class="puzzle-pack-item">
-                                <div class="puzzle-pack-info">
-                                    <div class="puzzle-pack-name">${pack.name}</div>
-                                    <div class="puzzle-pack-description">${pack.description}</div>
-                                </div>
-                                <a href="#" class="puzzle-pack-button" onclick="alert('Puzzle pack selection coming soon!')">Play</a>
-                            </div>
-                        `).join('');
-                        
-                        morePuzzlesCard.innerHTML = `
-                            <h3 class="more-puzzles-title">Your Puzzles</h3>
-                            <div class="more-puzzles-content">
-                                ${puzzlePacksHtml}
-                            </div>
-                        `;
-                        morePuzzlesCard.style.display = 'block';
-                        
-                    } else {
-                        // Show empty state with store link
-                        morePuzzlesCard.innerHTML = `
-                            <h3 class="more-puzzles-title">More Puzzles</h3>
-                            <div class="empty-puzzles">
-                                <div class="empty-puzzles-icon">📦</div>
-                                <p>Get more puzzles to continue playing!</p>
-                                <a href="./screens/store.html" class="store-link-button">Browse Store</a>
-                            </div>
-                        `;
-                        morePuzzlesCard.style.display = 'block';
-                    }
+                    morePuzzlesCard.innerHTML = `
+                        <h3 class="more-puzzles-title">Welcome back, ${userDisplayName}!</h3>
+                        <div class="home-navigation">
+                            <div class="home-nav-icon">🏠</div>
+                            <p>Access your puzzle dashboard, statistics, and more</p>
+                            <a href="./screens/home.html" class="home-nav-button">Go to Home</a>
+                        </div>
+                    `;
+                    morePuzzlesCard.style.display = 'block';
                     
                 } catch (error) {
-                    console.error('Error setting up more puzzles card:', error);
-                    // Show basic store link
+                    console.error('Error setting up home navigation card:', error);
+                    // Show fallback home link
                     morePuzzlesCard.innerHTML = `
-                        <h3 class="more-puzzles-title">More Puzzles</h3>
-                        <div class="empty-puzzles">
-                            <div class="empty-puzzles-icon">
-                                <img src="./assets/puzzle.png" alt="Puzzle" style="width: 32px; height: 32px; transform: scale(1.2);">
-                            </div>
-                            <p>Discover more puzzle collections</p>
-                            <a href="./screens/store.html" class="store-link-button">Browse Store</a>
+                        <h3 class="more-puzzles-title">Welcome!</h3>
+                        <div class="home-navigation">
+                            <div class="home-nav-icon">🏠</div>
+                            <p>Go to your puzzle dashboard</p>
+                            <a href="./screens/home.html" class="home-nav-button">Go to Home</a>
                         </div>
                     `;
                     morePuzzlesCard.style.display = 'block';
@@ -6074,10 +6269,18 @@ https://ladder.game/`;
         document.addEventListener('DOMContentLoaded', initSoundToggle);
         */
         
-        // PWA Card dismiss function with fade animation - copy of working signup dismiss
+        // PWA Card dismiss function with fade animation
         window.dismissPWACard = function(button) {
             const card = button.closest('.pwa-install-card');
+            
+            if (!card) {
+                return;
+            }
+            
             const nextCard = card.nextElementSibling;
+            
+            // Set dismissal flag to prevent re-showing
+            window.pwaCardDismissed = true;
             
             // Fade out the PWA card
             card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -6085,7 +6288,7 @@ https://ladder.game/`;
             card.style.transform = 'translateY(-20px)';
             
             setTimeout(() => {
-                card.style.display = 'none';
+                card.classList.add('hidden');
                 
                 // Slide up the next card if it exists
                 if (nextCard && nextCard.style.display !== 'none') {
@@ -6103,7 +6306,15 @@ https://ladder.game/`;
         // Failure PWA Card dismiss function
         window.dismissFailurePWACard = function(button) {
             const card = button.closest('.pwa-install-card');
+            
+            if (!card) {
+                return;
+            }
+            
             const nextCard = card.nextElementSibling;
+            
+            // Set dismissal flag to prevent re-showing
+            window.failurePwaCardDismissed = true;
             
             // Fade out the PWA card
             card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -6111,7 +6322,7 @@ https://ladder.game/`;
             card.style.transform = 'translateY(-20px)';
             
             setTimeout(() => {
-                card.style.display = 'none';
+                card.classList.add('hidden');
                 
                 // Slide up the next card if it exists
                 if (nextCard && nextCard.style.display !== 'none') {
