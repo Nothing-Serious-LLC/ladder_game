@@ -15,7 +15,7 @@ const CORE_ASSETS = [
   './screens/pack-puzzles.html',
   './screens/purchase-confirmation.html',
   './screens/product-overview.html',
-  './screens/my-puzzles.html',
+  
   './screens/store.html',
   './assets/icons/icon.svg',
   './assets/icons/icon-192.png',

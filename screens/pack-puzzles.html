@@ -78,10 +78,35 @@
             padding-left: var(--safe-area-inset-left);
         }
         
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gray-50);
+            z-index: 1000;
+            text-align: center;
+            padding: 20px 20px 30px 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            margin-bottom: 8px;
+            color: var(--gray-900);
+        }
+        
+        .date-info {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+        
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 120px 20px 20px 20px;
+            padding: 120px 20px 0 20px; /* Match other screens - no bottom padding */
             min-height: 100vh;
         }
         
@@ -438,7 +463,7 @@
         
         @media (max-width: 768px) {
             .container {
-                padding: 110px 15px 15px 15px;
+                padding: 110px 16px 0 16px; /* Match other screens */
             }
             
             .header {
@@ -455,10 +480,7 @@
                 min-height: 300px;
             }
             
-            .back-button {
-                left: 15px;
-                font-size: 1rem;
-            }
+
             
             .puzzles-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
@@ -488,7 +510,7 @@
             }
             
             .container {
-                padding: 75px 20px 20px 20px; /* Proper top padding for mobile header clearance */
+                padding: 110px 16px 0 16px; /* Match other screens mobile header clearance */
                 overflow-x: hidden;
                 box-sizing: border-box;
             }
@@ -834,7 +856,12 @@
         }
         
         window.goBack = function() {
-            window.location.href = './my-puzzles.html';
+            // Try to use browser history first, fallback to store
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = './store.html';
+            }
         };
         
         window.playPuzzle = async function(puzzleId) {
