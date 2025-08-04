@@ -879,11 +879,18 @@
             html, body {
                 background-color: #fafafa !important;
                 padding-top: 0 !important;
+                overflow-x: hidden !important;
+                touch-action: pan-y !important;
+                width: 100% !important;
+                max-width: 100% !important;
             }
             
             .container {
                 max-width: 100%;
+                width: 100%;
                 padding: 75px 15px 15px 15px; /* Proper top padding for mobile header clearance */
+                overflow-x: hidden;
+                box-sizing: border-box;
             }
             
             .content-stack {
@@ -931,6 +938,16 @@
             
             .puzzle-theme-section {
                 margin-bottom: 16px !important;
+            }
+            
+            /* Prevent any content from causing horizontal overflow */
+            * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .card, .content-stack, .two-card-row, .completion-stats {
+                overflow-x: hidden !important;
             }
         }
         

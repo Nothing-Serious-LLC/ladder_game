@@ -306,6 +306,10 @@
             html, body {
                 background-color: #fafafa !important;
                 padding-top: 0 !important;
+                overflow-x: hidden !important;
+                touch-action: pan-y !important;
+                width: 100% !important;
+                max-width: 100% !important;
             }
             
             .header {
@@ -315,6 +319,18 @@
             
             .container {
                 padding: 75px 16px 20px; /* Proper top padding for mobile header clearance */
+                overflow-x: hidden;
+                box-sizing: border-box;
+            }
+            
+            /* Prevent any content from causing horizontal overflow */
+            * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            .confirmation-content, .purchase-details, .next-steps {
+                overflow-x: hidden !important;
             }
             
             .confirmation-content {
