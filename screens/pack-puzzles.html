@@ -282,6 +282,18 @@
             margin-bottom: 40px;
         }
         
+        .pack-icon {
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .pack-icon img {
+            width: 80px;
+            height: 80px;
+        }
+        
         .pack-name {
             font-size: 1.8rem;
             font-weight: 700;
@@ -474,6 +486,9 @@
         <button class="back-button" onclick="goBack()">← Back</button>
         
         <div class="pack-info">
+            <div class="pack-icon" id="pack-icon" style="display: none;">
+                <!-- Icon will be inserted here based on pack type -->
+            </div>
             <h2 class="pack-name" id="pack-name">Loading...</h2>
             <p class="pack-progress" id="pack-progress">Loading...</p>
             
@@ -563,6 +578,7 @@
             if (user) {
                 await loadHistoricalPack(user.id);
                 document.getElementById('pack-name').textContent = 'Historical Daily Puzzles';
+                setPackIcon('archive');
                 const completed = Object.values(allCompletions).filter(c => c.completed).length;
                 document.getElementById('pack-progress').textContent = `${completed}/${packPuzzles.length} puzzles completed`;
             }
@@ -571,6 +587,25 @@
         }
         });
         
+        function setPackIcon(packId) {
+            const packIconContainer = document.getElementById('pack-icon');
+            
+            // Icon mappings for different pack types
+            const iconMappings = {
+                'free-pack': '<img src="../assets/Gift icon.png" alt="Free Pack" style="width: 80px; height: 80px;">',
+                'complete-pack': '<img src="../assets/Everything icon.png" alt="Complete Pack" style="width: 80px; height: 80px;">',
+                'archive': '📚', // Using emoji for archive for now
+                'puzzle-pack': '🧩' // Using emoji for puzzle pack for now
+            };
+            
+            if (iconMappings[packId]) {
+                packIconContainer.innerHTML = iconMappings[packId];
+                packIconContainer.style.display = 'flex';
+            } else {
+                packIconContainer.style.display = 'none';
+            }
+        }
+
         async function loadPackPuzzles(packId) {
             try {
                 const { data: { user } } = await supabaseClient.auth.getUser();
@@ -616,6 +651,7 @@
                 
                 // Update pack display info
                 document.getElementById('pack-name').textContent = packInfo.name;
+                setPackIcon(packId);
                 document.getElementById('pack-progress').textContent = packInfo.description || `${packInfo.total_puzzles} puzzles`;
                 
                 // Load puzzles based on pack
