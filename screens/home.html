@@ -896,8 +896,53 @@
             }
             
             .card {
-                padding: 20px;
+                padding: 16px;
             }
+            
+            /* Smaller completed card elements for mobile */
+            .puzzle-theme-large {
+                font-size: 1.6rem !important;
+            }
+            
+            .puzzle-subtitle {
+                font-size: 0.9rem !important;
+                margin-bottom: 16px !important;
+            }
+            
+            .completion-stats {
+                grid-template-columns: 1fr 1fr 1fr !important;
+                gap: 6px !important;
+                margin-bottom: 16px !important;
+            }
+            
+            .completion-stat {
+                padding: 10px 4px !important;
+            }
+            
+            .completion-stat-value {
+                font-size: 1.2rem !important;
+                margin-bottom: 2px !important;
+            }
+            
+            .completion-stat-label {
+                font-size: 0.65rem !important;
+                line-height: 1.2 !important;
+            }
+            
+            .puzzle-theme-section {
+                margin-bottom: 16px !important;
+            }
+        }
+        
+        /* Completion checkmark for both mobile and desktop */
+        .completion-checkmark {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 18px;
+            color: var(--primary-green);
+            font-weight: bold;
+        }
             
             /* Ensure store items stay horizontal on small mobile */
             .store-pack-item {
@@ -1323,9 +1368,10 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             // Use standard card styling for consistency
             
             dailyCard.innerHTML = `
+                <div class="completion-checkmark">✓</div>
                 <div class="puzzle-theme-section" style="text-align: center; margin-bottom: 24px;">
-                    <div class="puzzle-theme-large" style="color: var(--gray-900); font-size: 2.2rem; font-weight: 700; font-style: italic; margin-bottom: 8px;">${completion.puzzle_name || 'Unknown'}</div>
-                    <div class="puzzle-subtitle" style="color: var(--gray-600); font-size: 1.3rem;">${wasCompleted ? 'Completed' : 'Failed'} • Puzzle #${puzzleNumber} • ${puzzleDate}</div>
+                    <div class="puzzle-theme-large" style="color: var(--primary-green); font-size: 2.2rem; font-weight: 700; font-style: italic; margin-bottom: 8px;">${completion.puzzle_name || 'Unknown'}</div>
+                    <div class="puzzle-subtitle" style="color: var(--gray-600); font-size: 1.3rem;">Puzzle #${puzzleNumber} • ${puzzleDate}</div>
                 </div>
                 
                 <div class="completion-stats three-column">
@@ -1335,11 +1381,11 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     </div>
                     <div class="completion-stat" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
                         <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${hintsRemaining}</div>
-                        <div class="completion-stat-label" style="color: var(--gray-600);">Hints Remaining</div>
+                        <div class="completion-stat-label" style="color: var(--gray-600);">Hints</div>
                     </div>
                     <div class="completion-stat" style="background: var(--gray-50); border: 1px solid var(--gray-200);">
                         <div class="completion-stat-value" style="color: ${wasCompleted ? 'var(--primary-green)' : 'var(--error-red)'};">${remainingTries}</div>
-                        <div class="completion-stat-label" style="color: var(--gray-600);">Tries Remaining</div>
+                        <div class="completion-stat-label" style="color: var(--gray-600);">Tries</div>
                     </div>
                 </div>
                 
@@ -1348,8 +1394,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 </button>
             `;
             
-            // Apply standard card styling for consistency
+            // Apply standard card styling for consistency with relative positioning for checkmark
             dailyCard.className = 'card';
+            dailyCard.style.position = 'relative';
         }
         
         function renderPlayCard() {
