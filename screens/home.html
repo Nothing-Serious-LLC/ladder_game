@@ -1682,15 +1682,27 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                             }
                         });
                         
-                        // Close packs content div and add View All Packs button
+                        // Close packs content div
                         packsHTML += `
                             </div>
-                            <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
-                                View All Packs
-                            </button>
                         `;
                         
                         puzzlePacksContent.innerHTML = packsHTML;
+                        
+                        // Add View All Packs button outside of content (to match Store section structure)
+                        const puzzlePacksSection = document.querySelector('.puzzle-packs-section');
+                        const existingButton = puzzlePacksSection.querySelector('.view-all-button');
+                        if (existingButton) {
+                            existingButton.remove();
+                        }
+                        const viewAllButton = document.createElement('button');
+                        viewAllButton.className = 'view-all-button';
+                        viewAllButton.textContent = 'View All Packs';
+                        viewAllButton.onclick = (e) => {
+                            e.stopPropagation();
+                            window.location.href = 'my-puzzles.html';
+                        };
+                        puzzlePacksSection.appendChild(viewAllButton);
                     } else {
                         // No purchases, show empty state
                         puzzlePacksContent.innerHTML = `
@@ -1701,10 +1713,22 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                     <div class="empty-state-subtext">Purchase packs from the store to get started</div>
                                 </div>
                             </div>
-                            <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
-                                View All Packs
-                            </button>
                         `;
+                        
+                        // Add View All Packs button outside of content (to match Store section structure)
+                        const puzzlePacksSection = document.querySelector('.puzzle-packs-section');
+                        const existingButton = puzzlePacksSection.querySelector('.view-all-button');
+                        if (existingButton) {
+                            existingButton.remove();
+                        }
+                        const viewAllButton = document.createElement('button');
+                        viewAllButton.className = 'view-all-button';
+                        viewAllButton.textContent = 'View All Packs';
+                        viewAllButton.onclick = (e) => {
+                            e.stopPropagation();
+                            window.location.href = 'my-puzzles.html';
+                        };
+                        puzzlePacksSection.appendChild(viewAllButton);
                     }
                     
                     // Update store items to show ownership status
@@ -1721,10 +1745,22 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                             <div class="empty-state-text">No puzzle packs yet</div>
                             <div class="empty-state-subtext">Purchase packs from the store to get started</div>
                         </div>
-                        <button class="view-all-button" onclick="event.stopPropagation(); window.location.href='my-puzzles.html'">
-                            View All Packs
-                        </button>
                     `;
+                    
+                    // Add View All Packs button outside of content (to match Store section structure)
+                    const puzzlePacksSection = document.querySelector('.puzzle-packs-section');
+                    const existingButton = puzzlePacksSection.querySelector('.view-all-button');
+                    if (existingButton) {
+                        existingButton.remove();
+                    }
+                    const viewAllButton = document.createElement('button');
+                    viewAllButton.className = 'view-all-button';
+                    viewAllButton.textContent = 'View All Packs';
+                    viewAllButton.onclick = (e) => {
+                        e.stopPropagation();
+                        window.location.href = 'my-puzzles.html';
+                    };
+                    puzzlePacksSection.appendChild(viewAllButton);
                 }
             }
         }
