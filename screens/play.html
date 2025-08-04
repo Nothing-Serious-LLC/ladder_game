@@ -12,10 +12,10 @@
     
     <!-- PWA Meta Tags for Full Screen Experience -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Ladder">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#fafafa">
     <meta name="msapplication-navbutton-color" content="#6aaa64">
     <meta name="msapplication-TileColor" content="#6aaa64">
     
@@ -417,8 +417,8 @@
             border-bottom: 1px solid var(--gray-200);
         }
         
-        /* Sound Toggle */
-        .sound-toggle {
+        /* Desktop Sound Toggle - Commented out for now */
+        /* .sound-toggle {
             position: absolute;
             top: 20px;
             right: 20px;
@@ -447,7 +447,7 @@
         
         .sound-toggle.muted svg {
             fill: #d32f2f;
-        }
+        } */
 
         .title {
             font-size: 2.2rem;
@@ -627,10 +627,58 @@
             opacity: 0;
         }
 
+        .hint-instruction-popup {
+            position: fixed;
+            background-color: #ff8c42;
+            color: white;
+            padding: 20px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            z-index: 10001;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease-out;
+            pointer-events: none;
+            border: none;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) translateY(100px);
+            max-width: 480px;
+            line-height: 1.4;
+        }
+        
+        .hint-instruction-popup .need-help {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .hint-instruction-popup.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) translateY(0);
+        }
+        
+        .hint-instruction-popup.fade-out {
+            opacity: 0;
+            transform: translate(-50%, -50%) translateY(-50px);
+        }
+
+        /* Mobile-specific popup adjustments */
+        @media (max-width: 480px) {
+            .hint-instruction-popup {
+                max-width: calc(100vw - 40px); /* Use viewport width minus padding */
+                width: 90vw; /* Force wider width on mobile */
+                min-width: 320px; /* Ensure minimum readable width */
+            }
+        }
+
         .letter-box.current {
             border-color: #ff8c42;
             border-width: 2px; /* Same as default - no size change */
-            box-shadow: 0 0 8px rgba(255, 140, 66, 0.4);
             animation: pulse 1.5s infinite;
             background-color: rgba(255, 140, 66, 0.1);
         }
@@ -666,8 +714,14 @@
 
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            0%, 100% { 
+                box-shadow: 0 0 8px rgba(255, 140, 66, 0.4);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 12px rgba(255, 140, 66, 0.6);
+                transform: scale(1.02);
+            }
         }
 
         @keyframes autoCorrectFlash {
@@ -2011,8 +2065,11 @@
         }
 
         @media (max-width: 480px) {
+            /* Ensure background covers entire viewport on mobile */
             html, body {
                 height: 100%;
+                background-color: #fafafa !important;
+                padding-top: 0 !important;
             }
             .container.game-page {
                 height: 100%;
@@ -2022,6 +2079,7 @@
                 position: sticky;
                 top: 0;
                 z-index: 100;
+                position: relative; /* For absolute positioning of sound toggle */
             }
             .mobile-keyboard {
                 position: fixed;
@@ -2093,6 +2151,40 @@
             .mobile-header .stat-label {
                 font-size: 0.6rem;
             }
+            
+            /* Mobile Sound Toggle - Commented out for now */
+            /* .mobile-sound-toggle {
+                position: absolute;
+                top: 12px;
+                right: 16px;
+                width: 32px;
+                height: 32px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+                border-radius: 4px;
+                touch-action: manipulation;
+            }
+            
+            .mobile-sound-toggle:active {
+                background: rgba(120, 124, 126, 0.15);
+                transform: scale(0.95);
+            }
+            
+            .mobile-sound-toggle svg {
+                width: 18px;
+                height: 18px;
+                fill: #787c7e;
+                transition: fill 0.2s ease;
+            }
+            
+            .mobile-sound-toggle.muted svg {
+                fill: #d32f2f;
+            } */
 
             .mobile-game-area {
                 flex: 1;
@@ -2376,14 +2468,15 @@
         <header class="header">
             <h1 class="title">LADDER</h1>
             <p class="date-info" id="date-display">Puzzle # • Loading...</p>
-            <div class="sound-toggle" id="sound-toggle" onclick="toggleSound()" title="Toggle Sound">
+            <!-- Desktop Sound Toggle - Commented out for now -->
+            <!-- <div class="sound-toggle" id="sound-toggle" onclick="toggleSound()" title="Toggle Sound">
                 <svg class="sound-on" viewBox="0 0 24 24">
                     <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
                 </svg>
                 <svg class="sound-off" viewBox="0 0 24 24" style="display: none;">
                     <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
                 </svg>
-            </div>
+            </div> -->
         </header>
 
         <div class="game-content" id="game-content">
@@ -2427,6 +2520,15 @@
                     <div class="stat-label">Tries</div>
                 </div>
             </div>
+            <!-- Mobile Sound Toggle - Commented out for now -->
+            <!-- <div class="mobile-sound-toggle" id="mobile-sound-toggle" onclick="toggleSound()" title="Toggle Sound">
+                <svg class="sound-on" viewBox="0 0 24 24">
+                    <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                <svg class="sound-off" viewBox="0 0 24 24" style="display: none;">
+                    <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                </svg>
+            </div> -->
         </div>
 
         <div class="mobile-game-area">
@@ -2462,7 +2564,7 @@
                 <button class="keyboard-key" data-key="L">L</button>
             </div>
             <div class="keyboard-row">
-                <button class="keyboard-key wide" data-key="ENTER">ENTER</button>
+                <button class="keyboard-key wide" data-key="HINT">HINT</button>
                 <button class="keyboard-key" data-key="Z">Z</button>
                 <button class="keyboard-key" data-key="X">X</button>
                 <button class="keyboard-key" data-key="C">C</button>
@@ -2516,7 +2618,7 @@
             
             <!-- Smart puzzle recommendations card for daily puzzle completions -->
             <div class="recommendations-card card" id="puzzle-recommendations" style="display: none;">
-                <h3 class="recommendations-title">Continue Playing</h3>
+                <h3 class="recommendations-title">Want more puzzles?</h3>
                 <div class="recommendations-content">
                     <p class="recommendations-description" id="recommendations-text">Discover more puzzles</p>
                     <div class="recommendations-buttons">
@@ -3767,6 +3869,7 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                 this.maxHints = 3;
                 this.hintsRemaining = 3;
                 this.hintedWords = new Set();
+                this.lastHintButtonPress = null; // Track last hint button press for cooldown
                 this.wordRevealed = false;
                 this.gameEnded = false;
                 this.startTime = null;
@@ -4208,6 +4311,50 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     }, 300);
                 }, 1800); // Slower fade away
             }
+
+            showHintInstructionPopup() {
+                // Check if hints are available first
+                if (this.hintsRemaining <= 0) {
+                    return; // Don't show instruction if no hints left
+                }
+
+                // Check cooldown - 5 seconds between hint button presses
+                const now = Date.now();
+                if (this.lastHintButtonPress && (now - this.lastHintButtonPress) < 5000) {
+                    return; // Still in cooldown period
+                }
+                
+                // Update last press time
+                this.lastHintButtonPress = now;
+
+                // Create popup element
+                const popup = document.createElement('div');
+                popup.className = 'hint-instruction-popup';
+                popup.innerHTML = '<span class="need-help">Need help?</span><br>Hints reveal additional letters. Tap a circle to reveal the letter within. Using a hint adds 30 seconds to your time.';
+                
+                // Add to document first (needed for transitions)
+                document.body.appendChild(popup);
+                
+                // Trigger show animation on next frame
+                requestAnimationFrame(() => {
+                    popup.classList.add('show');
+                });
+                
+                // Play hint sound and vibrate
+                this.playSound('hint');
+                this.vibrate(100);
+                
+                // Auto-hide after 5.5 seconds
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                    popup.classList.add('fade-out');
+                    setTimeout(() => {
+                        if (popup.parentNode) {
+                            popup.parentNode.removeChild(popup);
+                        }
+                    }, 300);
+                }, 5500);
+            }
             
             setupMobileKeyboard() {
                 const mobileKeyboard = document.getElementById('mobile-keyboard');
@@ -4221,8 +4368,8 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                                 this.handleBackspace();
                                 this.playSound('type');
                                 this.vibrate(30); // Shorter vibration for backspace
-                            } else if (key === 'ENTER') {
-                                // Enter key functionality can be added later if needed
+                            } else if (key === 'HINT') {
+                                this.showHintInstructionPopup();
                                 return;
                             } else if (key.match(/^[A-Z]$/)) {
                                 this.addLetterToWord(key);
@@ -5523,10 +5670,10 @@ https://ladder.game/`;
                                     recommendationsCard.style.display = 'block';
                                 } else {
                                     // Not authenticated - offer signup with free pack
-                                    recommendationText.textContent = 'Sign up to unlock more puzzles and track your progress!';
+                                    recommendationText.textContent = 'Ready for more challenges? Sign up to unlock premium puzzle packs and track your daily streaks!';
                                     primaryBtn.innerHTML = `
-                                        <span class="recommendation-text">Sign Up Free</span>
-                                        <span class="recommendation-subtitle">Get started with 10 free puzzles</span>
+                                        <span class="recommendation-text">Claim Free Puzzle Pack</span>
+                                        <span class="recommendation-subtitle">Get started with 10 bonus puzzles</span>
                                     `;
                                     primaryBtn.style.display = 'block';
                                     primaryBtn.onclick = () => {
@@ -6213,55 +6360,99 @@ https://ladder.game/`;
             }
         };
         
+        // Sound Toggle Functions - Commented out for now
+        /* 
         // Global sound toggle function
         window.toggleSound = function() {
             const soundToggle = document.getElementById('sound-toggle');
-            const soundOn = soundToggle.querySelector('.sound-on');
-            const soundOff = soundToggle.querySelector('.sound-off');
+            const mobileSoundToggle = document.getElementById('mobile-sound-toggle');
             const isCurrentlyMuted = localStorage.getItem('sound_muted') === 'true';
             const newMutedState = !isCurrentlyMuted;
             
             // Update localStorage
             localStorage.setItem('sound_muted', newMutedState);
             
-            // Update toggle appearance
-            if (newMutedState) {
-                soundToggle.classList.add('muted');
-                soundOn.style.display = 'none';
-                soundOff.style.display = 'block';
-                soundToggle.title = 'Sound Off - Click to Enable';
-            } else {
-                soundToggle.classList.remove('muted');
-                soundOn.style.display = 'block';
-                soundOff.style.display = 'none';
-                soundToggle.title = 'Sound On - Click to Disable';
+            // Update desktop toggle appearance
+            if (soundToggle) {
+                const soundOn = soundToggle.querySelector('.sound-on');
+                const soundOff = soundToggle.querySelector('.sound-off');
+                if (newMutedState) {
+                    soundToggle.classList.add('muted');
+                    soundOn.style.display = 'none';
+                    soundOff.style.display = 'block';
+                    soundToggle.title = 'Sound Off - Click to Enable';
+                } else {
+                    soundToggle.classList.remove('muted');
+                    soundOn.style.display = 'block';
+                    soundOff.style.display = 'none';
+                    soundToggle.title = 'Sound On - Click to Disable';
+                }
+            }
+            
+            // Update mobile toggle appearance
+            if (mobileSoundToggle) {
+                const mobileSoundOn = mobileSoundToggle.querySelector('.sound-on');
+                const mobileSoundOff = mobileSoundToggle.querySelector('.sound-off');
+                if (newMutedState) {
+                    mobileSoundToggle.classList.add('muted');
+                    mobileSoundOn.style.display = 'none';
+                    mobileSoundOff.style.display = 'block';
+                    mobileSoundToggle.title = 'Sound Off - Click to Enable';
+                } else {
+                    mobileSoundToggle.classList.remove('muted');
+                    mobileSoundOn.style.display = 'block';
+                    mobileSoundOff.style.display = 'none';
+                    mobileSoundToggle.title = 'Sound On - Click to Disable';
+                }
             }
         };
         
         // Initialize sound toggle state
         function initSoundToggle() {
             const soundToggle = document.getElementById('sound-toggle');
-            if (!soundToggle) return;
-            
-            const soundOn = soundToggle.querySelector('.sound-on');
-            const soundOff = soundToggle.querySelector('.sound-off');
+            const mobileSoundToggle = document.getElementById('mobile-sound-toggle');
             const isMuted = localStorage.getItem('sound_muted') === 'true';
             
-            if (isMuted) {
-                soundToggle.classList.add('muted');
-                soundOn.style.display = 'none';
-                soundOff.style.display = 'block';
-                soundToggle.title = 'Sound Off - Click to Enable';
-            } else {
-                soundToggle.classList.remove('muted');
-                soundOn.style.display = 'block';
-                soundOff.style.display = 'none';
-                soundToggle.title = 'Sound On - Click to Disable';
+            // Initialize desktop sound toggle
+            if (soundToggle) {
+                const soundOn = soundToggle.querySelector('.sound-on');
+                const soundOff = soundToggle.querySelector('.sound-off');
+                
+                if (isMuted) {
+                    soundToggle.classList.add('muted');
+                    soundOn.style.display = 'none';
+                    soundOff.style.display = 'block';
+                    soundToggle.title = 'Sound Off - Click to Enable';
+                } else {
+                    soundToggle.classList.remove('muted');
+                    soundOn.style.display = 'block';
+                    soundOff.style.display = 'none';
+                    soundToggle.title = 'Sound On - Click to Disable';
+                }
+            }
+            
+            // Initialize mobile sound toggle
+            if (mobileSoundToggle) {
+                const mobileSoundOn = mobileSoundToggle.querySelector('.sound-on');
+                const mobileSoundOff = mobileSoundToggle.querySelector('.sound-off');
+                
+                if (isMuted) {
+                    mobileSoundToggle.classList.add('muted');
+                    mobileSoundOn.style.display = 'none';
+                    mobileSoundOff.style.display = 'block';
+                    mobileSoundToggle.title = 'Sound Off - Click to Enable';
+                } else {
+                    mobileSoundToggle.classList.remove('muted');
+                    mobileSoundOn.style.display = 'block';
+                    mobileSoundOff.style.display = 'none';
+                    mobileSoundToggle.title = 'Sound On - Click to Disable';
+                }
             }
         }
         
         // Initialize sound toggle when page loads
         document.addEventListener('DOMContentLoaded', initSoundToggle);
+        */
     </script>
 </body>
 </html>

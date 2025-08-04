@@ -7,10 +7,10 @@
     
     <!-- PWA Meta Tags for Full Screen Experience -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Ladder">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#fafafa">
     <meta name="msapplication-navbutton-color" content="#6aaa64">
     <meta name="msapplication-TileColor" content="#6aaa64">
     
@@ -222,6 +222,12 @@
         }
         
         @media (max-width: 480px) {
+            /* Ensure background covers entire viewport on mobile */
+            html, body {
+                background-color: #fafafa !important;
+                padding-top: 0 !important;
+            }
+            
             .container {
                 padding: 0 16px;
             }
