@@ -1108,6 +1108,17 @@
                 padding: 16px;
             }
             
+            /* Fix collapsible card shadows on small mobile */
+            .collapsible-card.collapsed {
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+                padding: 12px 16px !important;
+            }
+            
+            .collapsible-card:not(.collapsed) {
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+                padding: 16px !important;
+            }
+            
             /* Smaller completed card elements for mobile */
             .puzzle-theme-large {
                 font-size: 1.6rem !important;
@@ -1224,6 +1235,90 @@
                 padding: 8px 12px !important;
                 font-size: 0.8rem !important;
             }
+            
+            /* Collapsible cards - mobile only */
+            @media (max-width: 768px) {
+                .collapsible-card .card-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    cursor: pointer;
+                    user-select: none;
+                }
+                
+                .collapsible-card .card-header .section-title {
+                    margin-bottom: 0;
+                }
+                
+                .expand-button {
+                    background: var(--primary-green);
+                    color: white;
+                    border: none;
+                    padding: 6px 16px;
+                    border-radius: 6px;
+                    font-size: 0.8rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    pointer-events: auto; /* Allow button click */
+                }
+                
+                .collapsible-card.collapsed .expand-button {
+                    background: var(--gray-600);
+                }
+                
+                .collapsible-card.collapsed .expand-button:after {
+                    content: "";
+                }
+                
+                .collapsible-card:not(.collapsed) .expand-button {
+                    background: var(--primary-green);
+                }
+                
+                .collapsible-card:not(.collapsed) .expand-button:after {
+                    content: "";
+                }
+                
+                .card-content {
+                    transition: all 0.3s ease;
+                    overflow: hidden;
+                }
+                
+                .collapsible-card.collapsed .card-content {
+                    max-height: 0;
+                    opacity: 0;
+                    margin-top: 0;
+                    margin-bottom: 0;
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
+                
+                .collapsible-card:not(.collapsed) .card-content {
+                    max-height: 1000px;
+                    opacity: 1;
+                    margin-top: 20px;
+                }
+                
+                /* Make collapsed cards smaller and fix shadow */
+                .collapsible-card.collapsed {
+                    padding: 16px 20px;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+                    border: 1px solid rgba(0, 0, 0, 0.04) !important;
+                }
+                
+                .collapsible-card:not(.collapsed) {
+                    padding: 24px;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+                    border: 1px solid rgba(0, 0, 0, 0.04) !important;
+                }
+                
+                /* Ensure no shadow overflow */
+                .collapsible-card {
+                    box-sizing: border-box;
+                    overflow: visible;
+                    transform: translateZ(0); /* Force hardware acceleration and contain shadows */
+                }
+            }
         }
     </style>
 </head>
@@ -1267,42 +1362,52 @@
             </div>
             
             <!-- 3. Statistics (Full Width) -->
-            <div class="statistics-section card">
-                <h2 class="section-title">Statistics</h2>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" id="total-completed">0</div>
-                        <div class="stat-label">Completed</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="current-streak">0</div>
-                        <div class="stat-label">Streak</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="average-time">0:00</div>
-                        <div class="stat-label">Avg Time</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number" id="success-rate">0%</div>
-                        <div class="stat-label">Success</div>
-                    </div>
+            <div class="statistics-section card collapsible-card" id="statistics-card">
+                <div class="card-header" onclick="expandCard('statistics')">
+                    <h2 class="section-title">Statistics</h2>
+                    <button class="expand-button" id="statistics-expand-btn" onclick="event.stopPropagation(); collapseCard('statistics')">Show</button>
                 </div>
-                <button class="view-all-button" onclick="window.location.href='../screens/statistics.html'">View Details</button>
+                <div class="card-content" id="statistics-content">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="total-completed">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="current-streak">0</div>
+                            <div class="stat-label">Streak</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="average-time">0:00</div>
+                            <div class="stat-label">Avg Time</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="success-rate">0%</div>
+                            <div class="stat-label">Success</div>
+                        </div>
+                    </div>
+                    <button class="view-all-button" onclick="window.location.href='../screens/statistics.html'">View Details</button>
+                </div>
             </div>
             
             <!-- 4. Profile (Full Width, Simple) -->
-            <div class="profile-section card">
-                <h2 class="section-title">Profile</h2>
-                <div class="profile-header">
-                    <div class="profile-avatar" id="profile-avatar">U</div>
-                    <div class="profile-info">
-                        <h3 id="profile-name">Loading...</h3>
-                        <p id="profile-email">Loading...</p>
-                    </div>
+            <div class="profile-section card collapsible-card" id="profile-card">
+                <div class="card-header" onclick="expandCard('profile')">
+                    <h2 class="section-title">Profile</h2>
+                    <button class="expand-button" id="profile-expand-btn" onclick="event.stopPropagation(); collapseCard('profile')">Show</button>
                 </div>
-                <div class="profile-actions">
-                    <button class="profile-button primary" onclick="window.location.href='../screens/settings.html'">Edit Profile</button>
-                    <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
+                <div class="card-content" id="profile-content">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profile-avatar">U</div>
+                        <div class="profile-info">
+                            <h3 id="profile-name">Loading...</h3>
+                            <p id="profile-email">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="profile-button primary" onclick="window.location.href='../screens/settings.html'">Edit Profile</button>
+                        <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1330,6 +1435,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             loadDailyPuzzle();
             loadStatistics();
             loadPurchases();
+            
+            // Initialize collapsible cards
+            initializeCollapsibleCards();
         });
         
         // Refresh puzzle status when page becomes visible (handles navigation from other screens)
@@ -2353,6 +2461,74 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 window.location.href = './pack-puzzles.html?pack=archive';
             }
         };
+        
+        // Collapsible card functionality
+        window.toggleCard = function(cardType, forceAction = null) {
+            const card = document.getElementById(`${cardType}-card`);
+            const button = document.getElementById(`${cardType}-expand-btn`);
+            
+            if (!card || !button) return;
+            
+            const isCollapsed = card.classList.contains('collapsed');
+            
+            // If forceAction is specified, use that; otherwise toggle
+            const shouldExpand = forceAction === 'expand' ? true : 
+                                forceAction === 'collapse' ? false : 
+                                isCollapsed;
+            
+            if (shouldExpand) {
+                // Expand the card
+                card.classList.remove('collapsed');
+                button.textContent = 'Hide';
+            } else {
+                // Collapse the card
+                card.classList.add('collapsed');
+                button.textContent = 'Show';
+            }
+        };
+        
+        // Expand card (for clicking header when collapsed)
+        window.expandCard = function(cardType) {
+            const card = document.getElementById(`${cardType}-card`);
+            if (card && card.classList.contains('collapsed')) {
+                toggleCard(cardType, 'expand');
+            }
+        };
+        
+        // Collapse card (for clicking hide button when expanded)
+        window.collapseCard = function(cardType) {
+            const card = document.getElementById(`${cardType}-card`);
+            if (card && !card.classList.contains('collapsed')) {
+                toggleCard(cardType, 'collapse');
+            }
+        };
+        
+        // Initialize collapsible cards on mobile
+        function initializeCollapsibleCards() {
+            // Only collapse on mobile/tablet screens
+            if (window.innerWidth <= 768) {
+                const statisticsCard = document.getElementById('statistics-card');
+                const profileCard = document.getElementById('profile-card');
+                const statisticsBtn = document.getElementById('statistics-expand-btn');
+                const profileBtn = document.getElementById('profile-expand-btn');
+                
+                // Start both cards in collapsed state on mobile
+                if (statisticsCard && statisticsBtn) {
+                    statisticsCard.classList.add('collapsed');
+                    statisticsBtn.textContent = 'Show';
+                }
+                
+                if (profileCard && profileBtn) {
+                    profileCard.classList.add('collapsed');
+                    profileBtn.textContent = 'Show';
+                }
+            }
+        }
+        
+        // Re-initialize on window resize
+        window.addEventListener('resize', function() {
+            initializeCollapsibleCards();
+        });
     </script>
 </body>
 </html>
