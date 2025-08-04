@@ -947,9 +947,6 @@
                     <h2 class="section-title">Store</h2>
                     <div class="store-content">
                         <div class="store-pack-item" onclick="viewProduct('free-pack')">
-                            <div class="store-item-icon">
-                                <img src="../assets/Gift icon.png" alt="Free Pack" style="width: 32px; height: 32px; margin-right: 12px;">
-                            </div>
                             <div class="item-info">
                                 <div class="item-name">Free Pack</div>
                                 <div class="store-description">10 puzzles</div>
@@ -960,9 +957,6 @@
                             </div>
                         </div>
                         <div class="store-pack-item" onclick="viewProduct('complete-pack')">
-                            <div class="store-item-icon">
-                                <img src="../assets/bundle icon.png" alt="Complete Pack" style="width: 32px; height: 32px; margin-right: 12px;">
-                            </div>
                             <div class="item-info">
                                 <div class="item-name">Complete Pack</div>
                                 <div class="store-description">Everything included</div>
@@ -1663,9 +1657,6 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                 const total = 10; // Free pack has 10 puzzles
                                 packsHTML += `
                                     <div class="pack-item">
-                                        <div class="pack-item-icon">
-                                            <img src="../assets/Gift icon.png" alt="Free Pack" style="width: 32px; height: 32px; margin-right: 12px;">
-                                        </div>
                                         <div class="item-info">
                                             <div class="item-name">Free Pack</div>
                                             <div class="pack-progress">${completed}/${total} puzzles completed</div>
@@ -1681,9 +1672,6 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                 const total = 100; // Complete pack has 100 puzzles
                                 packsHTML += `
                                     <div class="pack-item">
-                                        <div class="pack-item-icon">
-                                            <img src="../assets/bundle icon.png" alt="Complete Pack" style="width: 32px; height: 32px; margin-right: 12px;">
-                                        </div>
                                         <div class="item-info">
                                             <div class="item-name">Complete Pack</div>
                                             <div class="pack-progress">${completed}/${total} puzzles completed</div>
