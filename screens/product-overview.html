@@ -101,27 +101,29 @@
 
         
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 160px 20px 0 20px; /* Top padding for fixed header */
+            padding: 120px 20px 0 20px; /* Match home screen header spacing */
             flex: 1;
         }
         
         /* Better spacing on desktop */
         @media (min-width: 768px) {
             .container {
-                padding: 160px 40px 0 40px;
+                max-width: 1200px;
+                padding: 120px 40px 0 40px; /* Match home screen header spacing */
             }
         }
         
         .product-hero {
             text-align: center;
-            padding: 40px 20px 30px;
+            padding: 40px 24px 30px;
             background: white;
             border-radius: 16px;
-            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.04);
             margin-bottom: 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
         
         .product-icon {
@@ -165,7 +167,7 @@
             font-size: 1rem;
             font-weight: 500;
             margin-bottom: 16px;
-            color: var(--gray-900);
+            color: var(--gray-600);
             text-align: left;
         }
         
@@ -187,7 +189,7 @@
         
         .feature-icon {
             font-size: 1rem;
-            color: var(--gray-600);
+            color: var(--green-500);
             margin-top: 2px;
         }
         
@@ -233,7 +235,9 @@
             }
             
             .container {
-                padding: 75px 16px 0 16px; /* Proper top padding for mobile header clearance */
+                max-width: 100%;
+                width: 100%;
+                padding: 110px 16px 0 16px; /* Match home screen mobile header clearance */
                 overflow-x: hidden;
                 box-sizing: border-box;
             }
@@ -249,7 +253,7 @@
             }
             
             .product-hero {
-                padding: 30px 16px;
+                padding: 24px 16px;
             }
             
             .features-section {
@@ -288,9 +292,7 @@
     </div>
     
     <div class="container">
-        <button class="back-button" onclick="goBack()">
-            ← Back to Store
-        </button>
+        <a href="#" class="back-button" onclick="goBack(); return false;">← Back</a>
         
         <div class="product-hero">
             <div class="product-icon" id="product-icon">●</div>
@@ -309,11 +311,7 @@
                 </li>
                 <li class="feature-item">
                     <span class="feature-icon">✓</span>
-                    <div class="feature-text">Progressive Difficulty</div>
-                </li>
-                <li class="feature-item">
-                    <span class="feature-icon">✓</span>
-                    <div class="feature-text">Achievement Tracking</div>
+                    <div class="feature-text">Statistics Tracking</div>
                 </li>
             </ul>
             
@@ -347,7 +345,7 @@
                 features: [
                     '10 Starter Puzzles',
                     'Perfect for Beginners',
-                    'Added to Statistics'
+                    'Statistics Tracking'
                 ]
             },
             'complete-pack': {
@@ -358,8 +356,7 @@
                 features: [
                     '100 Unique Puzzles',
                     'Complete Puzzle Archive',
-                    'Progressive Difficulty',
-                    'Added to Statistics'
+                    'Statistics Tracking'
                 ]
             },
             'puzzle-pack': {
@@ -369,8 +366,7 @@
                 price: '$2.99',
                 features: [
                     '100 Unique Puzzles',
-                    'Progressive Difficulty',
-                    'Added to Statistics'
+                    'Statistics Tracking'
                 ]
             },
             'archive': {
@@ -379,9 +375,9 @@
                 description: 'Access to all past daily puzzles',
                 price: '$2.99',
                 features: [
-                    'Complete Archive',
+                    'Complete Puzzle Archive',
                     'Browse by Date',
-                    'Added to Statistics'
+                    'Statistics Tracking'
                 ]
             }
         };
@@ -429,23 +425,28 @@
         }
         
         function goBack() {
-            // Get the 'from' parameter to determine where to go back to
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromPage = urlParams.get('from');
-            
-            // Navigate back to the appropriate page
-            switch (fromPage) {
-                case 'my-puzzles':
-                    window.location.href = 'my-puzzles.html';
-                    break;
-                case 'home':
-                    window.location.href = 'home.html';
-                    break;
-                case 'store':
-                default:
-                    // Default to store if no 'from' parameter or unrecognized value
-                    window.location.href = 'store.html';
-                    break;
+            // Try to use browser history first, fallback to URL parameter logic
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                // Fallback: Get the 'from' parameter to determine where to go back to
+                const urlParams = new URLSearchParams(window.location.search);
+                const fromPage = urlParams.get('from');
+                
+                // Navigate back to the appropriate page
+                switch (fromPage) {
+                    case 'my-puzzles':
+                        window.location.href = 'my-puzzles.html';
+                        break;
+                    case 'home':
+                        window.location.href = 'home.html';
+                        break;
+                    case 'store':
+                    default:
+                        // Default to store if no 'from' parameter or unrecognized value
+                        window.location.href = 'store.html';
+                        break;
+                }
             }
         }
         

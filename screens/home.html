@@ -524,6 +524,7 @@
             font-weight: 400;
         }
         
+        /* Legacy pack item styles for other pages */
         .pack-item {
             display: flex;
             align-items: center;
@@ -762,6 +763,201 @@
             line-height: 1.4;
         }
         
+        /* New Puzzle Packs Showcase Design */
+        .puzzle-packs-showcase {
+            background: white;
+        }
+        
+        .packs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .pack-card-large {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 24px;
+            background: linear-gradient(135deg, #f8fffe 0%, #f0fdf4 100%);
+            border-radius: 16px;
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pack-card-large:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(106, 170, 100, 0.15);
+            border-color: var(--primary-green);
+        }
+        
+        .pack-card-large:active {
+            transform: translateY(-2px);
+        }
+        
+        .pack-card-large.owned {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--primary-green);
+        }
+        
+        .pack-card-large.available {
+            background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+            border-color: var(--primary-orange);
+        }
+        
+        .pack-card-large.available:hover {
+            border-color: var(--primary-orange-hover);
+            box-shadow: 0 12px 32px rgba(255, 140, 66, 0.15);
+        }
+        
+        .pack-card-large.available:active {
+            transform: translateY(-2px);
+        }
+        
+        .pack-card-large.purchase {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-color: var(--gray-300);
+            opacity: 0.8;
+        }
+        
+        .pack-card-large.purchase:hover {
+            border-color: var(--gray-400);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            opacity: 1;
+        }
+        
+        .pack-card-large.purchase:active {
+            transform: translateY(-2px);
+        }
+        
+        .pack-card-large.purchase .pack-name {
+            color: var(--gray-700);
+        }
+        
+        .pack-card-large.purchase .pack-description {
+            color: var(--gray-500);
+        }
+        
+        .pack-card-large.purchase .pack-price {
+            color: var(--gray-600);
+        }
+        
+        .pack-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .pack-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .pack-details {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .pack-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+        
+        .pack-description {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        
+        /* Adjusted spacing for owned packs without descriptions */
+        .pack-card-large.owned .pack-progress {
+            margin-top: 8px;
+        }
+        
+        .pack-progress {
+            font-size: 1.3rem;
+            color: var(--primary-green);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+        
+        .pack-action-button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .pack-action-button:hover {
+            background: var(--primary-green-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(106, 170, 100, 0.4);
+        }
+        
+        .pack-action-button.purchase {
+            background: var(--primary-orange);
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+        }
+        
+        .pack-action-button.purchase:hover {
+            background: var(--primary-orange-hover);
+            box-shadow: 0 6px 16px rgba(255, 140, 66, 0.4);
+        }
+        
+        .pack-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary-orange);
+            margin-bottom: 12px;
+        }
+        
+        .pack-price.free {
+            color: var(--primary-green);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        
+        .pack-card-large.loading {
+            background: var(--gray-50);
+            border-color: var(--gray-200);
+            cursor: default;
+            padding: 24px;
+            justify-content: center;
+        }
+        
+        .pack-card-large.loading:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .pack-card-large.loading .pack-details {
+            margin-top: 0;
+        }
+        
         .countdown-label {
             font-size: 1.1rem;
             margin-bottom: 30px;
@@ -831,6 +1027,12 @@
             .two-card-row {
                 grid-template-columns: 1fr;
                 gap: 20px;
+            }
+            
+            /* Tablet responsive for pack showcase */
+            .packs-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
             }
             
             .header {
@@ -949,6 +1151,55 @@
             .card, .content-stack, .two-card-row, .completion-stats {
                 overflow-x: hidden !important;
             }
+            
+            /* Mobile responsive for new pack showcase */
+            .packs-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 12px !important;
+            }
+            
+            .pack-card-large {
+                padding: 24px 20px !important;
+            }
+            
+            .pack-logo {
+                width: 60px !important;
+                height: 60px !important;
+                margin-bottom: 16px !important;
+            }
+            
+            .pack-name {
+                font-size: 1.2rem !important;
+            }
+            
+            .pack-description {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Mobile countdown card - invisible styling */
+            .minimal-countdown {
+                background: var(--gray-50) !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                padding-top: 20px !important;
+                margin-top: 0 !important;
+            }
+            
+            .countdown-card.card {
+                background: var(--gray-50) !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+                padding-top: 10px !important;
+            }
+            
+            #daily-puzzle-card.card {
+                background: var(--gray-50) !important;
+                box-shadow: none !important;
+                border: none !important;
+                border-radius: 0 !important;
+            }
         }
         
         /* Completion checkmark for both mobile and desktop */
@@ -959,7 +1210,7 @@
             font-size: 18px;
             color: var(--primary-green);
             font-weight: bold;
-        }
+            }
             
             /* Ensure store items stay horizontal on small mobile */
             .store-pack-item {
@@ -998,71 +1249,21 @@
                 </button>
             </div>
             
-            <!-- 2. Two Cards Side-by-Side: My Puzzles & Store -->
-            <div class="two-card-row">
-                <div class="puzzle-packs-section card" onclick="window.location.href='my-puzzles.html'">
-                    <h2 class="section-title">My Puzzles</h2>
-                    <div id="puzzle-packs-content">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📦</div>
-                            <div class="empty-state-text">No puzzle packs yet</div>
-                            <div class="empty-state-subtext">Click to browse available packs</div>
+            <!-- 2. Puzzle Packs Section (Full Width) -->
+            <div class="puzzle-packs-showcase card">
+                <h2 class="section-title" id="packs-section-title">My Puzzles</h2>
+                <div class="packs-grid" id="packs-showcase-content">
+                    <!-- Default loading state -->
+                    <div class="pack-card-large loading">
+                        <div class="pack-details">
+                            <div class="pack-name">Loading...</div>
+                            <div class="pack-description">Please wait</div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="store-section card">
-                    <h2 class="section-title">Store</h2>
-                    <div class="store-content">
-                        <div class="store-pack-item" onclick="viewProduct('free-pack')">
-                            <div class="item-info">
-                                <div class="item-name">Free Pack</div>
-                                <div class="store-description">10 puzzles</div>
-                            </div>
-                            <div class="store-action">
-                                <div class="item-price" style="color: var(--primary-green);">Free</div>
-                                <button class="store-button" onclick="event.stopPropagation(); viewProduct('free-pack')">Claim</button>
-                            </div>
-                        </div>
-                        <div class="store-pack-item" onclick="viewProduct('complete-pack')">
-                            <div class="item-info">
-                                <div class="item-name">Complete Pack</div>
-                                <div class="store-description">Everything included</div>
-                            </div>
-                            <div class="store-action">
-                                <div class="item-price">$4.99</div>
-                                <button class="store-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">Unlock</button>
-                            </div>
-                        </div>
-                        <div class="store-pack-item" onclick="viewProduct('archive')">
-                            <div class="item-info">
-                                <div class="item-name">Archive</div>
-                                <div class="store-description">Past daily puzzles</div>
-                            </div>
-                            <div class="store-action">
-                                <div class="item-price">$2.99</div>
-                                <button class="store-button" onclick="event.stopPropagation(); viewProduct('archive')">Unlock</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Everything owned state -->
-                    <div class="everything-owned" id="everything-owned" style="display: none;">
-                        <div class="ownership-complete">
-                            <div class="checkmark-circle">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="12" cy="12" r="10" fill="var(--primary-green)"/>
-                                    <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <h3 class="ownership-title">Everything Owned!</h3>
-                            <p class="ownership-description">You have access to all available puzzle content</p>
-                        </div>
-                    </div>
-                    <button class="view-all-button" onclick="window.location.href='store.html'">
-                        See All Packs
-                    </button>
-                </div>
+                <button class="view-all-button" id="packs-view-all-button" onclick="window.location.href='my-puzzles.html'">
+                    Browse puzzles
+                </button>
             </div>
             
             <!-- 3. Statistics (Full Width) -->
@@ -1676,212 +1877,230 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                         .select('*')
                         .eq('user_id', user.id);
                     
-                    const puzzlePacksContent = document.getElementById('puzzle-packs-content');
-                    const storeSection = document.querySelector('.store-section');
-                    const twoCardRow = document.querySelector('.two-card-row');
+                    const packsShowcaseContent = document.getElementById('packs-showcase-content');
+                    const sectionTitle = document.getElementById('packs-section-title');
+                    const viewAllButton = document.getElementById('packs-view-all-button');
                     
                     // Check what packs the user owns
                     const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
                     const hasFreepack = ownedProducts.includes('free-pack');
                     const hasCompletePack = ownedProducts.includes('complete-pack');
+                    const hasArchive = ownedProducts.includes('archive');
                     
-                    // If user owns complete pack (which includes everything), hide store
-                    const ownsEverything = hasCompletePack;
+                    // Always show exactly 2 packs based on ownership
+                    sectionTitle.textContent = 'My Puzzles';
+                    viewAllButton.textContent = 'Browse puzzles';
+                    viewAllButton.onclick = () => window.location.href = 'store.html';
                     
-                    if (ownsEverything) {
-                        // Hide store and make My Puzzles full width
-                        storeSection.style.display = 'none';
-                        twoCardRow.classList.add('full-width');
-                    } else {
-                        // Show store normally
-                        storeSection.style.display = 'block';
-                        twoCardRow.classList.remove('full-width');
-                    }
+                    // Load completion counts for owned packs
+                    const { data: completions } = await supabase
+                        .from('puzzle_pack_completions')
+                        .select('pack_name, completed')
+                        .eq('user_id', user.id);
                     
-                    if (purchases && purchases.length > 0) {
-                        // User has purchases, show them
-                        let packsHTML = '<div class="packs-content">';
-                        
-                        // Load completion counts - get all completions, not just completed ones
-                        const { data: completions } = await supabase
-                            .from('puzzle_pack_completions')
-                            .select('pack_name, completed')
-                            .eq('user_id', user.id);
-                        
-                        const completionCounts = {};
-                        if (completions) {
-                            completions.forEach(c => {
-                                if (!completionCounts[c.pack_name]) {
-                                    completionCounts[c.pack_name] = { completed: 0, total: 0 };
-                                }
-                                completionCounts[c.pack_name].total += 1;
-                                if (c.completed) {
-                                    completionCounts[c.pack_name].completed += 1;
-                                }
-                            });
-                        }
-                        
-                        purchases.forEach(purchase => {
-                            if (purchase.product_id === 'free-pack') {
-                                const packStats = completionCounts['free-pack'] || { completed: 0, total: 0 };
-                                const completed = packStats.completed;
-                                const total = 10; // Free pack has 10 puzzles
-                                packsHTML += `
-                                    <div class="pack-item">
-                                        <div class="item-info">
-                                            <div class="item-name">Free Pack</div>
-                                            <div class="pack-progress">${completed}/${total} puzzles completed</div>
-                                        </div>
-                                        <button class="pack-button" onclick="event.stopPropagation(); playPuzzlePack('free')">Play</button>
-                                    </div>
-                                `;
+                    const completionCounts = {};
+                    if (completions) {
+                        completions.forEach(c => {
+                            if (!completionCounts[c.pack_name]) {
+                                completionCounts[c.pack_name] = { completed: 0, total: 0 };
                             }
-                            
-                            if (purchase.product_id === 'complete-pack') {
-                                const packStats = completionCounts['complete-pack'] || { completed: 0, total: 0 };
-                                const completed = packStats.completed;
-                                const total = 100; // Complete pack has 100 puzzles
-                                packsHTML += `
-                                    <div class="pack-item">
-                                        <div class="item-info">
-                                            <div class="item-name">Complete Pack</div>
-                                            <div class="pack-progress">${completed}/${total} puzzles completed</div>
-                                        </div>
-                                        <button class="pack-button" onclick="event.stopPropagation(); playPuzzlePack('complete')">Play</button>
-                                    </div>
-                                `;
+                            completionCounts[c.pack_name].total += 1;
+                            if (c.completed) {
+                                completionCounts[c.pack_name].completed += 1;
                             }
                         });
-                        
-                        // Close packs content div
-                        packsHTML += `
-                            </div>
-                        `;
-                        
-                        puzzlePacksContent.innerHTML = packsHTML;
-                        
-                        // Add View All Packs button outside of content (to match Store section structure)
-                        const puzzlePacksSection = document.querySelector('.puzzle-packs-section');
-                        const existingButton = puzzlePacksSection.querySelector('.view-all-button');
-                        if (existingButton) {
-                            existingButton.remove();
+                    }
+                    
+                    let packsHTML = '';
+                    
+                    // Create dynamic pack display based on progress and availability
+                    const packConfigs = [
+                        {
+                            id: 'free-pack',
+                            name: 'Free Pack', 
+                            logo: '../assets/Gift icon.png',
+                            total: 10,
+                            price: 'Free',
+                            playAction: "playPuzzlePack('free')"
+                        },
+                        {
+                            id: 'complete-pack',
+                            name: 'Complete Pack',
+                            logo: '../assets/Everything icon.png', 
+                            total: 100,
+                            price: '$4.99',
+                            playAction: "playPuzzlePack('complete')"
+                        },
+                        {
+                            id: 'puzzle-pack',
+                            name: 'Puzzle Pack',
+                            logo: '../assets/puzzle.png',
+                            total: 100, 
+                            price: '$2.99',
+                            playAction: "playPuzzlePack('puzzle')"
+                        },
+                        {
+                            id: 'archive',
+                            name: 'Archive Pack',
+                            logo: '../assets/Archive.png',
+                            total: 50,
+                            price: '$2.99', 
+                            playAction: "playPuzzlePack('archive')"
                         }
-                        const viewAllButton = document.createElement('button');
-                        viewAllButton.className = 'view-all-button';
-                        viewAllButton.textContent = 'View All Packs';
-                        viewAllButton.onclick = (e) => {
-                            e.stopPropagation();
-                            window.location.href = 'my-puzzles.html';
-                        };
-                        puzzlePacksSection.appendChild(viewAllButton);
-                    } else {
-                        // No purchases, show empty state
-                        puzzlePacksContent.innerHTML = `
-                            <div class="packs-content">
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">📦</div>
-                                    <div class="empty-state-text">No puzzle packs yet</div>
-                                    <div class="empty-state-subtext">Purchase packs from the store to get started</div>
+                    ];
+                    
+                    const ownedPacks = [];
+                    const unfinishedPacks = [];
+                    const availablePacks = [];
+                    
+                    packConfigs.forEach(pack => {
+                        const isOwned = ownedProducts.includes(pack.id);
+                        const stats = completionCounts[pack.name.toLowerCase().replace(' ', '-')] || { completed: 0, total: 0 };
+                        const completed = stats.completed;
+                        const total = pack.total;
+                        
+                        if (isOwned) {
+                            const isUnfinished = completed > 0 && completed < total;
+                            const packData = {
+                                ...pack,
+                                completed,
+                                total,
+                                progressText: `${completed}/${total}`,
+                                isUnfinished
+                            };
+                            
+                            if (isUnfinished) {
+                                unfinishedPacks.push(packData);
+                            } else {
+                                ownedPacks.push(packData);
+                            }
+                        } else {
+                            availablePacks.push(pack);
+                        }
+                    });
+                    
+                    // Priority: 1) Unfinished packs, 2) Owned packs, 3) Available packs
+                    const displayPacks = [];
+                    
+                    // Add unfinished packs first (highest priority)
+                    unfinishedPacks.forEach(pack => {
+                        if (displayPacks.length < 2) {
+                            displayPacks.push({
+                                type: 'owned',
+                                ...pack
+                            });
+                        }
+                    });
+                    
+                    // Add completed owned packs if we have space
+                    ownedPacks.forEach(pack => {
+                        if (displayPacks.length < 2) {
+                            displayPacks.push({
+                                type: 'owned',
+                                ...pack
+                            });
+                        }
+                    });
+                    
+                    // Fill remaining space with available packs (prioritize free, then complete)
+                    const prioritizedAvailable = availablePacks.sort((a, b) => {
+                        if (a.id === 'free-pack') return -1;
+                        if (b.id === 'free-pack') return 1;
+                        if (a.id === 'complete-pack') return -1;
+                        if (b.id === 'complete-pack') return 1;
+                        return 0;
+                    });
+                    
+                    prioritizedAvailable.forEach(pack => {
+                        if (displayPacks.length < 2) {
+                            displayPacks.push({
+                                type: 'purchase',
+                                ...pack
+                            });
+                        }
+                    });
+                    
+                    // Generate HTML for display packs
+                    displayPacks.forEach(pack => {
+                        if (pack.type === 'owned') {
+                            packsHTML += `
+                                <div class="pack-card-large owned" onclick="${pack.playAction}">
+                                    <div class="pack-logo">
+                                        <img src="${pack.logo}" alt="${pack.name}">
+                                    </div>
+                                    <div class="pack-details">
+                                        <div class="pack-name">${pack.name}</div>
+                                        <div class="pack-progress">${pack.progressText}</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            const priceClass = pack.price === 'Free' ? 'free' : '';
+                            packsHTML += `
+                                <div class="pack-card-large purchase" onclick="viewProduct('${pack.id}')">
+                                    <div class="pack-logo">
+                                        <img src="${pack.logo}" alt="${pack.name}">
+                                    </div>
+                                    <div class="pack-details">
+                                        <div class="pack-name">${pack.name}</div>
+                                        <div class="pack-price ${priceClass}">${pack.price}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    // Fallback if no packs to display
+                    if (displayPacks.length === 0) {
+                        packsHTML = `
+                            <div class="pack-card-large purchase" onclick="viewProduct('free-pack')">
+                                <div class="pack-logo">
+                                    <img src="../assets/Gift icon.png" alt="Free Pack">
+                                </div>
+                                <div class="pack-details">
+                                    <div class="pack-name">Free Pack</div>
+                                    <div class="pack-price free">Free</div>
+                                </div>
+                            </div>
+                            
+                            <div class="pack-card-large purchase" onclick="viewProduct('complete-pack')">
+                                <div class="pack-logo">
+                                    <img src="../assets/Everything icon.png" alt="Complete Pack">
+                                </div>
+                                <div class="pack-details">
+                                    <div class="pack-name">Complete Pack</div>
+                                    <div class="pack-price">$4.99</div>
                                 </div>
                             </div>
                         `;
-                        
-                        // Add View All Packs button outside of content (to match Store section structure)
-                        const puzzlePacksSection = document.querySelector('.puzzle-packs-section');
-                        const existingButton = puzzlePacksSection.querySelector('.view-all-button');
-                        if (existingButton) {
-                            existingButton.remove();
-                        }
-                        const viewAllButton = document.createElement('button');
-                        viewAllButton.className = 'view-all-button';
-                        viewAllButton.textContent = 'View All Packs';
-                        viewAllButton.onclick = (e) => {
-                            e.stopPropagation();
-                            window.location.href = 'my-puzzles.html';
-                        };
-                        puzzlePacksSection.appendChild(viewAllButton);
                     }
                     
-                    // Update store items to show ownership status
-                    updateStoreItemsOwnership(ownedProducts);
+                    packsShowcaseContent.innerHTML = packsHTML;
                 }
             } catch (error) {
                 console.error('Error loading purchases:', error);
-                // Show empty state on error
-                const puzzlePacksContent = document.getElementById('puzzle-packs-content');
-                if (puzzlePacksContent) {
-                    puzzlePacksContent.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📦</div>
-                            <div class="empty-state-text">No puzzle packs yet</div>
-                            <div class="empty-state-subtext">Purchase packs from the store to get started</div>
+                // Show error state
+                const packsShowcaseContent = document.getElementById('packs-showcase-content');
+                const sectionTitle = document.getElementById('packs-section-title');
+                
+                if (packsShowcaseContent && sectionTitle) {
+                    sectionTitle.textContent = 'Browse Puzzle Packs';
+                    packsShowcaseContent.innerHTML = `
+                        <div class="pack-card-large available" onclick="window.location.href='store.html'">
+                            <div class="pack-logo">
+                                <img src="../assets/puzzle.png" alt="Browse Packs">
+                            </div>
+                            <div class="pack-details">
+                                <div class="pack-name">Browse Packs</div>
+                                <div class="pack-description">Explore available puzzle collections</div>
+                            </div>
                         </div>
                     `;
-                    
-                    // Add View All Packs button outside of content (to match Store section structure)
-                    const puzzlePacksSection = document.querySelector('.puzzle-packs-section');
-                    const existingButton = puzzlePacksSection.querySelector('.view-all-button');
-                    if (existingButton) {
-                        existingButton.remove();
-                    }
-                    const viewAllButton = document.createElement('button');
-                    viewAllButton.className = 'view-all-button';
-                    viewAllButton.textContent = 'View All Packs';
-                    viewAllButton.onclick = (e) => {
-                        e.stopPropagation();
-                        window.location.href = 'my-puzzles.html';
-                    };
-                    puzzlePacksSection.appendChild(viewAllButton);
                 }
             }
         }
         
-        function updateStoreItemsOwnership(ownedProducts) {
-            const freePackItem = document.querySelector('.store-pack-item[onclick*="free-pack"]');
-            const completePackItem = document.querySelector('.store-pack-item[onclick*="complete-pack"]');
-            const archivePackItem = document.querySelector('.store-pack-item[onclick*="archive"]');
-            const storeContentContainer = document.querySelector('.store-content');
-            const everythingOwnedContainer = document.getElementById('everything-owned');
-            const viewAllButton = document.querySelector('.store-section .view-all-button');
-            
-            // Check ownership status
-            const hasFreePack = ownedProducts.includes('free-pack');
-            const hasCompletePack = ownedProducts.includes('complete-pack');
-            const hasArchivePack = ownedProducts.includes('archive');
-            
-            // Check if user owns everything (complete pack OR both free + archive)
-            const ownsEverything = hasCompletePack || (hasFreePack && hasArchivePack);
-            
-            if (ownsEverything) {
-                // Show "everything owned" state
-                if (storeContentContainer) storeContentContainer.style.display = 'none';
-                if (everythingOwnedContainer) everythingOwnedContainer.style.display = 'block';
-                if (viewAllButton) viewAllButton.style.display = 'none';
-            } else {
-                // Show regular store items
-                if (storeContentContainer) storeContentContainer.style.display = 'flex';
-                if (everythingOwnedContainer) everythingOwnedContainer.style.display = 'none';
-                
-                // Hide owned items
-                if (freePackItem) {
-                    freePackItem.style.display = (hasFreePack || hasCompletePack) ? 'none' : 'flex';
-                }
-                
-                if (completePackItem) {
-                    completePackItem.style.display = hasCompletePack ? 'none' : 'flex';
-                }
-                
-                if (archivePackItem) {
-                    archivePackItem.style.display = (hasArchivePack || hasCompletePack) ? 'none' : 'flex';
-                }
-                
-                // Show view all button if there are visible items
-                const visibleStoreItems = document.querySelectorAll('.store-pack-item:not([style*="display: none"])');
-                if (viewAllButton) {
-                    viewAllButton.style.display = visibleStoreItems.length > 0 ? 'block' : 'none';
-                }
-            }
-        }
+        // Legacy function removed - no longer needed with new showcase design
         
         function startMiniCountdown() {
             const miniTimer = document.getElementById('mini-countdown');
@@ -1928,12 +2147,12 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             // Simple countdown - just the timer, clickable to go back to puzzle
             dailyCard.innerHTML = `
-                <div class="minimal-countdown" onclick="togglePuzzleView()" style="text-align: center; padding: 40px 20px; cursor: pointer;" title="Click to go back to puzzle">
-                    <div class="instruction-logo">
-                        <img src="../assets/icons/ladder-trans-orange.png" alt="Ladder" class="ladder-icon" style="width: 120px; height: 120px; margin-bottom: 20px; opacity: 0.9;">
-                    </div>
-                    <div class="countdown-timer minimal" id="countdown-timer" style="color: var(--primary-orange); font-size: 2.5rem; font-weight: 700; margin: 0;">Loading...</div>
+                            <div class="minimal-countdown countdown-card" onclick="togglePuzzleView()" style="text-align: center; padding: 40px 20px; cursor: pointer;" title="Click to go back to puzzle">
+                <div class="instruction-logo">
+                    <img src="../assets/icons/ladder-trans-orange.png" alt="Ladder" class="ladder-icon" style="width: 120px; height: 120px; margin-bottom: 20px; opacity: 0.9;">
                 </div>
+                <div class="countdown-timer minimal" id="countdown-timer" style="color: var(--primary-orange); font-size: 2.5rem; font-weight: 700; margin: 0;">Loading...</div>
+            </div>
             `;
             
             // Apply standard card styling for consistency
@@ -2128,6 +2347,8 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 window.location.href = './pack-puzzles.html?pack=free-pack';
             } else if (packType === 'complete') {
                 window.location.href = './pack-puzzles.html?pack=complete-pack';
+            } else if (packType === 'puzzle') {
+                window.location.href = './pack-puzzles.html?pack=puzzle-pack';
             } else if (packType === 'archive') {
                 window.location.href = './pack-puzzles.html?pack=archive';
             }
