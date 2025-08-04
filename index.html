@@ -451,11 +451,15 @@
         }
 
         .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--gray-50);
+            z-index: 1000;
             text-align: center;
-            padding: 20px 0 30px;
-            border-bottom: 1px solid #d3d6da;
-            margin-bottom: 20px;
-            position: relative;
+            padding: 20px 20px 30px 20px;
+            border-bottom: 1px solid var(--gray-200);
         }
         
         /* Desktop Sound Toggle - Commented out for now */
@@ -509,6 +513,13 @@
             gap: 32px;
             margin-bottom: 30px;
             flex-wrap: wrap;
+        }
+        
+        /* Only add top margin for non-game pages (intro, completion, failure) */
+        .landing-page .stats,
+        .completion-page .stats,
+        .failure-page .stats {
+            margin-top: 40px;
         }
 
         .stat {
@@ -1285,7 +1296,7 @@
             gap: 24px;
             max-width: 500px;
             margin: 0 auto;
-            padding-top: 20px;
+            padding-top: 60px;
         }
         
         /* Card styling - matches intro card exactly */
@@ -1322,7 +1333,7 @@
         .completion-header, .failure-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             margin-bottom: 24px;
         }
         
@@ -1343,7 +1354,7 @@
         }
         
         .completion-details, .failure-details {
-            margin-bottom: 28px;
+            margin-bottom: 20px;
         }
         
         .completion-stats, .failure-stats {
@@ -1378,7 +1389,7 @@
         .completion-actions, .failure-actions {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 4px;
         }
         
         .completion-buttons, .failure-buttons {
@@ -1403,10 +1414,11 @@
         }
         
         .result-theme {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
             color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-weight: 500;
+            font-style: italic;
         }
         
         .completion-time,
@@ -1434,9 +1446,9 @@
         
         .completion-buttons .completion-button {
             background: white;
-            color: #1a1a1b;
+            color: #787c7e;
             border: 1px solid #d3d6da;
-            padding: 14px 28px;
+            padding: 10px 24px;
             border: 1px solid #d3d6da;
             border-radius: 8px;
             font-size: 0.95rem;
@@ -1444,7 +1456,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             flex: 1;
-            min-height: 52px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1458,7 +1470,7 @@
         
         .completion-button,
         .failure-button {
-            padding: 12px 24px;
+            padding: 8px 20px;
             border: none;
             border-radius: 10px;
             font-size: 0.9rem;
@@ -1468,6 +1480,10 @@
             background: rgba(255, 255, 255, 0.2);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.3);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .completion-button:hover,
@@ -1506,18 +1522,16 @@
         
         .failure-buttons .failure-button {
             background: white !important;
-            color: #1a1a1b !important;
+            color: #787c7e !important;
             border: 1px solid #d3d6da !important;
             border-radius: 8px !important;
             font-size: 0.95rem !important;
             font-weight: 600 !important;
             cursor: pointer;
             transition: all 0.2s ease;
-            padding: 14px 28px !important;
+            padding: 10px 24px !important;
             flex: 1;
-            min-height: 52px !important;
-            max-height: 52px !important;
-            height: 52px !important;
+            min-height: 44px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -1525,8 +1539,8 @@
         }
         
         .failure-buttons .failure-button:hover {
-            border-color: #6aaa64 !important;
-            color: #6aaa64 !important;
+            border-color: #ff8c42 !important;
+            color: #ff8c42 !important;
         }
         
         .failure-buttons .failure-button.tomorrow {
@@ -1737,9 +1751,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             max-width: 500px;
             margin: 0 auto;
-            padding: 160px 20px 40px;
+            padding: 200px 20px 40px;
+            min-height: calc(100vh - 120px);
         }
         
         .countdown-card {
@@ -1774,14 +1790,15 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(0, 0, 0, 0.04);
             text-align: center;
-            margin-top: 40px;
+            margin-top: 60px;
             max-width: 350px;
+            position: relative;
         }
         
         .countdown-page .signup-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #1a1a1b;
+            color: #6aaa64;
             margin-bottom: 8px;
         }
         
@@ -1796,6 +1813,29 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+        }
+        
+        .countdown-page .signup-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #787c7e;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+        
+        .countdown-page .signup-close:hover {
+            background-color: #f0f0f0;
+            color: #333;
         }
         
         .countdown-page .signup-button {
@@ -1867,8 +1907,19 @@
             /* Reduce bottom padding so ladder isn't cut off */
             .container {
                 padding: 0;
-                height: 100vh;
-                overflow: hidden;
+                min-height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            
+            /* Revert header positioning for mobile game screen only */
+            .game-page .header {
+                position: relative;
+                padding: 20px 0 30px;
+                border-bottom: 1px solid #d3d6da;
+                margin-bottom: 20px;
+                background: transparent;
+                z-index: auto;
             }
             
             /* Allow scrolling in mobile container */
@@ -2139,7 +2190,11 @@
             .completion-content,
             .failure-content {
                 gap: 16px;
-                padding: 90px 16px 20px 16px; /* Top padding for fixed header */
+                padding: 120px 16px 160px 16px; /* Extra bottom padding for mobile browser chrome */
+                overflow-y: auto;
+                overflow-x: hidden; /* Prevent horizontal scrolling */
+                max-height: none; /* Remove height constraint to prevent cutoff */
+                min-height: calc(100vh - 80px); /* Ensure full viewport usage */
             }
             
             .letter-circle {
@@ -2169,10 +2224,17 @@
                 font-size: 2.5rem;
             }
             
-            .completion-buttons,
             .failure-buttons,
             .signup-buttons {
-                flex-direction: column;
+                flex-direction: row;
+                gap: 12px;
+            }
+            
+            /* Keep completion buttons side by side on mobile */
+            .completion-buttons {
+                display: flex;
+                flex-direction: row;
+                gap: 12px;
             }
             
             .completion-button,
@@ -2186,22 +2248,26 @@
             .pwa-install-card {
                 display: block !important;
                 animation-delay: 0.3s;
-                background: linear-gradient(135deg, #6aaa64 0%, #5d9556 100%);
-                color: white;
-                border: none;
+                background: white;
+                color: #1a1a1b;
+                border: 2px solid #6aaa64;
+                box-shadow: 0 2px 8px rgba(106, 170, 100, 0.15);
+                position: relative;
             }
             
             .pwa-install-title {
-                font-size: 1.1rem;
-                font-weight: 600;
-                margin-bottom: 8px;
-                color: white;
+                font-size: 1.8rem;
+                font-weight: 700;
+                margin-bottom: 16px;
+                color: #6aaa64;
+                text-align: center;
             }
             
             .pwa-install-subtitle {
                 font-size: 0.9rem;
                 margin-bottom: 20px;
-                color: rgba(255, 255, 255, 0.9);
+                color: #787c7e;
+                text-align: center;
             }
             
             .pwa-install-steps {
@@ -2214,6 +2280,8 @@
                 gap: 12px;
                 margin-bottom: 12px;
                 padding: 8px 0;
+                margin-left: 0px;
+                justify-content: flex-start;
             }
             
             .pwa-step:last-child {
@@ -2230,33 +2298,70 @@
             }
             
             .pwa-step-icon svg {
-                width: 20px;
-                height: 20px;
-                color: rgba(255, 255, 255, 0.9);
+                width: 28px;
+                height: 28px;
+                color: #6aaa64;
                 stroke: currentColor;
             }
             
             .pwa-step-text {
                 font-size: 0.9rem;
-                color: rgba(255, 255, 255, 0.95);
+                color: #787c7e;
                 flex: 1;
+                text-align: left;
+            }
+            
+            .highlight-green {
+                color: #6aaa64;
+                font-weight: 600;
+            }
+            
+            .highlight-orange {
+                color: #ff8c42;
+                font-weight: 600;
             }
             
             .pwa-install-dismiss {
-                background: rgba(255, 255, 255, 0.2);
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 8px;
-                padding: 10px 20px;
-                font-size: 0.9rem;
-                font-weight: 500;
+                background: var(--gray-50);
+                color: var(--gray-600);
+                border: 1px solid var(--gray-200);
+                border-radius: 12px;
+                padding: 16px 20px;
+                font-size: 1rem;
+                font-weight: 600;
                 cursor: pointer;
                 transition: all 0.2s ease;
                 width: 100%;
+                text-align: center;
             }
             
             .pwa-install-dismiss:hover {
-                background: rgba(255, 255, 255, 0.3);
+                background: var(--gray-200);
+                color: var(--gray-900);
+                transform: translateY(-1px);
+            }
+            
+            .card-close {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                background: none;
+                border: none;
+                font-size: 18px;
+                color: #787c7e;
+                cursor: pointer;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: background-color 0.2s ease;
+            }
+            
+            .card-close:hover {
+                background-color: #f0f0f0;
+                color: #333;
             }
             
             /* More Puzzles Signup Card Styles */
@@ -2265,12 +2370,34 @@
                 background: white;
                 border: 1px solid var(--gray-200);
                 margin-bottom: 20px;
+                position: relative;
+            }
+            
+            /* Failure PWA Card Orange Theme */
+            .failure-pwa-card {
+                background: white;
+                color: #1a1a1b;
+                border: 2px solid #ff8c42;
+                box-shadow: 0 2px 8px rgba(255, 140, 66, 0.15);
+                position: relative;
+            }
+            
+            .failure-pwa-card .pwa-install-title {
+                color: #ff8c42;
+            }
+            
+            .failure-pwa-card .pwa-step-icon svg {
+                color: #ff8c42;
+            }
+            
+            .failure-pwa-card .pwa-step-text {
+                color: #1a1a1b;
             }
             
             .more-puzzles-signup-title {
                 font-size: 1.2rem;
                 font-weight: 700;
-                color: var(--gray-900);
+                color: #6aaa64;
                 margin: 0 0 12px 0;
                 text-align: center;
             }
@@ -2287,6 +2414,7 @@
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
+                width: 100%;
             }
             
             .more-puzzles-signup-button {
@@ -2362,7 +2490,8 @@
             }
             
             .countdown-content {
-                padding: 60px 16px 20px;
+                padding: 120px 16px 20px;
+                min-height: calc(100vh - 80px);
             }
             
             .countdown-timer {
@@ -2571,8 +2700,7 @@
             
             <!-- PWA Installation Instructions Card (Mobile Only) -->
             <div class="pwa-install-card card" id="pwa-install-card" style="display: none;">
-                <h3 class="pwa-install-title">📱 Add LADDER to your home screen</h3>
-                <p class="pwa-install-subtitle">Get the app experience for faster access</p>
+                <h3 class="pwa-install-title">Get the App</h3>
                 <div class="pwa-install-steps">
                     <div class="pwa-step">
                         <div class="pwa-step-icon">
@@ -2582,7 +2710,7 @@
                                 <path d="M8 7L12 3L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="pwa-step-text">Tap the Share button in your browser</div>
+                        <div class="pwa-step-text">Tap the <span class="highlight-green">Share button</span> in your browser</div>
                     </div>
                     <div class="pwa-step">
                         <div class="pwa-step-icon">
@@ -2592,23 +2720,21 @@
                                 <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="pwa-step-text">Scroll down and tap "Add to Home Screen"</div>
+                        <div class="pwa-step-text">Scroll down and tap "<span class="highlight-green">Add to Home Screen</span>"</div>
                     </div>
                 </div>
-                <button class="pwa-install-dismiss" onclick="this.closest('.pwa-install-card').style.display='none'">Maybe Later</button>
+                <button class="card-close" onclick="dismissPWACard(this)">×</button>
+                <button class="pwa-install-dismiss" onclick="dismissPWACard(this)">Maybe Later</button>
             </div>
             
             <!-- More Puzzles Signup Card for non-authenticated users -->
             <div class="more-puzzles-signup-card card" id="more-puzzles-signup-card" style="display: none;">
                 <h3 class="more-puzzles-signup-title">Want more puzzles?</h3>
-                <p class="more-puzzles-signup-description" id="more-puzzles-signup-text">Sign up to unlock premium puzzle packs and track your daily streaks!</p>
+                <p class="more-puzzles-signup-description" id="more-puzzles-signup-text">Sign up to unlock 10 free puzzles and track your stats!</p>
+                <button class="card-close" onclick="this.closest('.more-puzzles-signup-card').style.opacity='0'; setTimeout(() => this.closest('.more-puzzles-signup-card').style.display='none', 300)">×</button>
                 <div class="more-puzzles-signup-buttons">
                     <button class="more-puzzles-signup-button primary" id="more-puzzles-signup-primary">
-                        <span class="signup-button-text">Sign Up Free</span>
-                        <span class="signup-button-subtitle">Get started with 10 free puzzles</span>
-                    </button>
-                    <button class="more-puzzles-signup-button secondary" id="more-puzzles-signup-secondary">
-                        Browse Store
+                        <span class="signup-button-text">Sign Up</span>
                     </button>
                 </div>
             </div>
@@ -2652,11 +2778,53 @@
                 </div>
                 
                 <div class="failure-actions">
-                <div class="failure-buttons">
+                    <div class="failure-buttons">
                         <button class="failure-button share" id="failure-share">Share Result</button>
+                        <button class="failure-button copy" id="failure-copy">Copy Link</button>
                     </div>
                     
                     <button class="failure-button primary" id="failure-countdown-button">Next Puzzle</button>
+                </div>
+            </div>
+            
+            <!-- PWA Installation Instructions Card (Mobile Only) - Orange Theme for Failure -->
+            <div class="pwa-install-card card failure-pwa-card" id="failure-pwa-install-card" style="display: none;">
+                <h3 class="pwa-install-title">Get the App</h3>
+                <div class="pwa-install-steps">
+                    <div class="pwa-step">
+                        <div class="pwa-step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="11" width="18" height="10" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 11V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 7L12 3L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="pwa-step-text">Tap the <span class="highlight-orange">Share button</span> in your browser</div>
+                    </div>
+                    <div class="pwa-step">
+                        <div class="pwa-step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 16L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="pwa-step-text">Scroll down and tap "<span class="highlight-orange">Add to Home Screen</span>"</div>
+                    </div>
+                </div>
+                <button class="card-close" onclick="dismissFailurePWACard(this)">×</button>
+                <button class="pwa-install-dismiss" onclick="dismissFailurePWACard(this)">Maybe Later</button>
+            </div>
+            
+            <!-- More Puzzles Signup Card for non-authenticated users - Failure -->
+            <div class="more-puzzles-signup-card card" id="failure-more-puzzles-signup-card" style="display: none;">
+                <h3 class="more-puzzles-signup-title">Want more puzzles?</h3>
+                <p class="more-puzzles-signup-description" id="failure-more-puzzles-signup-text">Sign up to try the puzzle again and unlock 10 free puzzles and track your stats!</p>
+                <button class="card-close" onclick="this.closest('.more-puzzles-signup-card').style.opacity='0'; setTimeout(() => this.closest('.more-puzzles-signup-card').style.display='none', 300)">×</button>
+                <div class="more-puzzles-signup-buttons">
+                    <button class="more-puzzles-signup-button primary" id="failure-more-puzzles-signup-primary">
+                        <span class="signup-button-text">Sign Up</span>
+                    </button>
                 </div>
             </div>
             
@@ -2680,16 +2848,15 @@
         <div class="countdown-content">
             <div class="countdown-card">
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
-                <p class="countdown-subtitle">Next Puzzle</p>
             </div>
             
             <!-- Signup card for non-authenticated users -->
             <div class="signup-card" id="countdown-signup-card" style="display: none;">
-                <h3 class="signup-title">Save Your Progress</h3>
-                <p class="signup-description">Create an account to track your daily streaks and compete with friends</p>
+                <button class="signup-close" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">×</button>
+                <h3 class="signup-title">Want more puzzles?</h3>
+                <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
                 <div class="signup-buttons">
                     <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
-                    <button class="signup-button secondary" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">Skip</button>
                 </div>
             </div>
         </div>
@@ -5067,6 +5234,12 @@ https://ladder.game/`;
                     // Set up authentication-aware cards
                     this.setupAuthCards('failure');
                     
+                    // Set up PWA install card for mobile users not in PWA mode
+                    this.setupFailurePWAInstallCard();
+                    
+                    // Set up more puzzles signup card for non-authenticated users
+                    this.setupFailureMorePuzzlesSignupCard();
+                    
                     // Set up countdown button functionality
                     this.setupCountdownButton('failure');
                     
@@ -5257,6 +5430,43 @@ https://ladder.game/`;
                 }
             }
             
+            setupFailurePWAInstallCard() {
+                // Only show PWA install card on mobile and when not already in PWA mode
+                const isMobile = window.innerWidth <= 480;
+                const isStandalone = window.navigator.standalone || 
+                                   window.matchMedia('(display-mode: standalone)').matches ||
+                                   window.matchMedia('(display-mode: fullscreen)').matches;
+                
+                const pwaInstallCard = document.getElementById('failure-pwa-install-card');
+                
+                if (isMobile && !isStandalone && pwaInstallCard) {
+                    pwaInstallCard.style.display = 'block';
+                } else if (pwaInstallCard) {
+                    pwaInstallCard.style.display = 'none';
+                }
+            }
+            
+            setupFailureMorePuzzlesSignupCard() {
+                // Check if user is authenticated
+                if (window.supabaseClient) {
+                    window.supabaseClient.auth.getUser().then(({ data: { user }, error }) => {
+                        const signupCard = document.getElementById('failure-more-puzzles-signup-card');
+                        
+                        if (!error && user) {
+                            // User is authenticated, hide signup card
+                            if (signupCard) signupCard.style.display = 'none';
+                        } else {
+                            // User is not authenticated, show signup card
+                            if (signupCard) signupCard.style.display = 'block';
+                        }
+                    });
+                } else {
+                    // No Supabase client, show signup card
+                    const signupCard = document.getElementById('failure-more-puzzles-signup-card');
+                    if (signupCard) signupCard.style.display = 'block';
+                }
+            }
+            
             async setupMorePuzzlesSignupCard() {
                 try {
                     const signupCard = document.getElementById('more-puzzles-signup-card');
@@ -5289,7 +5499,7 @@ https://ladder.game/`;
                         
                         if (secondaryBtn) {
                             secondaryBtn.onclick = () => {
-                                window.location.href = './screens/store.html';
+                                dismissSignupCard(secondaryBtn);
                             };
                         }
                         
@@ -5863,6 +6073,84 @@ https://ladder.game/`;
         // Initialize sound toggle when page loads
         document.addEventListener('DOMContentLoaded', initSoundToggle);
         */
+        
+        // PWA Card dismiss function with fade animation - copy of working signup dismiss
+        window.dismissPWACard = function(button) {
+            const card = button.closest('.pwa-install-card');
+            const nextCard = card.nextElementSibling;
+            
+            // Fade out the PWA card
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                card.style.display = 'none';
+                
+                // Slide up the next card if it exists
+                if (nextCard && nextCard.style.display !== 'none') {
+                    nextCard.style.transform = 'translateY(20px)';
+                    nextCard.style.transition = 'transform 0.3s ease';
+                    
+                    // Trigger the slide up animation
+                    setTimeout(() => {
+                        nextCard.style.transform = 'translateY(0)';
+                    }, 50);
+                }
+            }, 300);
+        };
+        
+        // Failure PWA Card dismiss function
+        window.dismissFailurePWACard = function(button) {
+            const card = button.closest('.pwa-install-card');
+            const nextCard = card.nextElementSibling;
+            
+            // Fade out the PWA card
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                card.style.display = 'none';
+                
+                // Slide up the next card if it exists
+                if (nextCard && nextCard.style.display !== 'none') {
+                    nextCard.style.transform = 'translateY(20px)';
+                    nextCard.style.transition = 'transform 0.3s ease';
+                    
+                    // Trigger the slide up animation
+                    setTimeout(() => {
+                        nextCard.style.transform = 'translateY(0)';
+                    }, 50);
+                }
+            }, 300);
+        };
+        
+        // Signup Card dismiss function with fade animation
+        window.dismissSignupCard = function(button) {
+            const card = button.closest('.more-puzzles-signup-card');
+            const nextCard = card.nextElementSibling;
+            
+            // Fade out the signup card
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                card.style.display = 'none';
+                
+                // Slide up the next card if it exists
+                if (nextCard && nextCard.style.display !== 'none') {
+                    nextCard.style.transform = 'translateY(20px)';
+                    nextCard.style.transition = 'transform 0.3s ease';
+                    
+                    // Trigger the slide up animation
+                    setTimeout(() => {
+                        nextCard.style.transform = 'translateY(0)';
+                    }, 50);
+                }
+            }, 300);
+        };
     </script>
 </body>
 </html>

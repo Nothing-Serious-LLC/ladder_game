@@ -1650,18 +1650,16 @@
         
         .failure-buttons .failure-button {
             background: white !important;
-            color: #1a1a1b !important;
+            color: #787c7e !important;
             border: 1px solid #d3d6da !important;
             border-radius: 8px !important;
             font-size: 0.95rem !important;
             font-weight: 600 !important;
             cursor: pointer;
             transition: all 0.2s ease;
-            padding: 14px 28px !important;
+            padding: 10px 24px !important;
             flex: 1;
-            min-height: 52px !important;
-            max-height: 52px !important;
-            height: 52px !important;
+            min-height: 44px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
@@ -1669,8 +1667,8 @@
         }
         
         .failure-buttons .failure-button:hover {
-            border-color: #6aaa64 !important;
-            color: #6aaa64 !important;
+            border-color: #ff8c42 !important;
+            color: #ff8c42 !important;
         }
         
         .failure-buttons .failure-button.tomorrow {
@@ -1973,9 +1971,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             max-width: 500px;
             margin: 0 auto;
-            padding: 160px 20px 40px;
+            padding: 200px 20px 40px;
+            min-height: calc(100vh - 120px);
         }
         
         .countdown-card {
@@ -2010,14 +2010,15 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             border: 1px solid rgba(0, 0, 0, 0.04);
             text-align: center;
-            margin-top: 40px;
+            margin-top: 60px;
             max-width: 350px;
+            position: relative;
         }
         
         .countdown-page .signup-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #1a1a1b;
+            color: #6aaa64;
             margin-bottom: 8px;
         }
         
@@ -2032,6 +2033,29 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+        }
+        
+        .countdown-page .signup-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #787c7e;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+        
+        .countdown-page .signup-close:hover {
+            background-color: #f0f0f0;
+            color: #333;
         }
         
         .countdown-page .signup-button {
@@ -2435,7 +2459,8 @@
             }
             
             .countdown-content {
-                padding: 60px 16px 20px;
+                padding: 120px 16px 20px;
+                min-height: calc(100vh - 80px);
             }
             
             .countdown-timer {
@@ -2695,8 +2720,9 @@
                 </div>
                 
                 <div class="failure-actions">
-                <div class="failure-buttons">
+                    <div class="failure-buttons">
                         <button class="failure-button share" id="failure-share">Share Result</button>
+                        <button class="failure-button copy" id="failure-copy">Copy Link</button>
                     </div>
                     
                     <button class="failure-button primary" id="failure-home-button">Go to Home</button>
@@ -2752,16 +2778,15 @@
         <div class="countdown-content">
             <div class="countdown-card">
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
-                <p class="countdown-subtitle">Next Puzzle</p>
             </div>
             
             <!-- Signup card for non-authenticated users -->
             <div class="signup-card" id="countdown-signup-card" style="display: none;">
-                <h3 class="signup-title">Save Your Progress</h3>
-                <p class="signup-description">Create an account to track your daily streaks and compete with friends</p>
+                <button class="signup-close" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">×</button>
+                <h3 class="signup-title">Want more puzzles?</h3>
+                <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
                 <div class="signup-buttons">
                     <button class="signup-button primary" onclick="window.location.href='./signup.html'">Sign Up</button>
-                    <button class="signup-button secondary" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">Skip</button>
                 </div>
             </div>
         </div>
