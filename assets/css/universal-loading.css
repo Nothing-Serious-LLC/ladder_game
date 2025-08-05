@@ -1,0 +1,61 @@
+/**
+ * Universal Loading Screen Styles
+ * Reusable CSS for the Ladder loading component
+ */
+
+/* Universal Loading Screen */
+.universal-loading {
+    position: fixed;
+    top: 121px; /* Start below the fixed header + 1px border */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gray-50, #fafafa);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Adjust for mobile header height */
+@media (max-width: 768px) {
+    .universal-loading {
+        top: 81px; /* Mobile header is shorter + 1px border */
+    }
+}
+
+.universal-loading.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.loading-ladder-icon {
+    width: 80px;
+    height: 80px;
+    opacity: 0.8;
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(106, 170, 100, 0.2);
+    border-top: 3px solid var(--primary-green, #6aaa64);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -19,6 +19,9 @@
     <link rel="icon" type="image/svg+xml" href="../assets/icons/icon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/icon-180.png">
     
+    <!-- Universal Loading Styles - Temporarily disabled for home screen -->
+    <!-- <link rel="stylesheet" href="../assets/css/universal-loading.css"> -->
+    
     <style>
         /* Import the same color palette and basic styles from the main game */
         :root {
@@ -155,9 +158,70 @@
             flex-direction: column;
         }
         
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        .card-minimal {
+            background: transparent;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: none;
+            border: none;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-completed {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--primary-green);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-failed {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 2px solid var(--error-red);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Hover effects only for devices that support actual hovering (not touch) */
+        @media (hover: hover) {
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            }
+            
+            .card-completed:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 30px rgba(106, 170, 100, 0.2);
+            }
+            
+            .card-failed:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2);
+            }
+        }
+        
+        /* Touch-friendly hover effects without translateY to prevent header cut-off */
+        @media (hover: none) {
+            .card:hover {
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            }
+            
+            .card-completed:hover {
+                box-shadow: 0 8px 30px rgba(106, 170, 100, 0.2);
+            }
+            
+            .card-failed:hover {
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.2);
+            }
         }
         
         .card[onclick] {
@@ -1038,6 +1102,7 @@
             .header {
                 padding: 15px 0 20px;
                 margin-bottom: 30px;
+                border-bottom: 1px solid #d3d6da !important; /* Ensure border is preserved on mobile */
             }
             
             .title {
@@ -1090,7 +1155,7 @@
             .container {
                 max-width: 100%;
                 width: 100%;
-                padding: 75px 15px 15px 15px; /* Proper top padding for mobile header clearance */
+                padding: 80px 15px 15px 15px; /* Increased top padding for hover animation clearance */
                 overflow-x: hidden;
                 box-sizing: border-box;
             }
@@ -1197,16 +1262,16 @@
                 margin-top: 0 !important;
             }
             
-            .countdown-card.card {
-                background: var(--gray-50) !important;
+            .countdown-card.card-minimal {
+                background: transparent !important;
                 box-shadow: none !important;
                 border: none !important;
                 border-radius: 0 !important;
                 padding-top: 10px !important;
             }
             
-            #daily-puzzle-card.card {
-                background: var(--gray-50) !important;
+            #daily-puzzle-card.card-minimal {
+                background: transparent !important;
                 box-shadow: none !important;
                 border: none !important;
                 border-radius: 0 !important;
@@ -1329,7 +1394,8 @@
                 .collapsible-card:not(.collapsed) .card-content {
                     max-height: 1000px;
                     opacity: 1;
-                    margin-top: 20px;
+                    margin-top: 10px;
+                    padding-top: 5px; /* Extra space above cards to prevent hover animation cut-off */
                 }
                 
                 /* Make collapsed cards smaller and fix shadow */
@@ -1351,26 +1417,67 @@
                     overflow: visible;
                     transform: translateZ(0); /* Force hardware acceleration and contain shadows */
                 }
+                
+                /* Give My Puzzles section extra top margin for hover animations */
+                .puzzle-packs-showcase {
+                    margin-top: 5px; /* Reduced from 25px to maintain normal stack spacing while allowing hover animations */
+                }
             }
-        }
+            
+            /* Hide chevron buttons on desktop and ensure cards are always expanded */
+            @media (min-width: 769px) {
+                .expand-button {
+                    display: none !important;
+                }
+                
+                .collapsible-card .card-header {
+                    cursor: default !important;
+                    pointer-events: none !important;
+                }
+                
+                .collapsible-card .card-content {
+                    max-height: none !important;
+                    opacity: 1 !important;
+                    margin-top: 10px !important;
+                    padding-top: 5px !important; /* Extra space above cards to prevent hover animation cut-off */
+                }
+                
+                .collapsible-card.collapsed .card-content {
+                    max-height: none !important;
+                    opacity: 1 !important;
+                    margin-top: 10px !important;
+                    padding-top: 5px !important; /* Extra space above cards to prevent hover animation cut-off */
+                }
+            }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1 class="title">LADDER</h1>
-            <p class="date-info" id="home-date-display">Loading...</p>
-        </header>
-        
+    <!-- Universal Loading Screen - Temporarily disabled -->
+    <!-- 
+    <div class="universal-loading" id="universal-loading">
+        <div class="loading-content">
+            <img src="../assets/icons/ladder_transparent.png" alt="Ladder" class="loading-ladder-icon">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+    -->
+
+    <!-- Always visible header -->
+    <header class="header">
+        <h1 class="title">LADDER</h1>
+        <p class="date-info" id="home-date-display">Loading...</p>
+    </header>
+
+    <div class="container" id="main-content">
         <div class="content-stack">
             <!-- 1. Today's Puzzle (Full Width) -->
             <div class="card" id="daily-puzzle-card">
                 <div class="puzzle-status centered">
                     <div class="puzzle-info centered">
-                        <div class="puzzle-name" id="daily-puzzle-name">Loading...</div>
-                        <div class="puzzle-date" id="daily-puzzle-date">Loading...</div>
+                        <div class="puzzle-name" id="daily-puzzle-name"></div>
+                        <div class="puzzle-date" id="daily-puzzle-date"></div>
                     </div>
-                    <div class="status-badge" id="daily-status">Loading...</div>
+                    <div class="status-badge" id="daily-status"></div>
                 </div>
                 <button class="play-button" id="daily-play-button" onclick="playDailyPuzzle()">
                     Play Today's Puzzle
@@ -1385,13 +1492,7 @@
                 </div>
                 <div class="card-content">
                     <div class="packs-grid" id="packs-showcase-content">
-                        <!-- Default loading state -->
-                        <div class="pack-card-large loading">
-                            <div class="pack-details">
-                                <div class="pack-name">Loading...</div>
-                                <div class="pack-description">Please wait</div>
-                            </div>
-                        </div>
+                        <!-- Content will be loaded dynamically -->
                     </div>
                     <button class="view-all-button" id="packs-view-all-button" onclick="window.location.href='store.html'">
                         Browse puzzles
@@ -1438,8 +1539,8 @@
                     <div class="profile-header">
                         <div class="profile-avatar" id="profile-avatar">U</div>
                         <div class="profile-info">
-                            <h3 id="profile-name">Loading...</h3>
-                            <p id="profile-email">Loading...</p>
+                                            <h3 id="profile-name"></h3>
+                <p id="profile-email"></p>
                         </div>
                     </div>
                     <div class="profile-actions">
@@ -1453,6 +1554,8 @@
 
     <!-- Include Supabase for user management -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- Universal Loading Component - Temporarily disabled for home screen -->
+    <!-- <script src="../assets/js/universal-loading.js"></script> -->
     <script type="module">
         // Import Supabase config
         import { supabaseConfig } from '../config/supabase-config.js';
@@ -1467,12 +1570,25 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         
         // Initialize page on load
         document.addEventListener('DOMContentLoaded', function() {
+            // Original loading approach - universal loading disabled
             initializeHomePage();
             updateDateDisplay();
             loadUserData();
             loadDailyPuzzle();
             loadStatistics();
             loadPurchases();
+            
+            // Commented out universal loading initialization
+            /*
+            UniversalLoading.initializeWith([
+                initializeHomePage(),
+                updateDateDisplay(),
+                loadUserData(),
+                loadDailyPuzzle(),
+                loadStatistics(),
+                loadPurchases()
+            ]);
+            */
             
             // Initialize collapsible cards
             initializeCollapsibleCards();
@@ -1527,7 +1643,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             }
         }
         
-        function updateDateDisplay() {
+        async function updateDateDisplay() {
             // Update header date to match game format with puzzle number
             const puzzleNumber = getPuzzleNumber();
             const today = new Date();
@@ -1538,6 +1654,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             };
             const formattedDate = today.toLocaleDateString('en-US', options);
             document.getElementById('home-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
+            
+            // Return a resolved promise for loading coordination
+            return Promise.resolve();
         }
         
         async function loadUserData() {
@@ -1758,8 +1877,12 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 </button>
             `;
             
-            // Apply standard card styling for consistency with relative positioning for checkmark
-            dailyCard.className = 'card';
+            // Apply appropriate card styling based on completion status
+            if (wasCompleted) {
+                dailyCard.className = 'card-completed';
+            } else {
+                dailyCard.className = 'card-failed';
+            }
             dailyCard.style.position = 'relative';
         }
         
@@ -1769,8 +1892,8 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             const dateObj = new Date();
             const puzzleDate = formatPuzzleDate(dateObj);
             
-            // Apply standard white card background
-            dailyCard.className = 'card';
+            // Apply minimal styling - no card background/border, just icon stands out
+            dailyCard.className = 'card-minimal';
             
             dailyCard.innerHTML = `
                 <div style="text-align: center; padding: 20px 0;">
@@ -2291,9 +2414,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             currentView = 'countdown';
             const dailyCard = document.getElementById('daily-puzzle-card');
             
-            // Simple countdown - just the timer, clickable to go back to puzzle
+            // Simple countdown - just the timer, not clickable
             dailyCard.innerHTML = `
-                            <div class="minimal-countdown countdown-card" onclick="togglePuzzleView()" style="text-align: center; padding: 40px 20px; cursor: pointer;" title="Click to go back to puzzle">
+                            <div class="minimal-countdown countdown-card" style="text-align: center; padding: 40px 20px; pointer-events: none;">
                 <div class="instruction-logo">
                     <img src="../assets/icons/ladder-trans-orange.png" alt="Ladder" class="ladder-icon" style="width: 120px; height: 120px; margin-bottom: 20px; opacity: 0.9;">
                 </div>
@@ -2301,8 +2424,8 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             </div>
             `;
             
-            // Apply standard card styling for consistency
-            dailyCard.className = 'card';
+            // Apply minimal styling - no card background/border, just icon stands out
+            dailyCard.className = 'card-minimal';
             
             // Start countdown
             startCountdown();
@@ -2666,14 +2789,17 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 const myPuzzlesCard = document.getElementById('my-puzzles-card');
                 
                 // Start statistics and profile cards in collapsed state on mobile
-                if (statisticsCard) {
+                // Only set initial state if not already set by user interaction
+                if (statisticsCard && !statisticsCard.hasAttribute('data-user-controlled')) {
                     statisticsCard.classList.add('collapsed');
                     updateHeaderInteraction('statistics', true);
+                    statisticsCard.setAttribute('data-user-controlled', 'true');
                 }
                 
-                if (profileCard) {
+                if (profileCard && !profileCard.hasAttribute('data-user-controlled')) {
                     profileCard.classList.add('collapsed');
                     updateHeaderInteraction('profile', true);
+                    profileCard.setAttribute('data-user-controlled', 'true');
                 }
                 
                 // My Puzzles card starts expanded on mobile (user can collapse it)
@@ -2684,10 +2810,26 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     myPuzzlesCard.setAttribute('data-user-controlled', 'true');
                 }
             } else {
-                // On desktop, ensure headers are not clickable
-                updateHeaderInteraction('statistics', false);
-                updateHeaderInteraction('profile', false);
-                updateHeaderInteraction('my-puzzles', false);
+                // On desktop, ensure all cards are expanded and headers are not clickable
+                const statisticsCard = document.getElementById('statistics-card');
+                const profileCard = document.getElementById('profile-card');
+                const myPuzzlesCard = document.getElementById('my-puzzles-card');
+                
+                // Remove collapsed class from all cards to ensure they're expanded
+                if (statisticsCard) {
+                    statisticsCard.classList.remove('collapsed');
+                    updateHeaderInteraction('statistics', false);
+                }
+                
+                if (profileCard) {
+                    profileCard.classList.remove('collapsed');
+                    updateHeaderInteraction('profile', false);
+                }
+                
+                if (myPuzzlesCard) {
+                    myPuzzlesCard.classList.remove('collapsed');
+                    updateHeaderInteraction('my-puzzles', false);
+                }
             }
         }
         
