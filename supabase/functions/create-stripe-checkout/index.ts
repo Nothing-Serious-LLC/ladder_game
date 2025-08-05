@@ -11,6 +11,13 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 );
 
+// CORS headers for frontend integration
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
 interface CheckoutRequest {
   product_id: string;
   success_url: string;
@@ -18,8 +25,16 @@ interface CheckoutRequest {
 }
 
 Deno.serve(async (req: Request) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 });
+    return new Response('Method not allowed', { 
+      status: 405,
+      headers: corsHeaders 
+    });
   }
 
   try {
@@ -118,7 +133,10 @@ Deno.serve(async (req: Request) => {
       checkout_url: session.url,
       session_id: session.id,
     }), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        ...corsHeaders 
+      },
     });
 
   } catch (error) {
@@ -127,7 +145,10 @@ Deno.serve(async (req: Request) => {
       error: error.message,
     }), {
       status: 400,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        ...corsHeaders 
+      },
     });
   }
 });

@@ -106,6 +106,147 @@ export function showOfflineNotice() {
     document.getElementById('offline-notice').classList.add('show');
 }
 
+// Push Notification Management
+export async function setupPushNotifications() {
+    // Check if push notifications are supported
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+        console.log('Push notifications not supported');
+        return false;
+    }
+
+    try {
+        // Get service worker registration
+        const registration = await navigator.serviceWorker.ready;
+        
+        // Check if already subscribed
+        const existingSubscription = await registration.pushManager.getSubscription();
+        
+        if (existingSubscription) {
+            console.log('Already subscribed to push notifications');
+            return true;
+        }
+
+        // Request permission
+        const permission = await Notification.requestPermission();
+        
+        if (permission !== 'granted') {
+            console.log('Push notification permission denied');
+            
+            // Track permission denial
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'notification_permission_denied', {
+                    event_category: 'PWA_Notifications',
+                    event_label: 'Permission_Denied'
+                });
+            }
+            return false;
+        }
+
+        // Subscribe to push notifications
+        // Note: In production, you'll need a VAPID public key from your push service
+        // For now, we'll set up the subscription framework
+        console.log('Push notification permission granted');
+        
+        // Track permission granted
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'notification_permission_granted', {
+                event_category: 'PWA_Notifications',
+                event_label: 'Permission_Granted'
+            });
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error setting up push notifications:', error);
+        return false;
+    }
+}
+
+// Show daily reminder permission request
+export function showDailyReminderPrompt() {
+    // Only show if PWA is installed
+    const isPWA = window.navigator.standalone || 
+                  window.matchMedia('(display-mode: standalone)').matches;
+    
+    if (!isPWA) {
+        return;
+    }
+
+    // Check if user already made a decision
+    const reminderDecision = localStorage.getItem('daily_reminder_decision');
+    if (reminderDecision) {
+        return;
+    }
+
+    // Show custom prompt (you can style this to match your theme)
+    const shouldEnable = confirm(
+        "🧩 Would you like daily puzzle reminders?\n\n" +
+        "Get notified when each new LADDER puzzle is ready to solve!"
+    );
+
+    if (shouldEnable) {
+        setupPushNotifications();
+        localStorage.setItem('daily_reminder_decision', 'enabled');
+        
+        // Track opt-in
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'daily_reminder_opted_in', {
+                event_category: 'PWA_Notifications',
+                event_label: 'User_Opted_In'
+            });
+        }
+    } else {
+        localStorage.setItem('daily_reminder_decision', 'disabled');
+        
+        // Track opt-out
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'daily_reminder_opted_out', {
+                event_category: 'PWA_Notifications',
+                event_label: 'User_Opted_Out'
+            });
+        }
+    }
+}
+
+// Test notification function (for development)
+export async function sendTestNotification() {
+    if (!('serviceWorker' in navigator)) {
+        console.log('Service worker not supported');
+        return;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    
+    const options = {
+        title: 'LADDER - Test Notification 🧩',
+        body: 'This is a test notification for daily puzzle reminders!',
+        icon: './assets/icons/icon-192.png',
+        badge: './assets/icons/icon-192.png',
+        tag: 'test-notification',
+        requireInteraction: false,
+        actions: [
+            {
+                action: 'play',
+                title: 'Play Now'
+            },
+            {
+                action: 'dismiss',
+                title: 'Later'
+            }
+        ]
+    };
+
+    registration.showNotification(options.title, options);
+    
+    // Track test notification
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'test_notification_sent', {
+            event_category: 'PWA_Notifications',
+            event_label: 'Test_Notification'
+        });
+    }
+}
+
 // Initialize all PWA features
 export function initializePWA() {
     registerServiceWorker();
@@ -113,6 +254,11 @@ export function initializePWA() {
     setupViewportHeight();
     setupPWAMode();
     setupConnectionMonitoring();
+    
+    // Set up push notifications for PWA users after a delay
+    setTimeout(() => {
+        showDailyReminderPrompt();
+    }, 3000); // Wait 3 seconds after app load
     
     console.log('PWA features initialized');
 }
