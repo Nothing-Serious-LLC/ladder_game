@@ -329,11 +329,11 @@
     <!-- Include Supabase -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script type="module">
-        import { supabaseUrl, supabaseAnonKey } from '../config/supabase-config.js';
+        import { supabaseConfig } from '../config/supabase-config.js';
         
         // Initialize Supabase client
         const { createClient } = supabase;
-        window.supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+        window.supabaseClient = createClient(supabaseConfig.url, supabaseConfig.anonKey);
     </script>
     <script>
         // Get product info from URL parameters
