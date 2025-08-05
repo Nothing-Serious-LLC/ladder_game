@@ -820,12 +820,12 @@
         
         .pack-card-large.purchase {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-color: var(--gray-300);
+            border-color: var(--gray-600);
             opacity: 0.8;
         }
         
         .pack-card-large.purchase:hover {
-            border-color: var(--gray-400);
+            border-color: var(--gray-900);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
             opacity: 1;
         }
@@ -1242,8 +1242,22 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    cursor: pointer;
                     user-select: none;
+                    transition: cursor 0.2s;
+                }
+                
+                .collapsible-card.collapsed .card-header {
+                    cursor: pointer;
+                    pointer-events: auto;
+                }
+                
+                .collapsible-card:not(.collapsed) .card-header {
+                    cursor: default;
+                    pointer-events: none;
+                }
+                
+                .collapsible-card:not(.collapsed) .card-header .expand-button {
+                    pointer-events: auto; /* Re-enable for chevron button */
                 }
                 
                 .collapsible-card .card-header .section-title {
@@ -1251,32 +1265,51 @@
                 }
                 
                 .expand-button {
-                    background: var(--primary-green);
-                    color: white;
+                    background: transparent !important;
+                    color: var(--gray-600);
                     border: none;
-                    padding: 6px 16px;
-                    border-radius: 6px;
-                    font-size: 0.8rem;
-                    font-weight: 600;
+                    padding: 10px;
+                    border-radius: 0;
+                    font-size: 1.7rem;
+                    font-weight: normal;
                     cursor: pointer;
-                    transition: all 0.2s;
-                    pointer-events: auto; /* Allow button click */
+                    transition: transform 0.2s;
+                    pointer-events: auto;
+                    line-height: 1;
+                    min-width: 44px;
+                    min-height: 44px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    /* Remove all possible highlight effects */
+                    -webkit-tap-highlight-color: transparent !important;
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                    outline: none !important;
+                    box-shadow: none !important;
+                }
+                
+                .expand-button:focus,
+                .expand-button:active,
+                .expand-button:hover {
+                    background: transparent !important;
+                    color: var(--gray-600) !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    border: none !important;
                 }
                 
                 .collapsible-card.collapsed .expand-button {
-                    background: var(--gray-600);
-                }
-                
-                .collapsible-card.collapsed .expand-button:after {
-                    content: "";
+                    color: var(--gray-600);
+                    transform: rotate(0deg);
                 }
                 
                 .collapsible-card:not(.collapsed) .expand-button {
-                    background: var(--primary-green);
-                }
-                
-                .collapsible-card:not(.collapsed) .expand-button:after {
-                    content: "";
+                    color: var(--gray-600);
+                    transform: rotate(90deg);
                 }
                 
                 .card-content {
@@ -1363,9 +1396,9 @@
             
             <!-- 3. Statistics (Full Width) -->
             <div class="statistics-section card collapsible-card" id="statistics-card">
-                <div class="card-header" onclick="expandCard('statistics')">
+                <div class="card-header">
                     <h2 class="section-title">Statistics</h2>
-                    <button class="expand-button" id="statistics-expand-btn" onclick="event.stopPropagation(); collapseCard('statistics')">Show</button>
+                    <button class="expand-button" id="statistics-expand-btn" onclick="event.stopPropagation(); handleCardButton('statistics')">›</button>
                 </div>
                 <div class="card-content" id="statistics-content">
                     <div class="stats-grid">
@@ -1392,9 +1425,9 @@
             
             <!-- 4. Profile (Full Width, Simple) -->
             <div class="profile-section card collapsible-card" id="profile-card">
-                <div class="card-header" onclick="expandCard('profile')">
+                <div class="card-header">
                     <h2 class="section-title">Profile</h2>
-                    <button class="expand-button" id="profile-expand-btn" onclick="event.stopPropagation(); collapseCard('profile')">Show</button>
+                    <button class="expand-button" id="profile-expand-btn" onclick="event.stopPropagation(); handleCardButton('profile')">›</button>
                 </div>
                 <div class="card-content" id="profile-content">
                     <div class="profile-header">
@@ -2462,6 +2495,51 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             }
         };
         
+        // Scroll detection for preventing accidental card toggles
+        let isScrolling = false;
+        let scrollTimeout = null;
+        
+        // Detect scrolling
+        window.addEventListener('scroll', function() {
+            isScrolling = true;
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                isScrolling = false;
+            }, 150); // Wait 150ms after scroll stops
+        });
+        
+        // Detect touch scrolling - more sensitive detection
+        let isTouchScrolling = false;
+        let touchStartY = 0;
+        let touchStartX = 0;
+        let lastTouchTime = 0;
+        
+        document.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+            isTouchScrolling = false;
+            lastTouchTime = Date.now();
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].clientY;
+            const touchX = e.touches[0].clientX;
+            const touchDiffY = Math.abs(touchY - touchStartY);
+            const touchDiffX = Math.abs(touchX - touchStartX);
+            
+            // Consider it scrolling if moved more than 5px in any direction
+            if (touchDiffY > 5 || touchDiffX > 5) {
+                isTouchScrolling = true;
+            }
+        });
+        
+        document.addEventListener('touchend', function() {
+            // Keep scroll flag active longer to prevent accidental triggers
+            setTimeout(function() {
+                isTouchScrolling = false;
+            }, 300);
+        });
+        
         // Collapsible card functionality
         window.toggleCard = function(cardType, forceAction = null) {
             const card = document.getElementById(`${cardType}-card`);
@@ -2477,28 +2555,88 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                                 isCollapsed;
             
             if (shouldExpand) {
-                // Expand the card
+                // Expand the card - chevron rotates via CSS
                 card.classList.remove('collapsed');
-                button.textContent = 'Hide';
+                // Disable header click when expanded
+                updateHeaderInteraction(cardType, false);
             } else {
-                // Collapse the card
+                // Collapse the card - chevron rotates via CSS
                 card.classList.add('collapsed');
-                button.textContent = 'Show';
+                // Enable header click when collapsed
+                updateHeaderInteraction(cardType, true);
             }
         };
         
-        // Expand card (for clicking header when collapsed)
+        // Update header interaction based on card state
+        function updateHeaderInteraction(cardType, isCollapsed) {
+            const header = document.querySelector(`#${cardType}-card .card-header`);
+            if (!header) return;
+            
+            if (isCollapsed) {
+                // Enable header click for expansion
+                header.onclick = function() { safeExpandCard(cardType); };
+                header.style.cursor = 'pointer';
+            } else {
+                // Completely disable header click when expanded
+                header.onclick = null;
+                header.style.cursor = 'default';
+            }
+        }
+        
+        // Expand card (for clicking header when collapsed) - only if not scrolling
         window.expandCard = function(cardType) {
+            // Prevent expansion during scrolling
+            if (isScrolling || isTouchScrolling) {
+                return;
+            }
+            
             const card = document.getElementById(`${cardType}-card`);
             if (card && card.classList.contains('collapsed')) {
                 toggleCard(cardType, 'expand');
             }
         };
         
-        // Collapse card (for clicking hide button when expanded)
-        window.collapseCard = function(cardType) {
+        // Global flag to block all card interactions during touch
+        let isActiveTouch = false;
+        
+        // Track active touch sessions
+        document.addEventListener('touchstart', function() {
+            isActiveTouch = true;
+        });
+        
+        document.addEventListener('touchend', function() {
+            setTimeout(function() {
+                isActiveTouch = false;
+            }, 200);
+        });
+        
+        // Safe expand card - completely prevents any action when card is already expanded
+        window.safeExpandCard = function(cardType) {
             const card = document.getElementById(`${cardType}-card`);
-            if (card && !card.classList.contains('collapsed')) {
+            
+            // Block all interactions during active touch or scrolling
+            if (isActiveTouch || isScrolling || isTouchScrolling) {
+                return;
+            }
+            
+            // Only allow expansion if card is collapsed
+            if (!card || !card.classList.contains('collapsed')) {
+                return; // Do nothing if card is expanded
+            }
+            
+            // Only expand if card is collapsed and not in any touch state
+            toggleCard(cardType, 'expand');
+        };
+        
+        // Smart button handler - expands when collapsed, collapses when expanded
+        window.handleCardButton = function(cardType) {
+            const card = document.getElementById(`${cardType}-card`);
+            if (!card) return;
+            
+            const isCollapsed = card.classList.contains('collapsed');
+            if (isCollapsed) {
+                toggleCard(cardType, 'expand');
+            } else {
                 toggleCard(cardType, 'collapse');
             }
         };
@@ -2509,19 +2647,21 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             if (window.innerWidth <= 768) {
                 const statisticsCard = document.getElementById('statistics-card');
                 const profileCard = document.getElementById('profile-card');
-                const statisticsBtn = document.getElementById('statistics-expand-btn');
-                const profileBtn = document.getElementById('profile-expand-btn');
                 
                 // Start both cards in collapsed state on mobile
-                if (statisticsCard && statisticsBtn) {
+                if (statisticsCard) {
                     statisticsCard.classList.add('collapsed');
-                    statisticsBtn.textContent = 'Show';
+                    updateHeaderInteraction('statistics', true);
                 }
                 
-                if (profileCard && profileBtn) {
+                if (profileCard) {
                     profileCard.classList.add('collapsed');
-                    profileBtn.textContent = 'Show';
+                    updateHeaderInteraction('profile', true);
                 }
+            } else {
+                // On desktop, ensure headers are not clickable
+                updateHeaderInteraction('statistics', false);
+                updateHeaderInteraction('profile', false);
             }
         }
         

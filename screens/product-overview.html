@@ -118,12 +118,17 @@
         .product-hero {
             text-align: center;
             padding: 40px 24px 30px;
-            background: white;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border: 2px solid var(--gray-600);
             margin-bottom: 30px;
             transition: all 0.3s ease;
+        }
+        
+        .product-hero:hover {
+            border-color: var(--gray-900);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
         }
         
         .product-icon {

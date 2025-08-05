@@ -222,20 +222,21 @@
         }
         
         .product-card {
-            background: white;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border-radius: 16px;
             padding: 30px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border: 2px solid var(--gray-600);
             text-align: center;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
         }
         
         .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border-color: var(--gray-900);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
         
         .product-icon {
@@ -273,7 +274,7 @@
             padding: 14px 24px;
             border-radius: 10px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 3px 8px rgba(106, 170, 100, 0.3);
@@ -429,9 +430,9 @@
                 </div>
                 <div class="product-name">Free Pack</div>
                 <div class="product-description">10 starter puzzles to get you going</div>
-                <div class="product-price">Free</div>
+                <div class="product-price" style="display: none;">Free</div>
                 <button class="product-button" onclick="event.stopPropagation(); viewProduct('free-pack')">
-                    View
+                    Free
                 </button>
             </div>
             
@@ -441,9 +442,9 @@
                 </div>
                 <div class="product-name">Complete Pack</div>
                 <div class="product-description">Everything included bundle</div>
-                <div class="product-price">$4.99</div>
+                <div class="product-price" style="display: none;">$4.99</div>
                 <button class="product-button" onclick="event.stopPropagation(); viewProduct('complete-pack')">
-                    View
+                    $4.99
                 </button>
             </div>
             
@@ -453,9 +454,9 @@
                 </div>
                 <div class="product-name">Puzzle Pack</div>
                 <div class="product-description">100 carefully crafted puzzles</div>
-                <div class="product-price">$2.99</div>
+                <div class="product-price" style="display: none;">$2.99</div>
                 <button class="product-button" onclick="event.stopPropagation(); viewProduct('puzzle-pack')">
-                    View
+                    $2.99
                 </button>
             </div>
             
@@ -465,9 +466,9 @@
                 </div>
                 <div class="product-name">Archive</div>
                 <div class="product-description">Access to all past daily puzzles</div>
-                <div class="product-price">$2.99</div>
+                <div class="product-price" style="display: none;">$2.99</div>
                 <button class="product-button" onclick="event.stopPropagation(); viewProduct('archive')">
-                    View
+                    $2.99
                 </button>
             </div>
         </div>
