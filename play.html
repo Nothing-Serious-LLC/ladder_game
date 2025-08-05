@@ -3396,16 +3396,28 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                         throw new Error('User not authenticated');
                     }
                     
-                    // First check if user owns this pack
-                    const { data: ownership, error: ownershipError } = await client
+                    // Check if user owns this pack (including complete-pack access)
+                    const { data: purchases } = await client
                         .from('user_purchases')
                         .select('*')
                         .eq('user_id', user.id)
-                        .eq('product_id', packId)
-                        .single();
+                        .in('product_id', [packId, 'complete-pack', 'free-pack']);
                     
-                    // Free pack doesn't require purchase
-                    if (packId !== 'free-pack' && (ownershipError || !ownership)) {
+                    const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
+                    const hasCompletePack = ownedProducts.includes('complete-pack');
+                    const hasThisPack = ownedProducts.includes(packId);
+                    
+                    // Check access permissions based on pack type
+                    let hasAccess = false;
+                    if (packId === 'free-pack') {
+                        hasAccess = hasThisPack || hasCompletePack;
+                    } else if (packId === 'puzzle-pack' || packId === 'archive') {
+                        hasAccess = hasThisPack || hasCompletePack;
+                    } else {
+                        hasAccess = hasThisPack || hasCompletePack;
+                    }
+                    
+                    if (!hasAccess) {
                         throw new Error('User does not own this puzzle pack');
                     }
                     
