@@ -1378,20 +1378,25 @@
             </div>
             
             <!-- 2. Puzzle Packs Section (Full Width) -->
-            <div class="puzzle-packs-showcase card">
-                <h2 class="section-title" id="packs-section-title">My Puzzles</h2>
-                <div class="packs-grid" id="packs-showcase-content">
-                    <!-- Default loading state -->
-                    <div class="pack-card-large loading">
-                        <div class="pack-details">
-                            <div class="pack-name">Loading...</div>
-                            <div class="pack-description">Please wait</div>
+            <div class="puzzle-packs-showcase card collapsible-card" id="my-puzzles-card">
+                <div class="card-header">
+                    <h2 class="section-title" id="packs-section-title">My Puzzles</h2>
+                    <button class="expand-button" id="my-puzzles-expand-btn" onclick="event.stopPropagation(); handleCardButton('my-puzzles')">›</button>
+                </div>
+                <div class="card-content">
+                    <div class="packs-grid" id="packs-showcase-content">
+                        <!-- Default loading state -->
+                        <div class="pack-card-large loading">
+                            <div class="pack-details">
+                                <div class="pack-name">Loading...</div>
+                                <div class="pack-description">Please wait</div>
+                            </div>
                         </div>
                     </div>
+                    <button class="view-all-button" id="packs-view-all-button" onclick="window.location.href='store.html'">
+                        Browse puzzles
+                    </button>
                 </div>
-                <button class="view-all-button" id="packs-view-all-button" onclick="window.location.href='store.html'">
-                    Browse puzzles
-                </button>
             </div>
             
             <!-- 3. Statistics (Full Width) -->
@@ -2505,7 +2510,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             clearTimeout(scrollTimeout);
             scrollTimeout = setTimeout(function() {
                 isScrolling = false;
-            }, 150); // Wait 150ms after scroll stops
+            }, 50); // Reduced from 150ms to 50ms
         });
         
         // Detect touch scrolling - more sensitive detection
@@ -2527,17 +2532,17 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             const touchDiffY = Math.abs(touchY - touchStartY);
             const touchDiffX = Math.abs(touchX - touchStartX);
             
-            // Consider it scrolling if moved more than 5px in any direction
-            if (touchDiffY > 5 || touchDiffX > 5) {
+            // Consider it scrolling if moved more than 15px in any direction
+            if (touchDiffY > 15 || touchDiffX > 15) {
                 isTouchScrolling = true;
             }
         });
         
         document.addEventListener('touchend', function() {
-            // Keep scroll flag active longer to prevent accidental triggers
+            // Keep scroll flag active briefly to prevent accidental triggers
             setTimeout(function() {
                 isTouchScrolling = false;
-            }, 300);
+            }, 100); // Reduced from 300ms to 100ms
         });
         
         // Collapsible card functionality
@@ -2607,7 +2612,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         document.addEventListener('touchend', function() {
             setTimeout(function() {
                 isActiveTouch = false;
-            }, 200);
+            }, 50); // Reduced from 200ms to 50ms
         });
         
         // Safe expand card - completely prevents any action when card is already expanded
@@ -2624,6 +2629,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 return; // Do nothing if card is expanded
             }
             
+            // Mark card as user-controlled to prevent resize events from resetting it
+            card.setAttribute('data-user-controlled', 'true');
+            
             // Only expand if card is collapsed and not in any touch state
             toggleCard(cardType, 'expand');
         };
@@ -2632,6 +2640,14 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         window.handleCardButton = function(cardType) {
             const card = document.getElementById(`${cardType}-card`);
             if (!card) return;
+            
+            // Only block if actually scrolling (not just touching)
+            if (isScrolling || isTouchScrolling) {
+                return;
+            }
+            
+            // Mark card as user-controlled to prevent resize events from resetting it
+            card.setAttribute('data-user-controlled', 'true');
             
             const isCollapsed = card.classList.contains('collapsed');
             if (isCollapsed) {
@@ -2647,8 +2663,9 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             if (window.innerWidth <= 768) {
                 const statisticsCard = document.getElementById('statistics-card');
                 const profileCard = document.getElementById('profile-card');
+                const myPuzzlesCard = document.getElementById('my-puzzles-card');
                 
-                // Start both cards in collapsed state on mobile
+                // Start statistics and profile cards in collapsed state on mobile
                 if (statisticsCard) {
                     statisticsCard.classList.add('collapsed');
                     updateHeaderInteraction('statistics', true);
@@ -2658,19 +2675,30 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     profileCard.classList.add('collapsed');
                     updateHeaderInteraction('profile', true);
                 }
+                
+                // My Puzzles card starts expanded on mobile (user can collapse it)
+                // Only set initial state if not already set by user interaction
+                if (myPuzzlesCard && !myPuzzlesCard.hasAttribute('data-user-controlled')) {
+                    myPuzzlesCard.classList.remove('collapsed');
+                    updateHeaderInteraction('my-puzzles', false);
+                    myPuzzlesCard.setAttribute('data-user-controlled', 'true');
+                }
             } else {
                 // On desktop, ensure headers are not clickable
                 updateHeaderInteraction('statistics', false);
                 updateHeaderInteraction('profile', false);
+                updateHeaderInteraction('my-puzzles', false);
             }
         }
         
-        // Re-initialize on window resize
+        // Re-initialize on window resize (with debouncing to prevent excessive calls)
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            initializeCollapsibleCards();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                initializeCollapsibleCards();
+            }, 250); // Only reinitialize after resize stops for 250ms
         });
     </script>
 </body>
-</html>
-</html>
 </html>
