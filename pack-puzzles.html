@@ -411,6 +411,46 @@
             margin-top: 4px;
         }
         
+        .puzzle-date {
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            text-align: center;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+        
+        .pack-filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--gray-300);
+            background: white;
+            color: var(--gray-700);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-green);
+            border-color: var(--primary-green);
+            color: white;
+        }
+        
         .puzzle-status {
             position: absolute;
             top: 8px;
@@ -822,6 +862,9 @@
         
         function renderPuzzles() {
             const grid = document.getElementById('puzzles-grid');
+            const urlParams = new URLSearchParams(window.location.search);
+            const packId = urlParams.get('pack');
+            const isArchive = packId === 'archive';
             
             if (packPuzzles.length === 0) {
                 grid.innerHTML = `
@@ -833,13 +876,27 @@
                 return;
             }
             
+            // Add filter controls for archive pack
+            if (isArchive) {
+                const filtersHTML = `
+                    <div class="pack-filters" style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="filter-btn active" onclick="setFilter('all')" id="all-filter">All</button>
+                        <button class="filter-btn" onclick="setFilter('completed')" id="completed-filter">Completed</button>
+                        <button class="filter-btn" onclick="setFilter('untried')" id="untried-filter">Untried</button>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforebegin', filtersHTML);
+            }
+            
             let completedCount = 0;
             const puzzleCards = packPuzzles.map((puzzle, index) => {
-                const completion = completions[puzzle.id];
-                // Check if puzzle was EVER completed by looking at completion_time (more reliable than 'completed' flag)
-                const isCompleted = completion && completion.completion_time ? true : false;
-                const isFailed = completion && !isCompleted && completion.attempts > 0;
-                const attempts = completion?.attempts || 0;
+                const puzzleKey = isArchive ? puzzle.puzzle_date : puzzle.id;
+                const completion = completions[puzzleKey];
+                
+                // Check if puzzle was EVER completed
+                const isCompleted = completion && (completion.completed || completion.completion_time);
+                const isFailed = completion && !isCompleted && (completion.attempts > 0 || completion.tries_used > 0);
+                const attempts = completion?.attempts || completion?.tries_used || 0;
                 
                 if (isCompleted) completedCount++;
                 
@@ -847,15 +904,30 @@
                 if (isCompleted) cardClass += ' completed';
                 else if (isFailed) cardClass += ' failed';
                 
+                // Format date for archive puzzles
+                let displayNumber = `#${index + 1}`;
+                let displayTheme = isCompleted || isFailed ? puzzle.theme : '???';
+                let additionalInfo = '';
+                
+                if (isArchive) {
+                    const date = new Date(puzzle.puzzle_date);
+                    const formattedDate = date.toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    displayNumber = `#${puzzle.puzzle_number}`;
+                    displayTheme = puzzle.theme; // Always show theme for archive
+                    additionalInfo = `<div class="puzzle-date">${formattedDate}</div>`;
+                }
+                
                 return `
-                    <div class="${cardClass}" onclick="playPuzzle('${puzzle.id}')">
+                    <div class="${cardClass}" onclick="playPuzzle('${puzzleKey}')">
                         ${isCompleted ? '<div class="puzzle-status">✓</div>' : ''}
                         ${isFailed ? '<div class="puzzle-status">✗</div>' : ''}
-                        <div class="puzzle-number">#${index + 1}</div>
-                        <div class="puzzle-theme">
-                            ${isCompleted || isFailed ? puzzle.theme : '???'}
-                        </div>
-                        ${(isCompleted || isFailed) ? `<div class="puzzle-attempts">Attempts: ${Math.max(attempts, 1)}</div>` : ''}
+                        <div class="puzzle-number">${displayNumber}</div>
+                        <div class="puzzle-theme">${displayTheme}</div>
+                        ${additionalInfo}
+                        ${(isCompleted || isFailed) && attempts > 0 ? `<div class="puzzle-attempts">Attempts: ${attempts}</div>` : ''}
                     </div>
                 `;
             }).join('');
@@ -880,8 +952,13 @@
             const urlParams = new URLSearchParams(window.location.search);
             const packId = urlParams.get('pack');
             
-            // Navigate to play screen with pack puzzle parameters
-            window.location.href = `./play?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
+            if (packId === 'archive') {
+                // For archive puzzles, use historical daily puzzle type
+                window.location.href = `./play?type=daily&date=${puzzleId}`;
+            } else {
+                // Navigate to play screen with pack puzzle parameters
+                window.location.href = `./play?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
+            }
         };
         
         // Enhanced functionality for new pack types
@@ -904,9 +981,6 @@
         
         async function loadHistoricalPack(userId) {
             try {
-                // Show controls for filtering and pagination  
-                document.getElementById('controls').style.display = 'flex';
-                
                 // Load user's daily puzzle completions
                 const { data: completions } = await supabaseClient
                     .from('puzzle_completions')
@@ -914,10 +988,10 @@
                     .eq('user_id', userId)
                     .order('puzzle_date', { ascending: false });
                 
-                allCompletions = {};
+                completions = {};
                 if (completions) {
                     completions.forEach(comp => {
-                        allCompletions[comp.puzzle_date] = comp;
+                        completions[comp.puzzle_date] = comp;
                     });
                 }
                 
@@ -929,7 +1003,22 @@
                     .order('puzzle_date', { ascending: false });
                 
                 packPuzzles = puzzles || [];
-                renderHistoricalPuzzles();
+                
+                // Convert to pack-style format for consistency
+                packPuzzles = packPuzzles.map(puzzle => ({
+                    id: puzzle.puzzle_date, // Use date as unique ID
+                    theme: puzzle.theme,
+                    pack_level: puzzle.complexity_level,
+                    puzzle_date: puzzle.puzzle_date,
+                    puzzle_number: puzzle.puzzle_number
+                }));
+                
+                // Update progress display
+                const completed = Object.values(completions).filter(c => c.completed).length;
+                document.getElementById('pack-progress').textContent = `${completed}/${packPuzzles.length} puzzles completed`;
+                
+                // Use filtered rendering for archive packs
+                renderFilteredPuzzles();
                 
             } catch (error) {
                 console.error('Error loading historical pack:', error);
@@ -1046,21 +1135,100 @@
             `;
         }
         
-        // Global functions for new features
+        // Filter functionality
+        let currentFilter = 'all';
+        
         window.setFilter = function(filter) {
             currentFilter = filter;
-            currentPage = 1;
             
             // Update filter button states
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             const filterBtn = document.getElementById(`${filter}-filter`);
             if (filterBtn) filterBtn.classList.add('active');
             
-            // Re-render
-            if (currentPackId === 'archive') {
-                renderHistoricalPuzzles();
-            }
+            // Filter and re-render puzzles
+            renderFilteredPuzzles();
         };
+        
+        function renderFilteredPuzzles() {
+            const grid = document.getElementById('puzzles-grid');
+            const urlParams = new URLSearchParams(window.location.search);
+            const packId = urlParams.get('pack');
+            const isArchive = packId === 'archive';
+            
+            if (!isArchive) {
+                renderPuzzles();
+                return;
+            }
+            
+            // Filter puzzles based on current filter
+            let filteredPuzzles = packPuzzles;
+            
+            if (currentFilter === 'completed') {
+                filteredPuzzles = packPuzzles.filter(puzzle => {
+                    const completion = completions[puzzle.puzzle_date];
+                    return completion && (completion.completed || completion.completion_time);
+                });
+            } else if (currentFilter === 'untried') {
+                filteredPuzzles = packPuzzles.filter(puzzle => {
+                    const completion = completions[puzzle.puzzle_date];
+                    return !completion || (!completion.completed && !completion.completion_time && (!completion.attempts || completion.attempts === 0));
+                });
+            }
+            
+            // Render filtered puzzles
+            let completedCount = 0;
+            const puzzleCards = filteredPuzzles.map((puzzle, index) => {
+                const completion = completions[puzzle.puzzle_date];
+                const isCompleted = completion && (completion.completed || completion.completion_time);
+                const isFailed = completion && !isCompleted && (completion.attempts > 0 || completion.tries_used > 0);
+                const attempts = completion?.attempts || completion?.tries_used || 0;
+                
+                if (isCompleted) completedCount++;
+                
+                let cardClass = 'puzzle-card';
+                if (isCompleted) cardClass += ' completed';
+                else if (isFailed) cardClass += ' failed';
+                
+                const date = new Date(puzzle.puzzle_date);
+                const formattedDate = date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                
+                return `
+                    <div class="${cardClass}" onclick="playPuzzle('${puzzle.puzzle_date}')">
+                        ${isCompleted ? '<div class="puzzle-status">✓</div>' : ''}
+                        ${isFailed ? '<div class="puzzle-status">✗</div>' : ''}
+                        <div class="puzzle-number">#${puzzle.puzzle_number}</div>
+                        <div class="puzzle-theme">${puzzle.theme}</div>
+                        <div class="puzzle-date">${formattedDate}</div>
+                        ${(isCompleted || isFailed) && attempts > 0 ? `<div class="puzzle-attempts">Attempts: ${attempts}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            grid.innerHTML = puzzleCards;
+            
+            // Update counts in filter buttons
+            const allBtn = document.getElementById('all-filter');
+            const completedBtn = document.getElementById('completed-filter');
+            const untriedBtn = document.getElementById('untried-filter');
+            
+            const totalCompleted = packPuzzles.filter(puzzle => {
+                const completion = completions[puzzle.puzzle_date];
+                return completion && (completion.completed || completion.completion_time);
+            }).length;
+            
+            const totalUntried = packPuzzles.filter(puzzle => {
+                const completion = completions[puzzle.puzzle_date];
+                return !completion || (!completion.completed && !completion.completion_time && (!completion.attempts || completion.attempts === 0));
+            }).length;
+            
+            if (allBtn) allBtn.textContent = `All (${packPuzzles.length})`;
+            if (completedBtn) completedBtn.textContent = `Completed (${totalCompleted})`;
+            if (untriedBtn) untriedBtn.textContent = `Untried (${totalUntried})`;
+        }
         
         window.changePage = function(direction) {
             const filteredPuzzles = filterPuzzles();

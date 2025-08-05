@@ -2192,38 +2192,53 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     
                     let packsHTML = '';
                     
+                    // Get dynamic pack info from database
+                    const { data: packsData } = await supabase
+                        .from('puzzle_packs')
+                        .select('id, name, total_puzzles, price_cents')
+                        .eq('is_active', true);
+                    
+                    const packTotals = {};
+                    const packPrices = {};
+                    if (packsData) {
+                        packsData.forEach(pack => {
+                            packTotals[pack.id] = pack.total_puzzles;
+                            packPrices[pack.id] = pack.price_cents === 0 ? 'Free' : `$${(pack.price_cents / 100).toFixed(2)}`;
+                        });
+                    }
+                    
                     // Create dynamic pack display based on progress and availability
                     const packConfigs = [
                         {
                             id: 'free-pack',
                             name: 'Free Pack', 
                             logo: '../assets/Gift icon.png',
-                            total: 10,
-                            price: 'Free',
+                            total: packTotals['free-pack'] || 10,
+                            price: packPrices['free-pack'] || 'Free',
                             playAction: "playPuzzlePack('free')"
                         },
                         {
                             id: 'complete-pack',
                             name: 'Complete Pack',
                             logo: '../assets/Everything icon.png', 
-                            total: 100,
-                            price: '$4.99',
+                            total: packTotals['complete-pack'] || 100,
+                            price: packPrices['complete-pack'] || '$4.99',
                             playAction: "playPuzzlePack('complete')"
                         },
                         {
                             id: 'puzzle-pack',
                             name: 'Puzzle Pack',
                             logo: '../assets/puzzle.png',
-                            total: 100, 
-                            price: '$2.99',
+                            total: packTotals['puzzle-pack'] || 100, 
+                            price: packPrices['puzzle-pack'] || '$2.99',
                             playAction: "playPuzzlePack('puzzle')"
                         },
                         {
                             id: 'archive',
                             name: 'Archive Pack',
                             logo: '../assets/Archive.png',
-                            total: 50,
-                            price: '$2.99', 
+                            total: packTotals['archive'] || 8,
+                            price: packPrices['archive'] || '$2.99', 
                             playAction: "playPuzzlePack('archive')"
                         }
                     ];

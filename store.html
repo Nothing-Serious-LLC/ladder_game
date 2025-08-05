@@ -550,33 +550,46 @@
                     });
                 }
                 
+                // Get dynamic pack info from database
+                const { data: packsData } = await supabase
+                    .from('puzzle_packs')
+                    .select('id, name, total_puzzles')
+                    .eq('is_active', true);
+                
+                const packTotals = {};
+                if (packsData) {
+                    packsData.forEach(pack => {
+                        packTotals[pack.id] = pack.total_puzzles;
+                    });
+                }
+                
                 const packConfigs = [
                     {
                         id: 'free-pack',
                         name: 'Free Pack', 
                         logo: '../assets/Gift icon.png',
-                        total: 10,
+                        total: packTotals['free-pack'] || 10,
                         playAction: 'free'
                     },
                     {
                         id: 'complete-pack',
                         name: 'Complete Pack',
                         logo: '../assets/Everything icon.png', 
-                        total: 100,
+                        total: packTotals['complete-pack'] || 100,
                         playAction: 'complete'
                     },
                     {
                         id: 'puzzle-pack',
                         name: 'Puzzle Pack',
                         logo: '../assets/puzzle.png',
-                        total: 100, 
+                        total: packTotals['puzzle-pack'] || 100, 
                         playAction: 'puzzle'
                     },
                     {
                         id: 'archive',
                         name: 'Archive Pack',
                         logo: '../assets/Archive.png',
-                        total: 50,
+                        total: packTotals['archive'] || 8,
                         playAction: 'archive'
                     }
                 ];
