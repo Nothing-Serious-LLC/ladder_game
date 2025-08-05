@@ -5771,9 +5771,8 @@ https://ladder.game/`;
                     const userDisplayName = user?.email ? user.email.split('@')[0] : 'User';
                     
                     morePuzzlesCard.innerHTML = `
-                        <h3 class="more-puzzles-title">Welcome back, ${userDisplayName}!</h3>
+                        <h3 class="more-puzzles-title">Welcome back, <span style="color: var(--primary-green);">${userDisplayName}</span>!</h3>
                         <div class="home-navigation">
-                            <div class="home-nav-icon">🏠</div>
                             <p>Access your puzzle dashboard, statistics, and more</p>
                             <a href="./screens/home.html" class="home-nav-button">Go to Home</a>
                         </div>
