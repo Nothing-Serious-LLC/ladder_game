@@ -153,6 +153,15 @@
             flex-direction: column;
         }
 
+        /* Desktop-only: Increase padding-top to prevent content cutoff */
+        @media (min-width: 481px) {
+            .container.game-page,
+            .completion-page,
+            .failure-page {
+                padding-top: 160px;
+            }
+        }
+
         /* Landing Page Styles */
         .landing-page {
             display: flex;

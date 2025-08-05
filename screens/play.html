@@ -2089,11 +2089,8 @@
         }
 
         @media (max-width: 480px) {
-            /* Ensure background covers entire viewport on mobile */
             html, body {
                 height: 100%;
-                background-color: #fafafa !important;
-                padding-top: 0 !important;
             }
             .container.game-page {
                 height: 100%;
@@ -2103,7 +2100,6 @@
                 position: sticky;
                 top: 0;
                 z-index: 100;
-                position: relative; /* For absolute positioning of sound toggle */
             }
             .mobile-keyboard {
                 position: fixed;
@@ -2134,6 +2130,16 @@
                 min-height: 100vh;
                 overflow-x: hidden;
                 overflow-y: auto;
+            }
+            
+            /* Revert header positioning for mobile game screen only */
+            .game-page .header {
+                position: relative;
+                padding: 20px 0 30px;
+                border-bottom: 1px solid #d3d6da;
+                margin-bottom: 20px;
+                background: transparent;
+                z-index: auto;
             }
             
             /* Allow scrolling in mobile container */
@@ -6358,8 +6364,7 @@ https://ladder.game/`;
             }, 100);
         });
         
-        // Make LadderGame class available globally for module scripts
-        window.LadderGame = LadderGame;
+
         
         // Retry puzzle function for failure screen
         window.retryPuzzle = function() {
