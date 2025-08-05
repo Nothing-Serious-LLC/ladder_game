@@ -500,16 +500,7 @@
                     return;
                 }
                 
-                // For free pack, also add to user_puzzle_packs for backward compatibility
-                if (productId === 'free-pack') {
-                    await window.supabaseClient
-                        .from('user_puzzle_packs')
-                        .insert({
-                            user_id: user.id,
-                            pack_id: productId,
-                            claimed_at: new Date().toISOString()
-                        });
-                }
+                // Free pack purchase recorded successfully in user_purchases table
                 
                 // Add fade-out animation to the entire page
                 document.body.classList.add('page-fade-out');
