@@ -2116,6 +2116,7 @@
                 width: calc(100vw - 6px); /* Explicit width calculation */
                 z-index: 9999;
                 opacity: 0;
+                transition: opacity 0.4s ease-in;
             }
             
             /* PWA standalone mode adjustments - move keyboard up and extend game area */
@@ -2129,9 +2130,10 @@
             }
             /* Reduce bottom padding so ladder isn't cut off */
             .container {
-                padding: 120px 0 0 0; /* Match main container padding + header margin handles spacing */
-                height: 100vh;
-                overflow: hidden;
+                padding: 0;
+                min-height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
             }
             
             /* Allow scrolling in mobile container */
@@ -2151,6 +2153,8 @@
                 background: #fafafa;
                 border-bottom: 1px solid #d3d6da;
                 flex-shrink: 0;
+                transition: opacity 0.4s ease-in;
+                position: relative; /* For absolute positioning of sound toggle */
             }
             
             .mobile-header .title {
@@ -2226,7 +2230,7 @@
                 overflow-y: auto;
                 overflow-x: visible;
                 padding-bottom: 20px; /* Reduced padding */
-                max-height: calc(100vh - 120px - 210px); /* Adjusted for mobile fixed header and keyboard */
+                max-height: calc(100vh - 115px - 210px); /* Adjusted for mobile header and keyboard */
                 scroll-snap-type: y mandatory;
                 scroll-behavior: smooth;
             }
@@ -2253,13 +2257,13 @@
                 flex-shrink: 0;
             }
             
-            /* Keep header visible on mobile */
+            /* Hide desktop elements on mobile */
             .header {
-                display: block;
+                display: none;
             }
             
             .stats {
-                display: flex;
+                display: none;
             }
             
             .game-area {
@@ -2271,9 +2275,9 @@
                 display: none;
             }
             
-            /* Hide mobile header since we're using main header */
+            /* Show mobile elements on mobile */
             .mobile-header {
-                display: none;
+                display: block;
             }
             
             .mobile-game-area {
