@@ -693,7 +693,7 @@
                     .from('user_purchases')
                     .select('*')
                     .eq('user_id', user.id)
-                    .in('product_id', [packId, 'complete-pack', 'free-pack']);
+                    .in('product_id', [packId, 'complete-pack', 'free-pack', 'puzzle-pack', 'archive']);
                 
                 const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
                 const hasCompletePack = ownedProducts.includes('complete-pack');
@@ -701,10 +701,12 @@
                 
                 // Free pack is accessible if user owns free-pack OR complete-pack
                 const canAccessFreePack = packId === 'free-pack' && (hasThisPack || hasCompletePack);
-                // Other packs require direct ownership OR complete-pack
-                const canAccessPack = packId !== 'free-pack' && (hasThisPack || hasCompletePack);
+                // Puzzle-pack and archive are accessible if owned directly OR user has complete-pack
+                const canAccessPuzzlePack = (packId === 'puzzle-pack' || packId === 'archive') && (hasThisPack || hasCompletePack);
+                // Other packs require direct ownership OR complete-pack (for backwards compatibility)
+                const canAccessOtherPack = !['free-pack', 'puzzle-pack', 'archive'].includes(packId) && (hasThisPack || hasCompletePack);
                 
-                if (!canAccessFreePack && !canAccessPack) {
+                if (!canAccessFreePack && !canAccessPuzzlePack && !canAccessOtherPack) {
                     alert('You do not own this puzzle pack');
                     window.location.href = './home';
                     return;

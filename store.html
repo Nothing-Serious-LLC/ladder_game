@@ -584,8 +584,24 @@
                 let myPacksHTML = '';
                 const ownedProducts = purchases.map(p => p.product_id);
                 
+                const hasCompletePack = ownedProducts.includes('complete-pack');
+                
                 packConfigs.forEach(pack => {
-                    if (ownedProducts.includes(pack.id)) {
+                    // Determine if user has access to this pack
+                    let hasAccess = false;
+                    
+                    if (pack.id === 'complete-pack') {
+                        // Don't show complete-pack in My Packs (it's just a bundle)
+                        hasAccess = false;
+                    } else if (pack.id === 'puzzle-pack' || pack.id === 'archive') {
+                        // Show puzzle-pack and archive if user owns them directly OR owns complete-pack
+                        hasAccess = ownedProducts.includes(pack.id) || hasCompletePack;
+                    } else {
+                        // For other packs (free-pack, etc.), show if directly owned
+                        hasAccess = ownedProducts.includes(pack.id);
+                    }
+                    
+                    if (hasAccess) {
                         const stats = completionCounts[pack.name.toLowerCase().replace(' ', '-')] || { completed: 0, total: 0 };
                         const completed = stats.completed;
                         const total = pack.total;

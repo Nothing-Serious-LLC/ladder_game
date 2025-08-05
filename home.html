@@ -2233,7 +2233,20 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     const availablePacks = [];
                     
                     packConfigs.forEach(pack => {
-                        const isOwned = ownedProducts.includes(pack.id);
+                        // Determine if user has access to this pack
+                        let isOwned = false;
+                        
+                        if (pack.id === 'complete-pack') {
+                            // Don't show complete-pack in home (it's just a bundle)
+                            isOwned = false;
+                        } else if (pack.id === 'puzzle-pack' || pack.id === 'archive') {
+                            // Show puzzle-pack and archive if user owns them directly OR owns complete-pack
+                            isOwned = ownedProducts.includes(pack.id) || hasCompletePack;
+                        } else {
+                            // For other packs (free-pack, etc.), show if directly owned
+                            isOwned = ownedProducts.includes(pack.id);
+                        }
+                        
                         const stats = completionCounts[pack.name.toLowerCase().replace(' ', '-')] || { completed: 0, total: 0 };
                         const completed = stats.completed;
                         const total = pack.total;
