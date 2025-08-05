@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-93EGC4CGNR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-93EGC4CGNR');
+    </script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Settings - Ladder</title>
@@ -394,11 +404,13 @@
         </div>
         
         <!-- Game Preferences -->
+        <!-- 
         <div class="settings-section">
             <h2 class="section-title">Game Preferences</h2>
             
 
         </div>
+        -->
         
         <!-- Privacy Settings -->
         <div class="settings-section">
@@ -421,41 +433,6 @@
                 </div>
                 <div class="setting-control">
                     <div class="toggle-switch active" id="notifications-toggle" onclick="toggleSetting('notifications')"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Account Actions -->
-        <div class="settings-section">
-            <h2 class="section-title">Account Actions</h2>
-            
-            <div class="setting-item">
-                <div class="setting-info">
-                    <div class="setting-label">Change Password</div>
-                    <div class="setting-description">Update your account password</div>
-                </div>
-                <div class="setting-control">
-                    <button class="button secondary" onclick="changePassword()">Change Password</button>
-                </div>
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-info">
-                    <div class="setting-label">Export Data</div>
-                    <div class="setting-description">Download your puzzle history and statistics</div>
-                </div>
-                <div class="setting-control">
-                    <button class="button secondary" onclick="exportData()">Export Data</button>
-                </div>
-            </div>
-            
-            <div class="setting-item">
-                <div class="setting-info">
-                    <div class="setting-label">Delete Account</div>
-                    <div class="setting-description">Permanently delete your account and all data</div>
-                </div>
-                <div class="setting-control">
-                    <button class="button danger" onclick="deleteAccount()">Delete Account</button>
                 </div>
             </div>
         </div>
@@ -506,6 +483,51 @@
                 </div>
                 <div class="setting-control">
                     <a href="https://www.nothingserious.info/contact.html" target="_blank" rel="noopener noreferrer" class="button secondary">Contact Support</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Actions -->
+        <div class="settings-section">
+            <h2 class="section-title">Account Actions</h2>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Change Password</div>
+                    <div class="setting-description">Update your account password</div>
+                </div>
+                <div class="setting-control">
+                    <button class="button secondary" onclick="changePassword()">Change Password</button>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Export Data</div>
+                    <div class="setting-description">Download your puzzle history and statistics</div>
+                </div>
+                <div class="setting-control">
+                    <button class="button secondary" onclick="exportData()">Export Data</button>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Sign Out</div>
+                    <div class="setting-description">Sign out of your account</div>
+                </div>
+                <div class="setting-control">
+                    <button class="button secondary" onclick="signOutUser()">Sign Out</button>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <div class="setting-label">Delete Account</div>
+                    <div class="setting-description">Permanently delete your account and all data</div>
+                </div>
+                <div class="setting-control">
+                    <button class="button danger" onclick="deleteAccount()">Delete Account</button>
                 </div>
             </div>
         </div>
@@ -678,6 +700,20 @@
             } catch (error) {
                 console.error('Error exporting data:', error);
                 alert('Error exporting data. Please try again.');
+            }
+        };
+        
+        // Sign out user
+        window.signOutUser = async function() {
+            try {
+                const { error } = await _supabase.auth.signOut();
+                if (error) throw error;
+                
+                window.location.href = './';
+                
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('Error signing out. Please try again.');
             }
         };
         
