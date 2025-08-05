@@ -371,6 +371,12 @@
             const urlParams = new URLSearchParams(window.location.search);
             let productId = urlParams.get('product');
             const itemName = urlParams.get('item') || 'Puzzle Pack';
+            const sessionId = urlParams.get('session_id');
+            
+            // Handle Stripe success flow
+            if (sessionId) {
+                handleStripeSuccess(sessionId);
+            }
             
             // If no product parameter, try to infer from item name
             if (!productId) {
@@ -394,12 +400,30 @@
             // Set appropriate start playing link based on product
             const startPlayingBtn = document.getElementById('start-playing-btn');
             if (startPlayingBtn) {
-                if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack') {
+                if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack' || productId === 'archive') {
                     startPlayingBtn.href = `./pack-puzzles?pack=${productId}`;
                 } else {
                     startPlayingBtn.href = './home';
                 }
             }
+        }
+        
+        // Handle Stripe payment success
+        function handleStripeSuccess(sessionId) {
+            console.log('Processing Stripe payment success for session:', sessionId);
+            
+            // Show success message for paid purchases
+            const confirmationTitle = document.querySelector('.confirmation-title');
+            if (confirmationTitle) {
+                confirmationTitle.textContent = 'Payment Successful!';
+            }
+            
+            const confirmationMessage = document.querySelector('.confirmation-message');
+            if (confirmationMessage) {
+                confirmationMessage.innerHTML = 'Thank you for your purchase! Your payment has been processed and your <span class="pack-name" id="pack-name">puzzle pack</span> has been added to your account.';
+            }
+            
+            // The existing animated checkmark and success pulse will show automatically
         }
         
         // Initialize page

@@ -288,6 +288,13 @@
         .page-fade-out {
             animation: fadeOut 0.3s ease-in forwards;
         }
+        
+        /* Loading state for purchase button */
+        .purchase-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -474,6 +481,7 @@
                     .select('*')
                     .eq('user_id', user.id)
                     .eq('product_id', productId)
+                    .eq('status', 'completed')
                     .single();
                 
                 if (existingPurchase) {
@@ -481,14 +489,31 @@
                     return;
                 }
                 
-                // Record the purchase in the database
+                // Handle free products with existing flow
+                if (product.price === 'Free') {
+                    await handleFreePurchase(user, product);
+                    return;
+                }
+                
+                // Handle paid products with Stripe
+                await handleStripePurchase(user, product);
+                
+            } catch (error) {
+                console.error('Purchase process error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        async function handleFreePurchase(user, product) {
+            try {
+                // Record the free purchase in the database
                 const { error: purchaseError } = await window.supabaseClient
                     .from('user_purchases')
                     .insert({
                         user_id: user.id,
                         product_id: productId,
                         product_name: product.name,
-                        price_cents: product.price === 'Free' ? 0 : Math.round(parseFloat(product.price.replace('$', '')) * 100),
+                        price_cents: 0,
                         purchase_date: new Date().toISOString(),
                         payment_method: 'free_claim',
                         status: 'completed'
@@ -500,36 +525,103 @@
                     return;
                 }
                 
-                // Free pack purchase recorded successfully in user_purchases table
-                
-                // Add fade-out animation to the entire page
-                document.body.classList.add('page-fade-out');
-                
-                // Wait for animation to complete before navigating
-                setTimeout(() => {
-                    // Get the 'from' parameter to pass it along
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const fromPage = urlParams.get('from');
-                    
-                    const params = new URLSearchParams({
-                        item: product.name,
-                        price: product.price,
-                        description: product.description,
-                        product: productId  // Add product ID for proper routing
-                    });
-                    
-                    // Add the 'from' parameter if it exists
-                    if (fromPage) {
-                        params.set('from', fromPage);
-                    }
-                    
-                    window.location.href = `purchase-confirmation?${params.toString()}`;
-                }, 300); // Match the animation duration
+                // Navigate to confirmation
+                navigateToConfirmation(product);
                 
             } catch (error) {
-                console.error('Purchase process error:', error);
-                alert('An error occurred. Please try again.');
+                console.error('Free purchase error:', error);
+                alert('Failed to process free claim. Please try again.');
             }
+        }
+
+        async function handleStripePurchase(user, product) {
+            try {
+                // Show loading state
+                const purchaseButton = document.querySelector('.purchase-button');
+                const originalText = purchaseButton.textContent;
+                purchaseButton.textContent = 'Processing...';
+                purchaseButton.disabled = true;
+                
+                // Get user session for auth
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                
+                if (!session) {
+                    throw new Error('No valid session found');
+                }
+                
+                // Create Stripe checkout session
+                const { data, error } = await window.supabaseClient.functions.invoke(
+                    'create-stripe-checkout',
+                    {
+                        body: {
+                            product_id: productId,
+                            success_url: `${window.location.origin}/purchase-confirmation?session_id={CHECKOUT_SESSION_ID}&product=${productId}&item=${encodeURIComponent(product.name)}&price=${encodeURIComponent(product.price)}`,
+                            cancel_url: `${window.location.origin}/product-overview?product=${productId}&canceled=true`
+                        },
+                        headers: {
+                            'Authorization': `Bearer ${session.access_token}`
+                        }
+                    }
+                );
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (!data || !data.checkout_url) {
+                    throw new Error('Failed to create checkout session');
+                }
+                
+                // Redirect to Stripe Checkout
+                window.location.href = data.checkout_url;
+                
+            } catch (error) {
+                console.error('Stripe checkout error:', error);
+                let errorMessage = 'Failed to start checkout process. Please try again.';
+                
+                if (error.message === 'Product already owned') {
+                    errorMessage = 'You already own this product!';
+                } else if (error.message === 'Unauthorized') {
+                    errorMessage = 'Please sign in to make a purchase.';
+                } else if (error.message.includes('Product not found')) {
+                    errorMessage = 'Product not available for purchase.';
+                }
+                
+                alert(errorMessage);
+                
+                // Reset button state
+                const purchaseButton = document.querySelector('.purchase-button');
+                if (purchaseButton) {
+                    purchaseButton.textContent = originalText;
+                    purchaseButton.disabled = false;
+                }
+            }
+        }
+
+        function navigateToConfirmation(product) {
+            // Add fade-out animation to the entire page
+            document.body.classList.add('page-fade-out');
+            
+            // Wait for animation to complete before navigating
+            setTimeout(() => {
+                // Get the 'from' parameter to pass it along
+                const urlParams = new URLSearchParams(window.location.search);
+                const fromPage = urlParams.get('from');
+                
+                const params = new URLSearchParams({
+                    item: product.name,
+                    price: product.price,
+                    description: product.description,
+                    product: productId
+                });
+                
+                // Add the 'from' parameter if it exists
+                if (fromPage) {
+                    params.set('from', fromPage);
+                }
+                
+                window.location.href = `purchase-confirmation?${params.toString()}`;
+            }, 300); // Match the animation duration
         }
         
         // Initialize page when DOM is loaded
