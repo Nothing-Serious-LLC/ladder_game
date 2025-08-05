@@ -87,60 +87,60 @@
     <div class="test-section">
         <h2>1. Daily Puzzle</h2>
         <div class="test-links">
-            <a href="../screens/play.html" class="test-link">
+            <a href="../play" class="test-link">
                 Play Today's Puzzle (Default)
             </a>
-            <a href="../screens/play.html?type=daily" class="test-link">
+            <a href="../play?type=daily" class="test-link">
                 Play Today's Puzzle (Explicit)
             </a>
         </div>
-        <p class="note">URL Pattern: <code>play.html?type=daily</code></p>
+        <p class="note">URL Pattern: <code>play?type=daily</code></p>
     </div>
     
     <div class="test-section">
         <h2>2. Free Pack Puzzles</h2>
         <div class="test-links">
-            <a href="../screens/pack-puzzles.html?pack=free-pack" class="test-link orange">
+            <a href="../pack-puzzles?pack=free-pack" class="test-link orange">
                 View Free Pack
             </a>
-            <a href="../screens/play.html?type=pack&pack_id=free-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c" class="test-link orange">
+            <a href="../play?type=pack&pack_id=free-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c" class="test-link orange">
                 Play "Opening Door" (Free Pack #1)
             </a>
-            <a href="../screens/play.html?type=pack&pack_id=free-pack&puzzle_id=5b27483c-af3d-43a7-9580-23a4c14c8b50" class="test-link orange">
+            <a href="../play?type=pack&pack_id=free-pack&puzzle_id=5b27483c-af3d-43a7-9580-23a4c14c8b50" class="test-link orange">
                 Play "Making Breakfast" (Free Pack #2)
             </a>
         </div>
-        <p class="note">URL Pattern: <code>play.html?type=pack&pack_id=free-pack&puzzle_id={uuid}</code></p>
+        <p class="note">URL Pattern: <code>play?type=pack&pack_id=free-pack&puzzle_id={uuid}</code></p>
     </div>
     
     <div class="test-section">
         <h2>3. Complete Pack Puzzles</h2>
         <div class="test-links">
-            <a href="../screens/pack-puzzles.html?pack=complete-pack" class="test-link blue">
+            <a href="../pack-puzzles?pack=complete-pack" class="test-link blue">
                 View Complete Pack (100 Puzzles)
             </a>
-            <a href="../screens/play.html?type=pack&pack_id=complete-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c" class="test-link blue">
+            <a href="../play?type=pack&pack_id=complete-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c" class="test-link blue">
                 Play Any Puzzle from Complete Pack
             </a>
         </div>
-        <p class="note">URL Pattern: <code>play.html?type=pack&pack_id=complete-pack&puzzle_id={uuid}</code></p>
+        <p class="note">URL Pattern: <code>play?type=pack&pack_id=complete-pack&puzzle_id={uuid}</code></p>
         <p class="note">⚠️ Requires purchase to play</p>
     </div>
     
     <div class="test-section">
         <h2>4. Historical/Archived Puzzles</h2>
         <div class="test-links">
-            <a href="../screens/play.html?type=historical&date=2025-07-28" class="test-link">
+            <a href="../play?type=historical&date=2025-07-28" class="test-link">
                 Play Puzzle from July 28, 2025
             </a>
-            <a href="../screens/play.html?type=historical&date=2025-07-29" class="test-link">
+            <a href="../play?type=historical&date=2025-07-29" class="test-link">
                 Play Puzzle from July 29, 2025
             </a>
-            <a href="../screens/play.html?type=historical&date=2025-07-30" class="test-link">
+            <a href="../play?type=historical&date=2025-07-30" class="test-link">
                 Play Puzzle from July 30, 2025
             </a>
         </div>
-        <p class="note">URL Pattern: <code>play.html?type=historical&date=YYYY-MM-DD</code></p>
+        <p class="note">URL Pattern: <code>play?type=historical&date=YYYY-MM-DD</code></p>
     </div>
     
     <div class="test-section">
@@ -150,7 +150,7 @@
             <li>Add to <code>puzzle_packs</code> table</li>
             <li>Add puzzles to <code>puzzle_pack</code> table with <code>pack_id='holiday-pack-2024'</code></li>
             <li>Users purchase via store</li>
-            <li>Play with: <code>play.html?type=pack&pack_id=holiday-pack-2024&puzzle_id={uuid}</code></li>
+            <li>Play with: <code>play?type=pack&pack_id=holiday-pack-2024&puzzle_id={uuid}</code></li>
         </ol>
         <p class="note">No code changes needed - the infrastructure handles it automatically!</p>
     </div>
@@ -169,7 +169,7 @@
     </div>
     
     <div style="margin-top: 40px; text-align: center;">
-        <a href="../screens/home.html" class="test-link">← Back to Home</a>
+        <a href="../home" class="test-link">← Back to Home</a>
     </div>
 </body>
 </html>

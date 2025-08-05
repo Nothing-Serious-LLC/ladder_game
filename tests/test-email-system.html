@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email System Test - Ladder Game</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a1a1a;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .test-section h3 {
+            color: #2d5a87;
+            margin-top: 0;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 10px 10px 0;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        .btn.secondary {
+            background: #6c757d;
+        }
+        .btn.secondary:hover {
+            background: #5a6268;
+        }
+        .result {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            background: #f1f3f4;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        .success {
+            border-left-color: #4CAF50;
+            background: #e8f5e8;
+        }
+        .info {
+            border-left-color: #2196F3;
+            background: #e3f2fd;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Ladder Game - Email System Test</h1>
+        
+        <div class="status" id="status">
+            Ready to test email system...
+        </div>
+
+        <!-- Email Configuration -->
+        <div class="test-section">
+            <h3>📧 Email Configuration</h3>
+            <input type="email" id="testEmail" value="elliottthornburg@gmail.com" placeholder="Test email address">
+            <div class="result info">
+                <strong>Testing with:</strong> elliottthornburg@gmail.com<br>
+                <strong>Project:</strong> btonnmoeaandberyszsm.supabase.co
+            </div>
+        </div>
+
+        <!-- Test 1: Password Reset Email -->
+        <div class="test-section">
+            <h3>🔑 Test 1: Password Reset Email</h3>
+            <p>This will send a password reset email to the specified address.</p>
+            <button class="btn" onclick="testPasswordReset()">Send Password Reset Email</button>
+            <div id="passwordResetResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 2: Magic Link Email -->
+        <div class="test-section">
+            <h3>✨ Test 2: Magic Link Email</h3>
+            <p>This will send a magic link (passwordless login) email.</p>
+            <button class="btn" onclick="testMagicLink()">Send Magic Link Email</button>
+            <div id="magicLinkResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 3: Email Confirmation -->
+        <div class="test-section">
+            <h3>📮 Test 3: Email Confirmation</h3>
+            <p>This will create a new user and send a confirmation email.</p>
+            <input type="password" id="testPassword" placeholder="Test password (min 6 chars)" value="TestPassword123!">
+            <button class="btn" onclick="testEmailConfirmation()">Create User & Send Confirmation</button>
+            <div id="confirmationResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 4: Daily Reminder Test -->
+        <div class="test-section">
+            <h3>🌅 Test 4: Daily Reminder System</h3>
+            <p>This will test the daily reminder Edge Function (requires Edge Functions to be deployed).</p>
+            <button class="btn" onclick="testDailyReminder()">Test Daily Reminder</button>
+            <div id="dailyReminderResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 5: Purchase Confirmation Test -->
+        <div class="test-section">
+            <h3>🛒 Test 5: Purchase Confirmation</h3>
+            <p>This will test the purchase confirmation system (requires Edge Functions to be deployed).</p>
+            <input type="number" id="testAmount" placeholder="Amount in cents (e.g., 999)" value="999">
+            <input type="text" id="testProductName" placeholder="Product name" value="Premium Puzzle Pack">
+            <button class="btn" onclick="testPurchaseConfirmation()">Test Purchase Confirmation</button>
+            <div id="purchaseConfirmationResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 6: Email System Status -->
+        <div class="test-section">
+            <h3>📊 Test 6: Email System Status</h3>
+            <p>Check the status of all email system components.</p>
+            <button class="btn secondary" onclick="checkSystemStatus()">Check System Status</button>
+            <div id="systemStatusResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test All -->
+        <div class="test-section">
+            <h3>🚀 Run All Tests</h3>
+            <button class="btn secondary" onclick="runAllTests()">Test All Email Types</button>
+            <div id="allTestsResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="test-section">
+            <h3>📋 Instructions</h3>
+            <ol>
+                <li><strong>Password Reset:</strong> Tests Supabase's built-in password recovery system</li>
+                <li><strong>Magic Link:</strong> Tests passwordless authentication emails</li>
+                <li><strong>Email Confirmation:</strong> Tests new user signup confirmation emails</li>
+            </ol>
+            <p><strong>Note:</strong> Check the email inbox for elliottthornburg@gmail.com after running tests. Email delivery may take 1-2 minutes.</p>
+        </div>
+    </div>
+
+    <!-- Supabase JavaScript Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'https://btonnmoeaandberyszsm.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0b25ubW9lYWFuZGJlcnlzenNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4MzA5MzMsImV4cCI6MjA2OTQwNjkzM30.hNwKiVxvGum9QFLEWeJM_Ip30PBAmgBAi0nAR6KydZo';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `result ${type}`;
+            element.innerHTML = message;
+        }
+
+        async function testPasswordReset() {
+            updateStatus('Testing password reset email...', 'info');
+            const email = document.getElementById('testEmail').value;
+            
+            try {
+                const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://ladder.game',
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showResult('passwordResetResult', 
+                    `✅ <strong>Password Reset Email Sent Successfully!</strong><br>
+                    Email: ${email}<br>
+                    Status: ${JSON.stringify(data)}<br>
+                    <em>Check your email inbox for the password reset link.</em>`, 
+                    'success'
+                );
+                updateStatus('Password reset email sent!', 'success');
+                
+            } catch (error) {
+                showResult('passwordResetResult', 
+                    `❌ <strong>Error sending password reset email:</strong><br>
+                    ${error.message}`, 
+                    'error'
+                );
+                updateStatus('Password reset email failed', 'error');
+            }
+        }
+
+        async function testMagicLink() {
+            updateStatus('Testing magic link email...', 'info');
+            const email = document.getElementById('testEmail').value;
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: 'https://ladder.game'
+                    }
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showResult('magicLinkResult', 
+                    `✅ <strong>Magic Link Email Sent Successfully!</strong><br>
+                    Email: ${email}<br>
+                    Status: ${JSON.stringify(data)}<br>
+                    <em>Check your email inbox for the magic link.</em>`, 
+                    'success'
+                );
+                updateStatus('Magic link email sent!', 'success');
+                
+            } catch (error) {
+                showResult('magicLinkResult', 
+                    `❌ <strong>Error sending magic link email:</strong><br>
+                    ${error.message}`, 
+                    'error'
+                );
+                updateStatus('Magic link email failed', 'error');
+            }
+        }
+
+        async function testEmailConfirmation() {
+            updateStatus('Testing email confirmation...', 'info');
+            const email = document.getElementById('testEmail').value;
+            const password = document.getElementById('testPassword').value;
+            
+            if (!password || password.length < 6) {
+                showResult('confirmationResult', 
+                    `❌ <strong>Error:</strong> Password must be at least 6 characters long`, 
+                    'error'
+                );
+                return;
+            }
+
+            try {
+                // Create a unique email for testing to avoid conflicts
+                const testEmail = email.replace('@', `+test${Date.now()}@`);
+                
+                const { data, error } = await supabase.auth.signUp({
+                    email: testEmail,
+                    password: password,
+                    options: {
+                        emailRedirectTo: 'https://ladder.game'
+                    }
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                showResult('confirmationResult', 
+                    `✅ <strong>Email Confirmation Sent Successfully!</strong><br>
+                    Test Email: ${testEmail}<br>
+                    User Created: ${data.user ? 'Yes' : 'No'}<br>
+                    Session: ${data.session ? 'Created' : 'Pending confirmation'}<br>
+                    <em>Check your email inbox for the confirmation link.</em><br>
+                    <small><strong>Note:</strong> Used test email variant to avoid conflicts.</small>`, 
+                    'success'
+                );
+                updateStatus('Email confirmation sent!', 'success');
+                
+            } catch (error) {
+                showResult('confirmationResult', 
+                    `❌ <strong>Error sending confirmation email:</strong><br>
+                    ${error.message}`, 
+                    'error'
+                );
+                updateStatus('Email confirmation failed', 'error');
+            }
+        }
+
+        async function testDailyReminder() {
+            updateStatus('Testing daily reminder system...', 'info');
+            
+            try {
+                // Call the daily reminder Edge Function
+                const response = await fetch('https://btonnmoeaandberyszsm.supabase.co/functions/v1/send-daily-reminders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${supabaseKey}` // Using anon key for demo
+                    },
+                    body: JSON.stringify({
+                        test_mode: true,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('dailyReminderResult', 
+                        `✅ <strong>Daily Reminder System Working!</strong><br>
+                        Response: ${JSON.stringify(data, null, 2)}<br>
+                        <em>Check the database for email delivery logs.</em>`, 
+                        'success'
+                    );
+                    updateStatus('Daily reminder test completed!', 'success');
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                showResult('dailyReminderResult', 
+                    `❌ <strong>Daily Reminder Test Failed:</strong><br>
+                    ${error.message}<br>
+                    <em>Make sure Edge Functions are deployed and configured.</em>`, 
+                    'error'
+                );
+                updateStatus('Daily reminder test failed', 'error');
+            }
+        }
+
+        async function testPurchaseConfirmation() {
+            updateStatus('Testing purchase confirmation...', 'info');
+            const amount = parseInt(document.getElementById('testAmount').value) || 999;
+            const productName = document.getElementById('testProductName').value || 'Premium Puzzle Pack';
+            
+            try {
+                // Call the purchase confirmation Edge Function
+                const response = await fetch('https://btonnmoeaandberyszsm.supabase.co/functions/v1/send-purchase-confirmation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${supabaseKey}` // Using anon key for demo
+                    },
+                    body: JSON.stringify({
+                        user_id: 'test-user-id',
+                        user_email: 'elliottthornburg@gmail.com',
+                        user_name: 'Elliott (Test)',
+                        product_name: productName,
+                        amount: amount,
+                        currency: 'USD',
+                        transaction_id: `test_txn_${Date.now()}`,
+                        purchase_date: new Date().toISOString(),
+                        pack_id: 'test_pack_123',
+                        is_free_pack: false
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('purchaseConfirmationResult', 
+                        `✅ <strong>Purchase Confirmation System Working!</strong><br>
+                        Product: ${productName}<br>
+                        Amount: $${(amount / 100).toFixed(2)}<br>
+                        Response: ${JSON.stringify(data, null, 2)}<br>
+                        <em>Check email for purchase confirmation.</em>`, 
+                        'success'
+                    );
+                    updateStatus('Purchase confirmation test completed!', 'success');
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                showResult('purchaseConfirmationResult', 
+                    `❌ <strong>Purchase Confirmation Test Failed:</strong><br>
+                    ${error.message}<br>
+                    <em>Make sure Edge Functions are deployed and configured.</em>`, 
+                    'error'
+                );
+                updateStatus('Purchase confirmation test failed', 'error');
+            }
+        }
+
+        async function checkSystemStatus() {
+            updateStatus('Checking email system status...', 'info');
+            
+            try {
+                // Query the email system status view
+                const { data, error } = await supabase
+                    .from('email_system_status')
+                    .select('*');
+                
+                if (error) {
+                    throw error;
+                }
+                
+                let statusHtml = '<strong>📊 Email System Status:</strong><br><br>';
+                
+                data.forEach(component => {
+                    statusHtml += `<strong>${component.component}:</strong> ${component.status}<br>`;
+                    if (component.schedule) {
+                        statusHtml += `Schedule: ${component.schedule}<br>`;
+                    }
+                    statusHtml += '<br>';
+                });
+                
+                // Also check recent email activity
+                const { data: recentEmails, error: emailError } = await supabase
+                    .from('email_deliveries')
+                    .select('email_type, sent_at, status')
+                    .order('sent_at', { ascending: false })
+                    .limit(5);
+                
+                if (!emailError && recentEmails.length > 0) {
+                    statusHtml += '<strong>📧 Recent Email Activity:</strong><br>';
+                    recentEmails.forEach(email => {
+                        statusHtml += `${email.email_type}: ${email.status} (${new Date(email.sent_at).toLocaleString()})<br>`;
+                    });
+                } else {
+                    statusHtml += '<strong>📧 Recent Email Activity:</strong> No recent emails found<br>';
+                }
+                
+                showResult('systemStatusResult', statusHtml, 'info');
+                updateStatus('System status check completed!', 'success');
+                
+            } catch (error) {
+                showResult('systemStatusResult', 
+                    `❌ <strong>System Status Check Failed:</strong><br>
+                    ${error.message}`, 
+                    'error'
+                );
+                updateStatus('System status check failed', 'error');
+            }
+        }
+
+        async function runAllTests() {
+            updateStatus('Running all email tests...', 'info');
+            showResult('allTestsResult', '🔄 <strong>Running all tests...</strong>', 'info');
+            
+            let results = [];
+            
+            // Test 1: Password Reset
+            try {
+                await testPasswordReset();
+                results.push('✅ Password Reset: Success');
+            } catch (e) {
+                results.push('❌ Password Reset: Failed');
+            }
+            
+            // Wait 2 seconds between tests
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Test 2: Magic Link
+            try {
+                await testMagicLink();
+                results.push('✅ Magic Link: Success');
+            } catch (e) {
+                results.push('❌ Magic Link: Failed');
+            }
+            
+            // Wait 2 seconds between tests
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Test 3: Email Confirmation
+            try {
+                await testEmailConfirmation();
+                results.push('✅ Email Confirmation: Success');
+            } catch (e) {
+                results.push('❌ Email Confirmation: Failed');
+            }
+            
+            // Wait 2 seconds between tests
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Test 4: Daily Reminder (if Edge Functions are deployed)
+            try {
+                await testDailyReminder();
+                results.push('✅ Daily Reminder: Success');
+            } catch (e) {
+                results.push('⚠️ Daily Reminder: Not deployed or failed');
+            }
+            
+            // Wait 2 seconds between tests
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Test 5: Purchase Confirmation (if Edge Functions are deployed)
+            try {
+                await testPurchaseConfirmation();
+                results.push('✅ Purchase Confirmation: Success');
+            } catch (e) {
+                results.push('⚠️ Purchase Confirmation: Not deployed or failed');
+            }
+            
+            // System Status Check
+            try {
+                await checkSystemStatus();
+                results.push('✅ System Status: Checked');
+            } catch (e) {
+                results.push('⚠️ System Status: Check failed');
+            }
+            
+            showResult('allTestsResult', 
+                `<strong>🎯 All Tests Complete!</strong><br><br>
+                ${results.join('<br>')}<br><br>
+                <em>Check elliottthornburg@gmail.com for all test emails.</em><br>
+                <small>⚠️ indicates Edge Functions may not be deployed yet.</small>`, 
+                'success'
+            );
+            updateStatus('All tests completed!', 'success');
+        }
+
+        // Initialize
+        updateStatus('Email test system ready!', 'success');
+    </script>
+</body>
+</html>

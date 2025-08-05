@@ -357,7 +357,7 @@
                     <a href="#" class="primary-button" id="start-playing-btn">
                         Start Playing
                     </a>
-                    <a href="./home.html" class="secondary-button">
+                    <a href="./home" class="secondary-button">
                         Back to Home
                     </a>
                 </div>
@@ -395,9 +395,9 @@
             const startPlayingBtn = document.getElementById('start-playing-btn');
             if (startPlayingBtn) {
                 if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack') {
-                    startPlayingBtn.href = `./pack-puzzles.html?pack=${productId}`;
+                    startPlayingBtn.href = `./pack-puzzles?pack=${productId}`;
                 } else {
-                    startPlayingBtn.href = './home.html';
+                    startPlayingBtn.href = './home';
                 }
             }
         }

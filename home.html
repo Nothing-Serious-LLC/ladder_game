@@ -1494,7 +1494,7 @@
                     <div class="packs-grid" id="packs-showcase-content">
                         <!-- Content will be loaded dynamically -->
                     </div>
-                    <button class="view-all-button" id="packs-view-all-button" onclick="window.location.href='store.html'">
+                    <button class="view-all-button" id="packs-view-all-button" onclick="window.location.href='store'">
                         Browse puzzles
                     </button>
                 </div>
@@ -1525,7 +1525,7 @@
                             <div class="stat-label">Success</div>
                         </div>
                     </div>
-                    <button class="view-all-button" onclick="window.location.href='../screens/statistics.html'">View Details</button>
+                    <button class="view-all-button" onclick="window.location.href='./statistics'">View Details</button>
                 </div>
             </div>
             
@@ -1544,7 +1544,7 @@
                         </div>
                     </div>
                     <div class="profile-actions">
-                        <button class="profile-button primary" onclick="window.location.href='../screens/settings.html'">Edit Profile</button>
+                        <button class="profile-button primary" onclick="window.location.href='./settings'">Edit Profile</button>
                         <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
                     </div>
                 </div>
@@ -1632,7 +1632,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             if (!session) {
                 // Redirect to signup if not logged in
-                window.location.href = './signup.html';
+                window.location.href = './signup';
                 return;
             }
             
@@ -2159,7 +2159,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     // Always show exactly 2 packs based on ownership
                     sectionTitle.textContent = 'My Puzzles';
                     viewAllButton.textContent = 'Browse puzzles';
-                    viewAllButton.onclick = () => window.location.href = 'store.html';
+                    viewAllButton.onclick = () => window.location.href = 'store';
                     
                     // Load completion counts for owned packs
                     const { data: completions } = await supabase
@@ -2355,7 +2355,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 if (packsShowcaseContent && sectionTitle) {
                     sectionTitle.textContent = 'Browse Puzzle Packs';
                     packsShowcaseContent.innerHTML = `
-                        <div class="pack-card-large available" onclick="window.location.href='store.html'">
+                        <div class="pack-card-large available" onclick="window.location.href='store'">
                             <div class="pack-logo">
                                 <img src="../assets/puzzle.png" alt="Browse Packs">
                             </div>
@@ -2547,7 +2547,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 if (error) throw error;
                 
                 // Redirect to main game
-                window.location.href = '../index.html';
+                window.location.href = '/';
             } catch (error) {
                 console.error('Error signing out:', error);
                 alert('Error signing out. Please try again.');
@@ -2559,7 +2559,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             trackPuzzleStart();
             
             // Navigate to new play screen for daily puzzle
-            window.location.href = './play.html?type=daily';
+            window.location.href = './play?type=daily';
         };
         
         async function trackPuzzleStart() {
@@ -2597,11 +2597,11 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
         }
         
         window.viewStatistics = function() {
-            window.location.href = 'statistics.html';
+            window.location.href = 'statistics';
         };
         
         window.viewProduct = function(productId) {
-            window.location.href = `product-overview.html?product=${productId}&from=home`;
+            window.location.href = `product-overview?product=${productId}&from=home`;
         };
         
         window.playPuzzlePack = function(packType) {
@@ -2613,13 +2613,13 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             // Navigate to puzzle pack selection
             if (packType === 'free') {
-                window.location.href = './pack-puzzles.html?pack=free-pack';
+                window.location.href = './pack-puzzles?pack=free-pack';
             } else if (packType === 'complete') {
-                window.location.href = './pack-puzzles.html?pack=complete-pack';
+                window.location.href = './pack-puzzles?pack=complete-pack';
             } else if (packType === 'puzzle') {
-                window.location.href = './pack-puzzles.html?pack=puzzle-pack';
+                window.location.href = './pack-puzzles?pack=puzzle-pack';
             } else if (packType === 'archive') {
-                window.location.href = './pack-puzzles.html?pack=archive';
+                window.location.href = './pack-puzzles?pack=archive';
             }
         };
         

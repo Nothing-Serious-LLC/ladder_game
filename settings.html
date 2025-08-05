@@ -360,7 +360,7 @@
             </div>
         </header>
         
-        <a href="../screens/home.html" class="back-button" style="margin-top: 40px;">
+        <a href="./home" class="back-button" style="margin-top: 40px;">
             ← Back to Home
         </a>
         
@@ -470,7 +470,7 @@
                     <div class="setting-description">View our terms of service and user agreement</div>
                 </div>
                 <div class="setting-control">
-                    <a href="./terms-and-conditions.html" class="button secondary">View Terms</a>
+                    <a href="./terms-and-conditions" class="button secondary">View Terms</a>
                 </div>
             </div>
             
@@ -480,7 +480,7 @@
                     <div class="setting-description">Learn how we protect and use your data</div>
                 </div>
                 <div class="setting-control">
-                    <a href="./privacy-policy.html" class="button secondary">View Policy</a>
+                    <a href="./privacy-policy" class="button secondary">View Policy</a>
                 </div>
             </div>
             
@@ -490,7 +490,7 @@
                     <div class="setting-description">Information about cookies and tracking</div>
                 </div>
                 <div class="setting-control">
-                    <a href="./cookies-policy.html" class="button secondary">View Cookies</a>
+                    <a href="./cookies-policy" class="button secondary">View Cookies</a>
                 </div>
             </div>
         </div>
@@ -535,7 +535,7 @@
                 const { data: { user }, error: userError } = await _supabase.auth.getUser();
                 if (userError || !user) {
                     console.log('No authenticated user');
-                    window.location.href = '../screens/signup.html';
+                    window.location.href = './signup';
                     return;
                 }
                 
@@ -724,7 +724,7 @@
                 if (signOutError) throw signOutError;
                 
                 alert('Your account and all data have been permanently deleted.');
-                window.location.href = '../index.html';
+                window.location.href = '/';
                 
             } catch (error) {
                 console.error('Error deleting account:', error);

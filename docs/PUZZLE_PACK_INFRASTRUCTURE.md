@@ -149,22 +149,22 @@ INSERT INTO puzzle_pack (pack_id, theme, words, pack_level) VALUES
 
 ### Daily Puzzle
 ```
-https://yourdomain.com/screens/play.html
+https://yourdomain.com/play
 ```
 
 ### Free Pack Puzzle
 ```
-https://yourdomain.com/screens/play.html?type=pack&pack_id=free-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c
+https://yourdomain.com/play?type=pack&pack_id=free-pack&puzzle_id=bf9a9c50-e532-4654-bf1d-cd02c5c2926c
 ```
 
 ### Complete Pack Puzzle
 ```
-https://yourdomain.com/screens/play.html?type=pack&pack_id=complete-pack&puzzle_id=any-puzzle-uuid
+https://yourdomain.com/play?type=pack&pack_id=complete-pack&puzzle_id=any-puzzle-uuid
 ```
 
 ### Historical Puzzle
 ```
-https://yourdomain.com/screens/play.html?type=historical&date=2024-07-15
+https://yourdomain.com/play?type=historical&date=2024-07-15
 ```
 
 ## Future Enhancements

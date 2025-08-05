@@ -621,7 +621,7 @@
             currentFolder = urlParams.get('folder') || '';
             
             if (!packId) {
-                window.location.href = './home.html';
+                window.location.href = './home';
                 return;
             }
             
@@ -674,7 +674,7 @@
             try {
                 const { data: { user } } = await supabaseClient.auth.getUser();
                 if (!user) {
-                    window.location.href = './signup.html';
+                    window.location.href = './signup';
                     return;
                 }
                 
@@ -696,7 +696,7 @@
                 
                 if (!canAccessFreePack && !canAccessPack) {
                     alert('You do not own this puzzle pack');
-                    window.location.href = './home.html';
+                    window.location.href = './home';
                     return;
                 }
                 
@@ -709,7 +709,7 @@
                 
                 if (!packInfo) {
                     alert('Puzzle pack not found');
-                    window.location.href = './home.html';
+                    window.location.href = './home';
                     return;
                 }
                 
@@ -860,7 +860,7 @@
             if (window.history.length > 1) {
                 window.history.back();
             } else {
-                window.location.href = './store.html';
+                window.location.href = './store';
             }
         };
         
@@ -869,7 +869,7 @@
             const packId = urlParams.get('pack');
             
             // Navigate to play screen with pack puzzle parameters
-            window.location.href = `./play.html?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
+            window.location.href = `./play?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
         };
         
         // Enhanced functionality for new pack types
@@ -1063,7 +1063,7 @@
         };
         
         window.playHistoricalPuzzle = function(puzzleDate) {
-            window.location.href = `./play.html?type=daily&date=${puzzleDate}`;
+            window.location.href = `./play?type=daily&date=${puzzleDate}`;
         };
         
         // Removed duplicate archive pack initialization - now handled in main DOMContentLoaded

@@ -312,9 +312,9 @@
             
             <div class="agreement-text" style="font-size: 10px; color: var(--gray-400); margin: 20px 0 0 0; text-align: center; line-height: 1.3;">
                 By signing up, you agree to our 
-                <a href="./terms-and-conditions.html" style="color: var(--gray-400); text-decoration: underline;">Terms</a>, 
-                <a href="./privacy-policy.html" style="color: var(--gray-400); text-decoration: underline;">Privacy</a>, 
-                and <a href="./cookies-policy.html" style="color: var(--gray-400); text-decoration: underline;">Cookies</a> policies.
+                <a href="./terms-and-conditions" style="color: var(--gray-400); text-decoration: underline;">Terms</a>, 
+                <a href="./privacy-policy" style="color: var(--gray-400); text-decoration: underline;">Privacy</a>, 
+                and <a href="./cookies-policy" style="color: var(--gray-400); text-decoration: underline;">Cookies</a> policies.
             </div>
         </div>
     </div>
@@ -385,35 +385,58 @@
                 window.history.back();
             } else {
                 // Fallback to main game page
-                window.location.href = '../index.html';
+                window.location.href = '/';
             }
         }
         
-        function smoothTransitionToHome(button, successText) {
+        function smoothTransitionToHome(button, successText, confirmationMessage = null) {
             // Update button to show success
             button.textContent = successText;
             button.style.background = 'var(--primary-green)';
+            
+            // Show confirmation message if provided
+            if (confirmationMessage) {
+                // Create a temporary message element
+                const messageDiv = document.createElement('div');
+                messageDiv.style.cssText = `
+                    background: var(--primary-green);
+                    color: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    margin: 15px 0;
+                    text-align: center;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    animation: slideIn 0.3s ease-out;
+                `;
+                messageDiv.textContent = confirmationMessage;
+                
+                // Insert after the form
+                const form = document.querySelector('.signup-form');
+                form.parentNode.insertBefore(messageDiv, form.nextSibling);
+            }
             
             // Check if user came from completion/failure screen
             const urlParams = new URLSearchParams(window.location.search);
             const fromCompletion = urlParams.get('from') === 'completion';
             const fromFailure = urlParams.get('from') === 'failure';
             
-            // Start fade out after brief delay to show success state
+            // Start fade out after brief delay to show success state (longer if message shown)
+            const delay = confirmationMessage ? 2500 : 200;
             setTimeout(() => {
                 document.body.classList.add('fade-out');
                 
                 // Navigate after fade completes
                 setTimeout(() => {
-                    let targetUrl = './home.html';
+                    let targetUrl = './home';
                     if (fromCompletion) {
-                        targetUrl = './home.html?completed=true';
+                        targetUrl = './home?completed=true';
                     } else if (fromFailure) {
-                        targetUrl = './home.html?failed=true';
+                        targetUrl = './home?failed=true';
                     }
                     window.location.href = targetUrl;
                 }, 300); // Match the CSS transition duration
-            }, 200); // Brief delay to show success state
+            }, delay);
         }
         
         async function handleSignup(event) {
@@ -442,8 +465,16 @@
                     throw error;
                 }
                 
-                // Show success state and smooth transition
-                smoothTransitionToHome(submitButton, 'Success!');
+                // Check if email confirmation was sent
+                const emailSent = data.user && !data.session;
+                
+                if (emailSent) {
+                    // Show confirmation email message and smooth transition
+                    smoothTransitionToHome(submitButton, 'Account Created!', 'We sent a confirmation email to secure your account, but you can start playing right away!');
+                } else {
+                    // User is already confirmed (shouldn't happen in normal flow)
+                    smoothTransitionToHome(submitButton, 'Welcome!');
+                }
                 
             } catch (error) {
                 console.error('Signup error:', error);
@@ -494,7 +525,10 @@
                 if (error.message.includes('Invalid login credentials')) {
                     errorMessage = 'Invalid email or password. Please check your credentials and try again.';
                 } else if (error.message.includes('Email not confirmed')) {
-                    errorMessage = 'Please check your email and confirm your account before signing in.';
+                    // Allow unconfirmed users to sign in but show a friendly reminder
+                    const confirmationMessage = 'We sent you a confirmation email to secure your account. You can confirm it anytime from your email.';
+                    smoothTransitionToHome(submitButton, 'Welcome back!', confirmationMessage);
+                    return; // Exit early to avoid showing error
                 }
                 
                 alert(`Error signing in: ${errorMessage}`);

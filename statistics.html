@@ -796,7 +796,7 @@
     </div>
     
     <div class="container">
-        <a href="home.html" class="back-button">← Back</a>
+        <a href="home" class="back-button">← Back</a>
         
 
 
@@ -1203,7 +1203,7 @@
                                 </div>
                             </div>
                             
-                            <button class="play-button" onclick="window.location.href='../index.html'" style="margin-top: 20px; background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            <button class="play-button" onclick="window.location.href='/'" style="margin-top: 20px; background: var(--primary-green); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer;">
                                 Play Today's Puzzle
                             </button>
                         </div>
@@ -1335,7 +1335,7 @@
         
         window.playArchivePuzzle = function(puzzleDate, puzzleNumber) {
             // Navigate to main game with archive puzzle parameters
-            window.location.href = `../index.html?archive=true&date=${puzzleDate}&puzzle=${puzzleNumber}`;
+            window.location.href = `/?archive=true&date=${puzzleDate}&puzzle=${puzzleNumber}`;
         };
         
         function showNormalLoading() {
@@ -1451,7 +1451,7 @@
                         // They have some history but we're viewing a day without data
                         showNoDataMessage("No puzzle data for this period", {
                             text: "Buy Archive",
-                            onclick: "window.location.href='product-overview.html?product=archive'"
+                            onclick: "window.location.href='product-overview?product=archive'"
                         });
                     }
                 } else {

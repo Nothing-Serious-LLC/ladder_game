@@ -2799,7 +2799,7 @@
                 <h3 class="signup-title">Want more puzzles?</h3>
                 <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
                 <div class="signup-buttons">
-                    <button class="signup-button primary" onclick="window.location.href='./signup.html'">Sign Up</button>
+                    <button class="signup-button primary" onclick="window.location.href='./signup'">Sign Up</button>
                 </div>
             </div>
         </div>
@@ -3135,7 +3135,7 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                         if (isAuthenticated && hasPlayedToday) {
                             // Authenticated user who has played - redirect to home screen with timer
                             const gameDay = getGameDayString();
-                            window.location.href = `./home.html?played=true&date=${gameDay}`;
+                            window.location.href = `./home?played=true&date=${gameDay}`;
                             return;
                         } else if (!isAuthenticated && hasPlayedToday) {
                             // Non-authenticated user who has played - show countdown screen with signup option
@@ -5502,13 +5502,13 @@ https://ladder.game/`;
                         if (isAuthenticated) {
                             // For authenticated users, go to home screen
                             homeButton.onclick = () => {
-                                window.location.href = `./home.html`;
+                                window.location.href = `./home`;
                             };
                         } else {
                             // For non-authenticated users, show signup screen
                             homeButton.textContent = 'Sign Up';
                             homeButton.onclick = () => {
-                                window.location.href = `./signup.html?from=${pageType}`;
+                                window.location.href = `./signup?from=${pageType}`;
                             };
                         }
                     }
@@ -5550,7 +5550,7 @@ https://ladder.game/`;
                             if (returnPackCard && returnToPackBtn) {
                                 returnPackCard.style.display = 'flex';
                                 returnToPackBtn.onclick = () => {
-                                    window.location.href = `./pack-puzzles.html?pack=${packId}`;
+                                    window.location.href = `./pack-puzzles?pack=${packId}`;
                                 };
                                 console.log('Return to pack button set up for:', packId);
                             }
@@ -5574,7 +5574,7 @@ https://ladder.game/`;
                                 returnPackCard.style.display = 'flex';
                                 returnToPackBtn.textContent = 'Browse';
                                 returnToPackBtn.onclick = () => {
-                                    window.location.href = './home.html'; // Or archives page when available
+                                    window.location.href = './home'; // Or archives page when available
                                 };
                             }
                             
@@ -5622,7 +5622,7 @@ https://ladder.game/`;
                         nextPuzzleCard.style.display = 'flex';
                         nextPuzzleBtn.onclick = () => {
                             const nextPuzzle = puzzles[currentIndex + 1];
-                            window.location.href = `./play.html?type=pack&pack_id=${packId}&puzzle_id=${nextPuzzle.id}`;
+                            window.location.href = `./play?type=pack&pack_id=${packId}&puzzle_id=${nextPuzzle.id}`;
                         };
                     } else {
                         // No more puzzles in pack
@@ -5671,13 +5671,13 @@ https://ladder.game/`;
                                         `;
                                         primaryBtn.style.display = 'block';
                                         primaryBtn.onclick = () => {
-                                            window.location.href = './store.html';
+                                            window.location.href = './store';
                                         };
                                         
                                         secondaryBtn.textContent = 'Browse Store';
                                         secondaryBtn.style.display = 'block';
                                         secondaryBtn.onclick = () => {
-                                            window.location.href = './store.html';
+                                            window.location.href = './store';
                                         };
                                     } else if (hasFreepack) {
                                         // User has free pack but no others - offer store
@@ -5688,13 +5688,13 @@ https://ladder.game/`;
                                         `;
                                         primaryBtn.style.display = 'block';
                                         primaryBtn.onclick = () => {
-                                            window.location.href = './pack-puzzles.html?pack=free-pack';
+                                            window.location.href = './pack-puzzles?pack=free-pack';
                                         };
                                         
                                         secondaryBtn.textContent = 'Browse Store';
                                         secondaryBtn.style.display = 'block';
                                         secondaryBtn.onclick = () => {
-                                            window.location.href = './store.html';
+                                            window.location.href = './store';
                                         };
                                     } else {
                                         // User has no packs - offer free pack
@@ -5705,13 +5705,13 @@ https://ladder.game/`;
                                         `;
                                         primaryBtn.style.display = 'block';
                                         primaryBtn.onclick = () => {
-                                            window.location.href = './product-overview.html?product=free-pack';
+                                            window.location.href = './product-overview?product=free-pack';
                                         };
                                         
                                         secondaryBtn.textContent = 'Browse Store';
                                         secondaryBtn.style.display = 'block';
                                         secondaryBtn.onclick = () => {
-                                            window.location.href = './store.html';
+                                            window.location.href = './store';
                                         };
                                     }
                                     
@@ -5725,7 +5725,7 @@ https://ladder.game/`;
                                     `;
                                     primaryBtn.style.display = 'block';
                                     primaryBtn.onclick = () => {
-                                        window.location.href = './signup.html?from=daily-completion';
+                                        window.location.href = './signup?from=daily-completion';
                                     };
                                     
                                     recommendationsCard.style.display = 'block';
@@ -5803,7 +5803,7 @@ https://ladder.game/`;
                             <div class="empty-puzzles">
                                 <div class="empty-puzzles-icon">📦</div>
                                 <p>Get more puzzles to continue playing!</p>
-                                <a href="./store.html" class="store-link-button">Browse Store</a>
+                                <a href="./store" class="store-link-button">Browse Store</a>
                             </div>
                         `;
                         morePuzzlesCard.style.display = 'block';
@@ -5819,7 +5819,7 @@ https://ladder.game/`;
                                 <img src="../assets/puzzle.png" alt="Puzzle" style="width: 32px; height: 32px; transform: scale(1.2);">
                             </div>
                             <p>Discover more puzzle collections</p>
-                            <a href="./store.html" class="store-link-button">Browse Store</a>
+                            <a href="./store" class="store-link-button">Browse Store</a>
                         </div>
                     `;
                     morePuzzlesCard.style.display = 'block';
@@ -6380,13 +6380,13 @@ https://ladder.game/`;
             
             if (puzzleType === 'pack' && packId) {
                 // Go back to the specific puzzle pack
-                window.location.href = `./pack-puzzles.html?pack=${packId}`;
+                window.location.href = `./pack-puzzles?pack=${packId}`;
             } else if (puzzleType === 'archive') {
                 // Go back to home (or archives page when available)
-                window.location.href = './home.html';
+                window.location.href = './home';
             } else {
                 // Default: go back to home for daily puzzles
-                window.location.href = './home.html';
+                window.location.href = './home';
             }
         };
         

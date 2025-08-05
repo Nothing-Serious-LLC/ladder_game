@@ -204,7 +204,7 @@ if (window.cordova && product.price !== 'Free') {
 ### **URL Parameters**
 Test confirmation screen directly:
 ```
-/screens/purchase-confirmation.html?item=Free+Pack&price=Free&description=10+starter+puzzles
+/purchase-confirmation?item=Free+Pack&price=Free&description=10+starter+puzzles
 ```
 
 ## Security Considerations

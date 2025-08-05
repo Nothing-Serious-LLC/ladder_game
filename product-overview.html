@@ -391,7 +391,7 @@
             const product = products[productId];
             if (!product) {
                 // Fallback to puzzle pack if product not found
-                window.location.href = 'product-overview.html?product=puzzle-pack';
+                window.location.href = 'product-overview?product=puzzle-pack';
                 return;
             }
             
@@ -441,15 +441,15 @@
                 // Navigate back to the appropriate page
                 switch (fromPage) {
                                     case 'my-puzzles':
-                    window.location.href = 'store.html';
+                    window.location.href = 'store';
                     break;
                     case 'home':
-                        window.location.href = 'home.html';
+                        window.location.href = 'home';
                         break;
                     case 'store':
                     default:
                         // Default to store if no 'from' parameter or unrecognized value
-                        window.location.href = 'store.html';
+                        window.location.href = 'store';
                         break;
                 }
             }
@@ -464,7 +464,7 @@
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if (!user) {
                     alert('Please sign in to make a purchase');
-                    window.location.href = './signup.html';
+                    window.location.href = './signup';
                     return;
                 }
                 
@@ -523,7 +523,7 @@
                         params.set('from', fromPage);
                     }
                     
-                    window.location.href = `purchase-confirmation.html?${params.toString()}`;
+                    window.location.href = `purchase-confirmation?${params.toString()}`;
                 }, 300); // Match the animation duration
                 
             } catch (error) {

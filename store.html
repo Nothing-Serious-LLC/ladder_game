@@ -411,7 +411,7 @@
     </div>
     
     <div class="container">
-        <a href="home.html" class="back-button">← Back</a>
+        <a href="home" class="back-button">← Back</a>
         
         <!-- My Puzzle Packs Section -->
         <div id="my-packs-section" style="display: none;">
@@ -483,11 +483,11 @@
         
         function goBack() {
             // Always go back to home screen to avoid navigation loops
-            window.location.href = 'home.html';
+            window.location.href = 'home';
         }
         
         function viewProduct(productId) {
-            window.location.href = `product-overview.html?product=${productId}&from=store`;
+            window.location.href = `product-overview?product=${productId}&from=store`;
         }
         
         async function loadPurchasesAndUpdateStore() {
@@ -610,13 +610,13 @@
         function playPuzzlePack(packType) {
             // Navigate to puzzle pack selection
             if (packType === 'free') {
-                window.location.href = './pack-puzzles.html?pack=free-pack';
+                window.location.href = './pack-puzzles?pack=free-pack';
             } else if (packType === 'complete') {
-                window.location.href = './pack-puzzles.html?pack=complete-pack';
+                window.location.href = './pack-puzzles?pack=complete-pack';
             } else if (packType === 'puzzle') {
-                window.location.href = './pack-puzzles.html?pack=puzzle-pack';
+                window.location.href = './pack-puzzles?pack=puzzle-pack';
             } else if (packType === 'archive') {
-                window.location.href = './pack-puzzles.html?pack=archive';
+                window.location.href = './pack-puzzles?pack=archive';
             }
         }
         
