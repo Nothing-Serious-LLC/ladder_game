@@ -983,15 +983,15 @@
         async function loadHistoricalPack(userId) {
             try {
                 // Load user's daily puzzle completions
-                const { data: completions } = await supabaseClient
+                const { data: completionData } = await supabaseClient
                     .from('puzzle_completions')
                     .select('puzzle_date, puzzle_name, completed, completion_time, hints_used, tries_used')
                     .eq('user_id', userId)
                     .order('puzzle_date', { ascending: false });
                 
                 completions = {};
-                if (completions) {
-                    completions.forEach(comp => {
+                if (completionData) {
+                    completionData.forEach(comp => {
                         completions[comp.puzzle_date] = comp;
                     });
                 }
