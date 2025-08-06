@@ -3043,7 +3043,7 @@
                 <h3 class="signup-title">Want more puzzles?</h3>
                 <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
                 <div class="signup-buttons">
-                    <button class="signup-button primary" onclick="window.location.href='./screens/signup.html'">Sign Up</button>
+                    <button class="signup-button primary" onclick="window.location.href='./signup.html'">Sign Up</button>
                 </div>
             </div>
         </div>
@@ -3335,7 +3335,7 @@ import { getGameDayString } from './assets/js/timeUtils.js';
                     if (isAuthenticated && hasPlayedToday) {
                         // Authenticated user who has played - redirect to home screen with timer
                         const gameDay = getGameDayString();
-                        window.location.href = `./screens/home.html?played=true&date=${gameDay}`;
+                        window.location.href = `./home.html?played=true&date=${gameDay}`;
                     } else if (isAuthenticated && !hasPlayedToday) {
                         // Authenticated user who hasn't played - show intro screen
                         window.gameModule.showLandingPage();
@@ -5707,7 +5707,7 @@ https://ladder.game/`;
                                     const fromParam = storedStats && storedStats.status === 'completed' 
                                         ? 'daily-completion' 
                                         : 'daily-failure';
-                                    window.location.href = `./screens/signup.html?from=${fromParam}`;
+                                    window.location.href = `./signup.html?from=${fromParam}`;
                                 };
                             }
                         }
@@ -5724,7 +5724,7 @@ https://ladder.game/`;
                             const fromParam = storedStats && storedStats.status === 'completed' 
                                 ? 'daily-completion' 
                                 : 'daily-failure';
-                            window.location.href = `./screens/signup.html?from=${fromParam}`;
+                            window.location.href = `./signup.html?from=${fromParam}`;
                         };
                     }
                 }
@@ -5899,7 +5899,7 @@ https://ladder.game/`;
                         // Show signup card for non-authenticated users
                         if (primaryBtn) {
                             primaryBtn.onclick = () => {
-                                window.location.href = './screens/signup.html?from=daily-completion';
+                                window.location.href = './signup.html?from=daily-completion';
                             };
                         }
                         
@@ -5933,7 +5933,7 @@ https://ladder.game/`;
                         <h3 class="more-puzzles-title">Welcome back, <span style="color: var(--primary-green);">${userDisplayName}</span>!</h3>
                         <div class="home-navigation">
                             <p>Access your puzzle dashboard, statistics, and more</p>
-                            <a href="./screens/home.html" class="home-nav-button">Go to Home</a>
+                            <a href="./home.html" class="home-nav-button">Go to Home</a>
                         </div>
                     `;
                     morePuzzlesCard.style.display = 'block';
@@ -5946,7 +5946,7 @@ https://ladder.game/`;
                         <div class="home-navigation">
                             <div class="home-nav-icon">🏠</div>
                             <p>Go to your puzzle dashboard</p>
-                            <a href="./screens/home.html" class="home-nav-button">Go to Home</a>
+                            <a href="./home.html" class="home-nav-button">Go to Home</a>
                         </div>
                     `;
                     morePuzzlesCard.style.display = 'block';
