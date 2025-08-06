@@ -410,11 +410,11 @@
             // Set appropriate start playing link based on product
             const startPlayingBtn = document.getElementById('start-playing-btn');
             if (startPlayingBtn) {
-                if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack' || productId === 'archive') {
-                    startPlayingBtn.href = `./pack-puzzles?pack=${productId}`;
-                } else {
-                    startPlayingBtn.href = './home';
-                }
+                            if (productId === 'free-pack' || productId === 'complete-pack' || productId === 'puzzle-pack' || productId === 'archive') {
+                startPlayingBtn.href = `./pack-puzzles.html?pack=${productId}`;
+            } else {
+                startPlayingBtn.href = './home.html';
+            }
             }
         }
         
