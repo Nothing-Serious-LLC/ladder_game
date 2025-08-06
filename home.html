@@ -13,8 +13,10 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Home - Ladder</title>
-    <meta name="description" content="Your daily word ladder puzzle progress and statistics.">
+    <title>Dashboard - Ladder Word Game | Track Your Progress</title>
+    <meta name="description" content="View your ladder word game progress, daily streaks, and puzzle statistics. Track your improvement in this addictive word chain puzzle game.">
+    <meta name="keywords" content="ladder word game dashboard, word puzzle progress, daily streak, word game statistics, puzzle tracking">
+    <link rel="canonical" href="https://ladder.game/home.html">
     
     <!-- PWA Meta Tags for Full Screen Experience -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1535,7 +1537,7 @@
                             <div class="stat-label">Success</div>
                         </div>
                     </div>
-                    <button class="view-all-button" onclick="window.location.href='./statistics'">View Details</button>
+                    <button class="view-all-button" onclick="window.location.href='./statistics.html'">View Details</button>
                 </div>
             </div>
             
@@ -1554,7 +1556,7 @@
                         </div>
                     </div>
                     <div class="profile-actions">
-                        <button class="profile-button primary" onclick="window.location.href='./settings'">Edit Profile</button>
+                        <button class="profile-button primary" onclick="window.location.href='./settings.html'">Edit Profile</button>
                         <button class="profile-button secondary" onclick="handleLogout()">Sign Out</button>
                     </div>
                 </div>
@@ -1642,7 +1644,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             if (!session) {
                 // Redirect to signup if not logged in
-                window.location.href = './signup';
+                window.location.href = './signup.html';
                 return;
             }
             
@@ -2597,7 +2599,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             trackPuzzleStart();
             
             // Navigate to new play screen for daily puzzle
-            window.location.href = './play?type=daily';
+            window.location.href = './play.html?type=daily';
         };
         
         async function trackPuzzleStart() {
@@ -2651,13 +2653,13 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             
             // Navigate to puzzle pack selection
             if (packType === 'free') {
-                window.location.href = './pack-puzzles?pack=free-pack';
+                window.location.href = './pack-puzzles.html?pack=free-pack';
             } else if (packType === 'complete') {
-                window.location.href = './pack-puzzles?pack=complete-pack';
+                window.location.href = './pack-puzzles.html?pack=complete-pack';
             } else if (packType === 'puzzle') {
-                window.location.href = './pack-puzzles?pack=puzzle-pack';
+                window.location.href = './pack-puzzles.html?pack=puzzle-pack';
             } else if (packType === 'archive') {
-                window.location.href = './pack-puzzles?pack=archive';
+                window.location.href = './pack-puzzles.html?pack=archive';
             }
         };
         

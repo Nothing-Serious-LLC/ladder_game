@@ -658,7 +658,7 @@
             if (window.history.length > 1) {
                 window.history.back();
             } else {
-                window.location.href = './store';
+                window.location.href = './store.html';
             }
         };
         
@@ -681,7 +681,7 @@
             currentFolder = urlParams.get('folder') || '';
             
             if (!packId) {
-                window.location.href = './home';
+                window.location.href = './home.html';
                 return;
             }
             
@@ -734,7 +734,7 @@
             try {
                 const { data: { user } } = await supabaseClient.auth.getUser();
                 if (!user) {
-                    window.location.href = './signup';
+                    window.location.href = './signup.html';
                     return;
                 }
                 
@@ -758,7 +758,7 @@
                 
                 if (!canAccessFreePack && !canAccessPuzzlePack && !canAccessOtherPack) {
                     alert('You do not own this puzzle pack');
-                    window.location.href = './home';
+                    window.location.href = './home.html';
                     return;
                 }
                 
@@ -771,7 +771,7 @@
                 
                 if (!packInfo) {
                     alert('Puzzle pack not found');
-                    window.location.href = './home';
+                    window.location.href = './home.html';
                     return;
                 }
                 

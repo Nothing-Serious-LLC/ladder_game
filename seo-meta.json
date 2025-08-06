@@ -1,0 +1,78 @@
+{
+  "site": {
+    "name": "Ladder Word Game",
+    "domain": "ladder.game",
+    "primaryKeywords": ["ladder word game", "word ladder", "word chain puzzle", "daily word game"],
+    "description": "The premier daily word ladder game where you transform words by changing one letter at a time",
+    "author": "Ladder Game Team",
+    "language": "en-US",
+    "social": {
+      "twitter": "",
+      "facebook": "",
+      "instagram": ""
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Ladder Word Game - Daily Word Chain Puzzle | Free Online",
+      "description": "Play Ladder, the #1 daily word game! Transform words by changing one letter at a time in this addictive word chain puzzle. Free ladder word game with new puzzles daily.",
+      "keywords": "ladder word game, word ladder, word chain puzzle, daily word game, word transformation game, free word puzzle, online word game, vocabulary game, brain training, word ladder puzzle",
+      "priority": "1.0"
+    },
+    "play": {
+      "title": "Play Ladder Word Game - Free Daily Word Chain Puzzle",
+      "description": "Play Ladder word game now! Transform words by changing one letter at a time in this challenging word chain puzzle. Free online word ladder game with daily puzzles.",
+      "keywords": "play ladder word game, word ladder online, word chain puzzle, daily word game, free word puzzle, word transformation game, online puzzle game",
+      "priority": "0.9"
+    },
+    "dashboard": {
+      "title": "Dashboard - Ladder Word Game | Track Your Progress",
+      "description": "View your ladder word game progress, daily streaks, and puzzle statistics. Track your improvement in this addictive word chain puzzle game.",
+      "keywords": "ladder word game dashboard, word puzzle progress, daily streak, word game statistics, puzzle tracking",
+      "priority": "0.9"
+    },
+    "store": {
+      "title": "Store - Ladder Word Game | Unlock Premium Puzzles",
+      "description": "Unlock premium word ladder puzzles and exclusive content! Get access to hundreds of challenging word chain puzzles in the Ladder word game store.",
+      "keywords": "ladder word game store, premium word puzzles, word ladder packs, puzzle store, buy word games",
+      "priority": "0.7"
+    },
+    "signup": {
+      "title": "Sign Up - Ladder Word Game | Join Free Account",
+      "description": "Create your free Ladder word game account! Track your progress, unlock bonus puzzles, and never miss a daily word ladder challenge.",
+      "keywords": "ladder word game signup, word puzzle account, free registration, word game login",
+      "priority": "0.8"
+    }
+  },
+  "structuredData": {
+    "type": "Game",
+    "name": "Ladder Word Game",
+    "alternateNames": ["LADDER", "Word Ladder", "Daily Word Chain", "Word Transformation Game"],
+    "description": "Play Ladder, the premier word ladder game! Transform words by changing one letter at a time in this addictive daily word chain puzzle.",
+    "genre": ["Word Game", "Puzzle Game", "Brain Game", "Word Ladder", "Educational Game"],
+    "gamePlatform": "Web Browser",
+    "operatingSystem": "Cross-platform",
+    "applicationCategory": "Game",
+    "isAccessibleForFree": true,
+    "educationalUse": "Vocabulary building, word recognition, logical thinking, brain training",
+    "audience": "Word game enthusiasts, puzzle lovers, vocabulary builders, brain training enthusiasts"
+  },
+  "competitorKeywords": {
+    "primary": [
+      "wordle alternative",
+      "word ladder game",
+      "daily word puzzle",
+      "word chain game",
+      "vocabulary builder",
+      "word transformation puzzle"
+    ],
+    "longTail": [
+      "free online word ladder game",
+      "daily word chain puzzle game",
+      "transform words one letter at a time",
+      "addictive word puzzle game",
+      "brain training word game",
+      "challenging vocabulary game"
+    ]
+  }
+}

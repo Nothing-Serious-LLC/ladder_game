@@ -13,8 +13,10 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Sign Up - Ladder</title>
-    <meta name="description" content="Sign up for Ladder to track your progress and get daily puzzle reminders.">
+    <title>Sign Up - Ladder Word Game | Join Free Account</title>
+    <meta name="description" content="Create your free Ladder word game account! Track your progress, unlock bonus puzzles, and never miss a daily word ladder challenge.">
+    <meta name="keywords" content="ladder word game signup, word puzzle account, free registration, word game login">
+    <link rel="canonical" href="https://ladder.game/signup.html">
     
     <!-- PWA Meta Tags for Full Screen Experience -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,9 +267,29 @@
             }
             
             .container {
-                padding: 75px 16px 0 16px; /* Proper top padding for mobile header clearance */
+                padding: 120px 16px 0 16px; /* Increased top padding to 160px for mobile header clearance */
                 overflow-x: hidden;
                 box-sizing: border-box;
+            }
+            
+            /* Scale down signup card for better mobile fit */
+            .signup-card {
+                padding: 20px !important; /* Reduced from 30px */
+                margin: 20px auto 0 !important; /* Reduced from 40px top margin */
+                max-width: 350px !important; /* Slightly smaller max width */
+            }
+            
+            .signup-form {
+                gap: 16px !important; /* Reduced from 20px */
+            }
+            
+            .form-input {
+                padding: 12px !important; /* Slightly reduced padding */
+                font-size: 16px !important; /* Ensure no zoom on iOS */
+            }
+            
+            .signup-button {
+                padding: 14px 24px !important; /* Slightly reduced padding */
             }
             
             /* Prevent any content from causing horizontal overflow */
@@ -321,10 +343,10 @@
             </form>
             
             <div class="agreement-text" style="font-size: 10px; color: var(--gray-400); margin: 20px 0 0 0; text-align: center; line-height: 1.3;">
-                By signing up, you agree to our 
-                <a href="./terms-and-conditions" style="color: var(--gray-400); text-decoration: underline;">Terms</a>, 
-                <a href="./privacy-policy" style="color: var(--gray-400); text-decoration: underline;">Privacy</a>, 
-                and <a href="./cookies-policy" style="color: var(--gray-400); text-decoration: underline;">Cookies</a> policies.
+                            By signing up, you agree to our 
+            <a href="./terms-and-conditions.html" style="color: var(--gray-400); text-decoration: underline;">Terms</a>, 
+            <a href="./privacy-policy.html" style="color: var(--gray-400); text-decoration: underline;">Privacy</a>, 
+            and <a href="./cookies-policy.html" style="color: var(--gray-400); text-decoration: underline;">Cookies</a> policies.
             </div>
         </div>
     </div>
@@ -394,8 +416,8 @@
             if (document.referrer && document.referrer.includes(window.location.origin)) {
                 window.history.back();
             } else {
-                // Fallback to main game page
-                window.location.href = '/';
+                // Fallback to main game page (index.html)
+                window.location.href = './index.html';
             }
         }
         
@@ -438,11 +460,11 @@
                 
                 // Navigate after fade completes
                 setTimeout(() => {
-                    let targetUrl = './home';
+                    let targetUrl = './home.html';
                     if (fromCompletion) {
-                        targetUrl = './home?completed=true';
+                        targetUrl = './home.html?completed=true';
                     } else if (fromFailure) {
-                        targetUrl = './home?failed=true';
+                        targetUrl = './home.html?failed=true';
                     }
                     window.location.href = targetUrl;
                 }, 300); // Match the CSS transition duration

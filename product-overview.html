@@ -481,7 +481,7 @@
                 const { data: { user } } = await window.supabaseClient.auth.getUser();
                 if (!user) {
                     alert('Please sign in to make a purchase');
-                    window.location.href = './signup';
+                    window.location.href = './signup.html';
                     return;
                 }
                 

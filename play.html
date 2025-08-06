@@ -13,12 +13,12 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Ladder</title>
-    <meta name="description" content="Play Ladder, the daily word chain puzzle! Transform one word into another by changing one letter at a time. New challenging puzzles every day with weekly difficulty progression.">
-    <meta name="keywords" content="word game, puzzle, daily puzzle, word chain, ladder game, word transformation, vocabulary, brain teaser">
+    <title>Play Ladder Word Game - Free Daily Word Chain Puzzle</title>
+    <meta name="description" content="Play Ladder word game now! Transform words by changing one letter at a time in this challenging word chain puzzle. Free online word ladder game with daily puzzles.">
+    <meta name="keywords" content="play ladder word game, word ladder online, word chain puzzle, daily word game, free word puzzle, word transformation game, online puzzle game">
     <meta name="author" content="Ladder Game">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://ladder.game/">
+    <link rel="canonical" href="https://ladder.game/play.html">
     
     <!-- PWA Meta Tags for Full Screen Experience -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -2809,7 +2809,7 @@
                 <h3 class="signup-title">Want more puzzles?</h3>
                 <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
                 <div class="signup-buttons">
-                    <button class="signup-button primary" onclick="window.location.href='./signup'">Sign Up</button>
+                    <button class="signup-button primary" onclick="window.location.href='./signup.html'">Sign Up</button>
                 </div>
             </div>
         </div>
@@ -5599,7 +5599,7 @@ https://ladder.game/`;
                                 returnPackCard.style.display = 'flex';
                                 returnToPackBtn.textContent = 'Browse';
                                 returnToPackBtn.onclick = () => {
-                                    window.location.href = './home'; // Or archives page when available
+                                    window.location.href = './home.html'; // Or archives page when available
                                 };
                             }
                             
@@ -5696,13 +5696,13 @@ https://ladder.game/`;
                                         `;
                                         primaryBtn.style.display = 'block';
                                         primaryBtn.onclick = () => {
-                                            window.location.href = './store';
+                                            window.location.href = './store.html';
                                         };
                                         
                                         secondaryBtn.textContent = 'Browse Store';
                                         secondaryBtn.style.display = 'block';
                                         secondaryBtn.onclick = () => {
-                                            window.location.href = './store';
+                                            window.location.href = './store.html';
                                         };
                                     } else if (hasFreepack) {
                                         // User has free pack but no others - offer store
@@ -5713,13 +5713,13 @@ https://ladder.game/`;
                                         `;
                                         primaryBtn.style.display = 'block';
                                         primaryBtn.onclick = () => {
-                                            window.location.href = './pack-puzzles?pack=free-pack';
+                                            window.location.href = './pack-puzzles.html?pack=free-pack';
                                         };
                                         
                                         secondaryBtn.textContent = 'Browse Store';
                                         secondaryBtn.style.display = 'block';
                                         secondaryBtn.onclick = () => {
-                                            window.location.href = './store';
+                                            window.location.href = './store.html';
                                         };
                                     } else {
                                         // User has no packs - offer free pack
@@ -5730,13 +5730,13 @@ https://ladder.game/`;
                                         `;
                                         primaryBtn.style.display = 'block';
                                         primaryBtn.onclick = () => {
-                                            window.location.href = './product-overview?product=free-pack';
+                                            window.location.href = './product-overview.html?product=free-pack';
                                         };
                                         
                                         secondaryBtn.textContent = 'Browse Store';
                                         secondaryBtn.style.display = 'block';
                                         secondaryBtn.onclick = () => {
-                                            window.location.href = './store';
+                                            window.location.href = './store.html';
                                         };
                                     }
                                     
@@ -5750,7 +5750,7 @@ https://ladder.game/`;
                                     `;
                                     primaryBtn.style.display = 'block';
                                     primaryBtn.onclick = () => {
-                                        window.location.href = './signup?from=daily-completion';
+                                        window.location.href = './signup.html?from=daily-completion';
                                     };
                                     
                                     recommendationsCard.style.display = 'block';
@@ -5828,7 +5828,7 @@ https://ladder.game/`;
                             <div class="empty-puzzles">
                                 <div class="empty-puzzles-icon">📦</div>
                                 <p>Get more puzzles to continue playing!</p>
-                                <a href="./store" class="store-link-button">Browse Store</a>
+                                <a href="./store.html" class="store-link-button">Browse Store</a>
                             </div>
                         `;
                         morePuzzlesCard.style.display = 'block';
@@ -5844,7 +5844,7 @@ https://ladder.game/`;
                                 <img src="../assets/puzzle.png" alt="Puzzle" style="width: 32px; height: 32px; transform: scale(1.2);">
                             </div>
                             <p>Discover more puzzle collections</p>
-                            <a href="./store" class="store-link-button">Browse Store</a>
+                            <a href="./store.html" class="store-link-button">Browse Store</a>
                         </div>
                     `;
                     morePuzzlesCard.style.display = 'block';
@@ -6408,10 +6408,10 @@ https://ladder.game/`;
                 window.location.href = `./pack-puzzles?pack=${packId}`;
             } else if (puzzleType === 'archive') {
                 // Go back to home (or archives page when available)
-                window.location.href = './home';
+                window.location.href = './home.html';
             } else {
                 // Default: go back to home for daily puzzles
-                window.location.href = './home';
+                window.location.href = './home.html';
             }
         };
         

@@ -1,0 +1,26 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://ladder.game/sitemap.xml
+
+# Disallow private/development files
+Disallow: /docs/
+Disallow: /scripts/
+Disallow: /tests/
+Disallow: /supabase/
+Disallow: /email-templates/
+Disallow: /supabase-email-templates/
+Disallow: /*.md
+Disallow: /local-server.py
+Disallow: /CNAME
+Disallow: /LICENSE
+
+# Allow important assets
+Allow: /assets/
+Allow: /config/
+Allow: /manifest.json
+Allow: /sw.js
+
+# Crawl delay (optional - helps with server load)
+Crawl-delay: 1
