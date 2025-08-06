@@ -2405,6 +2405,61 @@
                 transform: translateY(-1px);
             }
             
+            /* Android PWA Install Card Styles */
+            .pwa-app-info {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+            
+            .pwa-app-icon {
+                width: 64px;
+                height: 64px;
+                border-radius: 16px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            }
+            
+            .pwa-app-details {
+                flex: 1;
+            }
+            
+            .pwa-app-details .pwa-install-title {
+                text-align: left;
+                margin-bottom: 4px;
+                font-size: 1.3rem;
+            }
+            
+            .pwa-install-button {
+                background: #6aaa64;
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 12px 20px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                width: 100%;
+                margin-bottom: 12px;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .pwa-install-button:hover {
+                background: #5c9156;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+            }
+            
+            .install-icon {
+                width: 20px;
+                height: 20px;
+            }
+            
             .card-close {
                 position: absolute;
                 top: 12px;
@@ -2457,6 +2512,31 @@
             
             .failure-pwa-card .pwa-step-text {
                 color: #1a1a1b;
+            }
+            
+            .failure-install-button {
+                background: #ff8c42;
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 12px 20px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                width: 100%;
+                margin-bottom: 12px;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .failure-install-button:hover {
+                background: #e6782a;
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
             }
             
             .more-puzzles-signup-title {
@@ -2791,6 +2871,26 @@
                 </div>
                 <button class="pwa-install-dismiss" onclick="dismissPWACard(this)">Maybe Later</button>
             </div>
+
+            <!-- Android PWA Installation Button Card -->
+            <div class="pwa-install-card card" id="android-pwa-install-card" style="display: none;">
+                <div class="pwa-app-info">
+                    <img src="assets/icons/icon-192.png" alt="LADDER" class="pwa-app-icon">
+                    <div class="pwa-app-details">
+                        <h3 class="pwa-install-title">Install LADDER</h3>
+                        <div class="pwa-install-subtitle">Add to home screen for instant access to daily puzzles!</div>
+                    </div>
+                </div>
+                <button class="pwa-install-button" id="pwa-install-btn" onclick="installPWA()">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="install-icon">
+                        <path d="M12 16L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Install App
+                </button>
+                <button class="pwa-install-dismiss" onclick="dismissPWACard(this)">Maybe Later</button>
+            </div>
             
             <!-- More Puzzles Signup Card for non-authenticated users -->
             <div class="more-puzzles-signup-card card" id="more-puzzles-signup-card" style="display: none;">
@@ -2877,6 +2977,26 @@
                         <div class="pwa-step-text">Scroll down and tap "<span class="highlight-orange">Add to Home Screen</span>"</div>
                     </div>
                 </div>
+                <button class="pwa-install-dismiss" onclick="dismissFailurePWACard(this)">Maybe Later</button>
+            </div>
+
+            <!-- Android PWA Installation Button Card - Orange Theme for Failure -->
+            <div class="pwa-install-card card failure-pwa-card" id="failure-android-pwa-install-card" style="display: none;">
+                <div class="pwa-app-info">
+                    <img src="assets/icons/icon-192.png" alt="LADDER" class="pwa-app-icon">
+                    <div class="pwa-app-details">
+                        <h3 class="pwa-install-title">Install LADDER</h3>
+                        <div class="pwa-install-subtitle">Add to home screen for instant access to daily puzzles!</div>
+                    </div>
+                </div>
+                <button class="pwa-install-button failure-install-button" id="failure-pwa-install-btn" onclick="installPWA()">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="install-icon">
+                        <path d="M12 16L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Install App
+                </button>
                 <button class="pwa-install-dismiss" onclick="dismissFailurePWACard(this)">Maybe Later</button>
             </div>
             
@@ -3188,6 +3308,9 @@ import { getGameDayString } from './assets/js/timeUtils.js';
             
             initializeApp: async () => {
                 try {
+                    // Initialize PWA tracking for Android install prompts
+                    window.gameModule.initializePWATracking();
+                    
                     // Check if we should auto-start the game (skip intro)
                     const urlParams = new URLSearchParams(window.location.search);
                     if (urlParams.get('autostart') === 'true') {
@@ -6259,6 +6382,83 @@ https://ladder.game/`;
                     mobileSoundOff.style.display = 'none';
                     mobileSoundToggle.title = 'Sound On - Click to Disable';
                 }
+            },
+
+            // PWA Installation Variables - moved inside gameModule  
+            deferredPrompt: null,
+            
+            initializePWATracking() {
+                const gameModule = this;
+                
+                // Listen for beforeinstallprompt event (Android)
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    
+                    // Store the event for later use
+                    gameModule.deferredPrompt = e;
+                    
+                    // Show Android install button
+                    gameModule.showAndroidInstallCard();
+                    
+                    // Track that PWA prompt is available (Android user)
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'pwa_prompt_available', {
+                            event_category: 'PWA_Funnel',
+                            event_label: 'Android_Install_Available',
+                            device_type: 'android',
+                            page_location: window.location.pathname
+                        });
+                    }
+                });
+                
+                // Listen for successful PWA installation
+                window.addEventListener('appinstalled', (evt) => {
+                    // Track successful installation
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'pwa_installed', {
+                            event_category: 'PWA_Funnel',
+                            event_label: 'Installation_Completed',
+                            value: 1,
+                            page_location: window.location.pathname
+                        });
+                    }
+                    
+                    // Hide install cards
+                    const androidCard = document.getElementById('android-pwa-install-card');
+                    const failureAndroidCard = document.getElementById('failure-android-pwa-install-card');
+                    if (androidCard) androidCard.style.display = 'none';
+                    if (failureAndroidCard) failureAndroidCard.style.display = 'none';
+                    
+                    // Clean up
+                    gameModule.deferredPrompt = null;
+                });
+            },
+            
+            showAndroidInstallCard() {
+                const isMobile = window.innerWidth <= 480;
+                const isStandalone = window.navigator.standalone || 
+                                   window.matchMedia('(display-mode: standalone)').matches ||
+                                   window.matchMedia('(display-mode: fullscreen)').matches;
+                
+                if (!isMobile || isStandalone || window.pwaCardDismissed) return;
+                
+                // Determine which page we're on and show appropriate card
+                const completionPage = document.getElementById('completion-page');
+                const failurePage = document.getElementById('failure-page');
+                
+                if (completionPage && completionPage.style.display !== 'none') {
+                    const androidCard = document.getElementById('android-pwa-install-card');
+                    if (androidCard) {
+                        androidCard.style.display = 'block';
+                        androidCard.classList.remove('hidden');
+                    }
+                } else if (failurePage && failurePage.style.display !== 'none') {
+                    const failureAndroidCard = document.getElementById('failure-android-pwa-install-card');
+                    if (failureAndroidCard) {
+                        failureAndroidCard.style.display = 'block';
+                        failureAndroidCard.classList.remove('hidden');
+                    }
+                }
             }
         };
         
@@ -6308,6 +6508,57 @@ https://ladder.game/`;
         // Initialize sound toggle when page loads
         document.addEventListener('DOMContentLoaded', initSoundToggle);
         */
+        
+        // Global PWA Install Function
+        window.installPWA = async function() {
+            if (!window.gameModule.deferredPrompt) {
+                // Track install attempt when prompt not available
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'pwa_install_attempt_failed', {
+                        event_category: 'PWA_Funnel',
+                        event_label: 'No_Prompt_Available',
+                        page_location: window.location.pathname
+                    });
+                }
+                return;
+            }
+            
+            // Track install button click
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'pwa_install_button_clicked', {
+                    event_category: 'PWA_Funnel',
+                    event_label: 'Android_Install_Button_Clicked',
+                    page_location: window.location.pathname
+                });
+            }
+            
+            // Show the install prompt
+            window.gameModule.deferredPrompt.prompt();
+            
+            // Wait for user choice
+            const { outcome } = await window.gameModule.deferredPrompt.userChoice;
+            
+            // Track user's choice
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'pwa_install_choice', {
+                    event_category: 'PWA_Funnel',
+                    event_label: outcome, // 'accepted' or 'dismissed'
+                    value: outcome === 'accepted' ? 1 : 0,
+                    page_location: window.location.pathname
+                });
+            }
+            
+            // Clean up
+            window.gameModule.deferredPrompt = null;
+            
+            // Hide install cards if user dismissed
+            if (outcome === 'dismissed') {
+                const androidCard = document.getElementById('android-pwa-install-card');
+                const failureAndroidCard = document.getElementById('failure-android-pwa-install-card');
+                if (androidCard) androidCard.style.display = 'none';
+                if (failureAndroidCard) failureAndroidCard.style.display = 'none';
+            }
+        };
         
         // PWA Card dismiss function with fade animation
         window.dismissPWACard = function(button) {
