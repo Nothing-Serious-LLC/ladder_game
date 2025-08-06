@@ -551,7 +551,7 @@
                 }
                 
                 // Get dynamic pack info from database
-                const { data: packsData } = await supabase
+                const { data: packsData } = await supabaseClient
                     .from('puzzle_packs')
                     .select('id, name, total_puzzles')
                     .eq('is_active', true);
@@ -661,6 +661,7 @@
         
         function updateProductCards(ownedProducts) {
             const productCards = document.querySelectorAll('.product-card');
+            let visibleProducts = 0;
             
             productCards.forEach(card => {
                 const productId = getProductIdFromCard(card);
@@ -671,8 +672,22 @@
                 if (isOwned) {
                     // Hide owned products from store - they're shown in "My Puzzles" section
                     card.style.display = 'none';
+                } else {
+                    visibleProducts++;
                 }
             });
+            
+            // Hide the entire store section if no products are visible
+            const storeTitle = document.querySelector('.store-title:not(#my-packs-section .store-title)');
+            const productsGrid = document.querySelector('.products-grid');
+            
+            if (visibleProducts === 0) {
+                if (storeTitle) storeTitle.style.display = 'none';
+                if (productsGrid) productsGrid.style.display = 'none';
+            } else {
+                if (storeTitle) storeTitle.style.display = 'block';
+                if (productsGrid) productsGrid.style.display = 'grid';
+            }
         }
         
         function getProductIdFromCard(card) {
