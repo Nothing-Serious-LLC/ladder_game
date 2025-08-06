@@ -954,8 +954,8 @@
             const packId = urlParams.get('pack');
             
             if (packId === 'archive') {
-                // For archive puzzles, use historical daily puzzle type
-                window.location.href = `./play?type=daily&date=${puzzleId}`;
+                // For archive puzzles, use historical puzzle type
+                window.location.href = `./play?type=historical&date=${puzzleId}`;
             } else {
                 // Navigate to play screen with pack puzzle parameters
                 window.location.href = `./play?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
