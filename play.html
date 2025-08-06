@@ -2870,10 +2870,13 @@ import { getGameDayString } from '../assets/js/timeUtils.js';
                     window.game = new LadderGame(puzzleData);
                     
                     // Update pack puzzle header with proper information after data is loaded
-                    if (params.type === 'pack' && puzzleData && gamePageDateDisplay) {
-                        const puzzleNumber = puzzleData.puzzleNumber || 'Pack Puzzle';
-                        const theme = puzzleData.puzzle?.theme || 'Loading...';
-                        gamePageDateDisplay.textContent = `${puzzleNumber} • ${theme}`;
+                    if (params.type === 'pack' && puzzleData) {
+                        const gamePageDateDisplay = document.getElementById('date-display');
+                        if (gamePageDateDisplay) {
+                            const puzzleNumber = puzzleData.puzzleNumber || 'Pack Puzzle';
+                            const theme = puzzleData.puzzle?.theme || 'Loading...';
+                            gamePageDateDisplay.textContent = `${puzzleNumber} • ${theme}`;
+                        }
                     }
                 } catch (error) {
                     console.error('Failed to fetch puzzle, using fallback:', error);
