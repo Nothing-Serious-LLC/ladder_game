@@ -5965,7 +5965,7 @@ https://ladder.game/`;
                 } catch (error) {
                     console.error('Error in storeCompletionStatsForNewUser:', error);
                 }
-            }
+            },
             
             // Show countdown timer for users who already completed today's puzzle
             showCountdownForCompletedUser() {
@@ -6437,6 +6437,8 @@ https://ladder.game/`;
                 }, totalAnimationTime);
             });
         }
+        
+        };
         
         // Fallback puzzle info update (backend version will override this)
         document.addEventListener('DOMContentLoaded', function() {
