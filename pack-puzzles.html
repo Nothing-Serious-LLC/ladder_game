@@ -652,6 +652,16 @@
         let itemsPerPage = 30;
         let complexityLevels = {};
         
+        // Define goBack function immediately for onclick handlers
+        window.goBack = function() {
+            // Try to use browser history first, fallback to store
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = './store';
+            }
+        };
+        
         document.addEventListener('DOMContentLoaded', async function() {
             // Update header date with puzzle number
             try {
@@ -939,15 +949,6 @@
             packProgress.textContent = `${completedCount} / ${packPuzzles.length} completed`;
         }
         
-        window.goBack = function() {
-            // Try to use browser history first, fallback to store
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = './store';
-            }
-        };
-        
         window.playPuzzle = async function(puzzleId) {
             const urlParams = new URLSearchParams(window.location.search);
             const packId = urlParams.get('pack');
@@ -1136,8 +1137,6 @@
         }
         
         // Filter functionality
-        let currentFilter = 'all';
-        
         window.setFilter = function(filter) {
             currentFilter = filter;
             
