@@ -30,6 +30,10 @@ export async function fetchTodaysPuzzle() {
     const dateStr = getGameDayString();
     const puzzleNumber = getPuzzleNumber();
     
+    // Current game day and puzzle number
+    console.log('🕒 Current game day string:', dateStr);
+    console.log('🔢 Puzzle number:', puzzleNumber);
+    
     // For July 29, 2024 and earlier - use hardcoded puzzles
     if (dateStr <= '2024-07-29') {
         const dateSeed = parseInt(dateStr.replace(/-/g, ''));
@@ -57,14 +61,15 @@ export async function fetchTodaysPuzzle() {
             .from('puzzle_overrides')
             .select('*')
             .eq('puzzle_date', dateStr)
-            .single();
+            .limit(1);
         
-        if (overrideData && !overrideError) {
-            console.log('🔧 Using puzzle override:', overrideData.theme, '(', overrideData.notes, ')');
+        if (overrideData && overrideData.length > 0 && !overrideError) {
+            const override = overrideData[0]; // Take first result
+            console.log('🔧 Using puzzle override:', override.theme, '(', override.notes, ')');
             // Convert override puzzle to frontend format using database patterns
             const puzzleWithReveals = {
-                theme: overrideData.theme,
-                words: overrideData.words.map((wordData, wordIndex) => ({
+                theme: override.theme,
+                words: override.words.map((wordData, wordIndex) => ({
                     word: wordData.word,
                     clue: wordData.clue,
                     hint: wordData.hint,
@@ -83,19 +88,26 @@ export async function fetchTodaysPuzzle() {
             .from('daily_puzzles')
             .select('*')
             .eq('puzzle_date', dateStr)
-            .single();
+            .limit(1);
+        
+        if (data && data.length > 0) {
+            console.log('✅ Successfully fetched puzzle from database');
+        } else {
+            console.log('⚠️ No puzzle data returned from database');
+        }
         
         if (error) {
             console.error('Database error fetching puzzle:', error);
             throw new Error(`Database error: ${error.message}`);
         }
         
-        if (data) {
-            console.log('Using daily puzzle:', data.theme);
+        if (data && data.length > 0) {
+            const puzzle = data[0]; // Take first result
+            console.log('Using daily puzzle:', puzzle.theme);
             // Convert database format to frontend format using database patterns
             const puzzleWithReveals = {
-                theme: data.theme,
-                words: data.words.map((wordData, wordIndex) => ({
+                theme: puzzle.theme,
+                words: puzzle.words.map((wordData, wordIndex) => ({
                     word: wordData.word,
                     clue: wordData.clue,
                     hint: wordData.hint,
@@ -105,7 +117,7 @@ export async function fetchTodaysPuzzle() {
                 }))
             };
             
-            return { puzzle: puzzleWithReveals, puzzleNumber: data.puzzle_number };
+            return { puzzle: puzzleWithReveals, puzzleNumber: puzzle.puzzle_number };
         }
     } catch (error) {
         console.error('Failed to fetch puzzle from database:', error);
