@@ -12,7 +12,7 @@
     </script>
     
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
     <title>Dashboard - Ladder Word Game | Track Your Progress</title>
     <meta name="description" content="View your ladder word game progress, daily streaks, and puzzle statistics. Track your improvement in this addictive word chain puzzle game.">
     <meta name="keywords" content="ladder word game dashboard, word puzzle progress, daily streak, word game statistics, puzzle tracking">
@@ -24,12 +24,13 @@
     <meta name="apple-mobile-web-app-title" content="Ladder">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#fafafa">
-    <meta name="msapplication-navbutton-color" content="#6aaa64">
-    <meta name="msapplication-TileColor" content="#6aaa64">
+    <meta name="msapplication-navbutton-color" content="#fafafa">
+    <meta name="msapplication-TileColor" content="#fafafa">
     
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="../assets/icons/icon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/icons/icon-180.png">
+    <link rel="manifest" href="../manifest.json">
     
     <!-- Universal Loading Styles - Temporarily disabled for home screen -->
     <!-- <link rel="stylesheet" href="../assets/css/universal-loading.css"> -->
@@ -60,11 +61,8 @@
             height: -webkit-fill-available;
         }
         
-        /* Hide scrollbars in PWA mode */
+        /* Hide scrollbars in PWA mode but allow scrolling */
         @media (display-mode: fullscreen) {
-            html {
-                overflow: hidden;
-            }
             body {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
@@ -92,6 +90,11 @@
             padding-left: var(--safe-area-inset-left);
             opacity: 0;
             animation: fadeIn 0.3s ease-out forwards;
+            /* Prevent zoom gestures */
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         @keyframes fadeIn {

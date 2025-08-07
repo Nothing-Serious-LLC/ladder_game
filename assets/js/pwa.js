@@ -78,7 +78,7 @@ export function setupPWAMode() {
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor && isStandalone) {
         // Ensure theme color is applied
-        metaThemeColor.setAttribute('content', '#6aaa64');
+        metaThemeColor.setAttribute('content', '#fafafa');
     }
 }
 

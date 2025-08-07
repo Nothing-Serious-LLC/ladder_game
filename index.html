@@ -12,7 +12,7 @@
     </script>
     
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0">
     <title>Ladder Word Game - Daily Word Puzzle | Free Online</title>
     <meta name="description" content="Play Ladder, the #1 daily word game! Transform words by changing one letter at a time in this addictive word chain puzzle. Free ladder word game with new puzzles daily.">
     <meta name="keywords" content="ladder word game, word ladder, word chain puzzle, daily word game, word transformation game, free word puzzle, online word game, vocabulary game, brain training, word ladder puzzle"
@@ -48,6 +48,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-180.png">
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="./assets/icons/icon-512.png">
+    <link rel="manifest" href="./manifest.json">
     
     <!-- Structured Data for Google -->
     <script type="application/ld+json">
@@ -184,13 +185,18 @@
             color: var(--gray-900);
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            padding-top: var(--safe-area-inset-top);
-            padding-right: var(--safe-area-inset-right);
-            padding-bottom: var(--safe-area-inset-bottom);
-            padding-left: var(--safe-area-inset-left);
+            padding-top: env(safe-area-inset-top, 0);
+            padding-right: env(safe-area-inset-right, 0);
+            padding-bottom: env(safe-area-inset-bottom, 0);
+            padding-left: env(safe-area-inset-left, 0);
             opacity: 0;
             animation: fadeIn 0.3s ease-out forwards;
             overscroll-behavior: none; /* Prevent overscroll bounce showing green */
+            /* Prevent zoom gestures */
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         /* PWA Splash Screen - prevents white flash */
@@ -2648,19 +2654,6 @@
             <div class="header-content">
                 <h1 class="title">LADDER</h1>
                 <p class="date-info" id="privacy-date-display">Loading...</p>
-                <button class="refresh-btn" id="refresh-btn" onclick="refreshPWAContent()" style="
-                    position: absolute; 
-                    top: 15px; 
-                    right: 20px; 
-                    background: transparent; 
-                    border: 1px solid var(--gray-400); 
-                    border-radius: 8px; 
-                    padding: 8px 12px; 
-                    font-size: 0.8rem; 
-                    color: var(--gray-600); 
-                    cursor: pointer;
-                    display: none;
-                ">🔄 Refresh</button>
         </div>
         </header>
 
@@ -3304,21 +3297,36 @@
             }, 300); // Wait for content switch to complete
         };
 
-        window.showCountdownContent = () => {
+        window.showCountdownContent = async () => {
+            // Check if user is authenticated first
+            try {
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                
+                if (user) {
+                    // User is authenticated - redirect to home instead of showing countdown
+                    console.log('Authenticated user accessing countdown, redirecting to home');
+                    window.location.href = '/home';
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking auth in countdown:', error);
+                // Continue to show countdown if auth check fails
+            }
+            
             // Remove mobile game mode class for countdown screen
             document.body.classList.remove('mobile-game-mode');
             showContent('countdown-content');
             
             // Update countdown page info
-                    const today = new Date();
+            const today = new Date();
             const puzzleNumber = Math.floor((today - new Date('2025-01-01')) / (1000 * 60 * 60 * 24)) + 1;
-                    const options = { month: 'long', day: 'numeric', year: 'numeric' };
-                    const formattedDate = today.toLocaleDateString('en-US', options);
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            const formattedDate = today.toLocaleDateString('en-US', options);
             
             // Update header date (reuse the existing header)
             document.getElementById('privacy-date-display').textContent = `Puzzle #${puzzleNumber} • ${formattedDate}`;
             
-            // For now, show signup card (in real implementation this would check auth)
+            // Show signup card for non-authenticated users
             const signupCard = document.getElementById('countdown-signup-card');
             if (signupCard) {
                 signupCard.style.display = 'block';
@@ -5021,17 +5029,36 @@
                     console.error('Error setting up desktop keyboard:', error);
                 }
                 
-                // Check if user has already completed today's puzzle
+                // Check user authentication and completion status
                 try {
-                    const hasCompletedToday = await checkIfCompletedToday();
-                    if (hasCompletedToday) {
-                        // User already played today - go directly to countdown
-                        console.log('User already completed today\'s puzzle, showing countdown on page load');
-                        showCountdownContent();
+                    // First, check if user is authenticated
+                    const { data: { user } } = await window.supabaseClient.auth.getUser();
+                    
+                    if (user) {
+                        // User is authenticated - check if they completed today's puzzle
+                        const hasCompletedToday = await checkIfCompletedToday();
+                        if (hasCompletedToday) {
+                            // User already played today - go directly to countdown
+                            console.log('Authenticated user already completed today\'s puzzle, showing countdown');
+                            showCountdownContent();
+                        } else {
+                            // Authenticated user hasn't played today - redirect to home
+                            console.log('Authenticated user hasn\'t played today, redirecting to home');
+                            window.location.href = '/home';
+                            return; // Stop further initialization
+                        }
+                    } else {
+                        // Non-authenticated user - check completion and show countdown if completed
+                        const hasCompletedToday = await checkIfCompletedToday();
+                        if (hasCompletedToday) {
+                            console.log('Non-authenticated user already completed today\'s puzzle, showing countdown');
+                            showCountdownContent();
+                        }
+                        // If not completed, stay on landing page (normal flow)
                     }
                 } catch (error) {
-                    console.error('Error checking completion status on page load:', error);
-                    // Continue with normal page load even if completion check fails
+                    console.error('Error checking authentication/completion status on page load:', error);
+                    // Continue with normal page load even if checks fail
                 }
                 
                 console.log('Page initialization complete');
@@ -5084,15 +5111,9 @@
         
         // Immediate splash screen hiding for PWA context
         document.addEventListener('DOMContentLoaded', function() {
-            // For PWA, hide splash screen faster and show refresh button
+            // For PWA, hide splash screen faster
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.matchMedia('(display-mode: fullscreen)').matches) {
-                // Show refresh button in PWA mode
-                const refreshBtn = document.getElementById('refresh-btn');
-                if (refreshBtn) {
-                    refreshBtn.style.display = 'block';
-                }
-                
                 setTimeout(() => {
                     const splash = document.getElementById('pwa-splash');
                     if (splash) {
@@ -5104,46 +5125,16 @@
                 }, 300); // Faster for PWA
             }
         });
+    </script>
+    
+    <!-- PWA Initialization -->
+    <script type="module">
+        import { initializePWA } from './assets/js/pwa.js';
         
-        // PWA Content Refresh Function
-        async function refreshPWAContent() {
-            const refreshBtn = document.getElementById('refresh-btn');
-            if (refreshBtn) {
-                refreshBtn.innerHTML = '🔄 Refreshing...';
-                refreshBtn.disabled = true;
-            }
-            
-            try {
-                // Clear all caches
-                if ('caches' in window) {
-                    const cacheNames = await caches.keys();
-                    await Promise.all(
-                        cacheNames.map(cacheName => caches.delete(cacheName))
-                    );
-                }
-                
-                // Update service worker
-                if ('serviceWorker' in navigator) {
-                    const registration = await navigator.serviceWorker.getRegistration();
-                    if (registration) {
-                        await registration.update();
-                    }
-                }
-                
-                // Hard reload the page
-                window.location.reload(true);
-                
-            } catch (error) {
-                console.error('Refresh failed:', error);
-                if (refreshBtn) {
-                    refreshBtn.innerHTML = '❌ Error';
-                    setTimeout(() => {
-                        refreshBtn.innerHTML = '🔄 Refresh';
-                        refreshBtn.disabled = false;
-                    }, 2000);
-                }
-            }
-        }
+        // Initialize PWA features
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePWA();
+        });
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
   "short_name": "Ladder",
   "description": "Daily word puzzle where you climb through connected words",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#fafafa",
   "theme_color": "#fafafa",
   "orientation": "portrait-primary",
