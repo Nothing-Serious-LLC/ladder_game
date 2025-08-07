@@ -51,10 +51,22 @@ class URLRewriteHandler(http.server.SimpleHTTPRequestHandler):
         super().do_GET()
 
 if __name__ == "__main__":
-    PORT = 8000
+    PORT = 8001
     
-    print(f"🚀 Local development server starting on http://localhost:{PORT}")
-    print("📝 URL rewriting enabled:")
+    import socket
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+    
+    print(f"🚀 Local development server starting on:")
+    print(f"   Local: http://localhost:{PORT}")
+    print(f"   Network: http://{local_ip}:{PORT}")
+    print(f"   Alternative: http://192.168.4.53:{PORT}")
+    print("\n📱 For mobile testing:")
+    print(f"   1. Connect phone to same WiFi")
+    print(f"   2. Go to http://192.168.4.53:{PORT}")
+    print(f"   3. Add to home screen")
+    print(f"   4. Installed app will use your local server!")
+    print("\n📝 URL rewriting enabled:")
     print("   /signup -> /signup.html")
     print("   /home -> /home.html") 
     print("   /play -> /play.html")
@@ -63,5 +75,5 @@ if __name__ == "__main__":
     print("\n✨ Now your local server matches your live site's URL structure!")
     print("🔧 Press Ctrl+C to stop the server\n")
     
-    with socketserver.TCPServer(("", PORT), URLRewriteHandler) as httpd:
+    with socketserver.TCPServer(("0.0.0.0", PORT), URLRewriteHandler) as httpd:
         httpd.serve_forever()
