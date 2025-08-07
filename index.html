@@ -26,8 +26,8 @@
     <meta name="apple-mobile-web-app-title" content="Ladder">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#fafafa">
-    <meta name="msapplication-navbutton-color" content="#6aaa64">
-    <meta name="msapplication-TileColor" content="#6aaa64">
+    <meta name="msapplication-navbutton-color" content="#fafafa">
+    <meta name="msapplication-TileColor" content="#fafafa">
     
     <!-- Open Graph Meta Tags for Social Sharing -->
     <meta property="og:title" content="Ladder Word Game - Free Daily Word Chain Puzzle">
@@ -139,16 +139,20 @@
             height: 100vh;
             height: -webkit-fill-available;
             background-color: #fafafa; /* Ensure background extends to status bar */
+            overscroll-behavior: none; /* Prevent bounce/overscroll */
         }
         
         /* Hide scrollbars in PWA mode */
         @media (display-mode: fullscreen), (display-mode: standalone) {
             html {
                 overflow: hidden;
+                overscroll-behavior: none; /* Prevent overscroll bounce in PWA */
             }
             body {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
+                overscroll-behavior: none; /* Prevent overscroll bounce in PWA */
+                background-color: var(--gray-50); /* Force background color in PWA */
             }
             ::-webkit-scrollbar {
                 display: none;
@@ -159,6 +163,12 @@
                 padding-bottom: env(safe-area-inset-bottom, 0);
                 padding-left: env(safe-area-inset-left, 0);
                 padding-right: env(safe-area-inset-right, 0);
+            }
+            
+            /* Force background for PWA container */
+            .container {
+                background-color: var(--gray-50) !important;
+                overscroll-behavior: none !important;
             }
         }
         
@@ -180,6 +190,7 @@
             padding-left: var(--safe-area-inset-left);
             opacity: 0;
             animation: fadeIn 0.3s ease-out forwards;
+            overscroll-behavior: none; /* Prevent overscroll bounce showing green */
         }
         
         /* PWA Splash Screen - prevents white flash */
@@ -234,6 +245,8 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            background-color: var(--gray-50); /* Ensure consistent background */
+            overscroll-behavior: none; /* Prevent overscroll bounce */
         }
 
         /* Desktop-only: Increase padding-top to prevent content cutoff */
