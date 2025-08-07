@@ -1147,7 +1147,7 @@
         .countdown-timer {
             font-size: 3.5rem;
             font-weight: 600;
-            color: #8B5CF6;
+            color: var(--primary-orange);
             margin-bottom: 0;
             text-align: center;
             letter-spacing: -0.02em;
@@ -2635,6 +2635,19 @@
             <div class="header-content">
                 <h1 class="title">LADDER</h1>
                 <p class="date-info" id="privacy-date-display">Loading...</p>
+                <button class="refresh-btn" id="refresh-btn" onclick="refreshPWAContent()" style="
+                    position: absolute; 
+                    top: 15px; 
+                    right: 20px; 
+                    background: transparent; 
+                    border: 1px solid var(--gray-400); 
+                    border-radius: 8px; 
+                    padding: 8px 12px; 
+                    font-size: 0.8rem; 
+                    color: var(--gray-600); 
+                    cursor: pointer;
+                    display: none;
+                ">🔄 Refresh</button>
         </div>
         </header>
 
@@ -5058,9 +5071,15 @@
         
         // Immediate splash screen hiding for PWA context
         document.addEventListener('DOMContentLoaded', function() {
-            // For PWA, hide splash screen faster
+            // For PWA, hide splash screen faster and show refresh button
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.matchMedia('(display-mode: fullscreen)').matches) {
+                // Show refresh button in PWA mode
+                const refreshBtn = document.getElementById('refresh-btn');
+                if (refreshBtn) {
+                    refreshBtn.style.display = 'block';
+                }
+                
                 setTimeout(() => {
                     const splash = document.getElementById('pwa-splash');
                     if (splash) {
@@ -5072,6 +5091,46 @@
                 }, 300); // Faster for PWA
             }
         });
+        
+        // PWA Content Refresh Function
+        async function refreshPWAContent() {
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '🔄 Refreshing...';
+                refreshBtn.disabled = true;
+            }
+            
+            try {
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                }
+                
+                // Update service worker
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        await registration.update();
+                    }
+                }
+                
+                // Hard reload the page
+                window.location.reload(true);
+                
+            } catch (error) {
+                console.error('Refresh failed:', error);
+                if (refreshBtn) {
+                    refreshBtn.innerHTML = '❌ Error';
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = '🔄 Refresh';
+                        refreshBtn.disabled = false;
+                    }, 2000);
+                }
+            }
+        }
     </script>
 </body>
 </html>

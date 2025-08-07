@@ -1,5 +1,5 @@
-// LADDER PWA Service Worker - Fast Loading
-const CACHE_NAME = 'ladder-v240';
+// LADDER PWA Service Worker - Fast Loading + Refresh
+const CACHE_NAME = 'ladder-v241';
 // Only cache essential assets for instant loading
 const CORE_ASSETS = [
   './',
@@ -56,7 +56,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - smart hybrid caching
+// Fetch event - optimized hybrid caching with network-first for critical updates
 self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (event.request.method !== 'GET') return;
@@ -74,17 +74,38 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Network-first strategy for HTML files (to get updates faster)
+  if (event.request.url.endsWith('.html') || event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Update cache with fresh content
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache if network fails
+          return caches.match(event.request) || caches.match('./index.html');
+        })
+    );
+    return;
+  }
+  
+  // Cache-first for static assets (faster loading)
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached static assets or fetch from network
-        return response || fetch(event.request);
-      })
-      .catch(() => {
-        // Fallback for offline - return main page for navigation requests only
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
+        return response || fetch(event.request).then((fetchResponse) => {
+          // Cache new static assets
+          const responseClone = fetchResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return fetchResponse;
+        });
       })
   );
 });
