@@ -1,45 +1,30 @@
-// LADDER PWA Service Worker
-const CACHE_NAME = 'ladder-v239';
+// LADDER PWA Service Worker - Fast Loading
+const CACHE_NAME = 'ladder-v240';
+// Only cache essential assets for instant loading
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './sitemap.xml',
-  './robots.txt',
   './assets/js/game.js',
   './assets/js/database.js', 
   './assets/js/pwa.js',
   './assets/js/timeUtils.js',
   './assets/css/back-button.css',
   './config/supabase-config.js',
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png'
+];
+
+// Secondary assets loaded on demand
+const SECONDARY_ASSETS = [
   './play.html',
   './home.html',
   './pack-puzzles.html',
-  './purchase-confirmation.html',
-  './product-overview.html',
   './settings.html',
   './signup.html',
   './statistics.html',
-  './terms-and-conditions.html',
-  './privacy-policy.html',
-  './cookies-policy.html',
   './store.html',
-  './play',
-  './home',
-  './pack-puzzles',
-  './purchase-confirmation',
-  './product-overview',
-  './settings',
-  './signup',
-  './statistics',
-  './terms-and-conditions',
-  './privacy-policy',
-  './cookies-policy',
-  './store',
-  './assets/icons/icon.svg',
-  './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png',
-  'https://unpkg.com/@supabase/supabase-js@2'
+  './assets/icons/icon.svg'
 ];
 
 // Install event - cache core assets
