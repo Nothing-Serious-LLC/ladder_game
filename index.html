@@ -1261,37 +1261,7 @@
             box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
         }
 
-        /* Testing Mode Replay Button Styles */
-        .testing-replay-section {
-            margin-top: 40px;
-            text-align: center;
-        }
-        
-        .testing-replay-button {
-            background: linear-gradient(135deg, #ff8c42, #ff6b1a);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
-        }
-        
-        .testing-replay-button:hover {
-            background: linear-gradient(135deg, #ff6b1a, #e55a0f);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
-        }
-        
-        .testing-mode-note {
-            margin-top: 12px;
-            font-size: 0.8rem;
-            color: #ff8c42;
-            font-style: italic;
-        }
+
 
         /* Mobile countdown styles */
         @media (max-width: 480px) {
@@ -1316,40 +1286,9 @@
             }
         }
         
-        /* Testing Mode Indicator - Subtle dot */
-        .testing-mode-indicator {
-            position: fixed;
-            top: 12px;
-            right: 12px;
-            width: 12px;
-            height: 12px;
-            background: #ff8c42;
-            border-radius: 50%;
-            z-index: 10000;
-            box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.2);
-            animation: testingPulse 2s infinite;
-        }
+
         
-        @keyframes testingPulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.1); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        
-        /* Tooltip on hover */
-        .testing-mode-indicator:hover::after {
-            content: 'Testing Mode';
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            white-space: nowrap;
-            margin-top: 4px;
-        }
+
 
         /* PWA Installation Card Styles (Mobile Only) */
         .pwa-install-card {
@@ -3073,8 +3012,7 @@
     </style>
 </head>
 <body>
-    <!-- Testing Mode Indicator - Subtle dot -->
-    <div class="testing-mode-indicator" id="testing-mode-indicator" style="display: none;" title="Testing Mode Active"></div>
+
     
     
     
@@ -3470,13 +3408,7 @@
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
             </div>
             
-            <!-- Testing Mode Replay Button -->
-            <div class="testing-replay-section" id="testing-replay-section" style="display: none;">
-                <button class="testing-replay-button" onclick="replayGame()">
-                    🔄 Replay Game (Testing Mode)
-                </button>
-                <p class="testing-mode-note">Testing mode is enabled. Toggle TESTING_MODE in code to disable.</p>
-            </div>
+
             
             <!-- Signup card for non-authenticated users -->
             <div class="signup-card" id="countdown-signup-card" style="display: none;">
@@ -3514,9 +3446,8 @@
         // Make Supabase client globally available
         window.supabaseClient = supabaseClient;
         
-        // Show testing mode indicator if enabled
+        // Testing mode check
         if (window.TESTING_MODE) {
-            document.getElementById('testing-mode-indicator').style.display = 'block';
             console.log('🧪 TESTING MODE ENABLED - Daily restrictions disabled');
         }
         
@@ -3920,10 +3851,7 @@
             document.body.classList.remove('mobile-game-mode');
             showContent('countdown-content');
             
-            // Show testing replay button if testing mode is enabled
-            if (window.TESTING_MODE) {
-                document.getElementById('testing-replay-section').style.display = 'block';
-            }
+
             
             // Update countdown page info
             const today = new Date();
