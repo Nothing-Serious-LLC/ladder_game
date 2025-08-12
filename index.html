@@ -2630,10 +2630,96 @@
         /* Orange accent title for PWA card */
         #failure-content .signup-card:nth-of-type(2) .signup-title { color: var(--primary-orange); }
 
+        /* Completion screen styling - green theme */
+        #completion-content .signup-card.card-completed {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #5d9556 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 20px rgba(106, 170, 100, 0.12);
+            padding: 32px 28px; 
+            min-height: 280px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: space-between;
+        }
+        
+        #completion-content .card-completed .signup-title { 
+            color: #fff; 
+            font-weight: 700; 
+            margin: 0; 
+            font-size: 1.5rem; 
+            flex-shrink: 0;
+        }
+        
+                #completion-content .completion-theme {
+            font-size: 1.0rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 16px 0 0 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        #completion-content .completion-time {
+            font-size: 3.0rem; 
+            font-weight: 700; 
+            letter-spacing: -0.02em; 
+            margin: 0; 
+            color: #fff; 
+            flex: 1; 
+            display: flex;
+            align-items: center; 
+            justify-content: center;
+        }
+        
+        #completion-content .signup-button { 
+            padding: 12px 32px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            border: none; 
+            font-size: 0.95rem; 
+            transition: all 0.2s; 
+            min-width: 160px;
+        }
+        
+        #completion-content .card-completed .signup-button.primary { 
+            background: #fff; 
+            color: var(--primary-green); 
+        }
+        
+        #completion-content .card-completed .signup-button.primary:hover { 
+            background: rgba(255,255,255,.9); 
+            transform: translateY(-1px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,.15); 
+        }
+        
+        /* Completion screen buttons - side by side like failure screen */
+        #completion-content .signup-buttons { 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center; 
+            flex-direction: row; 
+            flex-shrink: 0; 
+        }
+        @media (max-width: 480px){ #completion-content .signup-buttons { flex-direction: column; } }
+
         /* Android PWA card: replace icons with orange checkmarks */
         #failure-android-pwa-install-card .pwa-benefits { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
         #failure-android-pwa-install-card .pwa-benefit { position: relative; padding-left: 22px; color: var(--gray-700); font-size: 0.95rem; }
         #failure-android-pwa-install-card .pwa-benefit::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--primary-orange); font-weight: 800; }
+
+
+
+        /* Green highlight for completion screen PWA instructions */
+        .highlight-green { color: var(--primary-green); font-weight: 600; }
+
+        /* Completion PWA card styling - green theme */
+        .completion-pwa-card { 
+            border: 2px solid var(--primary-green) !important; 
+            margin-bottom: -2px !important; /* Reduce bottom margin by 10px (from 8px to -2px) */
+        }
+        .completion-pwa-card .pwa-install-title { color: var(--primary-green) !important; }
 
         .test-header {
             text-align: center;
@@ -3009,7 +3095,7 @@
 
 
             <button class="play-button" onclick="showGameContent()">Play</button>
-            <button class="play-button" onclick="showFailureContent()" style="background-color: #f59e0b; margin-top: 10px;">🧪 Test Failure Screen</button>
+            <button class="play-button" onclick="testCompletionScreen()" style="background-color: #6aaa64; margin-top: 10px;">🧪 Test Success Screen</button>
             <p class="week-difficulty-text">Daily puzzle gets more challenging throughout the week</p>
     </div>
 
@@ -3255,40 +3341,21 @@
     </div>
 
         <!-- Completion Screen Content (initially hidden) -->
-        <div class="completion-content" id="completion-content" style="display: none;">
-            <div class="completion-card card completion-success">
-                <div class="completion-header">
-                    <h2 class="completion-title">Puzzle Complete!</h2>
-                </div>
-                
-                <div class="completion-details">
-                    <p class="result-theme" id="completion-theme">Theme: Parliamentary Democracy</p>
-                    
-                    <div class="completion-stats">
-                        <div class="stat-item">
-                            <div class="stat-value" id="completion-time">2:34</div>
-                            <div class="stat-label">Time</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="completion-hints">0</div>
-                            <div class="stat-label">Hints</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="completion-actions">
-                    <div class="completion-buttons">
-                        <button class="completion-button share" onclick="shareCompletion()">Share Result</button>
-                        <button class="completion-button copy" onclick="copyShareLink()">Copy Link</button>
-                    </div>
-                    
-                    <button class="completion-button primary" onclick="showCountdownContent()">Next Puzzle</button>
+        <div class="failure-screen-container" id="completion-content" style="display: none;">
+            <!-- Main Completion Card using unified signup-card styling (full green) -->
+            <div class="signup-card card-completed">
+                <h3 class="signup-title">Puzzle Complete!</h3>
+                <div class="completion-theme" id="completion-theme">Theme: Loading...</div>
+                <div class="completion-time" id="completion-time">02:34</div>
+                <div class="signup-buttons">
+                    <button class="signup-button primary" id="completion-share" onclick="shareCompletion()">Share</button>
+                    <button class="signup-button primary" id="completion-next" onclick="showCountdownContent()">Next Puzzle</button>
                 </div>
             </div>
             
-            <!-- PWA Installation Instructions Card (Mobile Only) -->
-            <div class="pwa-install-card card" id="pwa-install-card" style="display: none;">
-                <h3 class="pwa-install-title">Get the App</h3>
+            <!-- PWA Install Card (green theme with clean icons) -->
+            <div class="pwa-install-card signup-card completion-pwa-card" id="completion-pwa-install-card" style="display:none;">
+                <h3 class="pwa-install-title signup-title">Get the App</h3>
                 <div class="pwa-install-steps">
                     <div class="pwa-step">
                         <div class="pwa-step-icon">
@@ -3303,46 +3370,24 @@
                     <div class="pwa-step">
                         <div class="pwa-step-icon">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 16L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8 12H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="pwa-step-text">Scroll down and tap "<span class="highlight-green">Add to Home Screen</span>"</div>
+                        <div class="pwa-step-text">Select <span class="highlight-green">"Add to Home Screen"</span></div>
                     </div>
                 </div>
-                <button class="pwa-install-dismiss" onclick="dismissPWACard(this)">Maybe Later</button>
+                <button class="signup-close" onclick="dismissCompletionPWACard(this)">×</button>
             </div>
 
-            <!-- Android PWA Installation Button Card -->
-            <div class="pwa-install-card card" id="android-pwa-install-card" style="display: none;">
-                <div class="pwa-app-info">
-                    <img src="assets/icons/icon-192.png" alt="LADDER" class="pwa-app-icon">
-                    <div class="pwa-app-details">
-                        <h3 class="pwa-install-title">Install LADDER</h3>
-                        <div class="pwa-install-subtitle">Add to home screen for instant access to daily puzzles!</div>
-                    </div>
-                </div>
-                <button class="pwa-install-button" id="pwa-install-btn" onclick="installPWA()">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="install-icon">
-                        <path d="M12 16L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Install App
-                </button>
-                <button class="pwa-install-dismiss" onclick="dismissPWACard(this)">Maybe Later</button>
-            </div>
-
-            <!-- More Puzzles Signup Card for non-authenticated users -->
-            <div class="more-puzzles-signup-card card" id="more-puzzles-signup-card" style="display: none;">
-                <h3 class="more-puzzles-signup-title">Want more puzzles?</h3>
-                <p class="more-puzzles-signup-description" id="more-puzzles-signup-text">Sign up to unlock 10 free puzzles, track daily stats, and more!</p>
-                <button class="card-close" onclick="this.closest('.more-puzzles-signup-card').style.opacity='0'; setTimeout(() => this.closest('.more-puzzles-signup-card').style.display='none', 300)">×</button>
-                <div class="more-puzzles-signup-buttons">
-                    <button class="more-puzzles-signup-button primary" id="more-puzzles-signup-primary">
-                        <span class="signup-button-text">Sign Up</span>
-                    </button>
+            <!-- Want More Puzzles Signup Card -->
+            <div class="signup-card">
+                <h3 class="signup-title">Want more puzzles?</h3>
+                <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
+                <button class="signup-close" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">×</button>
+                <div class="signup-buttons">
+                    <button class="signup-button primary" onclick="window.location.href='./signup.html'">Sign Up</button>
                 </div>
             </div>
         </div>
@@ -3695,14 +3740,60 @@
             showContent('landing-content');
         };
         
+        // Test function to properly load puzzle data before showing completion screen
+        window.testCompletionScreen = async () => {
+            try {
+                console.log('Testing completion screen - loading today\'s puzzle data...');
+                const puzzleData = await fetchTodaysPuzzle();
+                console.log('Puzzle data loaded for test:', puzzleData.puzzle.theme);
+                
+                // Set the theme globally
+                window.currentPuzzleTheme = puzzleData.puzzle.theme;
+                
+                // Initialize game state if needed
+                if (!window.gameState) {
+                    window.gameState = { currentPuzzle: puzzleData.puzzle };
+                } else {
+                    window.gameState.currentPuzzle = puzzleData.puzzle;
+                }
+                
+                // Now show the completion screen
+                showCompletionContent();
+                
+            } catch (error) {
+                console.error('Failed to load puzzle data for test:', error);
+                // Fallback to showing completion screen with fallback theme
+                window.currentPuzzleTheme = 'Wedding Traditions';
+                showCompletionContent();
+            }
+        };
+        
         window.showCompletionContent = () => {
             // Remove mobile game mode class for completion screen
             document.body.classList.remove('mobile-game-mode');
             showContent('completion-content');
             
-                        // Set up PWA install card for mobile users not in PWA mode
+            // Update theme with current puzzle theme
+            const themeElement = document.getElementById('completion-theme');
+            if (themeElement) {
+                // Try multiple sources for the theme
+                let theme = window.currentPuzzleTheme || 
+                           window.gameState?.currentPuzzle?.theme || 
+                           window.game?.currentPuzzle?.theme;
+                
+                if (!theme) {
+                    // If no theme available, try to fetch from database
+                    console.log('No theme found in memory, should load from database');
+                    theme = 'Wedding Traditions'; // Today's actual theme as fallback
+                }
+                
+                themeElement.textContent = `Theme: ${theme}`;
+                console.log('Completion screen theme set to:', theme);
+            }
+            
+            // Set up PWA install card for all users (desktop and mobile)
             setTimeout(() => {
-                setupPWAInstallCard();
+                setupCompletionPWAInstallCard(); // Use desktop-enabled version
                 setupMorePuzzlesSignupCard();
             }, 300); // Wait for content switch to complete
         };
@@ -3711,6 +3802,10 @@
             // Remove mobile game mode class for failure screen
             document.body.classList.remove('mobile-game-mode');
             showContent('failure-content');
+            
+            // Update theme with current puzzle theme (for consistency with completion screen)
+            // Note: Failure screen doesn't display theme, but this ensures data consistency
+            console.log('Failure screen - Current theme:', window.currentPuzzleTheme);
             
             // Set up PWA install card for mobile users not in PWA mode
             setTimeout(() => {
@@ -4236,7 +4331,6 @@
                     const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                     
                     document.getElementById('completion-time').textContent = timeString;
-                    document.getElementById('completion-hints').textContent = window.gameState.hintsUsed;
                     document.getElementById('completion-theme').textContent = `Theme: ${window.currentPuzzleTheme || 'Library Studies'}`;
                     
                     // Track completion in database/cookies
@@ -4614,7 +4708,11 @@
             const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             
             document.getElementById('failure-time').textContent = timeString;
-            document.getElementById('failure-hints').textContent = window.gameState.hintsUsed;
+            
+            // Track failure in database/cookies
+            if (window.game && window.game.trackFailure) {
+                window.game.trackFailure(timeString);
+            }
             
             // Set completion cookie for non-authenticated users (they played the puzzle)
             if (window.game && window.game.setPuzzlePlayedCookie) {
@@ -5424,7 +5522,7 @@
             }
         }
 
-        function dismissFailurePWACard(button) {
+        window.dismissFailurePWACard = function(button) {
             const card = button.closest('.pwa-install-card');
             if (card) {
                 card.style.opacity = '0';
@@ -5478,6 +5576,42 @@
             } else {
                 if (iosInstallCard) iosInstallCard.classList.add('hidden');
                 if (androidInstallCard) androidInstallCard.classList.add('hidden');
+            }
+        }
+
+        // PWA card setup for completion screen (desktop enabled)
+        function setupCompletionPWAInstallCard() {
+            const isStandalone = window.navigator.standalone || 
+                               window.matchMedia('(display-mode: standalone)').matches ||
+                               window.matchMedia('(display-mode: fullscreen)').matches;
+            
+            const pwaInstallCard = document.getElementById('completion-pwa-install-card');
+            
+            // Check if user already dismissed this card
+            if (window.pwaCardDismissed) {
+                if (pwaInstallCard) pwaInstallCard.style.display = 'none';
+                return;
+            }
+            
+            // Show clean PWA card for all users (desktop and mobile) if not in PWA mode
+            if (!isStandalone && pwaInstallCard) {
+                pwaInstallCard.style.display = 'block';
+                console.log('Showing clean PWA install card on completion screen (desktop enabled)');
+            } else if (pwaInstallCard) {
+                pwaInstallCard.style.display = 'none';
+            }
+        }
+
+        // Dismiss completion PWA card function
+        window.dismissCompletionPWACard = function(button) {
+            const card = button.closest('.signup-card');
+            if (card) {
+                card.style.opacity = '0.5';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300);
+                // Mark as dismissed so it doesn't show again
+                window.pwaCardDismissed = true;
             }
         }
 
@@ -5582,6 +5716,59 @@
                 this.gameEnded = false;
                 this.startTime = Date.now();
                 this.hintsUsed = 0;
+            }
+            
+            // Essential method for failure tracking
+            async trackFailure(timeString) {
+                try {
+                    console.log('Tracking failure:', timeString);
+                    
+                    // Skip tracking in testing mode
+                    if (window.TESTING_MODE) {
+                        console.log('Testing mode: Skipping failure tracking');
+                        return;
+                    }
+                    
+                    // Check if user is authenticated
+                    const { data: { user } } = await window.supabaseClient.auth.getUser();
+                    
+                    if (user) {
+                        // Authenticated user - save to database
+                        const today = new Date().toISOString().split('T')[0];
+                        
+                        // Convert time string to PostgreSQL interval format
+                        const [minutes, seconds] = timeString.split(':').map(Number);
+                        const totalSeconds = minutes * 60 + seconds;
+                        const completionInterval = `${totalSeconds} seconds`;
+                        
+                        const { error } = await window.supabaseClient
+                            .from('puzzle_completions')
+                            .upsert({
+                                user_id: user.id,
+                                puzzle_date: today,
+                                puzzle_name: this.currentPuzzle.theme,
+                                completed: false, // Failed
+                                completion_time: completionInterval, // Time when failed
+                                hints_used: window.gameState.hintsUsed || 0,
+                                tries_used: window.gameState.wrongGuesses || 0,
+                                created_at: new Date().toISOString(),
+                                updated_at: new Date().toISOString()
+                            }, {
+                                onConflict: 'user_id,puzzle_date'
+                            });
+                            
+                        if (error) {
+                            console.error('Error tracking failure:', error);
+                        } else {
+                            console.log('Puzzle failure tracked successfully');
+                        }
+                    } else {
+                        // Non-authenticated user - set cookie
+                        this.setPuzzlePlayedCookie();
+                    }
+                } catch (error) {
+                    console.error('Error in trackFailure:', error);
+                }
             }
             
             // Essential method for completion tracking
