@@ -2641,7 +2641,46 @@
             flex-direction: row; 
             flex-shrink: 0; 
         }
-        @media (max-width: 480px){ #completion-content .signup-buttons { flex-direction: column; } }
+        /* Mobile-specific completion screen fixes */
+        @media (max-width: 480px) {
+            /* Fix mobile touch and scrolling issues */
+            #completion-content {
+                -webkit-overflow-scrolling: touch !important;
+                overflow-y: auto !important;
+                touch-action: pan-y !important; /* Allow vertical scrolling */
+            }
+            
+            /* Ensure proper mobile container behavior */
+            #completion-content .failure-screen-container {
+                -webkit-overflow-scrolling: touch !important;
+                overflow-y: auto !important;
+            }
+            
+            /* Fix theme spacing - move closer to title */
+            #completion-content .completion-theme {
+                margin: 8px 0 0 0 !important; /* Reduce from 16px to 8px */
+            }
+            
+            /* Add proper spacing around time */
+            #completion-content .completion-time {
+                margin: 20px 0 !important; /* Add space above and below time */
+            }
+            
+            /* Keep buttons side-by-side on mobile */
+            #completion-content .signup-buttons { 
+                flex-direction: row !important; 
+                gap: 8px; /* Reduce gap for mobile */
+            }
+            
+            /* Make buttons wider on mobile so text fits on one line */
+            #completion-content .signup-button {
+                padding: 10px 24px !important;
+                font-size: 0.85rem !important;
+                min-width: 130px !important; /* Increased from 110px to fit "Next Puzzle" */
+                white-space: nowrap; /* Prevent text wrapping */
+                touch-action: manipulation !important; /* Improve touch responsiveness */
+            }
+        }
 
         /* Android PWA card: replace icons with orange checkmarks */
         #failure-android-pwa-install-card .pwa-benefits { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
