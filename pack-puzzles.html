@@ -58,9 +58,6 @@
         
         /* Hide scrollbars in PWA mode */
         @media (display-mode: fullscreen) {
-            html {
-                overflow: hidden;
-            }
             body {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
@@ -116,8 +113,8 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 120px 20px 0 20px; /* Match other screens - no bottom padding */
-            min-height: 100vh;
+            padding: 120px 20px 40px 20px; /* Add bottom padding and ensure content can scroll */
+            min-height: calc(100vh + 200px); /* Force content to be taller than viewport to enable scrolling */
         }
         
         /* Breadcrumb Navigation */
@@ -513,7 +510,7 @@
         
         @media (max-width: 768px) {
             .container {
-                padding: 110px 16px 0 16px; /* Match other screens */
+                padding: 110px 16px 40px 16px; /* Add bottom padding for mobile scrolling */
             }
             
             .header {

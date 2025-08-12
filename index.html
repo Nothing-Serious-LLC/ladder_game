@@ -199,41 +199,7 @@
             user-select: none;
         }
         
-        /* PWA Splash Screen - prevents white flash */
-        .pwa-splash {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #fafafa;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            opacity: 1;
-            transition: opacity 0.4s ease-out;
-        }
         
-        .pwa-splash.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .pwa-splash-icon {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-        
-        .pwa-splash-text {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #6aaa64;
-            letter-spacing: 0.1em;
-        }
         
         @keyframes fadeIn {
             from {
@@ -377,6 +343,9 @@
             line-height: 1.4;
             opacity: 0;
             animation: fadeInUp 0.6s ease-out 0.7s forwards;
+            max-width: clamp(220px, 60vw, 260px);
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Entrance animations */
@@ -409,8 +378,10 @@
             letter-spacing: 0.01em;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             position: relative;
-            max-width: 500px;
-            width: 100%;
+            width: clamp(220px, 60vw, 260px);
+            max-width: none;
+            display: block;
+            margin: 0 auto;
             transform: scale(1);
         }
 
@@ -812,6 +783,10 @@
             transform-origin: center;
         }
 
+        .rung.mobile-loading-animation {
+            animation: mobileLoadingGlow 0.4s ease-out;
+        }
+
         .letter-box.cascade-fill {
             animation: cascadeFill 0.4s ease-out;
         }
@@ -848,6 +823,22 @@
                 transform: scale(1);
                 box-shadow: 0 2px 8px rgba(106, 170, 100, 0.1);
                 opacity: 1;
+            }
+        }
+
+        /* Mobile ladder rung clean slide up animation */
+        @keyframes mobileLoadingGlow {
+            0% { 
+                transform: translateY(15px);
+                border-color: var(--gray-300);
+                opacity: 0.4;
+                background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            }
+            100% { 
+                transform: translateY(0px);
+                border-color: var(--primary-green);
+                opacity: 1;
+                background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
             }
         }
 
@@ -1143,7 +1134,7 @@
             align-items: center;
             justify-content: flex-start;
             max-width: 500px;
-            margin: 50px auto 0; /* Moved up another 30px from previous 50px */
+            margin: 30px auto 0; /* bring closer to header */
             padding: 0 20px 40px;
             min-height: calc(100vh - 120px);
         }
@@ -1173,7 +1164,9 @@
             font-family: system-ui, -apple-system, sans-serif;
         }
         
-        .countdown-content .signup-card {
+        /* Unified card style used by countdown and failure screens */
+        .countdown-content .signup-card,
+        .failure-screen-container .signup-card {
             background: white;
             border-radius: 16px;
             padding: 24px;
@@ -1181,31 +1174,46 @@
             border: 1px solid rgba(0, 0, 0, 0.04);
             text-align: center;
             margin-top: 60px;
-            max-width: 350px;
+            max-width: 500px; /* Match container width */
+            width: 100%; /* Take full width of container */
             position: relative;
+            align-self: center; /* Ensure centered alignment */
+        }
+
+        /* Override margin-top for failure screen only to fix positioning */
+        .failure-screen-container .signup-card:first-child {
+            margin-top: 0px; /* Remove large margin for first card only */
         }
         
-        .countdown-content .signup-title {
+        .failure-screen-container .signup-card:not(:first-child) {
+            margin-top: 24px; /* Restore spacing between cards (matching home.html gap) */
+        }
+
+        .countdown-content .signup-title,
+        .failure-screen-container .signup-title {
             font-size: 1.3rem;
             font-weight: 600;
             color: #6aaa64;
             margin-bottom: 8px;
         }
-        
-        .countdown-content .signup-description {
+
+        .countdown-content .signup-description,
+        .failure-screen-container .signup-description {
             font-size: 0.9rem;
             color: #787c7e;
             margin-bottom: 20px;
             line-height: 1.4;
         }
-        
-        .countdown-content .signup-buttons {
+
+        .countdown-content .signup-buttons,
+        .failure-screen-container .signup-buttons {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
         
-        .countdown-content .signup-close {
+        .countdown-content .signup-close,
+        .failure-screen-container .signup-close {
             position: absolute;
             top: 12px;
             right: 12px;
@@ -1223,12 +1231,14 @@
             transition: background-color 0.2s ease;
         }
         
-        .countdown-content .signup-close:hover {
+        .countdown-content .signup-close:hover,
+        .failure-screen-container .signup-close:hover {
             background-color: #f0f0f0;
             color: #333;
         }
         
-        .countdown-content .signup-button {
+        .countdown-content .signup-button,
+        .failure-screen-container .signup-button {
             padding: 12px 24px;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -1238,15 +1248,49 @@
             border: none;
         }
         
-        .countdown-content .signup-button.primary {
+        .countdown-content .signup-button.primary,
+        .failure-screen-container .signup-button.primary {
             background: #6aaa64;
             color: white;
         }
         
-        .countdown-content .signup-button.primary:hover {
+        .countdown-content .signup-button.primary:hover,
+        .failure-screen-container .signup-button.primary:hover {
             background: #5a9054;
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3);
+        }
+
+        /* Testing Mode Replay Button Styles */
+        .testing-replay-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .testing-replay-button {
+            background: linear-gradient(135deg, #ff8c42, #ff6b1a);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+        }
+        
+        .testing-replay-button:hover {
+            background: linear-gradient(135deg, #ff6b1a, #e55a0f);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+        }
+        
+        .testing-mode-note {
+            margin-top: 12px;
+            font-size: 0.8rem;
+            color: #ff8c42;
+            font-style: italic;
         }
 
         /* Mobile countdown styles */
@@ -1265,6 +1309,46 @@
                 font-size: 1rem;
                 margin: 20px 0 0 0;
             }
+            
+            .testing-replay-button {
+                padding: 14px 24px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Testing Mode Indicator - Subtle dot */
+        .testing-mode-indicator {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            width: 12px;
+            height: 12px;
+            background: #ff8c42;
+            border-radius: 50%;
+            z-index: 10000;
+            box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.2);
+            animation: testingPulse 2s infinite;
+        }
+        
+        @keyframes testingPulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Tooltip on hover */
+        .testing-mode-indicator:hover::after {
+            content: 'Testing Mode';
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            margin-top: 4px;
         }
 
         /* PWA Installation Card Styles (Mobile Only) */
@@ -1643,14 +1727,35 @@
                 font-weight: 500;
             }
             
-            .completion-content,
-            .failure-content {
+            .completion-content {
                 gap: 16px;
                 padding: 120px 16px 160px 16px; /* Extra bottom padding for mobile browser chrome */
                 overflow-y: auto;
                 overflow-x: hidden; /* Prevent horizontal scrolling */
                 max-height: none; /* Remove height constraint to prevent cutoff */
                 min-height: calc(100vh - 80px); /* Ensure full viewport usage */
+                align-items: center; /* Keep cards centered and width-stable */
+                width: 100%; /* Force full width container */
+            }
+            
+            /* Mobile styles for new failure container */
+            .failure-content-container {
+                gap: 16px;
+                padding: 120px 16px 160px 16px; /* Extra bottom padding for mobile browser chrome */
+                overflow-y: auto;
+                overflow-x: hidden; /* Prevent horizontal scrolling */
+                max-height: none; /* Remove height constraint to prevent cutoff */
+                min-height: calc(100vh - 80px); /* Ensure full viewport usage */
+                align-items: center; /* Keep cards centered and width-stable */
+                width: 100%; /* Force full width container */
+            }
+            
+            /* Override mobile card width constraints */
+            .completion-content .card,
+            .failure-content-container .card {
+                width: 100%;
+                max-width: calc(100vw - 32px); /* Full width minus padding */
+                min-width: auto; /* Allow mobile to be narrower */
             }
             
             .completion-title,
@@ -1774,12 +1879,22 @@
             opacity: 0;
             transform: translateY(40px);
             animation: cardSlideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            flex-shrink: 0; /* Prevent collapse when siblings are dismissed */
         }
         
         /* Completion and Failure Card Styles */
         .completion-card, .failure-card {
-            max-width: 550px;
+            width: 100%;
+            max-width: 500px;
             margin: 0 auto;
+        }
+        
+        /* Desktop-only: Fixed width to prevent layout shift when cards are dismissed */
+        @media (min-width: 769px) {
+            .completion-card, .failure-card {
+                width: 500px !important;
+                min-width: 500px;
+            }
         }
         
         .completion-success {
@@ -1858,6 +1973,15 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
+        }
+        
+        /* Desktop-only: Signup card width matching */
+        @media (min-width: 769px) {
+            .more-puzzles-signup-card {
+                width: 500px !important; /* Match completion/failure card width */
+                max-width: 500px;
+                min-width: 500px;
+            }
         }
         
         .card:nth-child(2) {
@@ -2385,17 +2509,237 @@
         }
 
         /* Completion and Failure Card Styles */
-        .completion-content,
-        .failure-content {
-            flex: 1;
+        .completion-content {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 24px;
+            transition: opacity 0.4s ease-out;
+        }
+
+        /* New Failure Content Container - Properly Centered Like Header */
+        .failure-content-container {
             max-width: 500px;
             margin: 0 auto;
-            padding-top: 20px;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
             transition: opacity 0.4s ease-out;
+        }
+
+        /* Test Card Styles - Properly Centered Like Header */
+        .test-card-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* Failure Screen Container - Match Countdown Container Styling */
+        .failure-screen-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 5px 20px 40px 20px; /* Much closer to header */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px; /* Match home.html spacing */
+            transition: opacity 0.4s ease-out;
+            overflow-y: auto;
+        }
+
+        /* Failure cards – restore old visual language without moving layout */
+        #failure-content .signup-card {
+            border: 1px solid #d3d6da;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Full red main card */
+        #failure-content .signup-card.card-failed {
+            background: linear-gradient(135deg, var(--error-red) 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 20px rgba(231, 76, 60, 0.12);
+        }
+
+        #failure-content .card-failed { 
+            padding: 32px 28px; 
+            min-height: 280px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: space-between; /* Distribute content evenly */
+        }
+        #failure-content .card-failed .signup-title { 
+            color: #fff; 
+            font-weight: 700; 
+            margin: 0; 
+            font-size: 1.5rem; 
+            flex-shrink: 0; /* Keep at top */
+        }
+        #failure-content .card-failed .signup-description { display:none; }
+        #failure-content .failure-time { 
+            font-size: 3.0rem; 
+            font-weight: 700; 
+            letter-spacing: -0.02em; 
+            margin: 0; 
+            color: #fff; 
+            flex: 1; /* Take up middle space */
+            display: flex;
+            align-items: center; /* Center vertically in its space */
+        }
+
+        /* Button rows – desktop horizontal, mobile vertical */
+        #failure-content .signup-buttons { 
+            display: flex; 
+            gap: 12px; 
+            justify-content: center; 
+            flex-direction: row; 
+            flex-shrink: 0; /* Keep at bottom */
+        }
+        @media (max-width: 480px){ #failure-content .signup-buttons { flex-direction: column; } }
+
+        #failure-content .signup-button { padding: 12px 24px; border-radius: 12px; font-weight: 700; border: none; font-size: 0.95rem; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; min-width: 140px; }
+        #failure-content .card-failed .signup-button.primary { background: #fff; color: var(--error-red); }
+        #failure-content .card-failed .signup-button.primary:hover { background: rgba(255,255,255,.9); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+
+        /* Secondary buttons */
+        #failure-content .signup-button:not(.primary) { background: #d3d6da; color: #565656; }
+        #failure-content .signup-button:not(.primary):hover { background: #c8ccd1; transform: translateY(-1px); }
+
+        /* Orange accent title for PWA card */
+        #failure-content .signup-card:nth-of-type(2) .signup-title { color: var(--primary-orange); }
+
+        /* Android PWA card: replace icons with orange checkmarks */
+        #failure-android-pwa-install-card .pwa-benefits { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+        #failure-android-pwa-install-card .pwa-benefit { position: relative; padding-left: 22px; color: var(--gray-700); font-size: 0.95rem; }
+        #failure-android-pwa-install-card .pwa-benefit::before { content: '✓'; position: absolute; left: 0; top: 0; color: var(--primary-orange); font-weight: 800; }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 16px; /* More compact */
+        }
+
+        .test-title {
+            font-size: 1.3rem; /* Match countdown signup title */
+            font-weight: 600;
+            color: var(--gray-900);
+            margin: 0 0 8px 0; /* Match countdown title margin */
+        }
+
+        .test-details {
+            margin: 20px 0;
+            color: var(--gray-600); /* Match countdown description color */
+            line-height: 1.4; /* Match countdown line height */
+        }
+
+        .test-details p {
+            font-size: 0.9rem; /* Match countdown description size */
+            margin: 10px 0;
+        }
+
+        .test-actions {
+            display: flex;
+            flex-direction: column; /* Match countdown button layout */
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .test-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px; /* Match countdown button radius */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s; /* Match countdown transition */
+            font-size: 0.9rem; /* Match countdown button size */
+        }
+
+        .test-button.primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .test-button.primary:hover {
+            background: var(--primary-green-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(106, 170, 100, 0.3); /* Match countdown button shadow */
+        }
+
+        /* Failure stats styling within test card */
+        .failure-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        /* PWA Benefits styling */
+        .pwa-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .pwa-benefit {
+            font-size: 0.9rem;
+            color: var(--gray-700);
+        }
+
+        /* Secondary button styling - Match countdown styling */
+        .test-button.secondary {
+            background: var(--gray-200);
+            color: var(--gray-600);
+            border: none;
+        }
+
+        .test-button.secondary:hover {
+            background: var(--gray-400);
+            transform: translateY(-1px);
+        }
+
+        /* Main failure card with red border - Match home.html style */
+        .failure-main-card {
+            border: 2px solid var(--error-red) !important;
+            box-shadow: 0 4px 20px rgba(231, 76, 60, 0.12) !important; /* Match home.html shadow depth */
         }
         
         .card {
@@ -2643,11 +2987,10 @@
     </style>
 </head>
 <body>
-    <!-- PWA Splash Screen -->
-    <div class="pwa-splash" id="pwa-splash">
-        <img src="./assets/icons/ladder_transparent.png" alt="Ladder" class="pwa-splash-icon">
-        <div class="pwa-splash-text">LADDER</div>
-    </div>
+    <!-- Testing Mode Indicator - Subtle dot -->
+    <div class="testing-mode-indicator" id="testing-mode-indicator" style="display: none;" title="Testing Mode Active"></div>
+    
+    
     
     <div class="container">
         <header class="header">
@@ -2665,7 +3008,8 @@
 
 
 
-            <button class="play-button" onclick="showGameContent()">Play Today's Puzzle</button>
+            <button class="play-button" onclick="showGameContent()">Play</button>
+            <button class="play-button" onclick="showFailureContent()" style="background-color: #f59e0b; margin-top: 10px;">🧪 Test Failure Screen</button>
             <p class="week-difficulty-text">Daily puzzle gets more challenging throughout the week</p>
     </div>
 
@@ -2934,8 +3278,8 @@
                 
                 <div class="completion-actions">
                     <div class="completion-buttons">
-                        <button class="completion-button share">Share Result</button>
-                        <button class="completion-button copy">Copy Link</button>
+                        <button class="completion-button share" onclick="shareCompletion()">Share Result</button>
+                        <button class="completion-button copy" onclick="copyShareLink()">Copy Link</button>
                     </div>
                     
                     <button class="completion-button primary" onclick="showCountdownContent()">Next Puzzle</button>
@@ -3003,41 +3347,36 @@
             </div>
         </div>
 
-        <!-- Failure Screen Content (initially hidden) -->
-        <div class="failure-content" id="failure-content" style="display: none;">
-            <div class="failure-card card failure-error">
-                <div class="failure-header">
-                    <h2 class="failure-title">Puzzle Incomplete</h2>
-                </div>
-                
-                <div class="failure-details">
-                    <p class="result-theme" id="failure-theme">Theme: Parliamentary Democracy</p>
-                    
-                    <div class="failure-stats">
-                        <div class="stat-item">
-                            <div class="stat-value" id="failure-time">2:34</div>
-                            <div class="stat-label">Time</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="failure-hints">0</div>
-                            <div class="stat-label">Hints</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="failure-actions">
-                    <div class="failure-buttons">
-                        <button class="failure-button share">Share Result</button>
-                        <button class="failure-button copy">Copy Link</button>
-                    </div>
-                    
-                    <button class="failure-button primary" onclick="showCountdownContent()">Next Puzzle</button>
+        <!-- Failure Screen with Multiple Cards -->
+        <div class="failure-screen-container" id="failure-content" style="display: none;">
+            <!-- Main Failure Card using unified signup-card styling (full red) -->
+            <div class="signup-card card-failed">
+                <h3 class="signup-title">Puzzle Incomplete</h3>
+                <div class="failure-time" id="failure-time">00:00</div>
+                <div class="signup-buttons">
+                    <button class="signup-button primary" id="failure-try-again" onclick="retryGame()">Try Again</button>
+                    <button class="signup-button primary" id="failure-countdown-button" onclick="showCountdownContent()">Next Puzzle</button>
                 </div>
             </div>
-            
-            <!-- PWA Installation Instructions Card (Mobile Only) - Orange Theme for Failure -->
-            <div class="pwa-install-card card failure-pwa-card" id="failure-pwa-install-card" style="display: none;">
-                <h3 class="pwa-install-title">Get the App</h3>
+
+            <!-- PWA Install Card -->
+            <div class="signup-card" id="failure-android-pwa-install-card" style="display:none;">
+                <h3 class="signup-title">Get the App</h3>
+                <p class="signup-description">Install LADDER for faster loading and notifications.</p>
+                <div class="pwa-benefits">
+                    <span class="pwa-benefit">📱 Full screen experience</span>
+                    <span class="pwa-benefit">⚡ Faster loading</span>
+                    <span class="pwa-benefit">🔔 Daily notifications</span>
+                </div>
+                <div class="signup-buttons">
+                    <button class="signup-button primary" id="failure-pwa-install-btn" onclick="installPWA()">Install App</button>
+                    <button class="signup-button" id="failure-pwa-dismiss" style="background:#d3d6da;color:#565656;" onclick="dismissFailurePWACard(this)">Maybe Later</button>
+                </div>
+            </div>
+
+            <!-- iOS PWA Instruction Card (orange theme) -->
+            <div class="pwa-install-card signup-card failure-pwa-card" id="failure-pwa-install-card" style="display:none;">
+                <h3 class="pwa-install-title signup-title">Get the App</h3>
                 <div class="pwa-install-steps">
                     <div class="pwa-step">
                         <div class="pwa-step-icon">
@@ -3060,41 +3399,22 @@
                         <div class="pwa-step-text">Scroll down and tap "<span class="highlight-orange">Add to Home Screen</span>"</div>
                     </div>
                 </div>
-                <button class="pwa-install-dismiss" onclick="dismissFailurePWACard(this)">Maybe Later</button>
+                <button class="signup-close card-close" onclick="dismissFailurePWACard(this)">×</button>
+                <div class="signup-buttons"><button class="signup-button" onclick="dismissFailurePWACard(this)" style="background:#d3d6da;color:#565656;">Maybe Later</button></div>
             </div>
 
-            <!-- Android PWA Installation Button Card - Orange Theme for Failure -->
-            <div class="pwa-install-card card failure-pwa-card" id="failure-android-pwa-install-card" style="display: none;">
-                <div class="pwa-app-info">
-                    <img src="assets/icons/icon-192.png" alt="LADDER" class="pwa-app-icon">
-                    <div class="pwa-app-details">
-                        <h3 class="pwa-install-title">Install LADDER</h3>
-                        <div class="pwa-install-subtitle">Add to home screen for instant access to daily puzzles!</div>
-                    </div>
-                </div>
-                <button class="pwa-install-button failure-install-button" id="failure-pwa-install-btn" onclick="installPWA()">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="install-icon">
-                        <path d="M12 16L12 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 12L12 16L16 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M20 16V20C20 20.5304 19.7893 21.0391 19.4142 21.4142C19.0391 21.7893 18.5304 22 18 22H6C5.46957 22 4.96086 21.7893 4.58579 21.4142C4.21071 21.0391 4 20.5304 4 20V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Install App
-                </button>
-                <button class="pwa-install-dismiss" onclick="dismissFailurePWACard(this)">Maybe Later</button>
-            </div>
-
-            <!-- More Puzzles Signup Card for non-authenticated users - Failure -->
-            <div class="more-puzzles-signup-card card" id="failure-more-puzzles-signup-card" style="display: none;">
-                <h3 class="more-puzzles-signup-title">Try again?</h3>
-                <p class="more-puzzles-signup-description" id="failure-more-puzzles-signup-text">Sign up to try the puzzle again and unlock 10 free puzzles, track daily stats, and more!</p>
-                <button class="card-close" onclick="this.closest('.more-puzzles-signup-card').style.opacity='0'; setTimeout(() => this.closest('.more-puzzles-signup-card').style.display='none', 300)">×</button>
-                <div class="more-puzzles-signup-buttons">
-                    <button class="more-puzzles-signup-button primary" id="failure-more-puzzles-signup-primary">
-                        <span class="signup-button-text">Sign Up</span>
-                    </button>
+            <!-- More Puzzles Card -->
+            <div class="signup-card">
+                <h3 class="signup-title">Want more puzzles?</h3>
+                <p class="signup-description">Create an account to unlock more puzzles and track your daily stats!</p>
+                <button class="signup-close" onclick="this.closest('.signup-card').style.opacity='0.5'; setTimeout(() => this.closest('.signup-card').style.display='none', 300)">×</button>
+                <div class="signup-buttons">
+                    <button class="signup-button primary" onclick="window.location.href='./signup.html'">Sign Up</button>
                 </div>
             </div>
         </div>
+
+
 
         <!-- Countdown Content (initially hidden) -->
         <div class="countdown-content" id="countdown-content" style="display: none;">
@@ -3103,6 +3423,14 @@
             </div>
             <div class="countdown-card">
                 <div class="countdown-timer" id="countdown-timer">00:00:00</div>
+            </div>
+            
+            <!-- Testing Mode Replay Button -->
+            <div class="testing-replay-section" id="testing-replay-section" style="display: none;">
+                <button class="testing-replay-button" onclick="replayGame()">
+                    🔄 Replay Game (Testing Mode)
+                </button>
+                <p class="testing-mode-note">Testing mode is enabled. Toggle TESTING_MODE in code to disable.</p>
             </div>
             
             <!-- Signup card for non-authenticated users -->
@@ -3125,6 +3453,9 @@
     
     <!-- Application Modules -->
     <script type="module">
+        // TESTING MODE - Set to true to enable replay functionality
+        window.TESTING_MODE = true; // Change to false for production
+        
         // Initialize Supabase client and set it globally for modules
         import { supabaseConfig, setSupabaseClient } from './config/supabase-config.js';
         import { initializePWA } from './assets/js/pwa.js';
@@ -3137,6 +3468,12 @@
         
         // Make Supabase client globally available
         window.supabaseClient = supabaseClient;
+        
+        // Show testing mode indicator if enabled
+        if (window.TESTING_MODE) {
+            document.getElementById('testing-mode-indicator').style.display = 'block';
+            console.log('🧪 TESTING MODE ENABLED - Daily restrictions disabled');
+        }
         
         // Initialize PWA features
         initializePWA();
@@ -3202,6 +3539,91 @@
                     }, 50);
                 }
             }, 300);
+        }
+        
+        // Ad Infrastructure for Try Again functionality
+        window.AdManager = {
+            // Future Google Ad configuration
+            config: {
+                enabled: false, // Set to true when ads are ready
+                adUnitId: '', // Will be set when Google ads are configured
+                timeout: 5000, // Max time to wait for ad to load
+            },
+            
+            // Show full-screen video ad before retry
+            async showRetryAd() {
+                if (!this.config.enabled) {
+                    console.log('Ads not configured, proceeding directly to retry');
+                    return true; // Allow retry to proceed
+                }
+                
+                try {
+                    console.log('Attempting to show retry ad...');
+                    // TODO: Implement Google AdMob/AdSense full-screen video ad
+                    // Example structure for future implementation:
+                    /*
+                    return new Promise((resolve, reject) => {
+                        const ad = new googleAds.RewardedVideoAd(this.config.adUnitId);
+                        ad.onUserEarnedReward = () => resolve(true);
+                        ad.onAdFailedToLoad = () => reject(false);
+                        ad.onAdClosed = () => resolve(true);
+                        ad.load();
+                        ad.show();
+                    });
+                    */
+                    
+                    // For now, return true to allow retry
+                    return true;
+                } catch (error) {
+                    console.error('Ad failed to load:', error);
+                    return false; // Block retry if ad system fails
+                }
+            }
+        };
+
+        // Try Again: restart the current game with full loading animation experience
+        window.retryGame = async function() {
+            try {
+                // Show ad before allowing retry (future implementation)
+                const adSuccess = await window.AdManager.showRetryAd();
+                
+                if (!adSuccess) {
+                    alert('Please try again in a moment.');
+                    return;
+                }
+                
+                // Switch to game content
+                document.body.classList.add('mobile-game-mode');
+                showContent('game-content');
+                
+                // Play the full loading animation with chimes (same as new game)
+                try {
+                    await playLoadingAnimation();
+                } catch (error) {
+                    console.error('Error during retry loading animation:', error);
+                    // Continue even if loading animation fails
+                }
+                
+                // Initialize the actual game with database puzzle (same flow as new game)
+                try {
+                    await initializeGameWithDatabase();
+                } catch (error) {
+                    console.error('Critical error initializing retry game:', error);
+                    // Fallback to basic initialization
+                    initializeGame();
+                }
+                
+                // Track retry attempt for analytics
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'retry_game', {
+                        event_category: 'game_action',
+                        event_label: 'failure_screen_retry'
+                    });
+                }
+            } catch (error) {
+                console.error('Error retrying game:', error);
+                alert('Unable to restart. Please refresh and try again.');
+            }
         }
         
         window.showGameContent = async () => {
@@ -3292,9 +3714,95 @@
             
             // Set up PWA install card for mobile users not in PWA mode
             setTimeout(() => {
-                setupFailurePWAInstallCard();
+                // Force-show PWA cards for editing on desktop (editor mode)
+                const editorPreviewPWA = false;
+                if (editorPreviewPWA) {
+                    const ios = document.getElementById('failure-pwa-install-card');
+                    const android = document.getElementById('failure-android-pwa-install-card');
+                    if (ios) ios.style.display = 'block';
+                    if (android) android.style.display = 'block';
+                } else {
+                    setupFailurePWAInstallCard();
+                }
                 setupFailureMorePuzzlesSignupCard();
             }, 300); // Wait for content switch to complete
+        };
+
+        // Centering Test Function (now built into failure screen)
+
+        window.runCenteringTest = () => {
+            console.log("=== CENTERING TEST RESULTS ===");
+            
+            // Test the header (should be perfectly centered)
+            const header = document.querySelector('.header');
+            if (header) {
+                const headerRect = header.getBoundingClientRect();
+                const headerCenterX = headerRect.left + headerRect.width / 2;
+                console.log("Header centerX:", headerCenterX);
+                console.log("Header bottom:", headerRect.bottom);
+            }
+            
+            // Test the failure content (now using test card structure)
+            const failureContainer = document.querySelector('#failure-content');
+            const failureScreenContainer = document.querySelector('.failure-screen-container');
+            if (failureContainer) {
+                const failureRect = failureContainer.getBoundingClientRect();
+                const failureCenterX = failureRect.left + failureRect.width / 2;
+                console.log("Failure container centerX:", failureCenterX);
+                console.log("Failure container top:", failureRect.top);
+                console.log("Distance from header bottom to failure top:", failureRect.top - (header ? header.getBoundingClientRect().bottom : 0));
+            }
+            if (failureScreenContainer) {
+                const screenRect = failureScreenContainer.getBoundingClientRect();
+                console.log("Failure screen container top:", screenRect.top);
+                console.log("Distance from header bottom to screen container:", screenRect.top - (header ? header.getBoundingClientRect().bottom : 0));
+            }
+            
+            // Test the main container
+            const container = document.querySelector('.container');
+            if (container) {
+                const containerRect = container.getBoundingClientRect();
+                const containerCenterX = containerRect.left + containerRect.width / 2;
+                console.log("Main container centerX:", containerCenterX);
+            }
+            
+
+            
+            // Viewport center reference
+            const viewportCenter = window.innerWidth / 2;
+            console.log("Viewport center:", viewportCenter);
+            
+            // Color coding for visual inspection
+            console.log("=== VISUAL OUTLINE TEST ===");
+            
+            // Clear previous outlines
+            document.querySelectorAll('*').forEach(el => {
+                el.style.outline = '';
+                el.style.outlineOffset = '';
+            });
+            
+            // Color the header (GREEN - reference point)
+            if (header) {
+                header.style.outline = '3px solid green';
+                header.style.outlineOffset = '-3px';
+                console.log("Header outlined in GREEN (reference)");
+            }
+            
+            // Color the failure container (BLUE - should be centered!)
+            if (failureContainer) {
+                failureContainer.style.outline = '3px solid blue';
+                failureContainer.style.outlineOffset = '-3px';
+                console.log("Failure container outlined in BLUE (should align with GREEN header)");
+            }
+            
+            // Color the main container (PURPLE)
+            if (container) {
+                container.style.outline = '3px solid purple';
+                container.style.outlineOffset = '-3px';
+                console.log("Main container outlined in PURPLE");
+            }
+            
+
         };
 
         window.showCountdownContent = async () => {
@@ -3317,6 +3825,11 @@
             document.body.classList.remove('mobile-game-mode');
             showContent('countdown-content');
             
+            // Show testing replay button if testing mode is enabled
+            if (window.TESTING_MODE) {
+                document.getElementById('testing-replay-section').style.display = 'block';
+            }
+            
             // Update countdown page info
             const today = new Date();
             const puzzleNumber = Math.floor((today - new Date('2025-01-01')) / (1000 * 60 * 60 * 24)) + 1;
@@ -3335,10 +3848,59 @@
             // Start countdown timer
             startCountdownTimer();
         };
+        
+        // Replay game function for testing mode
+        window.replayGame = () => {
+            console.log('Replaying game in testing mode');
+            
+            // Clear any completion cookies for testing
+            if (window.TESTING_MODE) {
+                clearTestingCompletionData();
+            }
+            
+            // Reset game state
+            if (window.gameState) {
+                window.gameState.currentRungIndex = 0;
+                window.gameState.attempts = [];
+                window.gameState.gameCompleted = false;
+                window.gameState.startTime = Date.now();
+            }
+            
+            // Reset any game instances
+            if (window.game) {
+                window.game = null;
+            }
+            
+            // Remove mobile game mode class to restore main header
+            document.body.classList.remove('mobile-game-mode');
+            
+            // Go back to landing page
+            showContent('landing-content');
+            
+            console.log('Returned to landing page for replay');
+        };
+        
+        // Clear completion data for testing mode
+        function clearTestingCompletionData() {
+            if (!window.TESTING_MODE) return;
+            
+            const today = getGameDayString(new Date());
+            const cookieName = `ladder_played_${today}`;
+            
+            // Remove completion cookie
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            console.log('Cleared testing completion data');
+        }
 
         // Check if user has already completed today's puzzle
         async function checkIfCompletedToday() {
             try {
+                // In testing mode, always allow play
+                if (window.TESTING_MODE) {
+                    console.log('Testing mode enabled - allowing play');
+                    return false;
+                }
+                
                 // Get today's date string using the same format as the game
                 const today = getGameDayString(new Date());
                 
@@ -4053,7 +4615,6 @@
             
             document.getElementById('failure-time').textContent = timeString;
             document.getElementById('failure-hints').textContent = window.gameState.hintsUsed;
-            document.getElementById('failure-theme').textContent = `Theme: ${window.currentPuzzleTheme || 'Library Studies'}`;
             
             // Set completion cookie for non-authenticated users (they played the puzzle)
             if (window.game && window.game.setPuzzlePlayedCookie) {
@@ -4227,33 +4788,49 @@
                     }
                 });
                 
-                // Create loading rungs
+                // Create loading rungs - different styles for desktop vs mobile
                 for (let i = 0; i < 6; i++) {
                     const isFinish = i === 5;
                     
                     [ladder, mobileLadder].forEach((ladderEl, ladderIndex) => {
                         if (!ladderEl) return;
                         
+                        const isMobile = ladderIndex === 1; // mobileLadder is second in array
+                        
                         const rung = document.createElement('div');
                         rung.className = 'rung';
-                        rung.id = `${ladderIndex === 0 ? '' : 'mobile-'}loading-rung-${i}`;
+                        rung.id = `${isMobile ? 'mobile-' : ''}loading-rung-${i}`;
                         rung.style.opacity = '0.3';
                         
-                        const wordDisplay = document.createElement('div');
-                        wordDisplay.className = 'word-display';
-                        
-                        // Create letter boxes for loading
-                        const letterCount = isFinish ? 6 : 4 + (i % 3);
-                        for (let j = 0; j < letterCount; j++) {
-                            const letterBox = document.createElement('div');
-                            letterBox.className = 'letter-box';
-                            letterBox.style.opacity = '0.3';
-                            wordDisplay.appendChild(letterBox);
+                        if (isMobile) {
+                            // Mobile: Create clean ladder rung rectangles
+                            rung.style.height = '52px';
+                            rung.style.background = 'linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%)';
+                            rung.style.border = '1px solid var(--primary-green)';
+                            rung.style.borderRadius = '16px';
+                            rung.style.margin = '2px 0';
+                            rung.style.width = '100%';
+                            rung.style.display = 'block';
+                            rung.style.position = 'relative';
+                        } else {
+                            // Desktop: Keep original letter box style
+                            const wordDisplay = document.createElement('div');
+                            wordDisplay.className = 'word-display';
+                            
+                            // Create letter boxes for loading
+                            const letterCount = isFinish ? 6 : 4 + (i % 3);
+                            for (let j = 0; j < letterCount; j++) {
+                                const letterBox = document.createElement('div');
+                                letterBox.className = 'letter-box';
+                                letterBox.style.opacity = '0.3';
+                                wordDisplay.appendChild(letterBox);
+                            }
+                            
+                            rung.appendChild(wordDisplay);
                         }
                         
-                        rung.appendChild(wordDisplay);
-                        
-                        if (!isFinish) {
+                        // Only add hints for desktop, not mobile rectangles
+                        if (!isFinish && !isMobile) {
                             const hint = document.createElement('div');
                             hint.className = 'word-hint';
                             hint.innerHTML = '&nbsp;'; // Empty space to maintain height
@@ -4269,25 +4846,37 @@
                 const animationDelay = isMobile ? 900 : 600;
                 
                 for (let i = 0; i < 6; i++) {
-                    const delay = animationDelay + (i * 150);
+                    // For mobile, animate bottom to top (reverse order for upward building effect)
+                    const animationIndex = isMobile ? (5 - i) : i;
+                    // Match chime timing: 200ms intervals for mobile, 150ms for desktop
+                    const intervalTiming = isMobile ? 200 : 150;
+                    const delay = animationDelay + (animationIndex * intervalTiming);
                     
                     setTimeout(() => {
                         const desktopRung = document.getElementById(`loading-rung-${i}`);
                         const mobileRung = document.getElementById(`mobile-loading-rung-${i}`);
                         
-                        [desktopRung, mobileRung].forEach(rung => {
-                            if (rung) {
-                                rung.classList.add('loading-animation');
-                                setTimeout(() => {
-                                    rung.classList.remove('loading-animation');
-                                }, 800);
-                            }
-                        });
+                        // Apply different animations for desktop vs mobile
+                        if (desktopRung) {
+                            desktopRung.classList.add('loading-animation');
+                            setTimeout(() => {
+                                desktopRung.classList.remove('loading-animation');
+                            }, 800);
+                        }
+                        
+                        if (mobileRung) {
+                            mobileRung.classList.add('mobile-loading-animation');
+                            setTimeout(() => {
+                                mobileRung.classList.remove('mobile-loading-animation');
+                            }, 400);
+                        }
                     }, delay);
                 }
                 
                 // Complete loading after all animations
-                const totalTime = animationDelay + (6 * 150) + 800 + 200;
+                const intervalTiming = isMobile ? 200 : 150;
+                const animationDuration = isMobile ? 400 : 800;
+                const totalTime = animationDelay + (5 * intervalTiming) + animationDuration + 200;
                 setTimeout(() => {
                     resolve();
                 }, totalTime);
@@ -4703,6 +5292,68 @@
             showTimePenaltyPopup();
         }
 
+        // Build share payload (matching old format)
+        function buildShareData() {
+            const timeElem = document.getElementById('completion-time');
+            const timeText = timeElem ? timeElem.textContent.trim() : '';
+            
+            // Get current date in the old format
+            const today = new Date();
+            const currentDate = today.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Calculate puzzle number (days since Jan 1, 2025)
+            const puzzleNumber = Math.floor((today - new Date('2025-01-01')) / (1000 * 60 * 60 * 24)) + 1;
+            
+            const title = 'LADDER - Daily Word Puzzle';
+            const text = `LADDER\nPuzzle #${puzzleNumber} • ${currentDate}\n${timeText}`;
+            const url = 'https://ladder.game';
+            return { title, text, url };
+        }
+
+        window.shareCompletion = async function() {
+            const data = buildShareData();
+            const button = document.querySelector('.completion-button.share');
+            try {
+                if (navigator.share) {
+                    await navigator.share(data);
+                } else {
+                    await navigator.clipboard.writeText(data.text + '\n\n' + data.url);
+                    // Show "Copied!" feedback
+                    if (button) {
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                        }, 2000);
+                    }
+                }
+            } catch (err) {
+                console.error('Share failed:', err);
+            }
+        }
+
+        window.copyShareLink = async function() {
+            const data = buildShareData();
+            const button = document.querySelector('.completion-button.copy');
+            try {
+                await navigator.clipboard.writeText(data.text + '\n\n' + data.url);
+                // Show "Copied!" feedback
+                if (button) {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Copy failed:', err);
+            }
+        }
+
         function showTimePenaltyPopup() {
             // Create popup element
             const popup = document.createElement('div');
@@ -4938,6 +5589,12 @@
                 try {
                     console.log('Tracking completion:', timeString);
                     
+                    // Skip tracking in testing mode
+                    if (window.TESTING_MODE) {
+                        console.log('Testing mode: Skipping completion tracking');
+                        return;
+                    }
+                    
                     // Check if user is authenticated
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                     
@@ -4982,6 +5639,12 @@
             
             // Cookie tracking for non-authenticated users
             setPuzzlePlayedCookie() {
+                // Skip setting cookie in testing mode
+                if (window.TESTING_MODE) {
+                    console.log('Testing mode: Skipping completion cookie');
+                    return;
+                }
+                
                 const today = new Date().toISOString().split('T')[0];
                 const cookieName = `ladder_played_${today}`;
                 
@@ -5095,36 +5758,7 @@
             }
         });
         
-        // PWA Splash Screen Management
-        window.addEventListener('load', function() {
-            // Hide splash screen after everything loads
-            setTimeout(() => {
-                const splash = document.getElementById('pwa-splash');
-                if (splash) {
-                    splash.classList.add('fade-out');
-                    setTimeout(() => {
-                        splash.remove();
-                    }, 400);
-                }
-            }, 100); // Small delay to ensure smooth transition
-        });
         
-        // Immediate splash screen hiding for PWA context
-        document.addEventListener('DOMContentLoaded', function() {
-            // For PWA, hide splash screen faster
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.matchMedia('(display-mode: fullscreen)').matches) {
-                setTimeout(() => {
-                    const splash = document.getElementById('pwa-splash');
-                    if (splash) {
-                        splash.classList.add('fade-out');
-                        setTimeout(() => {
-                            splash.remove();
-                        }, 400);
-                    }
-                }, 300); // Faster for PWA
-            }
-        });
     </script>
     
     <!-- PWA Initialization -->

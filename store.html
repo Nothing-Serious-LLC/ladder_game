@@ -54,9 +54,6 @@
         
         /* Hide scrollbars in PWA mode */
         @media (display-mode: fullscreen) {
-            html {
-                overflow: hidden;
-            }
             body {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
@@ -76,7 +73,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
             background-color: var(--gray-50);
             color: var(--gray-900);
-            min-height: 100vh;
+            min-height: calc(100vh + 200px); /* Force content to be taller than viewport to enable scrolling */
             min-height: -webkit-fill-available;
             padding-top: var(--safe-area-inset-top);
             padding-right: var(--safe-area-inset-right);

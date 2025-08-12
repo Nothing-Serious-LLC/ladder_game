@@ -61,9 +61,6 @@
         
         /* Hide scrollbars in PWA mode */
         @media (display-mode: fullscreen) {
-            html {
-                overflow: hidden;
-            }
             body {
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
@@ -83,7 +80,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
             background-color: var(--gray-50);
             color: var(--gray-900);
-            min-height: 100vh;
+            min-height: calc(100vh + 200px); /* Force content to be taller than viewport to enable scrolling */
             min-height: -webkit-fill-available;
             padding-top: var(--safe-area-inset-top);
             padding-right: var(--safe-area-inset-right);
@@ -121,14 +118,14 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 110px 20px 0 20px; /* Top padding for fixed header */
+            padding: 110px 20px 100px 20px; /* Added large bottom padding to ensure scrollable content */
             flex: 1;
         }
         
         /* Better spacing on desktop */
         @media (min-width: 768px) {
             .container {
-                padding: 110px 40px 0 40px;
+                padding: 110px 40px 100px 40px; /* Added bottom padding for desktop */
             }
         }
         
@@ -746,7 +743,7 @@
             }
             
             .container {
-                padding: 75px 16px 0 16px; /* Proper top padding for mobile header clearance */
+                padding: 75px 16px 100px 16px; /* Added large bottom padding for mobile scrolling */
                 overflow-x: hidden;
                 box-sizing: border-box;
             }
