@@ -5506,8 +5506,10 @@
             }
         }
 
-        // PWA card setup for completion screen (desktop enabled)
+        // PWA card setup for completion screen (mobile only)
         function setupCompletionPWAInstallCard() {
+            // Only show PWA install card on mobile and when not already in PWA mode
+            const isMobile = window.innerWidth <= 480;
             const isStandalone = window.navigator.standalone || 
                                window.matchMedia('(display-mode: standalone)').matches ||
                                window.matchMedia('(display-mode: fullscreen)').matches;
@@ -5520,10 +5522,10 @@
                 return;
             }
             
-            // Show clean PWA card for all users (desktop and mobile) if not in PWA mode
-            if (!isStandalone && pwaInstallCard) {
+            // Show clean PWA card only on mobile if not in PWA mode
+            if (isMobile && !isStandalone && pwaInstallCard) {
                 pwaInstallCard.style.display = 'block';
-                console.log('Showing clean PWA install card on completion screen (desktop enabled)');
+                console.log('Showing PWA install card on completion screen (mobile only)');
             } else if (pwaInstallCard) {
                 pwaInstallCard.style.display = 'none';
             }
