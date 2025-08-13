@@ -4508,12 +4508,69 @@
             });
         }
 
+        // Update header display based on puzzle type
+        function updateHeaderForPuzzleType(puzzleData) {
+            const headerDateDisplay = document.getElementById('date-display');
+            if (!headerDateDisplay) return;
+            
+            switch (window.puzzleParams.type) {
+                case 'daily':
+                    // Keep existing daily puzzle header format
+                    console.log('📅 Keeping daily puzzle header format');
+                    break;
+                    
+                case 'pack':
+                    if (puzzleData.puzzleNumber) {
+                        headerDateDisplay.textContent = puzzleData.puzzleNumber;
+                        console.log('📦 Updated header for pack puzzle:', puzzleData.puzzleNumber);
+                    }
+                    break;
+                    
+                case 'historical':
+                    headerDateDisplay.textContent = `Historical Puzzle • ${window.puzzleParams.date}`;
+                    console.log('📜 Updated header for historical puzzle');
+                    break;
+            }
+        }
+
         // Database Game Initialization - Fetches real puzzle and creates LadderGame
         async function initializeGameWithDatabase() {
             try {
-                console.log('Fetching today\'s puzzle from database...');
-                const puzzleData = await fetchTodaysPuzzle();
-                console.log('Database puzzle fetched successfully:', puzzleData.puzzle.theme);
+                console.log(`🎮 Initializing ${window.puzzleParams.type} puzzle...`);
+                let puzzleData;
+                
+                // Load puzzle based on type
+                switch (window.puzzleParams.type) {
+                    case 'daily':
+                        // Use existing daily puzzle logic
+                        console.log('📅 Loading daily puzzle...');
+                        puzzleData = await fetchTodaysPuzzle();
+                        break;
+                        
+                    case 'pack':
+                        // Fetch puzzle from a specific pack
+                        if (!window.puzzleParams.packId || !window.puzzleParams.puzzleId) {
+                            throw new Error('Pack ID and Puzzle ID required for pack puzzles');
+                        }
+                        console.log(`📦 Loading pack puzzle: ${window.puzzleParams.packId}/${window.puzzleParams.puzzleId}`);
+                        puzzleData = await window.LadderGame.prototype.fetchPackPuzzle(
+                            window.puzzleParams.packId, 
+                            window.puzzleParams.puzzleId
+                        );
+                        break;
+                        
+                    case 'historical':
+                        // Fetch historical daily puzzle (future enhancement)
+                        console.log(`📜 Loading historical puzzle: ${window.puzzleParams.date}`);
+                        puzzleData = await fetchTodaysPuzzle(); // Fallback for now
+                        break;
+                        
+                    default:
+                        console.warn('Unknown puzzle type, defaulting to daily');
+                        puzzleData = await fetchTodaysPuzzle();
+                }
+                
+                console.log(`Database puzzle fetched successfully: ${puzzleData.puzzle.theme}`);
                 
                 // Store puzzle theme globally for completion screens
                 window.currentPuzzleTheme = puzzleData.puzzle.theme;
@@ -4521,8 +4578,13 @@
                 // Create LadderGame instance with database puzzle
                 window.game = new LadderGame(puzzleData);
                 
+                // Update header with appropriate puzzle information
+                updateHeaderForPuzzleType(puzzleData);
+                
                 // Initialize the game with the fetched puzzle
                 initializeGame();
+                
+                console.log(`✅ Game initialized successfully with ${window.puzzleParams.type} puzzle`);
                 
             } catch (error) {
                 console.error('Failed to fetch puzzle from database, using fallback:', error);
@@ -6018,6 +6080,106 @@
                 const correctResetTime = new Date(targetResetDate.getTime() + offsetMs);
                 
                 return correctResetTime;
+            }
+            
+            // Pack puzzle fetching (ported from play.html)
+            async fetchPackPuzzle(packId, puzzleId) {
+                try {
+                    const client = window.supabaseClient;
+                    if (!client) {
+                        throw new Error('Supabase client not initialized');
+                    }
+                    
+                    // Fetch puzzle from user's puzzle pack
+                    const { data: { user } } = await client.auth.getUser();
+                    if (!user) {
+                        throw new Error('User not authenticated');
+                    }
+                    
+                    // Check user access permissions
+                    const { data: purchases } = await client
+                        .from('user_purchases')
+                        .select('*')
+                        .eq('user_id', user.id)
+                        .in('product_id', [packId, 'complete-pack', 'free-pack']);
+                    
+                    const ownedProducts = purchases ? purchases.map(p => p.product_id) : [];
+                    const hasCompletePack = ownedProducts.includes('complete-pack');
+                    const hasThisPack = ownedProducts.includes(packId);
+                    
+                    // Check access permissions based on pack type
+                    let hasAccess = false;
+                    if (packId === 'free-pack') {
+                        hasAccess = hasThisPack || hasCompletePack;
+                    } else if (packId === 'puzzle-pack' || packId === 'archive') {
+                        hasAccess = hasThisPack || hasCompletePack;
+                    } else {
+                        hasAccess = hasThisPack || hasCompletePack;
+                    }
+                    
+                    if (!hasAccess) {
+                        throw new Error('User does not own this puzzle pack');
+                    }
+                    
+                    // Fetch the specific puzzle from the pack
+                    const { data: puzzle, error: puzzleError } = await client
+                        .from('puzzle_pack')
+                        .select('*')
+                        .eq('id', puzzleId)
+                        .single();
+                    
+                    if (puzzleError) {
+                        throw puzzleError;
+                    }
+                    
+                    // Get pack name for display
+                    const { data: packInfo } = await client
+                        .from('puzzle_packs')
+                        .select('name')
+                        .eq('id', packId)
+                        .single();
+                    
+                    // Find puzzle index in pack for numbering
+                    let puzzleIndex = 1;
+                    if (packId === 'free-pack') {
+                        const { data: allPuzzles } = await client
+                            .from('free_pack_puzzles')
+                            .select('id')
+                            .order('pack_level')
+                            .order('created_at');
+                        puzzleIndex = (allPuzzles?.findIndex(p => p.id === puzzleId) || 0) + 1;
+                    } else {
+                        const { data: allPuzzles } = await client
+                            .from('puzzle_pack')
+                            .select('id')
+                            .order('pack_level')
+                            .order('created_at');
+                        puzzleIndex = (allPuzzles?.findIndex(p => p.id === puzzleId) || 0) + 1;
+                    }
+                    
+                    const packName = packInfo?.name || 'Puzzle Pack';
+                    
+                    // Process puzzle with letter reveals
+                    const puzzleWithReveals = {
+                        ...puzzle,
+                        words: puzzle.words.map((word, index) => ({
+                            ...word,
+                            letters: word.word.split('').map((letter, letterIndex) => ({
+                                letter: letter.toUpperCase(),
+                                revealed: puzzle[`word_${index + 1}_reveals`]?.includes(letterIndex) || false
+                            }))
+                        }))
+                    };
+                    
+                    return { 
+                        puzzle: puzzleWithReveals, 
+                        puzzleNumber: `${packName} #${puzzleIndex}`
+                    };
+                    
+                } catch (error) {
+                    console.error('Failed to fetch pack puzzle:', error);
+                    throw error;
+                }
             }
             
             // Cookie tracking for non-authenticated users
