@@ -5941,41 +5941,115 @@
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                     
                     if (user) {
-                        // Authenticated user - save to database
-                        const today = new Date().toISOString().split('T')[0];
+                        // Determine puzzle type and track accordingly
+                        const isPackPuzzle = window.puzzleParams.type === 'pack';
+                        const isArchivePuzzle = window.puzzleParams.type === 'historical';
                         
-                        // Convert time string to PostgreSQL interval format
-                        const [minutes, seconds] = timeString.split(':').map(Number);
-                        const totalSeconds = minutes * 60 + seconds;
-                        const completionInterval = `${totalSeconds} seconds`;
-                        
-                        const { error } = await window.supabaseClient
-                            .from('puzzle_completions')
-                            .upsert({
-                                user_id: user.id,
-                                puzzle_date: today,
-                                puzzle_name: this.currentPuzzle.theme,
-                                completed: false, // Failed
-                                completion_time: completionInterval, // Time when failed
-                                hints_used: window.gameState.hintsUsed || 0,
-                                tries_used: window.gameState.wrongGuesses || 0,
-                                created_at: new Date().toISOString(),
-                                updated_at: new Date().toISOString()
-                            }, {
-                                onConflict: 'user_id,puzzle_date'
-                            });
-                            
-                        if (error) {
-                            console.error('Error tracking failure:', error);
+                        if (isPackPuzzle) {
+                            await this.trackPackPuzzleFailure(timeString, user);
                         } else {
-                            console.log('Puzzle failure tracked successfully');
+                            await this.trackDailyPuzzleFailure(timeString, user, isArchivePuzzle);
                         }
                     } else {
-                        // Non-authenticated user - set cookie
-                        this.setPuzzlePlayedCookie();
+                        // Non-authenticated user - set cookie (only for daily puzzles)
+                        const isPackPuzzle = window.puzzleParams.type === 'pack';
+                        if (!isPackPuzzle) {
+                            this.setPuzzlePlayedCookie();
+                        }
                     }
                 } catch (error) {
                     console.error('Error in trackFailure:', error);
+                }
+            }
+            
+            // Track pack puzzle failure
+            async trackPackPuzzleFailure(timeString, user) {
+                try {
+                    const puzzleId = window.puzzleParams.puzzleId;
+                    const packId = window.puzzleParams.packId;
+                    
+                    if (!puzzleId || !packId) {
+                        console.error('Missing puzzle ID or pack ID for pack failure tracking');
+                        return;
+                    }
+
+                    // Convert time string to PostgreSQL interval format
+                    const [minutes, seconds] = timeString.split(':').map(Number);
+                    const totalSeconds = minutes * 60 + seconds;
+                    const completionInterval = `${totalSeconds} seconds`;
+
+                    const failureData = {
+                        user_id: user.id,
+                        puzzle_id: puzzleId,
+                        pack_name: getPackDisplayName(packId),
+                        completed: false,
+                        completion_time: completionInterval,
+                        hints_used: window.gameState.hintsUsed || 0,
+                        tries_used: window.gameState.wrongGuesses || 0,
+                        attempts: (window.gameState.wrongGuesses || 0) + 1,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const { error } = await window.supabaseClient
+                        .from('puzzle_pack_completions')
+                        .upsert(failureData, {
+                            onConflict: 'user_id,puzzle_id'
+                        });
+
+                    if (error) {
+                        console.error('Error tracking pack puzzle failure:', error);
+                    } else {
+                        console.log('Pack puzzle failure tracked successfully:', failureData);
+                    }
+                } catch (error) {
+                    console.error('Error in trackPackPuzzleFailure:', error);
+                }
+            }
+            
+            // Track daily puzzle failure (including archive puzzles)
+            async trackDailyPuzzleFailure(timeString, user, isArchivePuzzle) {
+                try {
+                    let puzzleDate;
+                    
+                    if (isArchivePuzzle) {
+                        // For archive puzzles, use the specific date from URL params
+                        puzzleDate = window.puzzleParams.date || getGameDayString();
+                    } else {
+                        // For today's daily puzzle
+                        puzzleDate = getGameDayString();
+                    }
+
+                    // Convert time string to PostgreSQL interval format
+                    const [minutes, seconds] = timeString.split(':').map(Number);
+                    const totalSeconds = minutes * 60 + seconds;
+                    const completionInterval = `${totalSeconds} seconds`;
+
+                    const failureData = {
+                        user_id: user.id,
+                        puzzle_date: puzzleDate,
+                        puzzle_name: this.currentPuzzle.theme,
+                        completed: false,
+                        completion_time: completionInterval,
+                        hints_used: window.gameState.hintsUsed || 0,
+                        tries_used: window.gameState.wrongGuesses || 0,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const { error } = await window.supabaseClient
+                        .from('puzzle_completions')
+                        .upsert(failureData, {
+                            onConflict: 'user_id,puzzle_date'
+                        });
+
+                    if (error) {
+                        console.error('Error tracking daily puzzle failure:', error);
+                    } else {
+                        console.log('Daily puzzle failure tracked successfully:', failureData);
+                    }
+                } catch (error) {
+                    console.error('Error in trackDailyPuzzleFailure:', error);
                 }
             }
             
@@ -5994,41 +6068,115 @@
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
                     
                     if (user) {
-                        // Authenticated user - save to database
-                        const today = new Date().toISOString().split('T')[0];
+                        // Determine puzzle type and track accordingly
+                        const isPackPuzzle = window.puzzleParams.type === 'pack';
+                        const isArchivePuzzle = window.puzzleParams.type === 'historical';
                         
-                        // Convert time string to PostgreSQL interval format
-                        const [minutes, seconds] = timeString.split(':').map(Number);
-                        const totalSeconds = minutes * 60 + seconds;
-                        const completionInterval = `${totalSeconds} seconds`;
-                        
-                        const { error } = await window.supabaseClient
-                            .from('puzzle_completions')
-                            .upsert({
-                                user_id: user.id,
-                                puzzle_date: today,
-                                puzzle_name: this.currentPuzzle.theme,
-                                completed: true,
-                                completion_time: completionInterval, // PostgreSQL interval format
-                                hints_used: window.gameState.hintsUsed || 0,
-                                tries_used: window.gameState.wrongGuesses || 0,
-                                created_at: new Date().toISOString(),
-                                updated_at: new Date().toISOString()
-                            }, {
-                                onConflict: 'user_id,puzzle_date'
-                            });
-                            
-                        if (error) {
-                            console.error('Error tracking completion:', error);
+                        if (isPackPuzzle) {
+                            await this.trackPackPuzzleCompletion(timeString, user);
                         } else {
-                            console.log('Puzzle completion tracked successfully');
+                            await this.trackDailyPuzzleCompletion(timeString, user, isArchivePuzzle);
                         }
                     } else {
-                        // Non-authenticated user - set cookie
-                        this.setPuzzlePlayedCookie();
+                        // Non-authenticated user - set cookie (only for daily puzzles)
+                        const isPackPuzzle = window.puzzleParams.type === 'pack';
+                        if (!isPackPuzzle) {
+                            this.setPuzzlePlayedCookie();
+                        }
                     }
                 } catch (error) {
                     console.error('Error in trackCompletion:', error);
+                }
+            }
+            
+            // Track pack puzzle completion
+            async trackPackPuzzleCompletion(timeString, user) {
+                try {
+                    const puzzleId = window.puzzleParams.puzzleId;
+                    const packId = window.puzzleParams.packId;
+                    
+                    if (!puzzleId || !packId) {
+                        console.error('Missing puzzle ID or pack ID for pack completion tracking');
+                        return;
+                    }
+
+                    // Convert time string to PostgreSQL interval format
+                    const [minutes, seconds] = timeString.split(':').map(Number);
+                    const totalSeconds = minutes * 60 + seconds;
+                    const completionInterval = `${totalSeconds} seconds`;
+
+                    const completionData = {
+                        user_id: user.id,
+                        puzzle_id: puzzleId,
+                        pack_name: getPackDisplayName(packId),
+                        completed: true,
+                        completion_time: completionInterval,
+                        hints_used: window.gameState.hintsUsed || 0,
+                        tries_used: window.gameState.wrongGuesses || 0,
+                        attempts: (window.gameState.wrongGuesses || 0) + 1,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const { error } = await window.supabaseClient
+                        .from('puzzle_pack_completions')
+                        .upsert(completionData, {
+                            onConflict: 'user_id,puzzle_id'
+                        });
+
+                    if (error) {
+                        console.error('Error tracking pack puzzle completion:', error);
+                    } else {
+                        console.log('Pack puzzle completion tracked successfully:', completionData);
+                    }
+                } catch (error) {
+                    console.error('Error in trackPackPuzzleCompletion:', error);
+                }
+            }
+            
+            // Track daily puzzle completion (including archive puzzles)
+            async trackDailyPuzzleCompletion(timeString, user, isArchivePuzzle) {
+                try {
+                    let puzzleDate;
+                    
+                    if (isArchivePuzzle) {
+                        // For archive puzzles, use the specific date from URL params
+                        puzzleDate = window.puzzleParams.date || getGameDayString();
+                    } else {
+                        // For today's daily puzzle
+                        puzzleDate = getGameDayString();
+                    }
+
+                    // Convert time string to PostgreSQL interval format
+                    const [minutes, seconds] = timeString.split(':').map(Number);
+                    const totalSeconds = minutes * 60 + seconds;
+                    const completionInterval = `${totalSeconds} seconds`;
+
+                    const completionData = {
+                        user_id: user.id,
+                        puzzle_date: puzzleDate,
+                        puzzle_name: this.currentPuzzle.theme,
+                        completed: true,
+                        completion_time: completionInterval,
+                        hints_used: window.gameState.hintsUsed || 0,
+                        tries_used: window.gameState.wrongGuesses || 0,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    };
+
+                    const { error } = await window.supabaseClient
+                        .from('puzzle_completions')
+                        .upsert(completionData, {
+                            onConflict: 'user_id,puzzle_date'
+                        });
+
+                    if (error) {
+                        console.error('Error tracking daily puzzle completion:', error);
+                    } else {
+                        console.log('Daily puzzle completion tracked successfully:', completionData);
+                    }
+                } catch (error) {
+                    console.error('Error in trackDailyPuzzleCompletion:', error);
                 }
             }
             
