@@ -952,10 +952,10 @@
             
             if (packId === 'archive') {
                 // For archive puzzles, use historical puzzle type
-                window.location.href = `./play?type=historical&date=${puzzleId}`;
+                window.location.href = `./?type=historical&date=${puzzleId}`;
             } else {
-                // Navigate to play screen with pack puzzle parameters
-                window.location.href = `./play?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
+                // Navigate to consolidated index.html with pack puzzle parameters
+                window.location.href = `./?type=pack&pack_id=${packId}&puzzle_id=${puzzleId}`;
             }
         };
         
@@ -1239,7 +1239,7 @@
         };
         
         window.playHistoricalPuzzle = function(puzzleDate) {
-            window.location.href = `./play?type=daily&date=${puzzleDate}`;
+            window.location.href = `./?type=daily&date=${puzzleDate}`;
         };
         
         // Removed duplicate archive pack initialization - now handled in main DOMContentLoaded
