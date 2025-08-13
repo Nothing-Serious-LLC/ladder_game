@@ -3884,10 +3884,9 @@
                 console.log('Completion screen theme set to:', theme);
             }
             
-            // Set up PWA install card for all users (desktop and mobile)
+            // Set up context-aware completion screen
             setTimeout(() => {
-                setupCompletionPWAInstallCard(); // Use desktop-enabled version
-                setupMorePuzzlesSignupCard();
+                setupCompletionScreenContextAware();
             }, 300); // Wait for content switch to complete
         };
         
@@ -3900,19 +3899,9 @@
             // Note: Failure screen doesn't display theme, but this ensures data consistency
             console.log('Failure screen - Current theme:', window.currentPuzzleTheme);
             
-            // Set up PWA install card for mobile users not in PWA mode
+            // Set up context-aware failure screen
             setTimeout(() => {
-                // Force-show PWA cards for editing on desktop (editor mode)
-                const editorPreviewPWA = false;
-                if (editorPreviewPWA) {
-                    const ios = document.getElementById('failure-pwa-install-card');
-                    const android = document.getElementById('failure-android-pwa-install-card');
-                    if (ios) ios.style.display = 'block';
-                    if (android) android.style.display = 'block';
-                } else {
-                    setupFailurePWAInstallCard();
-                }
-                setupFailureMorePuzzlesSignupCard();
+                setupFailureScreenContextAware();
             }, 300); // Wait for content switch to complete
         };
 
@@ -6325,6 +6314,176 @@
                 }
             }
         });
+        
+        // Context-aware screen setup functions
+        async function setupCompletionScreenContextAware() {
+            console.log('Setting up context-aware completion screen');
+            
+            // Determine puzzle context
+            const isPackPuzzle = window.puzzleParams.type === 'pack';
+            const isArchivePuzzle = window.puzzleParams.type === 'historical';
+            const isDailyPuzzle = window.puzzleParams.type === 'daily';
+            
+            // Update the main completion card with context-aware navigation
+            await updateCompletionCardWithContext(isPackPuzzle, isArchivePuzzle, isDailyPuzzle);
+            
+            // Set up secondary cards based on authentication and context
+            await setupContextAwareSecondaryCards('completion');
+        }
+        
+        async function setupFailureScreenContextAware() {
+            console.log('Setting up context-aware failure screen');
+            
+            // Determine puzzle context
+            const isPackPuzzle = window.puzzleParams.type === 'pack';
+            const isArchivePuzzle = window.puzzleParams.type === 'historical';
+            const isDailyPuzzle = window.puzzleParams.type === 'daily';
+            
+            // Update the main failure card with context-aware navigation
+            await updateFailureCardWithContext(isPackPuzzle, isArchivePuzzle, isDailyPuzzle);
+            
+            // Set up secondary cards based on authentication and context
+            await setupContextAwareSecondaryCards('failure');
+        }
+        
+        async function updateCompletionCardWithContext(isPackPuzzle, isArchivePuzzle, isDailyPuzzle) {
+            const completionCard = document.querySelector('#completion-content .card-completed');
+            if (!completionCard) return;
+            
+            const buttonsContainer = completionCard.querySelector('.signup-buttons');
+            if (!buttonsContainer) return;
+            
+            let navigationButtons = '';
+            
+            if (isPackPuzzle) {
+                // Pack puzzle - show "Back to Pack" and "Next Puzzle"
+                const packId = window.puzzleParams.packId;
+                const packName = getPackDisplayName(packId);
+                
+                navigationButtons = `
+                    <button class="signup-button primary" id="completion-share" onclick="shareCompletion()">Share</button>
+                    <button class="signup-button primary" id="completion-back-to-pack" onclick="backToPackPuzzles('${packId}')">Back to ${packName}</button>
+                `;
+            } else if (isArchivePuzzle) {
+                // Archive puzzle - show "Back to Archive" and "Share"
+                navigationButtons = `
+                    <button class="signup-button primary" id="completion-share" onclick="shareCompletion()">Share</button>
+                    <button class="signup-button primary" id="completion-back-to-archive" onclick="backToPackPuzzles('archive')">Back to Archive</button>
+                `;
+            } else {
+                // Daily puzzle - show "Share" and "Next Puzzle" (tomorrow's)
+                navigationButtons = `
+                    <button class="signup-button primary" id="completion-share" onclick="shareCompletion()">Share</button>
+                    <button class="signup-button primary" id="completion-next" onclick="showCountdownContent()">Next Puzzle</button>
+                `;
+            }
+            
+            buttonsContainer.innerHTML = navigationButtons;
+        }
+        
+        async function updateFailureCardWithContext(isPackPuzzle, isArchivePuzzle, isDailyPuzzle) {
+            const failureCard = document.querySelector('#failure-content .card-failed');
+            if (!failureCard) return;
+            
+            const buttonsContainer = failureCard.querySelector('.signup-buttons');
+            if (!buttonsContainer) return;
+            
+            let navigationButtons = '';
+            
+            if (isPackPuzzle) {
+                // Pack puzzle - show "Try Again" and "Back to Pack"
+                const packId = window.puzzleParams.packId;
+                const packName = getPackDisplayName(packId);
+                
+                navigationButtons = `
+                    <button class="signup-button primary" id="failure-try-again" onclick="retryGame()">Try Again</button>
+                    <button class="signup-button primary" id="failure-back-to-pack" onclick="backToPackPuzzles('${packId}')">Back to ${packName}</button>
+                `;
+            } else if (isArchivePuzzle) {
+                // Archive puzzle - show "Try Again" and "Back to Archive"
+                navigationButtons = `
+                    <button class="signup-button primary" id="failure-try-again" onclick="retryGame()">Try Again</button>
+                    <button class="signup-button primary" id="failure-back-to-archive" onclick="backToPackPuzzles('archive')">Back to Archive</button>
+                `;
+            } else {
+                // Daily puzzle - show "Try Again" and "Next Puzzle" (tomorrow's)
+                navigationButtons = `
+                    <button class="signup-button primary" id="failure-try-again" onclick="retryGame()">Try Again</button>
+                    <button class="signup-button primary" id="failure-countdown-button" onclick="showCountdownContent()">Next Puzzle</button>
+                `;
+            }
+            
+            buttonsContainer.innerHTML = navigationButtons;
+        }
+        
+        async function setupContextAwareSecondaryCards(screenType) {
+            try {
+                // Check authentication status
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                const isAuthenticated = !!user;
+                
+                // Determine puzzle context
+                const isPackPuzzle = window.puzzleParams.type === 'pack';
+                const isArchivePuzzle = window.puzzleParams.type === 'historical';
+                const isDailyPuzzle = window.puzzleParams.type === 'daily';
+                
+                console.log('Setting up secondary cards:', { 
+                    screenType, 
+                    isAuthenticated, 
+                    isPackPuzzle, 
+                    isArchivePuzzle, 
+                    isDailyPuzzle 
+                });
+                
+                // Set up PWA card (for mobile users not in PWA)
+                if (screenType === 'completion') {
+                    setupCompletionPWAInstallCard();
+                } else {
+                    setupFailurePWAInstallCard();
+                }
+                
+                // Set up signup card only for unauthenticated users playing daily puzzles
+                const shouldShowSignupCard = !isAuthenticated && isDailyPuzzle;
+                
+                if (shouldShowSignupCard) {
+                    console.log('Showing signup card for unauthenticated daily puzzle player');
+                    const signupCard = document.querySelector(`#${screenType}-content .signup-card:last-child`);
+                    if (signupCard && signupCard.innerHTML.includes('Want more puzzles?')) {
+                        signupCard.style.display = 'block';
+                    }
+                } else {
+                    console.log('Hiding signup card - user is authenticated or playing pack puzzle');
+                    const signupCard = document.querySelector(`#${screenType}-content .signup-card:last-child`);
+                    if (signupCard && signupCard.innerHTML.includes('Want more puzzles?')) {
+                        signupCard.style.display = 'none';
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error setting up context-aware secondary cards:', error);
+                // Fallback to showing all cards
+                if (screenType === 'completion') {
+                    setupCompletionPWAInstallCard();
+                } else {
+                    setupFailurePWAInstallCard();
+                }
+            }
+        }
+        
+        function getPackDisplayName(packId) {
+            const packNames = {
+                'free-pack': 'Free Pack',
+                'complete-pack': 'Complete Pack', 
+                'puzzle-pack': 'Puzzle Pack',
+                'archive': 'Archive'
+            };
+            return packNames[packId] || 'Pack';
+        }
+        
+        // Navigation function to go back to pack puzzles
+        window.backToPackPuzzles = function(packId) {
+            window.location.href = `./pack-puzzles.html?pack=${packId}`;
+        };
         
         
     </script>
