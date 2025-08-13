@@ -3556,6 +3556,19 @@
         // TESTING MODE - Set to true to enable replay functionality
         window.TESTING_MODE = false; // Change to false for production
         
+        // Enhanced puzzle parameter detection for multi-source support
+        window.puzzleParams = {
+            type: new URLSearchParams(window.location.search).get('type') || 'daily',
+            packId: new URLSearchParams(window.location.search).get('pack_id'),
+            puzzleId: new URLSearchParams(window.location.search).get('puzzle_id'),
+            date: new URLSearchParams(window.location.search).get('date')
+        };
+        console.log('🎯 Puzzle parameters detected:', window.puzzleParams);
+        
+        // Log current URL for debugging
+        console.log('📍 Current URL:', window.location.href);
+        console.log('🔗 Search params:', window.location.search);
+        
         // Initialize Supabase client and set it globally for modules
         import { supabaseConfig, setSupabaseClient } from './config/supabase-config.js';
         import { initializePWA } from './assets/js/pwa.js';
@@ -3728,6 +3741,18 @@
         window.showGameContent = async () => {
             try {
                 console.log('Starting game content initialization...');
+                
+                // Determine puzzle mode based on URL parameters
+                const isPackPuzzle = window.puzzleParams.type === 'pack';
+                const isArchivePuzzle = window.puzzleParams.type === 'historical';
+                const isDailyPuzzle = window.puzzleParams.type === 'daily';
+                
+                console.log(`Game mode: ${window.puzzleParams.type}`, {
+                    isPackPuzzle,
+                    isArchivePuzzle, 
+                    isDailyPuzzle,
+                    params: window.puzzleParams
+                });
                 
                 // Check if user has already completed today's puzzle
                 try {
