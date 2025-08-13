@@ -1783,12 +1783,25 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 // Check if user has completed today's puzzle
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
+                    console.log('HOME SCREEN - Looking for completion on date:', today);
+                    
                     // Query user's puzzle completions for today - handle case where no record exists
                     const { data: completions, error } = await supabase
                         .from('puzzle_completions')
-                        .select('puzzle_name, completed, completion_time, hints_used, tries_used')
+                        .select('puzzle_name, completed, completion_time, hints_used, tries_used, puzzle_date')
                         .eq('user_id', user.id)
                         .eq('puzzle_date', today);
+                    
+                    console.log('HOME SCREEN - Today\'s completion query result:', completions);
+                    
+                    // Also get all completions to see what dates we have
+                    const { data: allCompletions } = await supabase
+                        .from('puzzle_completions')
+                        .select('puzzle_date, completed')
+                        .eq('user_id', user.id)
+                        .order('puzzle_date', { ascending: false });
+                    
+                    console.log('HOME SCREEN - All completion dates in database:', allCompletions?.map(c => c.puzzle_date));
                     
                     // Check if user has completed today's puzzle
                     const completion = completions && completions.length > 0 ? completions[0] : null;

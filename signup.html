@@ -423,6 +423,8 @@
                             const { puzzleNumber } = getTodaysPuzzleInfo(); // This will need to be adapted for historical dates
                             
                             // Create database record from cookie data
+                            console.log('MIGRATION - Creating record for date:', puzzleDate, 'with puzzle number:', puzzleNumber);
+                            
                             const { error } = await supabase
                                 .from('puzzle_completions')
                                 .insert({
