@@ -3762,18 +3762,22 @@
                     params: window.puzzleParams
                 });
                 
-                // Check if user has already completed today's puzzle
-                try {
-                    const hasCompletedToday = await checkIfCompletedToday();
-                    if (hasCompletedToday) {
-                        // User already played today - redirect to countdown
-                        console.log('User already completed today\'s puzzle, redirecting to countdown');
-                        showCountdownContent();
-                        return;
+                // Only check daily puzzle completion for daily puzzles
+                if (isDailyPuzzle) {
+                    try {
+                        const hasCompletedToday = await checkIfCompletedToday();
+                        if (hasCompletedToday) {
+                            // User already played today - redirect to countdown
+                            console.log('User already completed today\'s puzzle, redirecting to countdown');
+                            showCountdownContent();
+                            return;
+                        }
+                    } catch (error) {
+                        console.error('Error checking completion status:', error);
+                        // Continue with game start even if completion check fails
                     }
-                } catch (error) {
-                    console.error('Error checking completion status:', error);
-                    // Continue with game start even if completion check fails
+                } else {
+                    console.log('Pack/archive puzzle - skipping daily completion check');
                 }
                 
                 // Add mobile game mode class for mobile header switching
@@ -6244,7 +6248,18 @@
                     console.error('Error setting up desktop keyboard:', error);
                 }
                 
-                // Check user authentication and completion status
+                // Check if this is a pack puzzle (skip normal daily puzzle logic)
+                const isPackPuzzle = window.puzzleParams.type === 'pack';
+                const isArchivePuzzle = window.puzzleParams.type === 'historical';
+                
+                if (isPackPuzzle || isArchivePuzzle) {
+                    // For pack/archive puzzles, go directly to game content
+                    console.log(`${window.puzzleParams.type} puzzle detected - going directly to game`, window.puzzleParams);
+                    showGameContent();
+                    return; // Skip daily puzzle logic
+                }
+                
+                // Original daily puzzle logic for when no pack parameters are present
                 try {
                     // First, check if user is authenticated
                     const { data: { user } } = await window.supabaseClient.auth.getUser();
