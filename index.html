@@ -3565,9 +3565,17 @@
         };
         console.log('🎯 Puzzle parameters detected:', window.puzzleParams);
         
-        // Log current URL for debugging
+        // Log current URL for debugging (works on both localhost and ladder.game)
         console.log('📍 Current URL:', window.location.href);
         console.log('🔗 Search params:', window.location.search);
+        console.log('🌐 Domain:', window.location.hostname);
+        
+        // Verify URL parameter detection works across domains
+        if (window.location.search) {
+            console.log('✅ URL parameters found and parsed successfully');
+        } else {
+            console.log('ℹ️ No URL parameters (normal for root page visits)');
+        }
         
         // Initialize Supabase client and set it globally for modules
         import { supabaseConfig, setSupabaseClient } from './config/supabase-config.js';
