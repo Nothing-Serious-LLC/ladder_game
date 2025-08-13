@@ -6171,15 +6171,16 @@
                     
                     const packName = packInfo?.name || 'Puzzle Pack';
                     
-                    // Process puzzle with letter reveals
+                    // Process puzzle with letter reveals - use same format as daily puzzles
                     const puzzleWithReveals = {
                         ...puzzle,
                         words: puzzle.words.map((word, index) => ({
-                            ...word,
-                            letters: word.word.split('').map((letter, letterIndex) => ({
-                                letter: letter.toUpperCase(),
-                                revealed: puzzle[`word_${index + 1}_reveals`]?.includes(letterIndex) || false
-                            }))
+                            word: word.word,
+                            clue: word.clue,
+                            hint: word.hint,
+                            revealPattern: Array.from({length: word.word.length}, (_, letterIndex) => 
+                                puzzle[`word_${index + 1}_reveals`]?.includes(letterIndex) || false
+                            )
                         }))
                     };
                     
