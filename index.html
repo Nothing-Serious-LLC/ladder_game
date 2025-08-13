@@ -285,6 +285,16 @@
             transition: opacity 0.4s ease-out;
             margin-top: 80px; /* Push ladder and play button further down */
         }
+
+        /* Prevent scrolling on landing page */
+        body.landing-page {
+            overflow: hidden;
+        }
+        
+        body.landing-page .container {
+            overflow: hidden;
+            height: 100vh;
+        }
         
         .landing-content.fade-out {
             opacity: 0;
@@ -2573,6 +2583,23 @@
             flex-shrink: 0; /* Keep at bottom */
         }
         @media (max-width: 480px){ 
+            /* Fix mobile failure screen scrolling - single scroll area */
+            #failure-content {
+                /* Remove nested overflow to prevent dual scrolling */
+                overflow-y: visible !important; /* Remove inner scroll context */
+                min-height: auto !important; /* Don't force viewport height */
+                touch-action: pan-y !important;
+                padding-bottom: 120px !important; /* Extra bottom padding for mobile browser UI */
+            }
+            
+            #failure-content.failure-screen-container {
+                /* Remove nested overflow - let outer container handle all scrolling */
+                overflow-y: visible !important; /* Critical: remove inner scroll */
+                min-height: auto !important; /* Don't compete with outer container */
+                -webkit-overflow-scrolling: touch !important;
+                padding-bottom: 120px !important; /* Extra bottom padding for mobile browser UI */
+            }
+            
             #failure-content .signup-buttons { 
                 flex-direction: row !important; 
                 gap: 8px; /* Reduce gap for mobile */
@@ -2671,17 +2698,22 @@
         }
         /* Mobile-specific completion screen fixes */
         @media (max-width: 480px) {
-            /* Fix mobile touch and scrolling issues */
+            /* Fix mobile touch and scrolling - single scroll area */
             #completion-content {
-                -webkit-overflow-scrolling: touch !important;
-                overflow-y: auto !important;
+                /* Remove nested overflow to prevent dual scrolling */
+                overflow-y: visible !important; /* Remove inner scroll context */
+                min-height: auto !important; /* Don't force viewport height */
                 touch-action: pan-y !important; /* Allow vertical scrolling */
+                padding-bottom: 120px !important; /* Extra bottom padding for mobile browser UI */
             }
             
-            /* Ensure proper mobile container behavior */
-            #completion-content .failure-screen-container {
+            /* Ensure only outer container handles scrolling */
+            #completion-content.failure-screen-container {
+                /* Remove nested overflow - let outer container handle all scrolling */
+                overflow-y: visible !important; /* Critical: remove inner scroll */
+                min-height: auto !important; /* Don't compete with outer container */
                 -webkit-overflow-scrolling: touch !important;
-                overflow-y: auto !important;
+                padding-bottom: 120px !important; /* Extra bottom padding for mobile browser UI */
             }
             
             /* Fix theme spacing - move closer to title */
@@ -3116,7 +3148,7 @@
                 <div class="stat-label">Hints</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="tries-left">5</div>
+                <div class="stat-value" id="tries-left">3</div>
                 <div class="stat-label">Tries</div>
             </div>
         </div>
@@ -3133,7 +3165,7 @@
                     <div class="stat-label">Hints</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="mobile-tries-left">5</div>
+                    <div class="stat-value" id="mobile-tries-left">3</div>
                     <div class="stat-label">Tries</div>
                 </div>
             </div>
@@ -3734,6 +3766,8 @@
         window.showLandingContent = () => {
             // Remove mobile game mode class to restore main header
             document.body.classList.remove('mobile-game-mode');
+            // Add landing page class to prevent scrolling
+            document.body.classList.add('landing-page');
             showContent('landing-content');
         };
         
@@ -4101,7 +4135,7 @@
             typedWord: '',
             gameEnded: false,
             wrongGuesses: 0,
-            maxWrongGuesses: 5,
+            maxWrongGuesses: 3,
             hintsUsed: 0,
             maxHints: 3,
             hintsRemaining: 3,
