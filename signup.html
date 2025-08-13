@@ -380,6 +380,84 @@
         // Initialize page
         setHeaderInfo();
         
+        // Migrate cookie-based completion data to database for newly authenticated users
+        async function migrateCookieCompletionsToDatabase(user) {
+            try {
+                console.log('Checking for puzzle completion cookies to migrate...');
+                
+                // Get all cookies and find puzzle completion ones
+                const cookies = document.cookie.split(';');
+                const puzzleCompletions = [];
+                
+                for (let cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name && name.startsWith('ladder_played_') && value === 'true') {
+                        // Extract date from cookie name (format: ladder_played_YYYY-MM-DD)
+                        const dateMatch = name.match(/ladder_played_(\d{4}-\d{2}-\d{2})/);
+                        if (dateMatch) {
+                            const puzzleDate = dateMatch[1];
+                            puzzleCompletions.push(puzzleDate);
+                            console.log('Found completion cookie for date:', puzzleDate);
+                        }
+                    }
+                }
+                
+                if (puzzleCompletions.length === 0) {
+                    console.log('No puzzle completion cookies found to migrate');
+                    return;
+                }
+                
+                // For each completion date, check if database record exists, if not create it
+                for (const puzzleDate of puzzleCompletions) {
+                    try {
+                        // Check if record already exists
+                        const { data: existing } = await supabase
+                            .from('puzzle_completions')
+                            .select('id')
+                            .eq('user_id', user.id)
+                            .eq('puzzle_date', puzzleDate)
+                            .single();
+                        
+                        if (!existing) {
+                            // Get puzzle info for this date
+                            const { puzzleNumber } = getTodaysPuzzleInfo(); // This will need to be adapted for historical dates
+                            
+                            // Create database record from cookie data
+                            const { error } = await supabase
+                                .from('puzzle_completions')
+                                .insert({
+                                    user_id: user.id,
+                                    puzzle_date: puzzleDate,
+                                    puzzle_name: `Puzzle #${puzzleNumber}`, // Best guess - we don't have theme from cookie
+                                    completed: true, // Cookie existence implies completion
+                                    completion_time: null, // No time data in cookie
+                                    hints_used: null, // No hint data in cookie
+                                    tries_used: null, // No tries data in cookie
+                                    created_at: new Date().toISOString(),
+                                    updated_at: new Date().toISOString()
+                                });
+                            
+                            if (error) {
+                                console.error('Error migrating completion for date', puzzleDate, ':', error);
+                            } else {
+                                console.log('Successfully migrated completion for date:', puzzleDate);
+                            }
+                        } else {
+                            console.log('Database record already exists for date:', puzzleDate);
+                        }
+                    } catch (error) {
+                        console.error('Error processing completion for date', puzzleDate, ':', error);
+                    }
+                }
+                
+                console.log('Cookie migration completed');
+                
+            } catch (error) {
+                console.error('Error in migrateCookieCompletionsToDatabase:', error);
+                // Don't throw - migration failure shouldn't block authentication
+            }
+        }
+        
         // Toggle between signup and signin modes
         function toggleMode() {
             const form = document.querySelector('.signup-form');
@@ -499,10 +577,16 @@
                 const emailSent = data.user && !data.session;
                 
                 if (emailSent) {
+                    // Migrate any existing puzzle completion cookies to database
+                    await migrateCookieCompletionsToDatabase(data.user);
+                    
                     // Show confirmation email message and smooth transition
                     smoothTransitionToHome(submitButton, 'Account Created!', 'We sent a confirmation email to secure your account, but you can start playing right away!');
                 } else {
                     // User is already confirmed (shouldn't happen in normal flow)
+                    // Migrate any existing puzzle completion cookies to database
+                    await migrateCookieCompletionsToDatabase(data.user);
+                    
                     smoothTransitionToHome(submitButton, 'Welcome!');
                 }
                 
@@ -541,6 +625,9 @@
                 }
                 
                 if (data.session && data.user) {
+                    // Migrate any existing puzzle completion cookies to database
+                    await migrateCookieCompletionsToDatabase(data.user);
+                    
                     // Show success state and smooth transition
                     smoothTransitionToHome(submitButton, 'Welcome back!');
                 } else {

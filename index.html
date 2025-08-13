@@ -1152,6 +1152,31 @@
             opacity: 0;
         }
 
+        /* Hint popup styles - orange theme with centered text */
+        .hint-popup {
+            position: fixed;
+            background-color: var(--primary-orange);
+            color: white;
+            padding: 24px 32px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.3s ease-out;
+            pointer-events: none;
+            text-align: center;
+            border: none;
+            box-shadow: 0 6px 24px rgba(255, 140, 66, 0.3);
+            max-width: 320px;
+            min-width: 280px;
+            line-height: 1.5;
+        }
+        
+        .hint-popup.fade-out {
+            opacity: 0;
+        }
+
         /* Countdown Page Styles */
         .countdown-content {
             flex: 1;
@@ -4846,10 +4871,8 @@
             
             // After cascade completes, add fade transition to completion screen
             setTimeout(() => {
-                // Keep screen positioned on FINISH rung during fade
-                if (mobileRung) {
-                    mobileRung.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                // Screen is already properly positioned from first scroll - no need to scroll again
+                // Removed scrollIntoView to prevent unwanted second scroll that pushes completion cards up
                 
                 // Start fade out of game screen
                 const gameContent = document.getElementById('game-content');
@@ -5147,8 +5170,8 @@
                             playSound('type');
                             vibrate(30);
                         } else if (key === 'HINT') {
-                            // Show hint instruction - users click on letters to reveal them
-                            alert('Click on any letter box to reveal it as a hint!');
+                            // Show hint instruction popup
+                            showHintPopup();
                             playSound('hint');
                             vibrate([100, 50, 100]);
                         } else if (key.match(/^[A-Z]$/)) {
@@ -5569,6 +5592,41 @@
             }, 2000);
         }
 
+        function showHintPopup() {
+            // Create popup element
+            const popup = document.createElement('div');
+            popup.className = 'hint-popup';
+            popup.innerHTML = 'Click any letter box to reveal it as a hint!<br><span style="font-size: 0.85em; opacity: 0.9;">+30 seconds time penalty</span>';
+            
+            // Center the popup on screen
+            const isMobile = window.innerWidth <= 480;
+            
+            if (isMobile) {
+                // Mobile: center in viewport, accounting for keyboard
+                popup.style.top = '40%';
+                popup.style.left = '50%';
+                popup.style.transform = 'translate(-50%, -50%)';
+            } else {
+                // Desktop: center in viewport
+                popup.style.top = '50%';
+                popup.style.left = '50%';
+                popup.style.transform = 'translate(-50%, -50%)';
+            }
+            
+            // Add to body
+            document.body.appendChild(popup);
+            
+            // Remove popup after animation
+            setTimeout(() => {
+                popup.classList.add('fade-out');
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.parentNode.removeChild(popup);
+                    }
+                }, 300);
+            }, 3000); // Show for 3 seconds since it has more text
+        }
+
         // PWA Installation Functions
         function dismissPWACard(button) {
             const card = button.closest('.pwa-install-card');
@@ -5886,6 +5944,57 @@
                 }
             }
             
+            // Calculate next 3am ET reset time (copied from play.html)
+            getNextPuzzleResetTime() {
+                const now = new Date();
+                
+                // Get current date/time in Eastern timezone using Intl
+                const etFormatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: 'America/New_York',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                
+                const etParts = etFormatter.formatToParts(now);
+                const etYear = parseInt(etParts.find(part => part.type === 'year').value);
+                const etMonth = parseInt(etParts.find(part => part.type === 'month').value) - 1; // 0-indexed
+                const etDay = parseInt(etParts.find(part => part.type === 'day').value);
+                const etHour = parseInt(etParts.find(part => part.type === 'hour').value);
+                
+                // Create today at 3am ET
+                const todayAt3amET = new Date();
+                todayAt3amET.setFullYear(etYear, etMonth, etDay);
+                todayAt3amET.setHours(3, 0, 0, 0);
+                
+                // Determine if we need today's or tomorrow's 3am ET
+                let targetResetDate;
+                if (etHour >= 3) {
+                    // Past 3am ET, so next reset is tomorrow at 3am ET
+                    targetResetDate = new Date(todayAt3amET);
+                    targetResetDate.setDate(targetResetDate.getDate() + 1);
+                } else {
+                    // Before 3am ET, so next reset is today at 3am ET  
+                    targetResetDate = todayAt3amET;
+                }
+                
+                // Convert from local interpretation to actual ET time
+                const testLocal = new Date(targetResetDate);
+                const testET = new Date(testLocal.toLocaleString('en-US', {timeZone: 'America/New_York'}));
+                
+                // Calculate the difference
+                const offsetMs = testLocal.getTime() - testET.getTime();
+                
+                // Apply the offset to get the correct reset time
+                const correctResetTime = new Date(targetResetDate.getTime() + offsetMs);
+                
+                return correctResetTime;
+            }
+            
             // Cookie tracking for non-authenticated users
             setPuzzlePlayedCookie() {
                 // Skip setting cookie in testing mode
@@ -5894,17 +6003,16 @@
                     return;
                 }
                 
-                const today = new Date().toISOString().split('T')[0];
+                // Use the same date format as checking function
+                const today = getGameDayString(new Date());
                 const cookieName = `ladder_played_${today}`;
                 
-                // Calculate next 3am ET reset time
+                // Calculate next 3am ET reset time properly
                 const now = new Date();
-                const nextReset = new Date(now);
-                nextReset.setDate(now.getDate() + 1);
-                nextReset.setHours(3, 0, 0, 0); // 3 AM next day
+                const nextReset = this.getNextPuzzleResetTime();
                 
                 document.cookie = `${cookieName}=true; expires=${nextReset.toUTCString()}; path=/`;
-                console.log('Set completion cookie for non-authenticated user');
+                console.log('Set completion cookie for non-authenticated user:', cookieName);
             }
         }
         
