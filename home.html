@@ -1783,19 +1783,23 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 // Check if user has completed today's puzzle
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
-                    // Query user's puzzle completions for today
-                    const { data: completion } = await supabase
+                    // Query user's puzzle completions for today - handle case where no record exists
+                    const { data: completions, error } = await supabase
                         .from('puzzle_completions')
                         .select('puzzle_name, completed, completion_time, hints_used, tries_used')
                         .eq('user_id', user.id)
-                        .eq('puzzle_date', today)
-                        .single();
+                        .eq('puzzle_date', today);
+                    
+                    // Check if user has completed today's puzzle
+                    const completion = completions && completions.length > 0 ? completions[0] : null;
                     
                     if (completion) {
                         // Show completed state with theme, time, hints
                         showCompletedPuzzle(completion, puzzleDate);
+                        console.log('HOME SCREEN - Found today\'s completion:', completion);
                     } else {
                         // Show play card with ladder logo
+                        console.log('HOME SCREEN - No completion found for today, showing play card');
                         renderPlayCard();
                     }
                 } else {
@@ -1850,8 +1854,8 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             const totalHints = 3;
             const hintsRemaining = Math.max(0, totalHints - hintsUsed);
             
-            // Calculate remaining tries (5 total tries available - same as game)
-            const totalTries = 5;
+            // Calculate remaining tries (3 total tries available - same as game)
+            const totalTries = 3;
             const triesUsed = completion.tries_used || 0;
             let remainingTries = 0;
             
@@ -1859,7 +1863,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                 // If completed successfully, show remaining tries
                 remainingTries = Math.max(0, totalTries - triesUsed);
             } else {
-                // If failed, no tries remaining (used all 5)
+                // If failed, no tries remaining (used all 3)
                 remainingTries = 0;
             }
             
