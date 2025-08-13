@@ -826,36 +826,11 @@
             }
         }
 
-        /* Enhanced mobile loading animations for word ladder */
-        @keyframes mobileLetterReveal {
+        /* Fast mobile loading animation - matches chime timing */
+        @keyframes mobileQuickSlideIn {
             0% { 
+                transform: translateY(15px);
                 opacity: 0;
-                transform: scale(0.3) rotateY(90deg);
-                background: var(--gray-300);
-                border-color: var(--gray-300);
-            }
-            50% {
-                transform: scale(1.15) rotateY(0deg);
-                background: rgba(106, 170, 100, 0.1);
-                border-color: var(--primary-green);
-            }
-            100% { 
-                opacity: 1;
-                transform: scale(1);
-                background: var(--gray-50);
-                border-color: var(--gray-200);
-            }
-        }
-
-        @keyframes mobileRungSlideIn {
-            0% { 
-                transform: translateY(20px);
-                opacity: 0;
-                filter: blur(1px);
-            }
-            70% {
-                transform: translateY(-3px);
-                filter: blur(0px);
             }
             100% { 
                 transform: translateY(0px);
@@ -863,50 +838,24 @@
             }
         }
 
-        @keyframes mobileHintFadeIn {
-            0% { 
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            100% { 
-                opacity: 0.7;
-                transform: translateY(0px);
-            }
-        }
-
-        /* Compact mobile loading rung with reduced height */
+        /* Dynamic mobile loading rungs - adjust to available viewport */
         .mobile-loading-rung {
-            min-height: 38px !important; /* Reduced from normal 52px */
-            max-height: 38px !important;
-            padding: 6px 12px !important; /* Tighter padding */
-            margin: 1px 0 !important; /* Reduced margin */
+            /* Height calculated dynamically in JavaScript */
+            padding: 8px 16px !important;
+            margin: 4px 0 !important;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            border: 2px solid var(--primary-green); /* Thicker border for better visibility */
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--primary-green);
         }
 
-        .mobile-loading-rung .word-display {
-            min-height: 16px !important; /* Reduced spacing */
-            margin-bottom: 2px !important;
-        }
-
-        .mobile-loading-rung .word-hint {
-            font-size: 0.7rem !important; /* Smaller hint text */
-            margin-top: 2px !important;
-            line-height: 1.1 !important;
-        }
-
-        /* Loading letter box animations */
-        .loading-letter {
-            animation: mobileLetterReveal 0.4s ease-out;
-            animation-fill-mode: both;
-        }
-
-        .loading-rung {
-            animation: mobileRungSlideIn 0.5s ease-out;
-            animation-fill-mode: both;
-        }
-
-        .loading-hint {
-            animation: mobileHintFadeIn 0.3s ease-out;
-            animation-fill-mode: both;
+        /* Quick mobile animation */
+        .mobile-loading-animation {
+            animation: mobileQuickSlideIn 0.15s ease-out;
         }
 
         @keyframes cascadeFill {
@@ -2623,7 +2572,19 @@
             flex-direction: row; 
             flex-shrink: 0; /* Keep at bottom */
         }
-        @media (max-width: 480px){ #failure-content .signup-buttons { flex-direction: column; } }
+        @media (max-width: 480px){ 
+            #failure-content .signup-buttons { 
+                flex-direction: row !important; 
+                gap: 8px; /* Reduce gap for mobile */
+            }
+            
+            /* Make buttons smaller on mobile for better fit */
+            #failure-content .signup-button {
+                padding: 10px 20px !important;
+                font-size: 0.85rem !important;
+                min-width: 120px !important;
+            }
+        }
 
         #failure-content .signup-button { padding: 12px 24px; border-radius: 12px; font-weight: 700; border: none; font-size: 0.95rem; transition: transform .2s ease, box-shadow .2s ease, background .2s ease; min-width: 140px; }
         #failure-content .card-failed .signup-button.primary { background: #fff; color: var(--error-red); }
@@ -4849,9 +4810,24 @@
             // Calculate total cascade time: (number of letters * 80ms) + animation duration + extended buffer
             const cascadeTime = (letterBoxes.length * 80) + 400 + 800; // Increased buffer from 300ms to 800ms
             
-            // After cascade completes, start completion animation
+            // After cascade completes, add fade transition to completion screen
             setTimeout(() => {
-                playCompletionAnimation();
+                // Keep screen positioned on FINISH rung during fade
+                if (mobileRung) {
+                    mobileRung.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Start fade out of game screen
+                const gameContent = document.getElementById('game-content');
+                if (gameContent) {
+                    gameContent.style.transition = 'opacity 0.8s ease-out'; // Longer fade
+                    gameContent.style.opacity = '0';
+                }
+                
+                // Show completion screen after fade completes
+                setTimeout(() => {
+                    showCompletionContent();
+                }, 800); // Wait for fade to complete
             }, cascadeTime);
         }
 
@@ -4934,32 +4910,28 @@
                         rung.style.opacity = '0.3';
                         
                         if (isMobile) {
-                            // Mobile: Create compact word ladder structure with letter boxes
-                            rung.className += ' mobile-loading-rung loading-rung';
+                            // Mobile: Dynamic rungs that adapt to available viewport
+                            rung.className += ' mobile-loading-rung';
+                            rung.style.opacity = '0';
                             
-                            // Create word display for letter boxes
-                            const wordDisplay = document.createElement('div');
-                            wordDisplay.className = 'word-display';
+                            // Calculate height based on actual mobile-ladder-viewport constraints
+                            // Based on: max-height: calc(100vh - 115px - 210px)
+                            const viewportReduction = 115; // From CSS: mobile header + container padding
+                            const keyboardHeight = 210; // Mobile keyboard height
+                            const ladderPadding = 32; // 12px top + 20px bottom from mobile-ladder CSS
+                            const totalRungs = 6;
+                            const rungMargins = 8; // 4px top + 4px bottom per rung
                             
-                            // Create letter boxes - varying lengths for word ladder feel
-                            const letterCount = isFinish ? 6 : [4, 5, 4, 6, 5][i] || 4;
-                            for (let j = 0; j < letterCount; j++) {
-                                const letterBox = document.createElement('div');
-                                letterBox.className = 'letter-box loading-letter';
-                                letterBox.style.animationDelay = `${j * 60}ms`; // Stagger letters
-                                wordDisplay.appendChild(letterBox);
-                            }
+                            // Use the same calculation as the actual mobile-ladder-viewport
+                            const mobileViewportHeight = window.innerHeight - viewportReduction - keyboardHeight;
+                            const availableHeight = mobileViewportHeight - ladderPadding - (totalRungs * rungMargins);
+                            const rungHeight = Math.max(35, Math.floor(availableHeight / totalRungs));
                             
-                            rung.appendChild(wordDisplay);
+                            rung.style.height = `${rungHeight}px`;
+                            rung.style.minHeight = `${rungHeight}px`;
+                            rung.style.maxHeight = `${rungHeight}px`;
                             
-                            // Add hint placeholder for non-finish rungs (compact style)
-                            if (!isFinish) {
-                                const hint = document.createElement('div');
-                                hint.className = 'word-hint loading-hint';
-                                hint.textContent = '...'; // Loading placeholder
-                                hint.style.animationDelay = `${letterCount * 60 + 200}ms`; // After letters
-                                rung.appendChild(hint);
-                            }
+                            // No text content - clean rungs
                         } else {
                             // Desktop: Keep original letter box style
                             const wordDisplay = document.createElement('div');
@@ -4991,12 +4963,12 @@
                 
                 // Animate loading rungs
                 const isMobile = window.innerWidth <= 480;
-                const animationDelay = isMobile ? 900 : 600;
+                const animationDelay = isMobile ? 400 : 600; // Delay first rung to sync after chime starts
                 
                 for (let i = 0; i < 6; i++) {
                     // For mobile, animate bottom to top (reverse order for upward building effect)
                     const animationIndex = isMobile ? (5 - i) : i;
-                    // Match chime timing: 200ms intervals for mobile, 150ms for desktop
+                    // Sync with chime sound: each rung appears with each chime note (200ms intervals)
                     const intervalTiming = isMobile ? 200 : 150;
                     const delay = animationDelay + (animationIndex * intervalTiming);
                     
@@ -5013,27 +4985,22 @@
                         }
                         
                         if (mobileRung) {
-                            // Trigger the enhanced rung slide-in animation
+                            // Fast mobile animation - matches chime timing
+                            mobileRung.classList.add('mobile-loading-animation');
                             mobileRung.style.opacity = '1';
-                            mobileRung.style.animationDelay = '0ms';
                             
-                            // Letter boxes will animate automatically due to their CSS animations
-                            // Remove loading classes after animations complete
+                            // Remove animation class quickly
                             setTimeout(() => {
-                                mobileRung.classList.remove('loading-rung');
-                                const letters = mobileRung.querySelectorAll('.loading-letter');
-                                letters.forEach(letter => letter.classList.remove('loading-letter'));
-                                const hint = mobileRung.querySelector('.loading-hint');
-                                if (hint) hint.classList.remove('loading-hint');
-                            }, 800);
+                                mobileRung.classList.remove('mobile-loading-animation');
+                            }, 150);
                         }
                     }, delay);
                 }
                 
-                // Complete loading after all animations
+                // Complete loading after all animations - sync with chime
                 const intervalTiming = isMobile ? 200 : 150;
-                const animationDuration = isMobile ? 400 : 800;
-                const totalTime = animationDelay + (5 * intervalTiming) + animationDuration + 200;
+                const animationDuration = isMobile ? 200 : 800;
+                const totalTime = animationDelay + (5 * intervalTiming) + animationDuration + 200; // Mobile: ~1500ms total to match chime
                 setTimeout(() => {
                     resolve();
                 }, totalTime);
