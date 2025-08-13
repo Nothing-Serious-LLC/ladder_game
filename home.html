@@ -1808,7 +1808,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
                     
                     if (completion) {
                         // Show completed state with theme, time, hints
-                        showCompletedPuzzle(completion, puzzleDate);
+                        await showCompletedPuzzle(completion, puzzleDate);
                         console.log('HOME SCREEN - Found today\'s completion:', completion);
                     } else {
                         // Show play card with ladder logo
@@ -1849,13 +1849,33 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             return puzzleNumber;
         }
         
-        function showCompletedPuzzle(completion, puzzleDate) {
+        async function showCompletedPuzzle(completion, puzzleDate) {
             const dailyCard = document.getElementById('daily-puzzle-card');
             
             // Store completion data for toggling
             completionData = completion;
             puzzleDateData = puzzleDate;
             currentView = 'completion';
+            
+            // Fetch today's puzzle to get the actual theme
+            let puzzleTheme = 'Unknown Theme';
+            try {
+                const today = getCurrentPuzzleDate();
+                const { data: puzzle } = await supabase
+                    .from('daily_puzzles')
+                    .select('theme')
+                    .eq('puzzle_date', today)
+                    .single();
+                
+                if (puzzle && puzzle.theme) {
+                    puzzleTheme = puzzle.theme;
+                    console.log('HOME SCREEN - Found puzzle theme:', puzzleTheme);
+                } else {
+                    console.log('HOME SCREEN - No theme found, using fallback');
+                }
+            } catch (error) {
+                console.error('Error fetching puzzle theme:', error);
+            }
             
             // Check if puzzle was completed or failed
             const wasCompleted = completion.completed;
@@ -1885,7 +1905,7 @@ import { getGameDayString, getPuzzleNumber as getPuzzleNumberHelper } from '../a
             dailyCard.innerHTML = `
                 <div class="completion-checkmark">✓</div>
                 <div class="puzzle-theme-section" style="text-align: center; margin-bottom: 24px;">
-                    <div class="puzzle-theme-large" style="color: var(--primary-green); font-size: 2.2rem; font-weight: 700; font-style: italic; margin-bottom: 8px;">${completion.puzzle_name || 'Unknown'}</div>
+                    <div class="puzzle-theme-large" style="color: var(--primary-green); font-size: 2.2rem; font-weight: 700; font-style: italic; margin-bottom: 8px;">${puzzleTheme}</div>
                     <div class="puzzle-subtitle" style="color: var(--gray-600); font-size: 1.3rem;">Puzzle #${puzzleNumber} • ${puzzleDate}</div>
                 </div>
                 

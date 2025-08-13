@@ -1,5 +1,5 @@
 // LADDER PWA Service Worker - Fast Loading + Refresh
-const CACHE_NAME = 'ladder-v247';
+const CACHE_NAME = 'ladder-v248';
 // Only cache essential assets for instant loading
 const CORE_ASSETS = [
   './',
