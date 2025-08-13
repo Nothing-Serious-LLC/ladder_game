@@ -826,20 +826,87 @@
             }
         }
 
-        /* Mobile ladder rung clean slide up animation */
-        @keyframes mobileLoadingGlow {
+        /* Enhanced mobile loading animations for word ladder */
+        @keyframes mobileLetterReveal {
             0% { 
-                transform: translateY(15px);
+                opacity: 0;
+                transform: scale(0.3) rotateY(90deg);
+                background: var(--gray-300);
                 border-color: var(--gray-300);
-                opacity: 0.4;
-                background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            }
+            50% {
+                transform: scale(1.15) rotateY(0deg);
+                background: rgba(106, 170, 100, 0.1);
+                border-color: var(--primary-green);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1);
+                background: var(--gray-50);
+                border-color: var(--gray-200);
+            }
+        }
+
+        @keyframes mobileRungSlideIn {
+            0% { 
+                transform: translateY(20px);
+                opacity: 0;
+                filter: blur(1px);
+            }
+            70% {
+                transform: translateY(-3px);
+                filter: blur(0px);
             }
             100% { 
                 transform: translateY(0px);
-                border-color: var(--primary-green);
                 opacity: 1;
-                background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
             }
+        }
+
+        @keyframes mobileHintFadeIn {
+            0% { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% { 
+                opacity: 0.7;
+                transform: translateY(0px);
+            }
+        }
+
+        /* Compact mobile loading rung with reduced height */
+        .mobile-loading-rung {
+            min-height: 38px !important; /* Reduced from normal 52px */
+            max-height: 38px !important;
+            padding: 6px 12px !important; /* Tighter padding */
+            margin: 1px 0 !important; /* Reduced margin */
+        }
+
+        .mobile-loading-rung .word-display {
+            min-height: 16px !important; /* Reduced spacing */
+            margin-bottom: 2px !important;
+        }
+
+        .mobile-loading-rung .word-hint {
+            font-size: 0.7rem !important; /* Smaller hint text */
+            margin-top: 2px !important;
+            line-height: 1.1 !important;
+        }
+
+        /* Loading letter box animations */
+        .loading-letter {
+            animation: mobileLetterReveal 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .loading-rung {
+            animation: mobileRungSlideIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .loading-hint {
+            animation: mobileHintFadeIn 0.3s ease-out;
+            animation-fill-mode: both;
         }
 
         @keyframes cascadeFill {
@@ -4867,15 +4934,32 @@
                         rung.style.opacity = '0.3';
                         
                         if (isMobile) {
-                            // Mobile: Create clean ladder rung rectangles
-                            rung.style.height = '52px';
-                            rung.style.background = 'linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%)';
-                            rung.style.border = '1px solid var(--primary-green)';
-                            rung.style.borderRadius = '16px';
-                            rung.style.margin = '2px 0';
-                            rung.style.width = '100%';
-                            rung.style.display = 'block';
-                            rung.style.position = 'relative';
+                            // Mobile: Create compact word ladder structure with letter boxes
+                            rung.className += ' mobile-loading-rung loading-rung';
+                            
+                            // Create word display for letter boxes
+                            const wordDisplay = document.createElement('div');
+                            wordDisplay.className = 'word-display';
+                            
+                            // Create letter boxes - varying lengths for word ladder feel
+                            const letterCount = isFinish ? 6 : [4, 5, 4, 6, 5][i] || 4;
+                            for (let j = 0; j < letterCount; j++) {
+                                const letterBox = document.createElement('div');
+                                letterBox.className = 'letter-box loading-letter';
+                                letterBox.style.animationDelay = `${j * 60}ms`; // Stagger letters
+                                wordDisplay.appendChild(letterBox);
+                            }
+                            
+                            rung.appendChild(wordDisplay);
+                            
+                            // Add hint placeholder for non-finish rungs (compact style)
+                            if (!isFinish) {
+                                const hint = document.createElement('div');
+                                hint.className = 'word-hint loading-hint';
+                                hint.textContent = '...'; // Loading placeholder
+                                hint.style.animationDelay = `${letterCount * 60 + 200}ms`; // After letters
+                                rung.appendChild(hint);
+                            }
                         } else {
                             // Desktop: Keep original letter box style
                             const wordDisplay = document.createElement('div');
@@ -4929,10 +5013,19 @@
                         }
                         
                         if (mobileRung) {
-                            mobileRung.classList.add('mobile-loading-animation');
+                            // Trigger the enhanced rung slide-in animation
+                            mobileRung.style.opacity = '1';
+                            mobileRung.style.animationDelay = '0ms';
+                            
+                            // Letter boxes will animate automatically due to their CSS animations
+                            // Remove loading classes after animations complete
                             setTimeout(() => {
-                                mobileRung.classList.remove('mobile-loading-animation');
-                            }, 400);
+                                mobileRung.classList.remove('loading-rung');
+                                const letters = mobileRung.querySelectorAll('.loading-letter');
+                                letters.forEach(letter => letter.classList.remove('loading-letter'));
+                                const hint = mobileRung.querySelector('.loading-hint');
+                                if (hint) hint.classList.remove('loading-hint');
+                            }, 800);
                         }
                     }, delay);
                 }
